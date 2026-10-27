@@ -525,3 +525,35 @@ are ignored and may contain paths, hashes, captures or device identities.
   existing slow gates.
 - Next: run both before each commit that touches engine or shell boundaries.
 
+## 2026-10-27T21:10:00Z — campaign inventory from the front-end text
+
+- Goal: G07. Requirement: R08 in progress.
+- Hypothesis: the standalone action build stubs the documented `DumpFiles=on`
+  option, so restoring it would expose the game's own data with real names.
+- Observed: implemented the option in the standalone build (patch 0016). A
+  front-end boot now writes eight named files under `dump/`, including
+  `UKTxt.Dat`. Parsing that bank with the bundled tool yields the 18-entry
+  campaign order (Training through Equinox) and nine multiplayer map names.
+- Observed: the supplied driving data holds seven mission bundles
+  (`mis01`, `mis3`, `mis4`, `mis11`, `mis13a/b/c`) whose engine names match the
+  driving loop's intro/outro special cases.
+- Evidence: `docs/CAMPAIGN-INVENTORY.md`; raw bank stays in ignored `build/`.
+- Verdict: names, order and map list are inventoried. Mission scripts,
+  transitions, movies per mission and the exact driving-bundle placement remain.
+- Next: map each mission to its level script and driving bundle, then run the
+  frozen first-play route.
+
+## 2026-10-27T21:30:00Z — level table and recording coverage
+
+- Goal: G07. Requirement: R08 in progress.
+- Observed: the engine's hashcode table names 22 campaign levels
+  (`0x07000005`..`0x0700001c`) and ten multiplayer levels, including the
+  front-end's map names.
+- Observed: the supplied recordings cover eight of those levels, and the
+  CastleExterior recording itself crosses from `0x07000005` to `0x07000006`,
+  so a transition is captured in existing evidence.
+- Evidence: `docs/CAMPAIGN-INVENTORY.md`; demo log in ignored `build/`.
+- Verdict: names, order, level ids and recording coverage are inventoried.
+  Mission-to-level grouping still needs the front-end's mission table or a run
+  per mission.
+

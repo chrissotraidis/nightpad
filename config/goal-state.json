@@ -198,12 +198,15 @@
       "next_step": "Verify engine pad consumption and rumble on device, then map the eight original control schemes and Driving/POV layouts."
     },
     "G07": {
-      "status": "pending",
-      "started_at": null,
+      "status": "in_progress",
+      "started_at": "2026-10-27T21:10:00Z",
       "completed_at": null,
-      "evidence": [],
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "patches/0016-standalone-file-dump.patch"
+      ],
       "blockers": [],
-      "next_step": null
+      "next_step": "Map each mission to its level script and driving bundle, then run the frozen first-play route."
     },
     "G08": {
       "status": "pending",
@@ -326,10 +329,14 @@
       ]
     },
     "R08": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Campaign names/order and multiplayer map names extracted from the dumped front-end text. Mission scripts, transitions, saves and completion paths remain."
+      ]
     },
     "R09": {
       "status": "unverified",
@@ -993,5 +1000,5 @@
       "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "Device execution of the shell handoff, pause, saves and touch sessions; then campaign inventory and coverage."
+  "next_step": "G07: map missions to level scripts and driving bundles, then run the first-play route (device execution still required for acceptance)."
 }

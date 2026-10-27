@@ -1,0 +1,59 @@
+--- a/src/action/standalone/NoDevtools.cpp
++++ b/src/action/standalone/NoDevtools.cpp
+@@ -6,8 +6,13 @@
+ #include "../devtools/MenuProbe.h"
+ #include "../devtools/SndTrace.h"
+ #include "../engine/psiInput.h"
++#include "../engine/XboxSettings.h"
+ #include "../ui/ui.h"
+ 
++#include <stdio.h>
++#include <string.h>
++#include <sys/stat.h>
++
+ #ifndef NIGHTFIRE_STANDALONE_TEST   // which has the time demos' player
+ // No time demo: the game's own clock, the host's pads, mouse and sound device
+ void Demo_Init(void) {}
+@@ -59,6 +64,40 @@
+ // No teleport keys, frame dumps or per-frame shadow tests
+ void Devtools_Tick(void) {}
+ 
+-// No sound call trace, and no copies of the files read
++// No sound call trace
+ void SndTrace(const char *, ...) {}
+-void FileDump_Save(const char *, const void *, size_t) {}
++
++// DumpFiles=on is documented in settings.ini, but the standalone build used to
++// ignore it. Read files still land under dump with the game's own paths.
++static void DumpFolders(const char *path) {
++    char folders[256];
++    snprintf(folders, sizeof(folders), "%s", path);
++    for (char *p = folders + 1; *p; ++p) {
++        if (*p == '/' || *p == '\\') {
++            const char separator = *p;
++            *p = '\0';
++            mkdir(folders, 0777);
++            *p = separator;
++        }
++    }
++}
++
++void FileDump_Save(const char *gamePath, const void *data, size_t size) {
++    if (!Settings_GetDumpFiles() || gamePath == NULL || data == NULL)
++        return;
++    if (strstr(gamePath, "..") != NULL)
++        return;
++    char path[256];
++    snprintf(path, sizeof(path), "dump/%s", gamePath);
++    DumpFolders(path);
++    FILE *file = fopen(path, "wb");
++    if (file == NULL) {
++        printf("[dump] cannot write %s\n", path);
++        return;
++    }
++    if (fwrite(data, 1, size, file) != size)
++        printf("[dump] short write to %s\n", path);
++    else
++        printf("[dump] %s (%u bytes)\n", path, (unsigned)size);
++    fclose(file);
++}

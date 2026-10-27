@@ -161,6 +161,11 @@ simulator probe and remains blocked on physical-device access.
 - The engine's relative `saves` folder is now a symlink to NightPad's durable
   Saves directory when the host prepares a launch state, so a new import or a
   rebuilt launch state cannot strand campaign progress.
+- The action build now honors the documented `DumpFiles=on` option. A front-end
+  boot dumps named data, and the dumped text bank yields the 18-entry campaign
+  order and nine multiplayer map names, recorded in
+  [CAMPAIGN-INVENTORY.md](CAMPAIGN-INVENTORY.md). Mission-to-script mapping and
+  per-mission transitions remain.
 
 ## Current uncertainty and blockers
 
