@@ -774,3 +774,13 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: contrast is measured rather than eyeballed. Focus order and physical
   sessions remain.
 
+## 2026-10-28T04:45:00Z — render cost on the host
+
+- Goal: G09. Requirement: R18 in progress.
+- Observed: Mission 1 played at 640x480, 1280x960 and 1920x1440 all reach the
+  host's ~50 fps cap with 339-348 draws per frame. Working time ranged 11-20 ms
+  with waiting compensating, so no resolution trend is visible.
+- Evidence: `scripts/test_render_cost.sh`; raw logs under ignored `build/`.
+- Verdict: higher targets run on the host, but the host is not GPU-bound. This
+  says nothing about iPhone cost; device measurement decides the default.
+

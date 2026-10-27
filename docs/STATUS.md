@@ -208,6 +208,9 @@ simulator probe and remains blocked on physical-device access.
 - Control colours come from one shared palette whose white-label contrast is
   checked at 4.5:1 or better for every control, so the Xbox face buttons keep
   their identity without failing AA contrast.
+- A host render-cost pass plays Mission 1 at 1x, 2x and 3x and finds the same
+  ~50 fps cap at all three (339-348 draws), so higher targets run but the
+  Mac is not resolution-bound. Device performance still decides the default.
 
 ## Current uncertainty and blockers
 

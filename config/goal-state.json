@@ -464,11 +464,12 @@
       "status": "in_progress",
       "evidence": [
         "apple/shared/NightPadEngineSettings.cpp",
-        "scripts/test_engine_settings.sh"
+        "scripts/test_engine_settings.sh",
+        "scripts/test_render_cost.sh"
       ],
       "decision_id": null,
       "notes": [
-        "Render scale, FXAA and widescreen are exposed, persisted and written to the engine; 1280x960 target construction confirmed on macOS. Aspect/HUD/scope checks and device performance remain."
+        "Render scale, FXAA and widescreen are exposed, persisted and written to the engine; 1280x960 target construction and 1x-3x host runs are confirmed. The host is not resolution-bound, so device performance still decides defaults; aspect/HUD/scope checks remain."
       ]
     },
     "R19": {
