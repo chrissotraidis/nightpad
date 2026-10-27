@@ -128,6 +128,13 @@ simulator probe and remains blocked on physical-device access.
   safe-area geometry, 44-point minimum clamping, opacity bounds, reset and atomic
   versioned persistence. Unknown/malformed layouts are rejected without
   replacing the active model.
+- The touch-layout editor now renders the authored controls with Xbox labels and
+  colours, supports drag and pinch with 44-point clamping, and offers Cancel,
+  Save and a confirmed Reset. On the iPhone 17 simulator Save wrote
+  `Controls/layout-phone.txt`, relaunch rendered a hand-edited geometry, and
+  Reset plus Save restored the defaults. The default face-button diamond was
+  re-spaced after the simulator showed it collapsing under the size floor; a
+  test now asserts overlap-free geometry at three landscape sizes.
 
 ## Current uncertainty and blockers
 
@@ -144,8 +151,9 @@ simulator probe and remains blocked on physical-device access.
 
 ## Next step
 
-Run the device shell to verify SDL window/overlay composition and pause/resume,
-then clear input while native UI is open and exercise the Files import flow end
-to end. Keep the ten-cycle lifecycle, pause and data-import tests as regression
-gates.
+G06 continues with the in-game touch overlay and the single controller
+authority: render the authored layout during play, feed touch and physical pad
+state through the mixer into the engine, and then run the device composition
+and Files checks. Keep the ten-cycle lifecycle, pause and data-import tests as
+regression gates.
 

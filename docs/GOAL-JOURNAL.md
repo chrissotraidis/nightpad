@@ -327,3 +327,26 @@ are ignored and may contain paths, hashes, captures or device identities.
   accessibility and physical ergonomics remain.
 - Next: render the authored layout as UIKit controls and add the editor.
 
+## 2026-10-27T15:25:00Z — touch-layout editor
+
+- Goal: G06. Requirement: R12 in progress.
+- Hypothesis: a UIKit canvas over the versioned layout can give the authored
+  geometry a usable editor without new engine work.
+- Observed: added `NightPadTouchLayoutViewController` with one view per control,
+  Xbox colours/labels, drag and pinch gestures, 44-point clamping after every
+  gesture, a Reset confirmation, explicit Cancel and Save, and a menu entry in
+  the shell. The save path is `Controls/layout-<phone|tablet>.txt` under the app
+  support directory.
+- Observed: the first simulator render showed the face-button diamond collapsing
+  into itself once the 44-point floor inflated heights on a short landscape
+  canvas. The phone/tablet defaults were re-authored as a separated diamond and
+  a new test asserts that no visible controls overlap at three landscape sizes.
+- Evidence: both shell lanes build; `scripts/test_touch_layout.sh` passes. On the
+  iPhone 17 simulator Save wrote the layout file, relaunching rendered a
+  hand-edited `a 0.30 0.30` position, Reset restored the defaults and Save
+  persisted them. The editor screenshot is under ignored
+  `evidence/ios-shell/touch-layout-editor.png`.
+- Verdict: editor and persistence pass on simulator; the in-game overlay,
+  simultaneous gameplay touches, controller authority and physical runs remain.
+- Next: feed the mixer into the engine and render the overlay during gameplay.
+

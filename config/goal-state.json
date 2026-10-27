@@ -154,10 +154,12 @@
         "apple/shared/NightPadTouchLayout.h",
         "apple/shared/NightPadTouchLayout.cpp",
         "tests/native/test_touch_layout.cpp",
-        "scripts/test_touch_layout.sh"
+        "scripts/test_touch_layout.sh",
+        "apple/ios/NightPadTouchLayoutViewController.h",
+        "apple/ios/NightPadTouchLayoutViewController.mm"
       ],
       "blockers": [],
-      "next_step": "Render the versioned phone/tablet layout as UIKit touch controls and add the drag/resize editor with reset and persistence."
+      "next_step": "Render the touch controls over gameplay, feed touch and controller state into the engine, and verify simultaneous input on device."
     },
     "G07": {
       "status": "pending",
@@ -314,11 +316,13 @@
       "status": "in_progress",
       "evidence": [
         "apple/shared/NightPadTouchLayout.cpp",
-        "scripts/test_touch_layout.sh"
+        "scripts/test_touch_layout.sh",
+        "apple/ios/NightPadTouchLayoutViewController.h",
+        "apple/ios/NightPadTouchLayoutViewController.mm"
       ],
       "decision_id": null,
       "notes": [
-        "Phone/tablet defaults, normalized safe-area geometry, 44-point clamp and versioned persistence pass; UIKit rendering/editor and physical ergonomics remain."
+        "Phone/tablet defaults, safe-area/44-point clamp, overlap-free geometry and versioned persistence pass. UIKit editor saves, resets and reloads on the iPhone 17 simulator; in-game overlay and physical ergonomics remain."
       ]
     },
     "R13": {
@@ -930,5 +934,5 @@
       "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "Implement the engine start/stop coordinator and prove thread/resource teardown before transition tests."
+  "next_step": "G06: render the touch overlay for gameplay and feed touch/controller pad state into the engine."
 }

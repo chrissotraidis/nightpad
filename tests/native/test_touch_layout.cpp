@@ -39,6 +39,26 @@ int main() {
           "Xbox face controls");
     Check(phone.controls[1].width != tablet.controls[1].width, "phone/tablet defaults independent");
 
+    // Defaults must stay usable, not just in bounds: at realistic landscape
+    // sizes no visible control may cover another (the 44-point floor used to
+    // push the face-button diamond into itself).
+    for (const auto &size : { std::pair<float, float>{ 844, 340 }, { 800, 320 }, { 1024, 700 } }) {
+        for (TouchLayout layout : { phone, tablet }) {
+            layout.Clamp(size.first, size.second, 44);
+            for (size_t i = 0; i < layout.controls.size(); ++i) {
+                for (size_t j = i + 1; j < layout.controls.size(); ++j) {
+                    const auto &a = layout.controls[i];
+                    const auto &b = layout.controls[j];
+                    if (!a.visible || !b.visible)
+                        continue;
+                    const bool apart = a.x + a.width <= b.x + 1e-4f || b.x + b.width <= a.x + 1e-4f ||
+                                       a.y + a.height <= b.y + 1e-4f || b.y + b.height <= a.y + 1e-4f;
+                    Check(apart, "visible controls do not overlap");
+                }
+            }
+        }
+    }
+
     // 44-point minimum and safe-area clamp at an extreme landscape size.
     TouchLayout clamped = phone;
     clamped.controls[0].x = 2.0f;

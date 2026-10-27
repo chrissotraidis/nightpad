@@ -2,9 +2,11 @@
 #import "NightPadEngineHost.h"
 #import "NightPadDiagnosticsViewController.h"
 #import "NightPadAboutViewController.h"
+#import "NightPadTouchLayoutViewController.h"
 
 #include "../shared/NightPadGameDataImport.h"
 #include "../shared/NightPadDiagnostics.h"
+#include "../shared/NightPadTouchLayout.h"
 
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #include <mach/mach.h>
@@ -51,6 +53,7 @@ using nightpad::Paths;
     BOOL _pendingDiagnostics;
     BOOL _pendingAbout;
     BOOL _pendingFixtureImport;
+    BOOL _pendingTouchLayout;
     BOOL _gameplayMode;
     NSTimer *_engineTimer;
 
@@ -159,6 +162,8 @@ static uint64_t ShellResidentBytes(void) {
         _pendingAbout = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--import-fixture"])
         _pendingFixtureImport = YES;
+    else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-touch-layout"])
+        _pendingTouchLayout = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -182,6 +187,12 @@ static uint64_t ShellResidentBytes(void) {
             URLByAppendingPathComponent:@"ImportFixture" isDirectory:YES];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             [self importPreparedFolder:fixture];
+        });
+    }
+    if (_pendingTouchLayout) {
+        _pendingTouchLayout = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            [self openTouchLayout];
         });
     }
 }
@@ -239,6 +250,7 @@ static uint64_t ShellResidentBytes(void) {
     _startButton.enabled = NO;
     [stack addArrangedSubview:_startButton];
     [stack addArrangedSubview:[self panelButton:@"Game Data & Saves" action:@selector(openDataPanel)]];
+    [stack addArrangedSubview:[self panelButton:@"Touch Layout" action:@selector(openTouchLayout)]];
     [stack addArrangedSubview:[self panelButton:@"App Pause" action:@selector(showPausePanel)]];
     [stack addArrangedSubview:[self panelButton:@"About NightPad" action:@selector(openAbout)]];
     [stack addArrangedSubview:[self panelButton:@"Diagnostics" action:@selector(openDiagnostics)]];
@@ -419,6 +431,36 @@ static uint64_t ShellResidentBytes(void) {
 - (void)dismissPanels {
     [self closePanels];
     [self endNativeUI];
+}
+
+- (nightpad::TouchDeviceClass)touchDeviceClass {
+    return UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad
+        ? nightpad::TouchDeviceClass::Tablet : nightpad::TouchDeviceClass::Phone;
+}
+
+- (NSURL *)touchLayoutURL {
+    NSString *controls = [NSString stringWithUTF8String:(_paths.appSupport / "Controls").c_str()];
+    NSString *name = [NSString stringWithFormat:@"layout-%s.txt",
+        nightpad::TouchDeviceName([self touchDeviceClass])];
+    return [NSURL fileURLWithPath:[controls stringByAppendingPathComponent:name]];
+}
+
+- (void)openTouchLayout {
+    [self beginNativeUI];
+    [self closePanels];
+    const nightpad::TouchDeviceClass device = [self touchDeviceClass];
+    nightpad::TouchLayout layout = nightpad::TouchLayout::Defaults(device);
+    NSURL *url = [self touchLayoutURL];
+    std::string loadError;
+    if (!layout.Load(url.fileSystemRepresentation, &loadError) && loadError != "The layout file is missing.")
+        [self showError:[NSString stringWithFormat:@"Saved touch layout ignored: %s", loadError.c_str()]];
+    NightPadTouchLayoutViewController *editor = [[NightPadTouchLayoutViewController alloc]
+        initWithLayout:layout savePath:url];
+    __weak NightPadShellViewController *weakSelf = self;
+    editor.onClose = ^{ [weakSelf endNativeUI]; };
+    UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:editor];
+    navigation.modalPresentationStyle = UIModalPresentationPageSheet;
+    [self presentViewController:navigation animated:YES completion:nil];
 }
 
 - (void)beginNativeUI {
