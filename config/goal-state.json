@@ -356,7 +356,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Campaign names/order and multiplayer map names extracted from the dumped front-end text. Mission scripts, transitions, saves and completion paths remain."
+        "Names/order, start levels, chains, media coverage and the difficulty/failure structure are inventoried. Objective labels are retail text kept out of the repo. Runs and completion evidence remain."
       ]
     },
     "R09": {
@@ -1051,5 +1051,5 @@
       "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "Collect diagnostics and performance measurements on device; G07/G08 inventory continues."
+  "next_step": "Device acceptance is the gate; finish per-mission details and exercise difficulty/failure routes once runs are possible."
 }

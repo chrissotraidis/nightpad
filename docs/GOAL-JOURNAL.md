@@ -710,3 +710,16 @@ are ignored and may contain paths, hashes, captures or device identities.
   artifact itself. Deliberate device collection and performance measurement
   remain.
 
+## 2026-10-28T02:40:00Z — difficulty and failure structure
+
+- Goal: G07. Requirement: R08 in progress.
+- Observed: three difficulties (Operative, Agent, 00 Agent) map to modifier
+  values 1-3 and are applied in PlayerStats. Missions move through running,
+  failed, died, timed out, waiting, won and countdown states; the timed-out
+  state shows results after a win and the retry menu otherwise.
+- Observed: the mission table gives per-level objective counts for every chain
+  (Castle 1/1/2/2 through SpaceStationD 2).
+- Evidence: `docs/CAMPAIGN-INVENTORY.md`; source tables cited inline.
+- Verdict: the failure/restart and difficulty paths are mapped for testing.
+  They still need to be exercised in a run.
+

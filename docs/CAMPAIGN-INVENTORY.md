@@ -183,3 +183,32 @@ path is exercised.
 
 The known PAL gap is separate: the supplied image has only the `30_fps` movie
 bundle, while one action recording expects a `25_fps` movie.
+
+## Difficulty, objectives and failure
+
+The front end offers three difficulties (`ui_nightfire.cpp`): Operative,
+Agent and 00 Agent, stored as `GameState.difficultyModifier` 1, 2 and 3.
+`PlayerStats.cpp` branches on the value, so the ladder is engine-owned and
+must be exercised through the original menu.
+
+`Mission.cpp` tracks a mission through running, failed (fail text shown),
+died, timed out, waiting, won and countdown states. The timed-out state shows
+the results after a win and the retry menu otherwise, which is the path a
+failure or death follows before a restart.
+
+Each level's objective count comes from the same table:
+
+| Mission chain | Level objectives |
+| --- | --- |
+| Castle | CastleExterior 1, CastleCourtyard 1, CastleIndoors1 2, CastleIndoors2 2 |
+| Henderson | HendersonA 1, HendersonB 3, HendersonC 3, HendersonD 1 |
+| Tower | TowerA 3, TowerB 3, TowerC 5 |
+| Power Station | PowerStationA1 3, PowerStationA2 3 |
+| Cut levels | Cut_Level1 4, Cut_Level2 1 |
+| Tower 2 | Tower2A 2, Tower2B 2, Tower2Elevator 1, Tower2C 1 |
+| Caves | Cut_Level3 3 |
+| Evil Base | EvilBase 5, EvilSilo 1, EvilBaseC 2 |
+| Space Station | SpaceStationD 2 |
+
+The labels behind those objectives are retail text and stay in the ignored
+dump; only the structure is recorded here.
