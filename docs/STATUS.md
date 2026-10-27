@@ -262,6 +262,9 @@ simulator probe and remains blocked on physical-device access.
 - The shell pauses the engine when the app leaves the foreground and resumes
   only the pause it created; a player pause or an open native panel is left
   alone. The rule is unit-tested; hearing it needs a device.
+- Cancelling a game-data import no longer blocks later imports. A new import
+  starts a fresh transaction, the cancelled one leaves no stage, and the shell
+  reports cancellation as information rather than an error.
 - [CANDIDATE.md](CANDIDATE.md) is the draft candidate manifest: identity fields
   to freeze, support matrix, verified evidence, known issues and the device
   next step. It is not an acceptance claim.

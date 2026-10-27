@@ -1151,6 +1151,12 @@ static uint64_t ShellResidentBytes(void) {
             strongSelf->_progressLabel.hidden = YES;
             if (!prepared) {
                 NSString *message = error.empty() ? @"Import failed." : [NSString stringWithUTF8String:error.c_str()];
+                if ([message isEqualToString:@"Import cancelled."]) {
+                    [strongSelf logSessionEvent:@"import cancelled"];
+                    [strongSelf showInfo:@"Import cancelled" detail:@"No game data was changed."];
+                    [strongSelf refreshDataState];
+                    return;
+                }
                 [strongSelf showError:message];
                 [strongSelf refreshDataState];
                 return;

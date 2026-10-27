@@ -1044,3 +1044,16 @@ are ignored and may contain paths, hashes, captures or device identities.
   dirty tree.
 - Verdict: freezing checks the whole dependency graph, not one pin.
 
+## 2026-10-28T11:55:00Z — cancel no longer bricks imports
+
+- Goal: G05. Requirement: R04 in progress.
+- Observed: `GameDataImporter::Prepare` never cleared its cancel flag, so one
+  cancel made every later import return "Import cancelled." until the app was
+  relaunched. The shell also presented a cancellation as an error alert.
+- Observed: a new Prepare now resets the flag as a fresh transaction. The test
+  cancels mid-copy, confirms no stage remains, then prepares again with the same
+  importer. The shell shows "Import cancelled" with "No game data was changed."
+- Evidence: `scripts/test_data_import.sh` passes; both shell lanes build.
+- Verdict: import cancellation is recoverable. Device picker selection remains
+  manual.
+

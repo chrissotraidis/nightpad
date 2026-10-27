@@ -96,9 +96,19 @@ int main() {
     const fs::path sourceC = home / "incoming" / "C";
     Prepared(sourceC, 'd', "cancelled");
     GameDataImporter cancelled(paths);
-    cancelled.Cancel();
-    Check(!cancelled.Prepare(sourceC, nullptr, &error), "cancelled import rejected");
+    bool askedToCancel = false;
+    const bool firstTry = cancelled.Prepare(sourceC, [&](const char *, double) {
+        if (!askedToCancel) {
+            askedToCancel = true;
+            cancelled.Cancel();
+        }
+    }, &error);
+    Check(!firstTry && askedToCancel, "in-flight cancel stops the import");
+    Check(error == "Import cancelled.", "cancel reports a cancellation");
     Check(cancelled.stage().empty(), "cancelled import leaves no stage");
+    Check(cancelled.Prepare(sourceC, nullptr, &error), "the same importer imports after a cancel");
+    cancelled.Cancel();
+    Check(cancelled.DiscardStage(&error), "cancel discards the retried stage");
 
     GameDataImporter cancelledAfter(paths);
     Check(cancelledAfter.Prepare(sourceC, nullptr, &error), "prepare for cancel cleanup");

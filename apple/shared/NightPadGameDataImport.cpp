@@ -210,10 +210,9 @@ bool GameDataImporter::Prepare(const fs::path &preparedData, const ImportProgres
         if (error != nullptr) *error = "A fresh import transaction is required.";
         return false;
     }
-    if (cancelled_.load()) {
-        if (error != nullptr) *error = "Import cancelled.";
-        return false;
-    }
+    // A cancel applies to the transaction that was running. A new Prepare is a
+    // fresh transaction and must not inherit an earlier cancellation.
+    cancelled_.store(false);
     previousDataRetained_ = false;
     previousPath_.clear();
     std::string detail;

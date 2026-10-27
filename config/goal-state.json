@@ -323,7 +323,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Shell import, validation, activation, relaunch and save preservation pass with the real 1.9 GB prepared tree. The system folder picker opens; choosing the folder is manual because the picker is not scriptable here."
+        "Real prepared-tree import, relaunch, save preservation and cancel-then-retry pass; the shell reports cancellation as information. Picker selection remains manual."
       ]
     },
     "R05": {
