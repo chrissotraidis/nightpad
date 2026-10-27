@@ -24,6 +24,11 @@ secondary selection, A to secondary fire, X to gadget fire and Y to camera
 change. These are the definitions used for contextual driving labels and
 acceptance, not a hard-coded substitution for the POV screens.
 
+The Control Help page now separates Driving from Mounted views. The mounted
+card names the common POV mapping and the variations: camera spin is Y except
+on one mount, reload is A except on one mount where it is X, and secondary
+cycling moves between D-pad, White/Black and face buttons by mount.
+
 ## Reproduction
 
 Build the pinned engine, then run:

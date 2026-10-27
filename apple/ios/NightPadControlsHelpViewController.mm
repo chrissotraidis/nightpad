@@ -86,7 +86,7 @@
         @[ @"Back", @"Night vision" ],
         @[ @"Start", @"Original game pause" ],
     ]]];
-    [stack addArrangedSubview:[self cardWithTitle:@"Driving and turrets" rows:@[
+    [stack addArrangedSubview:[self cardWithTitle:@"Driving" rows:@[
         @[ @"Left stick", @"Steer" ],
         @[ @"Right stick", @"Camera" ],
         @[ @"RT", @"Gas" ],
@@ -97,6 +97,15 @@
         @[ @"Y", @"Change camera" ],
         @[ @"White / Black", @"Secondary up and down" ],
         @[ @"D-pad left / right", @"Secondary up and down" ],
+    ]]];
+    [stack addArrangedSubview:[self cardWithTitle:@"Mounted views (varies by mount)" rows:@[
+        @[ @"Both sticks", @"Camera" ],
+        @[ @"RT", @"Fire" ],
+        @[ @"LT", @"Zoom" ],
+        @[ @"Y", @"Camera spin (B on some mounts)" ],
+        @[ @"A", @"Reload (X on one mount)" ],
+        @[ @"D-pad / face buttons", @"Cycle secondary weapon" ],
+        @[ @"D-pad up / down", @"Camera zoom in and out" ],
     ]]];
     [stack addArrangedSubview:[self cardWithTitle:@"Menus" rows:@[
         @[ @"D-pad", @"Move selection" ],

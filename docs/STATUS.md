@@ -256,6 +256,9 @@ simulator probe and remains blocked on physical-device access.
   runs in the quick pass.
 - The privacy gate also rejects networking APIs in `apple/`; About-page links
   open in the browser, and diagnostics stay local until shared.
+- Control Help no longer conflates driving with mounted views. Driving keeps its
+  gas/brake/handbrake card; mounted views have a separate card that names the
+  POV variations across the eight configurations.
 - [CANDIDATE.md](CANDIDATE.md) is the draft candidate manifest: identity fields
   to freeze, support matrix, verified evidence, known issues and the device
   next step. It is not an acceptance claim.

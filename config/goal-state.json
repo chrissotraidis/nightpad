@@ -412,11 +412,12 @@
     "R13": {
       "status": "in_progress",
       "evidence": [
-        "apple/ios/NightPadControlsHelpViewController.mm"
+        "apple/ios/NightPadControlsHelpViewController.mm",
+        "docs/DRIVING-CONTROLS.md"
       ],
       "decision_id": null,
       "notes": [
-        "The engine keeps its eight schemes and inversion/aim/crouch preferences; the app sends Xbox bits and now documents on-foot, vehicle and menu mappings from drivecfg.def/POV definitions. Runtime scheme and vehicle verification remains."
+        "The engine keeps its schemes and preferences; help separates Driving from Mounted views and names the POV variations across eight configurations. In-game checks remain."
       ]
     },
     "R14": {

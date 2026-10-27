@@ -1007,3 +1007,17 @@ are ignored and may contain paths, hashes, captures or device identities.
   the quick pass; `docs/PROVENANCE.md` states the boundary.
 - Verdict: the "no automatic upload" claim is checked mechanically.
 
+## 2026-10-28T11:00:00Z — driving and mounted-view help split
+
+- Goal: G06. Requirement: R13 in progress.
+- Observed: the help page described one "Driving and turrets" mapping, but the
+  eight POV configurations differ: camera spin is Y except on one mount (B),
+  reload is A except on one (X), and secondary cycling moves between D-pad,
+  White/Black and face buttons.
+- Observed: the page now has separate Driving and Mounted views cards, with the
+  common POV mapping and its variations named. The simulator accessibility tree
+  lists every row.
+- Evidence: `docs/DRIVING-CONTROLS.md`, the refreshed help page and its AX tree.
+- Verdict: the help no longer implies one vehicle layout. In-game verification
+  of each mount remains device work.
+
