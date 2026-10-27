@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T23:45:00Z",
+  "last_updated_at": "2026-10-28T23:55:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -347,10 +347,17 @@
     },
     "R05": {
       "status": "in_progress",
-      "evidence": [],
+      "evidence": [
+        "scripts/build_ios_shell.sh",
+        "scripts/check_ios_shell_link.sh",
+        "scripts/check_package.sh",
+        "scripts/package_device_app.sh",
+        "docs/TEST-MATRIX.md"
+      ],
       "decision_id": null,
       "notes": [
-        "Both complete iPhoneOS engines build and link in one executable with 15 intended bridge symbols; macOS mixed transitions pass ten cycles."
+        "The device shell links the combined action and driving engines with static SDL, FFmpeg and SPIRV-Cross; the IPA is arm64 with only system libraries.",
+        "A signed install and run on physical hardware, without a debugger or JIT, is the remaining proof."
       ]
     },
     "R06": {
@@ -1438,6 +1445,16 @@
         "docs/TEST-MATRIX.md",
         "scripts/test_action_pause.sh",
         "scripts/test_driving_pause.sh"
+      ]
+    },
+    {
+      "at": "2026-10-28T23:55:00Z",
+      "goal": "G13",
+      "summary": "Filled R05 with the device-link, package and arm64 evidence it already had, leaving the signed hardware run as the open part.",
+      "evidence": [
+        "config/goal-state.json",
+        "scripts/check_package.sh",
+        "scripts/check_ios_shell_link.sh"
       ]
     }
   ],
