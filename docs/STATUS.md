@@ -106,6 +106,11 @@ simulator probe and remains blocked on physical-device access.
 - Opening native menu/pause surfaces now pauses the engine and suspends input;
   pad and keyboard reads answer neutral and pointer deltas are discarded until
   the surface closes. The shell exposes the input bridge in the device link.
+- Diagnostics now generate a local report with app/build identity, data and
+  engine state, path classes, thread count and resident memory. Home paths and
+  app-container UUIDs are redacted, credential-looking values are removed, and
+  the report is presented for review with an explicit Share action. Nothing is
+  uploaded automatically. Simulator review screen and device build pass.
 
 ## Current uncertainty and blockers
 

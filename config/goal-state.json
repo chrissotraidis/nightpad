@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T14:56:00Z",
+  "last_updated_at": "2026-10-27T15:03:53Z",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -128,10 +128,16 @@
         "scripts/check_ios_shell_link.sh",
         "patches/0012-native-engine-pause.patch",
         "scripts/test_action_pause.sh",
-        "patches/0013-native-input-suspension.patch"
+        "patches/0013-native-input-suspension.patch",
+        "apple/shared/NightPadDiagnostics.h",
+        "apple/shared/NightPadDiagnostics.cpp",
+        "apple/ios/NightPadDiagnosticsViewController.h",
+        "apple/ios/NightPadDiagnosticsViewController.mm",
+        "tests/native/test_diagnostics.cpp",
+        "scripts/test_diagnostics.sh"
       ],
       "blockers": [],
-      "next_step": "Run the device shell through menu-open/pause/resume and the Files import flow; verify SDL/overlay composition on phone and tablet."
+      "next_step": "Exercise diagnostic Share/Save to Files, then run device shell through start/pause/import and verify SDL/overlay composition."
     },
     "G06": {
       "status": "pending",
@@ -376,10 +382,16 @@
       "notes": []
     },
     "R25": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "apple/shared/NightPadDiagnostics.cpp",
+        "apple/ios/NightPadDiagnosticsViewController.mm",
+        "scripts/test_diagnostics.sh"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Local report with redacted paths and review/share screen; share/save flow and device use remain unverified."
+      ]
     },
     "R26": {
       "status": "unverified",
@@ -720,6 +732,16 @@
         "patches/0013-native-input-suspension.patch",
         "apple/ios/NightPadShellViewController.mm",
         "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T15:03:53Z",
+      "goal": "G05",
+      "summary": "Added a reviewable local diagnostics report with path/credential redaction and explicit share; simulator review and device build pass.",
+      "evidence": [
+        "apple/shared/NightPadDiagnostics.cpp",
+        "apple/ios/NightPadDiagnosticsViewController.mm",
+        "scripts/test_diagnostics.sh"
       ]
     }
   ],

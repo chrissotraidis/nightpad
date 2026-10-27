@@ -234,3 +234,21 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: run the device shell through menu-open/pause/resume and the Files import
   flow; inspect overlay/window composition on the phone and tablet.
 
+## 2026-10-27T15:03:53Z — reviewable local diagnostics
+
+- Goal: G05. Requirement: R25 in progress.
+- Hypothesis: diagnostics should be a local draft the player can inspect before
+  sharing, with no automatic upload or private container identifiers.
+- Observed: added a portable report builder and UIKit review screen. The report
+  records app/build identity, data and engine state, path classes, thread count
+  and resident memory. Home paths and app-container UUIDs are redacted; common
+  credential-looking values are removed. The shell writes the report atomically
+  under Logs/NightPad and presents it with explicit Share and Done actions.
+- Evidence: `scripts/test_diagnostics.sh` passes; simulator review screen
+  renders (screenshot `evidence/ios-shell/diagnostics-preview.png`); simulator
+  and device shell targets build; link check still passes.
+- Verdict: review/export foundation passes; the actual share-sheet/save flow and
+  device use remain unverified.
+- Next: exercise Share/Save to Files, then continue G05 device composition and
+  import flow once hardware access is available.
+

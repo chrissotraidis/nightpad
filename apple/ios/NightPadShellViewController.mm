@@ -1,9 +1,13 @@
 #import "NightPadShellViewController.h"
 #import "NightPadEngineHost.h"
+#import "NightPadDiagnosticsViewController.h"
 
 #include "../shared/NightPadGameDataImport.h"
+#include "../shared/NightPadDiagnostics.h"
 
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#include <mach/mach.h>
+#include <mach/task_info.h>
 #include <memory>
 
 using nightpad::DataState;
@@ -43,6 +47,7 @@ using nightpad::Paths;
     BOOL _enginePaused;
     BOOL _uiPausedEngine;
     BOOL _uiInputSuspended;
+    BOOL _pendingDiagnostics;
     BOOL _gameplayMode;
     NSTimer *_engineTimer;
 
@@ -58,6 +63,26 @@ using nightpad::Paths;
     UIButton *_importButton;
     UIButton *_discardButton;
     UIButton *_startButton;
+    NSString *_lastError;
+}
+
+static uint32_t ShellThreadCount(void) {
+    thread_act_array_t threads = nullptr;
+    mach_msg_type_number_t count = 0;
+    if (task_threads(mach_task_self(), &threads, &count) != KERN_SUCCESS)
+        return 0;
+    for (mach_msg_type_number_t i = 0; i < count; ++i)
+        mach_port_deallocate(mach_task_self(), threads[i]);
+    vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(threads), count * sizeof(thread_t));
+    return count;
+}
+
+static uint64_t ShellResidentBytes(void) {
+    task_vm_info_data_t info = {};
+    mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
+    if (task_info(mach_task_self(), TASK_VM_INFO, reinterpret_cast<task_info_t>(&info), &count) != KERN_SUCCESS)
+        return 0;
+    return info.phys_footprint;
 }
 
 - (void)loadView {
@@ -127,6 +152,18 @@ using nightpad::Paths;
         [self toggleMenu];
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-data"])
         [self openDataPanel];
+    else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-diagnostics"])
+        _pendingDiagnostics = YES;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (_pendingDiagnostics) {
+        _pendingDiagnostics = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            [self openDiagnostics];
+        });
+    }
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
@@ -594,15 +631,61 @@ using nightpad::Paths;
 }
 
 - (void)openDiagnostics {
+    [self beginNativeUI];
     [self closePanels];
-    NSString *path = [NSString stringWithUTF8String:_paths.diagnostics.c_str()];
-    UIActivityViewController *share = [[UIActivityViewController alloc] initWithActivityItems:@[path] applicationActivities:nil];
-    share.popoverPresentationController.sourceView = _menuButton;
-    share.popoverPresentationController.sourceRect = _menuButton.bounds;
-    [self presentViewController:share animated:YES completion:nil];
+    const char *state = "Missing";
+    switch (_state) {
+        case DataState::Ready: state = "Ready"; break;
+        case DataState::RecoverableError: state = "RecoverableError"; break;
+        case DataState::Invalid: state = "Invalid"; break;
+        case DataState::Importing: state = "Importing"; break;
+        case DataState::Launching: state = "Launching"; break;
+        case DataState::Running: state = "Running"; break;
+        case DataState::Missing: state = "Missing"; break;
+    }
+    nightpad::DiagnosticContext context;
+    context.appVersion = [[NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"] UTF8String] ?: "";
+    context.buildConfiguration =
+#if DEBUG
+        "diagnostic/debug";
+#else
+        "performance/release";
+#endif
+    NSISO8601DateFormatter *iso = [NSISO8601DateFormatter new];
+    context.generatedAt = [[iso stringFromDate:[NSDate date]] UTF8String] ?: "";
+    context.dataState = state;
+    context.dataIdentity = _identity.UTF8String ?: "";
+    context.engineState = !_engineRunning ? "stopped" : (_enginePaused ? "paused" : "running");
+    context.lastError = _lastError.UTF8String ?: "";
+    context.home = NSHomeDirectory().UTF8String ?: "";
+    context.paths = _paths;
+    context.threadCount = ShellThreadCount();
+    context.residentBytes = ShellResidentBytes();
+    const std::string report = nightpad::BuildDiagnosticReport(context);
+    NSDateFormatter *formatter = [NSDateFormatter new];
+    formatter.dateFormat = @"yyyyMMdd-HHmmss";
+    NSString *name = [NSString stringWithFormat:@"NightPad-diagnostics-%@.txt", [formatter stringFromDate:NSDate.date]];
+    NSString *directory = [NSString stringWithUTF8String:_paths.diagnostics.c_str()];
+    [NSFileManager.defaultManager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:nil];
+    NSString *path = [directory stringByAppendingPathComponent:name];
+    NSError *writeError = nil;
+    NSString *text = [NSString stringWithUTF8String:report.c_str()];
+    if (![text writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&writeError]) {
+        [self endNativeUI];
+        [self showError:writeError.localizedDescription ?: @"The local diagnostic report could not be saved."];
+        return;
+    }
+    NightPadDiagnosticsViewController *review = [[NightPadDiagnosticsViewController alloc]
+        initWithReport:text reportURL:[NSURL fileURLWithPath:path]];
+    __weak NightPadShellViewController *weakSelf = self;
+    review.onClose = ^{ [weakSelf endNativeUI]; };
+    UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:review];
+    navigation.modalPresentationStyle = UIModalPresentationPageSheet;
+    [self presentViewController:navigation animated:YES completion:nil];
 }
 
 - (void)showError:(NSString *)message {
+    _lastError = [message copy];
     dispatch_async(dispatch_get_main_queue(), ^{
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"NightPad"
             message:message preferredStyle:UIAlertControllerStyleAlert];

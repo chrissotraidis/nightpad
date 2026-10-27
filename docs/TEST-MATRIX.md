@@ -54,6 +54,7 @@
 | G05 | Native pause/input/audio gating | iPhone/iPad | partial | Engine pause/audio and shell App Pause are wired; device run remains |
 | G05 | Cooperative engine pause boundary | macOS arm64 | passed | `scripts/test_action_pause.sh`: frames 0→2, hold 3→3, resume→33; audio pause path exercised; normal cycles/transition still pass |
 | G05 | Native-UI input suspension | iPhoneOS/macOS | passed for build/boundary | Pad/keyboard reads answer neutral and pointer deltas drop while suspended; shell menu/pause uses it; device behavior pending |
+| G05 | Local diagnostic report review | iPhone simulator / iPhoneOS build | passed for core/review | `scripts/test_diagnostics.sh`; redacts home/container paths and credentials; simulator shows review/share screen; no automatic upload |
 
 Only rows with explicit execution evidence are marked passed. Source inspection
 does not satisfy runtime acceptance.

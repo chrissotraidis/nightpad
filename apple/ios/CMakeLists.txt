@@ -22,7 +22,8 @@ add_executable(NightPadProbe MACOSX_BUNDLE
 
 add_library(nightpad_core STATIC
   ../shared/NightPadPaths.cpp
-  ../shared/NightPadGameDataImport.cpp)
+  ../shared/NightPadGameDataImport.cpp
+  ../shared/NightPadDiagnostics.cpp)
 target_include_directories(nightpad_core PUBLIC ../shared)
 target_compile_features(nightpad_core PUBLIC cxx_std_20)
 target_compile_options(nightpad_core PRIVATE -fno-exceptions)
@@ -30,9 +31,11 @@ target_compile_options(nightpad_core PRIVATE -fno-exceptions)
 add_executable(NightPadShell MACOSX_BUNDLE
   main.mm
   NightPadShellViewController.mm
+  NightPadDiagnosticsViewController.mm
   NightPadEngineHost.mm)
 target_compile_features(NightPadShell PRIVATE cxx_std_20)
 target_compile_options(NightPadShell PRIVATE -fobjc-arc)
+target_compile_definitions(NightPadShell PRIVATE $<$<CONFIG:Debug>:DEBUG=1>)
 target_link_libraries(NightPadShell PRIVATE nightpad_core
   "-framework UIKit" "-framework Foundation" "-framework CoreGraphics" "-framework UniformTypeIdentifiers")
 set(NIGHTPAD_ENGINE_ARCHIVE "" CACHE FILEPATH "Combined engine archive from build_combined_engine_link.sh")
