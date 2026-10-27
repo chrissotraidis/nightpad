@@ -33,6 +33,9 @@ public:
     void Cancel();
     bool Activate(bool runtimeStopped, std::string *error);
     bool DiscardStage(std::string *error);
+    // Removes stage directories left behind by earlier runs. The active stage
+    // and a retained previous tree are kept.
+    bool CleanupAbandonedStages(std::string *error);
 
     bool prepared() const { return prepared_; }
     bool previousDataRetained() const { return previousDataRetained_; }

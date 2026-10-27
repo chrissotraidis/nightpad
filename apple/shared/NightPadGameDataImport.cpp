@@ -337,6 +337,37 @@ bool GameDataImporter::DiscardStage(std::string *error) {
     return true;
 }
 
+// A re-import leaves the replaced tree in its stage path. The shell can discard
+// the newest one while it is still running, but anything left from an earlier
+// launch is unreachable - and each tree is the size of the game data. Clear
+// those, keeping the active stage and the retained previous tree.
+bool GameDataImporter::CleanupAbandonedStages(std::string *error) {
+    std::error_code ec;
+    fs::directory_iterator entry(paths_.appSupport, ec);
+    if (ec) {
+        if (error != nullptr) *error = "Could not scan for abandoned imports: " + ec.message();
+        return false;
+    }
+    const fs::directory_iterator end;
+    while (entry != end) {
+        const fs::path candidate = entry->path();
+        entry.increment(ec);
+        if (ec)
+            break;
+        if (!ValidStageName(candidate.filename().string()))
+            continue;
+        if ((!stage_.empty() && candidate == stage_) ||
+            (!previousPath_.empty() && candidate == previousPath_))
+            continue;
+        fs::remove_all(candidate, ec);
+        if (ec) {
+            if (error != nullptr) *error = "An abandoned import could not be removed: " + ec.message();
+            return false;
+        }
+    }
+    return true;
+}
+
 DataState GameDataImporter::CurrentState(std::string *identity, std::string *error) const {
     std::error_code ec;
     std::string found = PointerIdentity(paths_);

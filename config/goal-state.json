@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T22:20:00Z",
+  "last_updated_at": "2026-10-28T22:45:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -341,7 +341,8 @@
       "notes": [
         "Preflight, staging, validation, cancellation, atomic activation, replacement and rollback retention are covered by scripts/test_data_import.sh.",
         "The shell imports a prepared tree from the picker or from Documents/NightPad Import with progress and cancel, and re-import leaves Saves byte-identical.",
-        "Choosing an arbitrary external folder still uses the system picker and is manual in this harness."
+        "Choosing an arbitrary external folder still uses the system picker and is manual in this harness.",
+        "Startup cleanup removes stage trees left by earlier imports; a 7.6 GB pile in the simulator fell to the single active tree."
       ]
     },
     "R05": {
@@ -1372,6 +1373,17 @@
         "apple/ios/NightPadShellViewController.mm",
         "docs/TEST-MATRIX.md",
         "evidence/ios-shell/panel-dynamic-type.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T22:45:00Z",
+      "goal": "G05",
+      "summary": "Abandoned import stage trees are removed at startup, freeing 7.6 GB in the simulator while keeping the active tree and saves.",
+      "evidence": [
+        "apple/shared/NightPadGameDataImport.cpp",
+        "tests/native/test_data_import.cpp",
+        "docs/TEST-MATRIX.md",
+        "docs/KNOWN-ISSUES.md"
       ]
     }
   ],

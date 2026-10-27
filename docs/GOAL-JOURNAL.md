@@ -1625,3 +1625,20 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the shell follows the system text size. The pause card needs a live
   engine to be seen at any size.
 
+## 2026-10-28T22:45:00Z — old import stages no longer pile up
+
+- Goal: G05. Requirement: R04 in progress.
+- Observed: a re-import swaps the new tree in place and leaves the replaced
+  one in that import's stage folder. Only the newest is reachable through
+  "Remove Previous Game Data", and only until relaunch, so repeated imports had
+  left four `GameData.import-*` trees - about 7.6 GB - that nothing could see.
+- Observed: `GameDataImporter::CleanupAbandonedStages` removes stage-shaped
+  directories that are neither the active stage nor the retained previous tree,
+  and the shell calls it before reporting state at launch.
+- Evidence: the simulator's Application Support fell from about 9.5 GB to
+  1.9 GB, the active tree still reports ready as
+  `data-a3c98ab965ac41e559ac` and saves were byte-identical.
+  `scripts/test_data_import.sh` proves stage folders go and lookalikes stay.
+- Verdict: repeated imports no longer leak disk. The rollback tree is now
+  explicitly a same-session affordance, which KNOWN-ISSUES records.
+

@@ -25,3 +25,5 @@ tester would see, what is blocked, and where the detail lives.
   simulator accessibility bridge; a direct tap opens it.
 - `scripts/verify_patches.sh` prints one whitespace warning for patch 0006; the
   reproduced files still match.
+- A re-import keeps the replaced tree only for that session: the next launch
+  clears it, so "Remove Previous Game Data" is a same-session action.

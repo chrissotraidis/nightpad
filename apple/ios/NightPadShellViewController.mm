@@ -1143,6 +1143,9 @@ static uint64_t ShellResidentBytes(void) {
 - (void)refreshDataState {
     if (!_importer)
         _importer = std::make_unique<GameDataImporter>(_paths);
+    // Earlier runs can leave full copies of the game data in stage folders that
+    // nothing can reach any more; clear them before reporting the state.
+    _importer->CleanupAbandonedStages(nullptr);
     std::string identity, error;
     _state = _importer->CurrentState(&identity, &error);
     _identity = identity.empty() ? nil : [NSString stringWithUTF8String:identity.c_str()];

@@ -126,6 +126,18 @@ int main() {
     Check(brokenImporter.CurrentState(&active, &error) == DataState::RecoverableError,
           "invalid pointer is recoverable error");
 
+    // Stages left by earlier launches are unreachable; clear them, keep anything
+    // that is not a stage.
+    const fs::path staleA = paths.appSupport / "GameData.import-0123456789abcdef0123456789abcdef";
+    const fs::path staleB = paths.appSupport / "GameData.import-fedcba9876543210fedcba9876543210";
+    const fs::path keepOther = paths.appSupport / "GameData.import-not-a-stage";
+    WriteFile(staleA / "default.xbe", "stale");
+    WriteFile(staleB / "default.xbe", "stale");
+    WriteFile(keepOther / "default.xbe", "keep");
+    Check(second.CleanupAbandonedStages(&error), "abandoned stages clean up");
+    Check(!fs::exists(staleA) && !fs::exists(staleB), "abandoned stages removed");
+    Check(fs::exists(keepOther), "non-stage folders kept");
+
     fs::remove_all(home, ec);
     std::cout << (failures == 0 ? "data import: PASS" : "data import: FAIL") << "\n";
     return failures == 0 ? 0 : 1;
