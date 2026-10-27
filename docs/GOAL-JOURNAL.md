@@ -1355,3 +1355,19 @@ are ignored and may contain paths, hashes, captures or device identities.
   from outside the app stays manual, and an interrupted engine write still
   needs a device run.
 
+## 2026-10-28T17:05:00Z — handoff checklist matches the app
+
+- Goal: G13/R30. Requirements: R26, R30 in progress.
+- Observed: the device checklist still described the picker as the import path,
+  did not mention the hide/show gesture or the save-restore prompt, and carried
+  the previous package hash.
+- Observed: the checklist now names the app-folder import first, adds a
+  save-restore session, mentions hiding a control, records what the device pass
+  cannot expect (texture overrides) and carries the rebuilt package hash.
+- Evidence: `docs/DEVICE-HANDOFF.md`; `scripts/package_device_app.sh` rebuilt the
+  unsigned IPA at `f46e4e9`,
+  sha256 `4ff2f289ce0c62a4d88d25efde1a6a03fbaf9bdbb9fa95578aab65f8e9e9695e`;
+  `docs/CANDIDATE.md` snapshot updated to the same values.
+- Verdict: the handoff document describes the app that exists. Final freeze
+  still waits on device acceptance.
+

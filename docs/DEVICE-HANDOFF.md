@@ -29,10 +29,11 @@ ignored `evidence/device/<date>/`.
 | Gate | Session | Expected result |
 | --- | --- | --- |
 | G03 | Install the probe app and run the pointer/Metal/media fixtures | Results match the simulator probe |
-| G05 | Import the prepared folder with the system picker, relaunch, play, save | Ready state survives; saves untouched by import |
+| G05 | Import the prepared data - copy it to `Documents/NightPad Import` first, then use the panel's "Use NightPad Folder"; try the picker path once too - relaunch, play, save | Ready state survives; saves untouched by import; both paths reach the same result |
+| G05 | Share the saves, then restore them with Import Saves and answer the replace prompt | Restored files match the export; unrelated saves stay untouched |
 | G06 | Touch: move/look/fire/aim, five fingers, sustained combat grip | No dropped inputs, controls reachable, menu independent |
 | G06 | Controller: connect, held buttons, sleep/wake, P2 join | Ports stay separate; touch P1 not stolen; rumble routed |
-| G06 | Edit the layout, Save, relaunch, Reset | Geometry persists; every editor action remains reachable |
+| G06 | Edit the layout, Save, relaunch, Reset; long-press a control to hide and show it | Geometry and visibility persist; every editor action remains reachable |
 | G07 | First-play route: front end, Paris, a transition, save, relaunch | Transitions, media and saves work on device |
 | G09 | Original and 2x targets, 4:3 and 16:9, FXAA off/on | Correct fit, no scope/HUD regressions, sustained frame rate |
 | G09 | Secret Unlocks: mission toggle, reward set, upgrade, invalid code, save/relaunch | Unlocks persist; invalid code changes nothing |
@@ -58,6 +59,17 @@ ignored `evidence/device/<date>/`.
 `scripts/package_device_app.sh` builds the Release app and writes an unsigned
 `build/package/NightPadShell-unsigned.ipa` for inspection. It is not
 installable until it is signed.
+
+The current unsigned package hash is
+`4ff2f289ce0c62a4d88d25efde1a6a03fbaf9bdbb9fa95578aab65f8e9e9695e` (commit
+`f46e4e9`). Regenerate it at freeze time; do not install a stale copy.
+
+## Not in this candidate
+
+Texture overrides are decided off for this pass: the engine's DDS replacement
+belongs to the D3D9 backend and is not wired into the SDL/Metal backend
+(`docs/DECISIONS/0013-texture-overrides.md`). Do not create a `textures` folder
+expecting it to change anything.
 
 ## What cannot be claimed before this pass
 
