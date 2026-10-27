@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T14:26:55Z",
+  "last_updated_at": "2026-10-27T14:32:45Z",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -113,10 +113,16 @@
         "tests/native/test_data_import.cpp",
         "scripts/test_data_import.sh",
         "apple/ios/CMakeLists.txt",
-        "docs/DECISIONS/0007-app-data-layout.md"
+        "docs/DECISIONS/0007-app-data-layout.md",
+        "apple/ios/main.mm",
+        "apple/ios/NightPadShellViewController.h",
+        "apple/ios/NightPadShellViewController.mm",
+        "apple/ios/NightPadShellInfo.plist.in",
+        "scripts/build_ios_shell.sh",
+        "docs/DECISIONS/0008-native-shell-surface.md"
       ],
       "blockers": [],
-      "next_step": "Build the iOS shell target, data status/import UI and persistent three-dot menu around the tested path/import core."
+      "next_step": "Attach the combined engine host beneath the shell; connect menu/pause state and real runtime stopped state to import; exercise Files import end to end."
     },
     "G06": {
       "status": "pending",
@@ -222,7 +228,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Path classes and atomic prepared-data import pass native tests; import picker/progress UI and engine integration remain."
+        "Path classes and atomic import core pass native tests; shell import panel and picker entry exist, but end-to-end Files import and engine-stop integration remain."
       ]
     },
     "R05": {
@@ -296,10 +302,15 @@
       "notes": []
     },
     "R15": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/DECISIONS/0008-native-shell-surface.md"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Persistent three-dot menu, data panel and app-pause surface render on simulator; engine pause/audio/input gating remains."
+      ]
     },
     "R16": {
       "status": "unverified",
@@ -650,6 +661,16 @@
         "scripts/test_data_import.sh",
         "apple/shared/NightPadGameDataImport.cpp",
         "apple/shared/NightPadPaths.cpp"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:32:45Z",
+      "goal": "G05",
+      "summary": "Added the native shell target with persistent three-dot menu, data import/status panel, pause/about/diagnostics surfaces; simulator and device builds pass.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/DECISIONS/0008-native-shell-surface.md",
+        "docs/TEST-MATRIX.md"
       ]
     }
   ],

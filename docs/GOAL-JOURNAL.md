@@ -141,3 +141,22 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: add the iOS shell target around the core and wire data status plus the
   persistent three-dot menu before integrating the engine session.
 
+## 2026-10-27T14:32:45Z — native shell surface
+
+- Goal: G05. Requirements: R04, R15 in progress.
+- Hypothesis: a dedicated NightPad-shell target should expose the persistent
+  menu and data controls without importing GalaxyPad's Nintendo-specific menu.
+- Observed: added a landscape UIKit `NightPadShell` app with a persistent
+  three-dot button, menu, game-data status/import panel, progress/cancel,
+  previous-data cleanup, app-pause card, About card and diagnostics share entry.
+  The import panel uses the tested `GameDataImporter`; the engine host is not yet
+  attached, so Start Game is deliberately disabled and import activation uses
+  the known-stopped state.
+- Evidence: `scripts/build_ios_shell.sh simulator` and `device` both succeed.
+  Simulator screenshots show home, open menu and data panel under
+  `evidence/ios-shell/`; the simulator was shut down afterwards.
+- Verdict: the shell surface and import UI foundation pass build/visual smoke;
+  engine attachment, real pause/input gating and end-to-end picker import remain.
+- Next: attach the combined engine host beneath the shell and connect menu/pause
+  state to the coordinator, then run the Files import flow.
+

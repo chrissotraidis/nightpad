@@ -27,6 +27,19 @@ target_include_directories(nightpad_core PUBLIC ../shared)
 target_compile_features(nightpad_core PUBLIC cxx_std_20)
 target_compile_options(nightpad_core PRIVATE -fno-exceptions)
 
+add_executable(NightPadShell MACOSX_BUNDLE
+  main.mm
+  NightPadShellViewController.mm)
+target_compile_features(NightPadShell PRIVATE cxx_std_20)
+target_compile_options(NightPadShell PRIVATE -fobjc-arc)
+target_link_libraries(NightPadShell PRIVATE nightpad_core
+  "-framework UIKit" "-framework Foundation" "-framework CoreGraphics" "-framework UniformTypeIdentifiers")
+set_target_properties(NightPadShell PROPERTIES
+  MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/NightPadShellInfo.plist.in"
+  XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
+  XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "local.nightpad.shell"
+  XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "NO")
+
 set_source_files_properties("${NIGHTFIRE}/src/driving/devtools/GameWindowTest.cpp"
   PROPERTIES COMPILE_DEFINITIONS "main=NightfireGameWindowTestMain")
 target_compile_definitions(NightPadProbe PRIVATE

@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-27 14:26 UTC
+Updated: 2026-10-27 14:32 UTC
 
 ## Outcome
 
@@ -84,6 +84,12 @@ simulator probe and remains blocked on physical-device access.
   invalid input, symlinks, cancellation, failed activation, replacement,
   rollback data and stale-pointer recovery.
 - The G05 core compiles into the iPhoneOS probe target.
+- G05 now has a native landscape `NightPadShell` app target. Simulator and
+  device builds succeed. The persistent three-dot menu, data status/import
+  panel with progress/cancel/previous-data cleanup, app-pause card, About card
+  and diagnostics share entry render and are reachable.
+- Simulator screenshots verify the home, menu and data-panel states. The app
+  exposes its Documents directory to Files for prepared-folder import.
 
 ## Current uncertainty and blockers
 
@@ -100,7 +106,8 @@ simulator probe and remains blocked on physical-device access.
 
 ## Next step
 
-Build the native shell around the path/import core: data status and import UI,
-the three-dot menu, and engine pause/transition wiring. Keep the ten-cycle
+Attach the combined engine host beneath the shell, pass real runtime
+stopped/pause state into the menu and import gate, clear input while native UI
+is open, and exercise the Files import flow end to end. Keep the ten-cycle
 lifecycle and data-import tests as regression gates.
 
