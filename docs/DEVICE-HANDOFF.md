@@ -71,9 +71,10 @@ It refuses a dirty tree, runs the gates in order, rebuilds the unsigned package
 and prints the identity, writing the whole run to
 `build/package/candidate.txt`. Device acceptance is never claimed by it.
 
-The last unsigned package built from this tree is
-`fc654387f50e80d42f57e8960ec67cec0023411b775bdefacedb3bc31f2b6f1c` (app code
-at `66af620`). Regenerate it at freeze time; do not install a stale copy.
+`scripts/freeze_candidate.sh` rebuilds the package and records its hash in
+`build/package/candidate.txt`. The last manual build was
+`ee803d577fb6ab1e70c540ac5f2244c03e5c348eca93ad83e817d20ff2193d10` (app code
+at `ba3a56e`). Do not install a stale copy.
 
 ## Not in this candidate
 
