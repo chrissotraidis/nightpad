@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T00:40:00Z",
+  "last_updated_at": "2026-10-29T01:00:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -212,10 +212,11 @@
       "completed_at": null,
       "evidence": [
         "docs/CAMPAIGN-INVENTORY.md",
-        "patches/0016-standalone-file-dump.patch"
+        "patches/0016-standalone-file-dump.patch",
+        "scripts/inspect_driving_track.py"
       ],
       "blockers": [],
-      "next_step": "G07: parse the track event data, or use an interactive run that reaches the first objective, to attribute the driving objective strings; then run the first-play route when device execution is available."
+      "next_step": "G07: decode the event families that carry text ids in each track (Paris objective events have empty comments), then run the first-play route when device execution is available."
     },
     "G08": {
       "status": "in_progress",
@@ -1487,6 +1488,15 @@
       "evidence": [
         "docs/CAMPAIGN-INVENTORY.md",
         "docs/KNOWN-ISSUES.md"
+      ]
+    },
+    {
+      "at": "2026-10-29T01:00:00Z",
+      "goal": "G07",
+      "summary": "Added a CARP track inspector that decodes the map group and rule event lists; Paris objective events have empty comments, so the text lives in another event family.",
+      "evidence": [
+        "scripts/inspect_driving_track.py",
+        "docs/CAMPAIGN-INVENTORY.md"
       ]
     }
   ],

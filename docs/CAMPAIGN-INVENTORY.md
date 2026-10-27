@@ -193,6 +193,15 @@ minute in. The app's real handover page is NTSC, so this is a harness default
 rather than the product path, but it rules out sitting through the intro
 quickly this way. That hook was removed too; the remaining routes are unchanged.
 
+The track data itself can be read without the game. `scripts/inspect_driving_track.py`
+walks the CARP group tree, finds the `Map ` group, lists its data families and
+decodes the mission rules' event lists. Running it on Paris shows the method
+works: the map group holds 114 rules, 754 triggers and 1391 event lists, and
+`ESetObjective` (event 69) is present. Their comment words are zero, though, so
+Paris's objective text must come from another event type - the families to
+decode next are the ones carrying small text ids, such as 40 and 112. The
+script prints those ids; it never prints the locale strings.
+
 ### How a part starts and ends
 
 Starting a level part (`Mission_Init`) records its base map and order, then

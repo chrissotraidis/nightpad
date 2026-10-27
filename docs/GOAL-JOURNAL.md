@@ -1729,3 +1729,20 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: a direct boot cannot sit through the intro quickly enough to be a
   practical route. The track parser or an interactive device run stands.
 
+## 2026-10-29T01:00:00Z — the track parser exists, and Paris has no comment text
+
+- Goal: G07. Requirement: campaign inventory.
+- Observed: a track's `.crp` is a `CARP` group tree with 16-byte records; the
+  `Map ` group holds 114 mission rules, each with a reference to an `elNN` event
+  list, and those lists carry the objective, waypoint and message events.
+- Observed: `scripts/inspect_driving_track.py` parses that tree, lists the map's
+  data families and decodes the rule event types. On Paris it finds the
+  `ESetObjective` events, but all of their comment words are zero, so this
+  mission's objective text comes from another event family.
+- Evidence: the tool's output on Paris (`map group at 0x1f00`, 114 rules, 1391
+  event lists) and `docs/CAMPAIGN-INVENTORY.md`. No retail strings are printed
+  or committed.
+- Verdict: the track data is readable now, which turns the attribution into
+  decoding the right event family rather than parsing the container. The
+  per-mission list is still open.
+
