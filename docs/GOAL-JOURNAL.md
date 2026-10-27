@@ -733,4 +733,8 @@ are ignored and may contain paths, hashes, captures or device identities.
   label; screenshot in ignored `evidence/ios-shell/`.
 - Verdict: text sizing is exercised on the simulator. Contrast measurement,
   focus order and physical ergonomics remain.
+- Follow-up: the editor hint wrapped to two lines at XXXL and squeezed the
+  canvas enough for the face cluster to crowd. It is now a single short line
+  capped at 17 pt, and the editor screenshot at XXXL shows the cluster separated
+  again.
 

@@ -34,9 +34,11 @@
     self.navigationItem.rightBarButtonItem.accessibilityIdentifier = @"nightpad.touch.save";
 
     UILabel *hint = [UILabel new];
-    hint.text = @"Drag to move, pinch to resize. Controls stay inside the safe area and at least 44 points.";
+    hint.text = @"Drag to move · pinch to resize · 44 pt minimum";
     hint.textColor = [UIColor colorWithWhite:1 alpha:0.72];
-    hint.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    UIFont *hintBase = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    hint.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleFootnote]
+        scaledFontForFont:hintBase maximumPointSize:17];
     hint.adjustsFontForContentSizeCategory = YES;
     hint.numberOfLines = 0;
     hint.translatesAutoresizingMaskIntoConstraints = NO;
