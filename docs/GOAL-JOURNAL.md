@@ -1493,3 +1493,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: a headless boot, with or without throttle, cannot attribute the
   driving objectives. The track parser or an interactive run is required.
 
+## 2026-10-28T20:10:00Z — controls can be made fainter
+
+- Goal: G06. Requirement: R12 in progress.
+- Observed: the layout model and file format carry an opacity per control, and
+  the overlay uses it, but the editor never exposed it - every control stayed at
+  the 70% default.
+- Observed: long-pressing a control now shows Hide Control and an Opacity
+  submenu (30, 50, 70, 100%) with the current value ticked. The change applies
+  to the view immediately and to the live overlay after Save.
+- Evidence: iPhone 17 simulator, iOS 26.5: 30% dimmed the left stick in the
+  editor and the overlay, `layout-phone.txt` held `0.3`, and restoring the saved
+  70% layout brought the stick back. Evidence `evidence/ios-shell/touch-opacity.png`.
+- Verdict: opacity is reachable and persisted. Physical readability over a
+  bright scene remains a device check.
+

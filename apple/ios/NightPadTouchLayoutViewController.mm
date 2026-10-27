@@ -39,7 +39,7 @@
     self.navigationItem.rightBarButtonItem.accessibilityIdentifier = @"nightpad.touch.save";
 
     UILabel *hint = [UILabel new];
-    hint.text = @"Drag to move · pinch to resize · long press to hide · 44 pt minimum";
+    hint.text = @"Drag to move · pinch to resize · long press for hide and opacity · 44 pt minimum";
     hint.textColor = [UIColor colorWithWhite:1 alpha:0.72];
     UIFont *hintBase = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
     hint.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleFootnote]
@@ -178,6 +178,7 @@
     auto *control = [self controlForId:view.controlId];
     if (control == nullptr)
         return;
+    view.backgroundColor = [[self colourFor:view.controlId] colorWithAlphaComponent:control->opacity];
     const BOOL hidden = !control->visible;
     view.alpha = hidden ? 0.35 : 1.0;
     view.layer.borderWidth = hidden ? 2.0 : 1.0;
@@ -208,11 +209,35 @@
         target->visible = !target->visible;
         [strongSelf applyVisibilityAppearance:view];
     }];
+    // Opacity is part of the layout model and the file format but had no
+    // control; a fainter stick keeps the view behind it readable.
+    NSMutableArray<UIAction *> *opacities = [NSMutableArray array];
+    for (float value : { 0.3f, 0.5f, 0.7f, 1.0f }) {
+        NSString *title = [NSString stringWithFormat:@"%d%%", (int)lroundf(value * 100.0f)];
+        UIAction *action = [UIAction actionWithTitle:title
+                                              image:nil
+                                         identifier:nil
+                                            handler:^(__kindof UIAction *selected) {
+            (void)selected;
+            NightPadTouchLayoutViewController *strongSelf = weakSelf;
+            if (strongSelf == nil)
+                return;
+            auto *target = [strongSelf controlForId:view.controlId];
+            if (target == nullptr)
+                return;
+            target->opacity = value;
+            [strongSelf applyVisibilityAppearance:view];
+        }];
+        if (fabsf(control->opacity - value) < 0.01f)
+            action.state = UIMenuElementStateOn;
+        [opacities addObject:action];
+    }
+    UIMenu *opacity = [UIMenu menuWithTitle:@"Opacity" children:opacities];
     return [UIContextMenuConfiguration configurationWithIdentifier:nil
                                                    previewProvider:nil
                                                     actionProvider:^UIMenu *(NSArray<UIMenuElement *> *suggested) {
         (void)suggested;
-        return [UIMenu menuWithTitle:@"" children:@[ toggle ]];
+        return [UIMenu menuWithTitle:@"" children:@[ toggle, opacity ]];
     }];
 }
 
