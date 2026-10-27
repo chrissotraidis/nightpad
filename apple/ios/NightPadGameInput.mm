@@ -94,6 +94,10 @@ static void NightPadRumbleFromEngine(int port, unsigned leftMotor, unsigned righ
     return _controllers.hasController;
 }
 
+- (BOOL)touchPlayerControllerPresent {
+    return [_controllers controllerPresentForPort:0];
+}
+
 - (void)start {
     if (_running)
         return;

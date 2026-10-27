@@ -211,6 +211,9 @@ simulator probe and remains blocked on physical-device access.
 - A host render-cost pass plays Mission 1 at 1x, 2x and 3x and finds the same
   ~50 fps cap at all three (339-348 draws), so higher targets run but the
   Mac is not resolution-bound. Device performance still decides the default.
+- Touch auto-hide now depends only on the controller that owns the touch
+  player's port. A second player's controller can no longer take player one's
+  touch controls away.
 
 ## Current uncertainty and blockers
 

@@ -10,6 +10,7 @@
 #include "../shared/NightPadGameDataImport.h"
 #include "../shared/NightPadDiagnostics.h"
 #include "../shared/NightPadSettings.h"
+#include "../shared/NightPadTouchPolicy.h"
 #include "../shared/NightPadTouchLayout.h"
 
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
@@ -671,8 +672,9 @@ static uint64_t ShellResidentBytes(void) {
 - (void)updateTouchControlsVisibility {
     if (_touchControls == nil)
         return;
-    const BOOL hide = _gameInput.controllerConnected && !_settings.touchControlsAlwaysVisible &&
-                      _settings.hideTouchControlsWithController;
+    const BOOL hide = nightpad::ShouldHideTouchControls(_gameInput.touchPlayerControllerPresent,
+                                                       _settings.touchControlsAlwaysVisible,
+                                                       _settings.hideTouchControlsWithController);
     [_touchControls setControlsHidden:hide animated:YES];
 }
 

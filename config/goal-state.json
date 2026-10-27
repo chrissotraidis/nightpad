@@ -426,11 +426,14 @@
         "apple/ios/NightPadControllerRumble.mm",
         "apple/shared/NightPadControllerSlots.cpp",
         "scripts/test_controller_slots.sh",
-        "patches/0014-host-pad-override.patch"
+        "patches/0014-host-pad-override.patch",
+        "apple/shared/NightPadTouchPolicy.h",
+        "tests/native/test_touch_policy.cpp",
+        "scripts/test_touch_policy.sh"
       ],
       "decision_id": null,
       "notes": [
-        "Four-port mixer, touch mapping, GameController authority, slot reconciliation, per-port rumble and the engine host-pad override are implemented and linked. Physical connect/reconnect and rumble feel remain."
+        "Four-port mixer, touch mapping, GameController authority, slot reconciliation, per-port rumble, host-pad override and touch auto-hide owned by port 0 are implemented. Physical connect/reconnect and a real second controller remain."
       ]
     },
     "R15": {

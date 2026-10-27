@@ -31,6 +31,7 @@ add_library(nightpad_core STATIC
   ../shared/NightPadSaves.cpp
   ../shared/NightPadSettings.cpp
   ../shared/NightPadTouchInput.cpp
+  ../shared/NightPadTouchPolicy.cpp
   ../shared/NightPadTouchLayout.cpp)
 target_include_directories(nightpad_core PUBLIC ../shared)
 target_compile_features(nightpad_core PUBLIC cxx_std_20)

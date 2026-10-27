@@ -14,6 +14,9 @@
 
 @property(nonatomic, readonly) NightPadControllerAuthority *controllers;
 @property(nonatomic, readonly) BOOL controllerConnected;
+// Whether the controller that owns the touch player's port is present. Only
+// this one may hide the touch overlay.
+@property(nonatomic, readonly) BOOL touchPlayerControllerPresent;
 @property(nonatomic, copy) void (^controllerConnectionChanged)(void);
 
 - (void)start;

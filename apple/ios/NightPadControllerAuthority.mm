@@ -201,6 +201,10 @@ PadState PadFromController(GCController *controller) {
     return PadFromController(controller);
 }
 
+- (BOOL)controllerPresentForPort:(int)port {
+    return [self controllerForPort:port] != nil;
+}
+
 - (void)setRumbleLeft:(uint16_t)left right:(uint16_t)right port:(int)port {
     [_rumble setLeft:left right:right forPort:port];
 }

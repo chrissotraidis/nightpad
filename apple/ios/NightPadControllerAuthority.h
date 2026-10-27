@@ -19,6 +19,7 @@
 - (void)stop;
 - (void)reconcile;
 - (nightpad::PadState)padForPort:(int)port present:(BOOL *)present;
+- (BOOL)controllerPresentForPort:(int)port;
 - (void)setRumbleLeft:(uint16_t)left right:(uint16_t)right port:(int)port;
 - (void)stopRumbleForPort:(int)port;
 // Player preference; off stops rumble at once.

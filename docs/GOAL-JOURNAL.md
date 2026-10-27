@@ -784,3 +784,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: higher targets run on the host, but the host is not GPU-bound. This
   says nothing about iPhone cost; device measurement decides the default.
 
+## 2026-10-28T05:10:00Z — touch auto-hide follows the touch player
+
+- Goal: G06. Requirement: R14 in progress.
+- Observed: the overlay used to hide when *any* controller connected, so a
+  player-two pad would hide player one's touch controls. The decision now uses
+  only the controller assigned to port 0, expressed as a small shared policy.
+- Evidence: `scripts/test_touch_policy.sh` covers the port-0 owner, a port-two
+  controller, always-visible and auto-hide-off; the simulator's virtual pad on
+  port 0 still hides the overlay when auto-hide is on.
+- Verdict: the requirement's ownership rule holds in code and in the simulator.
+  A real second controller is still needed to confirm slot assignment.
+
