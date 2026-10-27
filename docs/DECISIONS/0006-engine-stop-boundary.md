@@ -37,3 +37,12 @@ Repeat the test across the driving engine and a real action-to-driving
 transition. Keep recording thread identities after every cycle so an
 engine-owned leak cannot hide inside the stable OS worker pool.
 
+## Driving follow-up
+
+The driving runtime starts Mission 1, renders and reaches its simulation loop.
+A cooperative stop runs GameLoop_CleanUp and Bond_CleanUp. Its normal return
+requests DEFAULT.XBE; the in-process callback receives the 3,072-byte page, but
+the thread does not finish joining. The process must be terminated externally.
+This is the next transition bug: the driving request path still has a live
+caller/worker relationship that the current bridge does not unwind.
+

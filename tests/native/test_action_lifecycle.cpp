@@ -5,8 +5,25 @@
 #include <dlfcn.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#if defined(NIGHTPAD_DRIVING_LIFECYCLE)
+#define ENGINE_START NightPadDrivingEngineStart
+#define ENGINE_RUN_WINDOW NightPadDrivingEngineRunWindow
+#define ENGINE_JOIN NightPadDrivingEngineJoin
+#define ENGINE_CLOSE_WINDOW NightPadDrivingEngineCloseWindow
+#define ENGINE_REQUEST_STOP NightPadDrivingEngineRequestStop
+#define ENGINE_SET_LAUNCH_CALLBACK NightPadDrivingEngineSetLaunchRequestCallback
+#else
+#define ENGINE_START NightPadActionEngineStart
+#define ENGINE_RUN_WINDOW NightPadActionEngineRunWindow
+#define ENGINE_JOIN NightPadActionEngineJoin
+#define ENGINE_CLOSE_WINDOW NightPadActionEngineCloseWindow
+#define ENGINE_REQUEST_STOP NightPadActionEngineRequestStop
+#define ENGINE_SET_LAUNCH_CALLBACK NightPadActionEngineSetLaunchRequestCallback
+#endif
 
 static mach_msg_type_number_t ThreadCount() {
     thread_act_array_t threads = nullptr;
@@ -56,26 +73,36 @@ static void DumpThreads(const char *label) {
 
 static void *StopLater(void *) {
     sleep(6);
-    NightPadActionEngineRequestStop();
+    ENGINE_REQUEST_STOP();
     return nullptr;
+}
+
+static int CaptureLaunch(NightPadEngineId, const char *image, const void *, unsigned bytes) {
+    printf("[lifecycle] in-process launch request: %s (%u bytes)\n", image, bytes);
+    return 1;
 }
 
 int main(int argc, char **argv) {
     mach_msg_type_number_t before = ThreadCount();
     mach_msg_type_number_t firstAfter = 0;
     bool ok = true;
-    for (int cycle = 0; cycle < 3; ++cycle) {
-        if (!NightPadActionEngineStart(argc, argv)) {
+    const char *cycleText = getenv("NIGHTPAD_LIFECYCLE_CYCLES");
+    int cycles = cycleText != nullptr ? atoi(cycleText) : 3;
+    if (cycles < 1)
+        cycles = 1;
+    ENGINE_SET_LAUNCH_CALLBACK(CaptureLaunch);
+    for (int cycle = 0; cycle < cycles; ++cycle) {
+        if (!ENGINE_START(argc, argv)) {
             fprintf(stderr, "action lifecycle: start failed on cycle %d\n", cycle + 1);
             return 1;
         }
         mach_msg_type_number_t running = ThreadCount();
         pthread_t stopper;
         pthread_create(&stopper, nullptr, StopLater, nullptr);
-        NightPadActionEngineRunWindow();
+        ENGINE_RUN_WINDOW();
         pthread_join(stopper, nullptr);
-        int joined = NightPadActionEngineJoin(30000);
-        NightPadActionEngineCloseWindow();
+        int joined = ENGINE_JOIN(30000);
+        ENGINE_CLOSE_WINDOW();
         sleep(2);
         mach_msg_type_number_t after = ThreadCount();
         if (cycle == 0)

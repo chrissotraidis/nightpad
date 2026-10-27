@@ -48,6 +48,9 @@ simulator probe and remains blocked on physical-device access.
   path. Moving GameWindow and HostPosix into one shared runtime fixed the
   localized shader allocator crash. Three cycles join and settle on the same
   Cocoa/libdispatch thread pool; no engine worker remains visibly alive.
+- The driving engine starts Mission 1 and completes its normal cleanup on
+  cooperative stop. Its DEFAULT.XBE request reaches the in-process callback,
+  but the game thread does not join and the process remains hung.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
   mask `0x7`, with only the `30_fps` movie bundle present.
 - The driving/POV control definitions were safely decoded from `misc.viv`:

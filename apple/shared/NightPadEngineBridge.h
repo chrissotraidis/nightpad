@@ -25,6 +25,10 @@ int NightPadActionEngineStart(int argc, char **argv);
 void NightPadActionEngineRunWindow(void);
 int NightPadActionEngineJoin(unsigned timeoutMilliseconds);
 void NightPadActionEngineCloseWindow(void);
+int NightPadDrivingEngineStart(int argc, char **argv);
+void NightPadDrivingEngineRunWindow(void);
+int NightPadDrivingEngineJoin(unsigned timeoutMilliseconds);
+void NightPadDrivingEngineCloseWindow(void);
 
 unsigned NightPadActionEngineThread(void *unused);
 unsigned NightPadDrivingEngineThread(void *unused);

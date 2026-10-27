@@ -34,22 +34,24 @@ find "$driving_dir" -name '*.o' ! -name 'StandaloneMain.o' \
 printf '%s\n%s\n' "$action_dir/GameWindow.o" "$action_dir/HostPosix.o" > "$out/shared-objects.txt"
 
 sdk=$(xcrun --sdk iphoneos --show-sdk-path)
-common="-target arm64-apple-ios16.0 -isysroot $sdk -std=gnu++20 -ffp-contract=off -fms-extensions -fno-exceptions -Wno-ignored-attributes -DNIGHTFIRE_STANDALONE=1 -DNIGHTFIRE_SDL=1 -DNIGHTFIRE_WINDOW_BASE=0x100000000 -I $repo/vendor/nightfire/src"
+common="-target arm64-apple-ios16.0 -isysroot $sdk -std=gnu++20 -ffp-contract=off -fms-extensions -fno-exceptions -Wno-ignored-attributes -DNIGHTFIRE_STANDALONE=1 -DNIGHTFIRE_SDL=1 -DNIGHTFIRE_WINDOW_BASE=0x100000000 -I $repo/vendor/nightfire/src -I $repo/vendor/nightfire/third_party/ffmpeg-prebuilt/include"
 # shellcheck disable=SC2086
 clang++ $common -c "$repo/apple/shared/NightPadActionEngineEntry.cpp" -o "$out/action-entry.o"
 # shellcheck disable=SC2086
 clang++ $common -c "$repo/apple/shared/NightPadActionRuntime.cpp" -o "$out/action-runtime.o"
 # shellcheck disable=SC2086
 clang++ $common -c "$repo/apple/shared/NightPadDrivingEngineEntry.cpp" -o "$out/driving-entry.o"
+# shellcheck disable=SC2086
+clang++ $common -c "$repo/apple/shared/NightPadDrivingRuntime.cpp" -o "$out/driving-runtime.o"
 
 ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/action-raw.o" \
     -filelist "$out/action-objects.txt" "$out/action-entry.o" "$out/action-runtime.o"
 ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/driving-raw.o" \
-    -filelist "$out/driving-objects.txt" "$out/driving-entry.o"
+    -filelist "$out/driving-objects.txt" "$out/driving-entry.o" "$out/driving-runtime.o"
 ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/shared-runtime.o" \
     -filelist "$out/shared-objects.txt"
 printf '_NightPadActionEngineThread\n_NightPadActionEngineSetLaunchRequestCallback\n_NightPadActionEngineRequestStop\n_NightPadActionEngineStart\n_NightPadActionEngineRunWindow\n_NightPadActionEngineJoin\n_NightPadActionEngineCloseWindow\n' > "$out/action-exports.txt"
-printf '_NightPadDrivingEngineThread\n_NightPadDrivingEngineSetLaunchRequestCallback\n_NightPadDrivingEngineRequestStop\n' > "$out/driving-exports.txt"
+printf '_NightPadDrivingEngineThread\n_NightPadDrivingEngineSetLaunchRequestCallback\n_NightPadDrivingEngineRequestStop\n_NightPadDrivingEngineStart\n_NightPadDrivingEngineRunWindow\n_NightPadDrivingEngineJoin\n_NightPadDrivingEngineCloseWindow\n' > "$out/driving-exports.txt"
 nmedit -s "$out/action-exports.txt" -o "$out/action-isolated.o" "$out/action-raw.o"
 nmedit -s "$out/driving-exports.txt" -o "$out/driving-isolated.o" "$out/driving-raw.o"
 
@@ -71,8 +73,8 @@ clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" -Wl,-no_fixup_chains \
     -weak_framework CoreHaptics 2> "$out/combined-link.log"
 
 exports=$(nm -gU "$out/nightpad-combined-link" | grep -c 'NightPad.*Engine' || true)
-if [ "$exports" -ne 10 ]; then
-    echo "Expected ten engine bridge exports, found $exports" >&2
+if [ "$exports" -ne 14 ]; then
+    echo "Expected fourteen engine bridge exports, found $exports" >&2
     exit 1
 fi
 file "$out/nightpad-combined-link"

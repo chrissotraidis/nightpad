@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T12:10:00Z",
+  "last_updated_at": "2026-10-27T12:18:00Z",
   "active_goal": "G04",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -94,7 +94,7 @@
         "patches/0006-engine-stop-lifecycle.patch"
       ],
       "blockers": [],
-      "next_step": "Build the driving runtime wrapper and test action-to-driving plus return transitions with stable ownership."
+      "next_step": "Fix driving DEFAULT.XBE request thread exit/join and then run action-to-driving and return transitions."
     },
     "G05": {
       "status": "pending",
@@ -508,6 +508,15 @@
         "docs/DECISIONS/0006-engine-stop-boundary.md",
         "tests/native/test_action_lifecycle.cpp"
       ]
+    },
+    {
+      "at": "2026-10-27T12:18:00Z",
+      "goal": "G04",
+      "summary": "Driving start and cleanup work; cross-engine launch request captures page but hangs before join.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "scripts/test_driving_lifecycle.sh"
+      ]
     }
   ],
   "completed_tests": [
@@ -584,6 +593,11 @@
     {
       "name": "three repeated action lifecycle cycles",
       "result": "PASS: all cycles join; settled thread pool stays 7 after first cycle; no engine worker visible",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "driving engine start/stop/request",
+      "result": "Mission 1 cleanup completes; in-process DEFAULT.XBE request captured but game thread hangs at join",
       "target": "macOS 27 arm64"
     }
   ],
