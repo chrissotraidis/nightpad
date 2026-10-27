@@ -298,3 +298,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: smoke the picker with a prepared retail folder on device, then finish
   the device composition gate.
 
+## 2026-10-27T15:13:56Z — G06 four-port input mixer
+
+- Goal: G06. Requirement: R14 in progress.
+- Hypothesis: one Xbox-format mixer can own touch/controller merging, timing and
+  port isolation before any layout or UIKit work.
+- Observed: added `NightPadInput` with four ports, XInput-compatible button bits,
+  neutral/dead-zone axes, trigger thresholds, rising-edge latching, per-source
+  clear, controller-join release-before-reacquire and independent port state.
+- Evidence: `scripts/test_input.sh` covers short taps across polls, dead zones,
+  trigger thresholds, simultaneous sources, controller acquisition and port
+  isolation. The core compiles into simulator/device shells.
+- Verdict: input core passes; touch layout/editor, mapping UI, controller adapter
+  wiring and physical runs remain.
+- Next: build the Xbox touch layout and mapping adapter on this core.
+

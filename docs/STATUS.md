@@ -120,6 +120,10 @@ simulator probe and remains blocked on physical-device access.
 - A synthetic prepared-data folder imported through the shell's real
   validation/staging/activation path in the simulator. The active identity and
   files survived relaunch, and a pre-existing save file was unchanged.
+- G06 started with `NightPadInput`: four Xbox-format ports, touch/controller
+  source merger, short-tap edge latching, dead zones, trigger thresholds and
+  release-before-reacquire for newly acquired controllers. Native tests pass and
+  the core compiles into simulator/device shells.
 
 ## Current uncertainty and blockers
 
