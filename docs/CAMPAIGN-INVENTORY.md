@@ -15,11 +15,14 @@ the dumped files stay in ignored `build/` output.
    entries are bank 3, `0x03000000` through `0x03000011`; the multiplayer map
    names follow at `0x03000024`.
 
-## Campaign order
+## Bank order
 
-| # | Mission | Objective (summary) | Text label |
+Rows marked \* are chapters inside a mission, not selectable starts; the
+section below explains why.
+
+| # | Heading | Objective (summary) | Text label |
 | --- | --- | --- | --- |
-| 0 | Training | Learn the basic weapons and gadgets in Q's evaluation centre. | `0x03000000` |
+| 0 | Training * | Learn the basic weapons and gadgets in Q's evaluation centre. | `0x03000000` |
 | 1 | Paris Prelude | Stop a rogue faction disrupting the New Year celebrations in Paris. | `0x03000001` |
 | 2 | The Exchange | Reach Drake's reception and meet the undercover agents. | `0x03000002` |
 | 3 | Alpine Escape | Escape with Zoe on an armoured snowmobile. | `0x03000003` |
@@ -27,23 +30,47 @@ the dumped files stay in ignored `build/` output.
 | 5 | Double Cross | Meet Mayhew, a traitor inside Drake's organisation. | `0x03000005` |
 | 6 | Night Shift | Enter Mayhew's headquarters and retrieve data from the company system. | `0x03000006` |
 | 7 | Chain Reaction | Infiltrate the decommissioned nuclear plant. | `0x03000007` |
-| 8 | Hidden Agenda | Discover how Drake is secretly using the plant. | `0x03000008` |
+| 8 | Hidden Agenda * | Discover how Drake is secretly using the plant. | `0x03000008` |
 | 9 | Phoenix Fire | Escape Kiko's trap and leave the skyscraper. | `0x03000009` |
-| 10 | Streets of Tokyo | Flee the scene toward Q's mobile headquarters. | `0x0300000a` |
-| 11 | Atoll Infiltration | Approach Drake's island base using Q's Vanquish. | `0x0300000b` |
+| 10 | Streets of Tokyo * | Flee the scene toward Q's mobile headquarters. | `0x0300000a` |
+| 11 | Atoll Infiltration * | Approach Drake's island base using Q's Vanquish. | `0x0300000b` |
 | 12 | Deep Descent | Reach the private island without being detected. | `0x0300000c` |
-| 13 | Island Caves | Sabotage the radar jamming devices to open the way for MI6. | `0x0300000d` |
+| 13 | Island Caves * | Sabotage the radar jamming devices to open the way for MI6. | `0x0300000d` |
 | 14 | Island Infiltration | Destroy the air-defence system protecting the island. | `0x0300000e` |
-| 15 | River Gauntlet | Infiltrate Drake's Disarmament Facility. | `0x0300000f` |
+| 15 | River Gauntlet * | Infiltrate Drake's Disarmament Facility. | `0x0300000f` |
 | 16 | Countdown | Enter the underwater base covertly and pursue Drake. | `0x03000010` |
 | 17 | Equinox | Stop the takeover of the missile-defence platform. | `0x03000011` |
 
 The front-end mission wheel (`src/action/ui/ui_nightfire.cpp`) contains twelve
 selectable missions and names the level each one starts on. The text bank lists
-eighteen campaign headings; the six extra names (Training, Hidden Agenda,
-Streets of Tokyo, Atoll Infiltration, Island Caves, River Gauntlet) are not on
-the wheel and are most likely a tutorial, sub-sections or unused strings. That
-distinction is not yet verified.
+eighteen campaign headings. The six extra names are chapters inside those
+twelve missions, not selectable entries.
+
+### The six headings that are not on the wheel
+
+The bank stores a heading and a description for every campaign chapter, in
+play order: `0x03000000`-`0x03000011` are headings and `0x03000012`-
+`0x03000023` are their descriptions, one for one. The engine names eleven of
+those headings in `assets.h`; its twelfth mission, Countdown, uses a different
+id (`0x03000034`). Nothing in the recovered source refers to the remaining
+seven bank ids: the six chapters below and a second copy of "Countdown" at
+`0x03000010`. Their descriptions name beats the wheel missions must cross:
+
+| Id | Heading | Description (shortened) | Chapter it belongs to |
+| --- | --- | --- | --- |
+| `0x03000000` | Training | Learn basic weapon and gadget skills in Q's evaluation centre. | Tutorial before Paris Prelude |
+| `0x03000008` | Hidden Agenda | Determine how Drake is secretly using the decommissioned power plant. | Second half of Chain Reaction |
+| `0x0300000a` | Streets of Tokyo | Flee the scene and head for Q's mobile headquarters. | Second half of Phoenix Fire |
+| `0x0300000b` | Atoll Infiltration | Use the special abilities of Q's Vanquish to infiltrate Drake's secret island base. | Approach before Deep Descent |
+| `0x0300000d` | Island Caves | Sabotage the island's radar jamming devices so you can open the way for MI6 forces. | Caves between Deep Descent and Island Infiltration |
+| `0x0300000f` | River Gauntlet | Infiltrate Drake's Disarmament Facility. | Approach before Countdown |
+
+The level table backs this reading where it can: `Cut_Level1`-`Cut_Level3`
+(`0x0700000e`-`0x07000010`) exist but belong to no wheel mission, and the
+supplied data has no separate atoll driving bundle. So the extra chapters are
+either merged into the shipped levels or were cut, and their strings outlived
+them. NightPad therefore lists twelve campaign missions and never offers the
+other six as starts.
 
 | Mission | Start level | Level id | Kind |
 | --- | --- | --- | --- |

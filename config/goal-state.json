@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T12:45:00Z",
+  "last_updated_at": "2026-10-28T13:05:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -212,7 +212,7 @@
         "patches/0016-standalone-file-dump.patch"
       ],
       "blockers": [],
-      "next_step": "G07: resolve the five extra front-end headings, inventory per-mission movies/objectives, then run the first-play route when device execution is available."
+      "next_step": "G07: inventory per-mission start/end state and objectives, then run the first-play route when device execution is available."
     },
     "G08": {
       "status": "in_progress",
@@ -997,6 +997,17 @@
         "evidence/ios-shell/menu-touch-layout.png",
         "evidence/ios-shell/menu-diagnostics.png",
         "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T13:05:00Z",
+      "goal": "G07",
+      "summary": "Resolved the extra front-end headings: they are campaign chapters inside the twelve wheel missions, not selectable entries, and the engine never references them.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "vendor/nightfire/src/action/assets.h",
+        "vendor/nightfire/src/action/ui/ui_nightfire.cpp",
+        "build/tests/action-dump/run/dump/UKTxt.Dat"
       ]
     }
   ],

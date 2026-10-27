@@ -1107,3 +1107,23 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: menu actions reach their sheets during a running session. Physical
   device confirmation and an in-game save remain.
 
+## 2026-10-28T13:05:00Z — the extra front-end headings are chapters, not missions
+
+- Goal: G07. Requirement: campaign inventory.
+- Observed: the text bank holds eighteen campaign headings with a description
+  for each, but the wheel exposes twelve missions. The engine names eleven of
+  the bank headings in `assets.h` and gives Countdown a separate id, so seven
+  bank ids are never referenced: Training, Hidden Agenda, Streets of Tokyo,
+  Atoll Infiltration, Island Caves, River Gauntlet and a duplicate "Countdown".
+- Observed: each unused description names a beat the wheel missions cross - the
+  plant's secret use, fleeing to Q's mobile headquarters, the Vanquish
+  approach, the radar-jamming caves and the Disarmament Facility. The level
+  table's three `Cut_Level` entries back that reading, and the supplied data
+  has no separate atoll bundle.
+- Evidence: `vendor/nightfire/src/action/ui/ui_nightfire.cpp`,
+  `vendor/nightfire/src/action/assets.h`, `UKTxt.Dat` ids `0x03000000`-
+  `0x03000023`; written up in `docs/CAMPAIGN-INVENTORY.md`.
+- Verdict: the extra headings are chapters inside the twelve missions. NightPad
+  keeps listing twelve starts. Per-mission start/end state and objectives
+  remain open.
+
