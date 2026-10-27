@@ -50,6 +50,7 @@ using nightpad::Paths;
     BOOL _uiInputSuspended;
     BOOL _pendingDiagnostics;
     BOOL _pendingAbout;
+    BOOL _pendingFixtureImport;
     BOOL _gameplayMode;
     NSTimer *_engineTimer;
 
@@ -156,6 +157,8 @@ static uint64_t ShellResidentBytes(void) {
         _pendingDiagnostics = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-about"])
         _pendingAbout = YES;
+    else if ([NSProcessInfo.processInfo.arguments containsObject:@"--import-fixture"])
+        _pendingFixtureImport = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -170,6 +173,15 @@ static uint64_t ShellResidentBytes(void) {
         _pendingAbout = NO;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             [self openAbout];
+        });
+    }
+    if (_pendingFixtureImport) {
+        _pendingFixtureImport = NO;
+        NSString *documents = [NSString stringWithUTF8String:_paths.documents.string().c_str()];
+        NSURL *fixture = [[NSURL fileURLWithPath:documents isDirectory:YES]
+            URLByAppendingPathComponent:@"ImportFixture" isDirectory:YES];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            [self importPreparedFolder:fixture];
         });
     }
 }
@@ -550,6 +562,10 @@ static uint64_t ShellResidentBytes(void) {
     (void)controller;
     NSURL *url = urls.firstObject;
     if (url == nil) return;
+    [self importPreparedFolder:url];
+}
+
+- (void)importPreparedFolder:(NSURL *)url {
     BOOL scoped = [url startAccessingSecurityScopedResource];
     _importing = YES;
     _progress.hidden = NO;

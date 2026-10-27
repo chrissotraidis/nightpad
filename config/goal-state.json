@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T15:08:56Z",
+  "last_updated_at": "2026-10-27T15:11:50Z",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -139,7 +139,7 @@
         "apple/ios/NightPadAboutViewController.mm"
       ],
       "blockers": [],
-      "next_step": "Smoke-test external About links, then run the device shell through start/pause/resume, diagnostic export and Files import with overlay composition."
+      "next_step": "Run the production Files picker with a prepared retail package on device, then verify SDL/overlay composition and pause/resume."
     },
     "G06": {
       "status": "pending",
@@ -245,7 +245,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Path classes and atomic import core pass native tests; shell import panel and picker entry exist, but end-to-end Files import and engine-stop integration remain."
+        "Native import core and shell import path pass with a synthetic prepared tree; active data/identity survive relaunch and saves remain untouched. Production Files-picker import with a retail package remains."
       ]
     },
     "R05": {
@@ -762,6 +762,15 @@
       "summary": "Added a native About page with source/donor links and independence/game-data notices; builds and simulator rendering pass.",
       "evidence": [
         "apple/ios/NightPadAboutViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T15:11:50Z",
+      "goal": "G05",
+      "summary": "Shell imported a synthetic prepared folder through real validation/activation, persisted the active identity across relaunch and preserved saves.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
         "docs/TEST-MATRIX.md"
       ]
     }

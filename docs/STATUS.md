@@ -117,6 +117,9 @@ simulator probe and remains blocked on physical-device access.
 - About NightPad is now a native page with version, product identity, source and
   interface-donor links, non-affiliation/game-data notices and accessibility
   identifiers. It renders in the simulator and is included in both app builds.
+- A synthetic prepared-data folder imported through the shell's real
+  validation/staging/activation path in the simulator. The active identity and
+  files survived relaunch, and a pre-existing save file was unchanged.
 
 ## Current uncertainty and blockers
 

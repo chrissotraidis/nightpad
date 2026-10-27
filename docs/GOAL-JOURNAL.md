@@ -281,3 +281,20 @@ are ignored and may contain paths, hashes, captures or device identities.
   physical-device presentation remain unverified.
 - Next: open-link smoke and the remaining device composition/import gates.
 
+## 2026-10-27T15:11:50Z — shell import fixture
+
+- Goal: G05. Requirement: R04.
+- Hypothesis: the shell's picker handler and import transaction should work
+  end-to-end without retail data when given a synthetic required tree.
+- Observed: refactored the picker into one reusable import path and added a
+  fixture launch hook. A synthetic prepared folder imported through validation,
+  staging and activation; the active identity appeared after import and after
+  relaunch; the existing save file remained byte-identical. The success alert and
+  ready screen are captured under `evidence/ios-shell/`.
+- Evidence: simulator import/ready screenshots; device shell builds; link check
+  passes. The production Files picker still needs a prepared retail package.
+- Verdict: shell import integration passes with synthetic data; retail-package
+  picker flow and device run remain.
+- Next: smoke the picker with a prepared retail folder on device, then finish
+  the device composition gate.
+
