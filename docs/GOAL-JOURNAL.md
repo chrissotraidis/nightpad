@@ -414,3 +414,14 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: confirm engine pad consumption on device; keep layout/settings gates in
   the regression set.
 
+## 2026-10-27T17:10:00Z — controller auto-hide verified
+
+- Goal: G06. Requirement: R12 in progress.
+- Hypothesis: the persisted auto-hide choice drives the live overlay rather
+  than only a stored flag.
+- Observed: with the simulator's virtual gamepad connected, the overlay started
+  hidden. Turning Auto-Hide off made the full overlay appear immediately, and
+  `settings.txt` recorded `auto_hide_touch=0`.
+- Verdict: visibility policy and persistence are wired together.
+- Next: physical controller and touch sessions remain the external gate.
+
