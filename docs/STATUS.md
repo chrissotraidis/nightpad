@@ -153,6 +153,11 @@ simulator probe and remains blocked on physical-device access.
   touch-control visibility, controller auto-hide and rumble. Unknown keys and
   another donor's Nintendo preferences are ignored, bad versions are refused,
   and a toggle survives relaunch (verified with rumble on the simulator).
+- The app now owns XBE hand-off in-process: the launch request stops and joins
+  the running engine, then starts the named one from `psiLaunch.bin`. A macOS
+  gate proves action to driving boots `paris_mis01` from the handed page, runs,
+  and joins on stop; driving also gained a nonblocking poll, pause/resume with
+  sound, a frame counter and its own pad/rumble bridges.
 
 ## Current uncertainty and blockers
 

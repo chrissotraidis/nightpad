@@ -94,12 +94,21 @@
         "patches/0006-engine-stop-lifecycle.patch",
         "patches/0010-engine-session-reset.patch",
         "tests/native/test_action_lifecycle.cpp",
-        "docs/TEST-MATRIX.md"
+        "docs/TEST-MATRIX.md",
+        "tests/native/test_engine_handoff.cpp",
+        "scripts/test_engine_handoff.sh",
+        "tests/native/test_driving_pause.cpp",
+        "scripts/test_driving_pause.sh",
+        "patches/0015-driving-loop-pause.patch",
+        "docs/DECISIONS/0010-engine-handoff.md",
+        "apple/ios/NightPadEngineHost.mm",
+        "apple/shared/NightPadDrivingRuntime.cpp",
+        "apple/shared/NightPadEngineBridge.h"
       ],
       "blockers": [
         "B01"
       ],
-      "next_step": "Run the ten-cycle lifecycle and transition gates on a signed physical iPhone and iPad; the macOS reset contract passes."
+      "next_step": "Device execution of the handoff; quit during the loading screen needs a stability fix."
     },
     "G05": {
       "status": "in_progress",
@@ -136,7 +145,8 @@
         "tests/native/test_diagnostics.cpp",
         "scripts/test_diagnostics.sh",
         "apple/ios/NightPadAboutViewController.h",
-        "apple/ios/NightPadAboutViewController.mm"
+        "apple/ios/NightPadAboutViewController.mm",
+        "evidence/ios-shell/data-ready-real.png"
       ],
       "blockers": [],
       "next_step": "Run the production Files picker with a prepared retail package on device, then verify SDL/overlay composition and pause/resume."
@@ -277,11 +287,12 @@
         "apple/shared/NightPadGameDataImport.cpp",
         "tests/native/test_data_import.cpp",
         "scripts/test_data_import.sh",
-        "apple/ios/CMakeLists.txt"
+        "apple/ios/CMakeLists.txt",
+        "evidence/ios-shell/data-ready-real.png"
       ],
       "decision_id": null,
       "notes": [
-        "Native import core and shell import path pass with a synthetic prepared tree; active data/identity survive relaunch and saves remain untouched. Production Files-picker import with a retail package remains."
+        "Shell import, validation, activation, relaunch and save preservation pass with the real 1.9 GB prepared tree. The system folder picker opens; choosing the folder is manual because the picker is not scriptable here."
       ]
     },
     "R05": {

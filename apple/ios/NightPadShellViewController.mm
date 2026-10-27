@@ -52,6 +52,7 @@ using nightpad::Paths;
     NightPadEngineHost *_engineHost;
     BOOL _engineRunning;
     BOOL _enginePaused;
+    BOOL _switchingEngine;
     BOOL _uiPausedEngine;
     BOOL _uiInputSuspended;
     BOOL _pendingDiagnostics;
@@ -696,13 +697,64 @@ static uint64_t ShellResidentBytes(void) {
 }
 
 - (void)pollEngine {
-    if (!_engineRunning || ![_engineHost pollWindow]) {
-        [self stopGame];
+    if (!_engineRunning || _switchingEngine)
+        return;
+    if ([_engineHost pollWindow])
+        return;
+    if ([_engineHost handoffPending]) {
+        [self switchEngine];
+        return;
     }
+    [self stopGame];
+}
+
+- (void)switchEngine {
+    if (_switchingEngine)
+        return;
+    _switchingEngine = YES;
+    [_engineTimer invalidate];
+    _engineTimer = nil;
+    __weak NightPadShellViewController *weakSelf = self;
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+        NightPadShellViewController *strongSelf = weakSelf;
+        if (strongSelf == nil)
+            return;
+        const int joined = [strongSelf->_engineHost joinWithTimeout:30000];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NightPadShellViewController *strongSelf = weakSelf;
+            if (strongSelf == nil)
+                return;
+            [strongSelf->_engineHost closeWindow];
+            if (!joined) {
+                strongSelf->_switchingEngine = NO;
+                [strongSelf showError:@"The game did not stop for the next session."];
+                [strongSelf stopGame];
+                return;
+            }
+            if (![strongSelf->_engineHost startHandoffTarget]) {
+                strongSelf->_switchingEngine = NO;
+                [strongSelf showError:@"The next game session could not start."];
+                [strongSelf stopGame];
+                return;
+            }
+            strongSelf->_enginePaused = NO;
+            strongSelf->_uiPausedEngine = NO;
+            strongSelf->_uiInputSuspended = NO;
+            [strongSelf->_gameInput engineChanged];
+            strongSelf->_switchingEngine = NO;
+            strongSelf->_engineTimer = [NSTimer timerWithTimeInterval:1.0 / 60.0 target:strongSelf
+                                                             selector:@selector(pollEngine)
+                                                           userInfo:nil repeats:YES];
+            [NSRunLoop.mainRunLoop addTimer:strongSelf->_engineTimer forMode:NSRunLoopCommonModes];
+            [strongSelf updateGameplaySurface];
+            [strongSelf refreshMenu];
+        });
+    });
 }
 
 - (void)stopGame {
     if (!_engineRunning) return;
+    if (_switchingEngine) return;
     _engineRunning = NO;
     [self endNativeUI];
     [self removeTouchControls];
@@ -867,7 +919,9 @@ static uint64_t ShellResidentBytes(void) {
     context.generatedAt = [[iso stringFromDate:[NSDate date]] UTF8String] ?: "";
     context.dataState = state;
     context.dataIdentity = _identity.UTF8String ?: "";
-    context.engineState = !_engineRunning ? "stopped" : (_enginePaused ? "paused" : "running");
+    context.engineState = !_engineRunning ? "stopped"
+        : (_enginePaused ? "paused"
+        : (_engineHost.activeEngine == NightPadEngineKindDriving ? "running (driving)" : "running (action)"));
     context.lastError = _lastError.UTF8String ?: "";
     context.home = NSHomeDirectory().UTF8String ?: "";
     context.paths = _paths;

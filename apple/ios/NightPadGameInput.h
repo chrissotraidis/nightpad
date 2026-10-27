@@ -21,5 +21,7 @@
 // Native UI in front: stop publishing, drop fingers and rumble, but keep the
 // controller slot assignment so it is unchanged when play resumes.
 - (void)setSuspended:(BOOL)suspended;
+// The host switched to another engine: re-enable the pad path on it.
+- (void)engineChanged;
 
 @end

@@ -78,6 +78,14 @@ static void NightPadRumbleFromEngine(int port, unsigned leftMotor, unsigned righ
     }
 }
 
+- (void)engineChanged {
+    if (!_running || _suspended)
+        return;
+    [_host setHostPadsEnabled:YES];
+    [_host setRumbleHandler:NightPadRumbleFromEngine];
+    [self tick];
+}
+
 - (NightPadControllerAuthority *)controllers {
     return _controllers;
 }

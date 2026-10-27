@@ -41,12 +41,16 @@
 | G04 | Action-to-driving request through psiLaunchDriving | macOS arm64 | passed | Action callback captures DRIVING.XBE; window and thread join |
 | G04 | Repeated mixed transition soak | macOS arm64 | passed, 10 cycles | 20 launches; both directions; real Boot_GetPTPData page; all joins; settled 8-9 OS threads |
 | G04 | Ten repeated driving sessions | macOS arm64 | passed | Every cycle joins; resident memory warms to about 296 MB and the tenth cycle is lower than the ninth |
+| G04 | In-process action-to-driving handoff boots the target | macOS arm64 | passed | `scripts/test_engine_handoff.sh`: action requests `d:\driving.xbe`, joins; driving reads the 3072-byte page, boots `paris_mis01`, requests `D:\DEFAULT.XBE` on stop and joins |
+| G04 | Driving simulation pause and resume | macOS arm64 | passed | `scripts/test_driving_pause.sh`: frames held while paused, advanced after resume, clean join |
 | G04 | Ten repeated action sessions | macOS arm64 | passed | File slots close per session; device-scoped buffers are reused; every cycle joins; settle 248 MB |
 | G04 | Load-time initializer ownership | macOS arm64 | passed for transition | Fmv and LaunchOptions deferred; remaining graphics initializer is compatible |
 | G04 | Action to driving and return transitions | macOS arm64 | passed, 10 cycles | `scripts/test_engine_transition.sh`; iPhoneOS execution remains device-blocked |
 | G05 | Separate app data, save, cache, launch and diagnostic paths | macOS arm64 | passed | `NightPadPaths` unit coverage; directory creation and layout asserted |
 | G05 | Transactional prepared-data import | macOS arm64 | passed for core | `scripts/test_data_import.sh`: preflight, staging, validation, cancel, atomic activation, replacement and rollback retention |
 | G05 | Shell prepared-data import and relaunch | iPhone simulator | passed with synthetic fixture | Real shell import path; active tree and identity survive relaunch; existing save unchanged; production Files picker still needs a retail package |
+| G05 | Shell import of the real prepared game data | iPhone 17 simulator / iOS 26.5 | passed | 56-file, 1.9 GB prepared tree imported through validation/staging/activation to identity `data-a3c98ab965ac41e559ac`; relaunch reports ready; a re-import left `Saves/slot1.sav` byte-identical; evidence `evidence/ios-shell/data-ready-real.png` |
+| G05 | Production Files picker presentation | iPhone 17 simulator / iOS 26.5 | partial | Import action opens the system folder picker; navigating and choosing the prepared folder is still manual because the picker's remote UI is not scriptable here |
 | G06 | Four-port Xbox input mixer | macOS arm64 / iPhoneOS build | passed for core | `scripts/test_input.sh`: short taps, edges, dead zones, triggers, source merge, release-before-acquire and port isolation |
 | G06 | Versioned touch-layout model | macOS arm64 / iPhoneOS build | passed for core | `scripts/test_touch_layout.sh`: phone/tablet defaults, safe-area/44-point clamp, overlap-free defaults, round trip, reset, unknown rows and bad versions |
 | G06 | Touch-layout editor save/reset/relaunch | iPhone 17 simulator / iOS 26.5 | passed | `--open-touch-layout`; Save wrote `Controls/layout-phone.txt`, relaunch rendered the saved geometry, Reset restored defaults and Save persisted them; evidence `evidence/ios-shell/touch-layout-editor.png` |

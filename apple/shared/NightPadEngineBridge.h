@@ -40,6 +40,14 @@ void NightPadActionEngineCloseWindow(void);
 void NightPadActionEngineTriggerDrivingAfter(unsigned frames);
 int NightPadDrivingEngineStart(int argc, char **argv);
 void NightPadDrivingEngineRunWindow(void);
+int NightPadDrivingEnginePollWindow(void);
+void NightPadDrivingEngineSetPaused(int paused);
+void NightPadDrivingEngineSetInputSuspended(int suspended);
+void NightPadDrivingEngineSetHostPadsEnabled(int enabled);
+void NightPadDrivingEngineSetHostPad(int port, unsigned buttons, int leftX, int leftY, int rightX, int rightY,
+                                     unsigned leftTrigger, unsigned rightTrigger, int connected);
+void NightPadDrivingEngineSetRumbleHandler(NightPadRumbleHandler handler);
+unsigned long NightPadDrivingEngineFrameCount(void);
 int NightPadDrivingEngineJoin(unsigned timeoutMilliseconds);
 void NightPadDrivingEngineCloseWindow(void);
 

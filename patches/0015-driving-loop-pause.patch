@@ -1,0 +1,50 @@
+--- a/src/driving/engine/GameLoop.cpp
++++ b/src/driving/engine/GameLoop.cpp
+@@ -77,10 +77,18 @@
+ #include "../audio/Voice.h"
+ #include "../../common/launchInfo.h"
+ #include "../../common/engineLifecycle.h"
++#include "../platform/Host.h"
+ #include "../../helpers.h"
+ #include "../logging.h"             // dbg_wprintf, our printf
+ #include "../platform/CRuntime.h"
++#include <atomic>
+ 
++static std::atomic<unsigned long> g_drivingFrames{0};
++
++extern "C" unsigned long NightPadDrivingEngineFrameCount(void) {
++    return g_drivingFrames.load(std::memory_order_acquire);
++}
++
+ #include "../platform/Sse.h"
+ #include <stdlib.h>
+ #include <string.h>
+@@ -812,7 +820,20 @@
+     GLoadingScreen::Status("Entering main loop");
+     fgScheduler->ResetTime();
+ 
++    bool paused = false;
+     while (fgSimulation.simState != kSimFinished && !EngineLifecycle_StopRequested()) {
++        if (EngineLifecycle_PauseRequested()) {
++            if (!paused) {
++                ASoundManager::Pause();
++                paused = true;
++            }
++            HostSleep(10);
++            continue;
++        }
++        if (paused) {
++            ASoundManager::Resume();
++            paused = false;
++        }
+         while (!GlobalActionQueue.IsEmpty()) {
+             ActionRef action;
+             GlobalActionQueue.GetAction(&action);
+@@ -822,6 +843,7 @@
+         }
+         SYNCTASK_run(0);
+         fgScheduler->Run(0);
++        g_drivingFrames.fetch_add(1, std::memory_order_acq_rel);
+     }
+ 
+     GLoadingScreen::Status("Leaving loop");

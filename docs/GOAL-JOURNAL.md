@@ -438,3 +438,44 @@ are ignored and may contain paths, hashes, captures or device identities.
   `scripts/test_controller_slots.sh`. Hardware sleep/wake remains unverified.
 - Next: device session for connect/reconnect, held buttons and rumble.
 
+## 2026-10-27T18:05:00Z — real game data through the shell import
+
+- Goal: G05. Requirement: R04 in progress.
+- Hypothesis: the shell's transaction path works on the real prepared tree, not
+  only a synthetic fixture.
+- Observed: copied the 1.9 GB, 56-file prepared tree into the app's
+  Documents/ImportFixture and ran the shell import hook. Validation, staging and
+  activation produced identity `data-a3c98ab965ac41e559ac`; relaunch reports
+  "Game data ready". A second import left `Saves/slot1.sav` byte-identical
+  (SHA-256 checked before and after).
+- Observed: the Game Data menu's import action opens the system folder picker.
+  Its remote view exposes no scriptable row actions to this harness, so choosing
+  the folder remains a manual step.
+- Evidence: ignored `evidence/ios-shell/data-ready-real.png`; container state
+  under `Library/Application Support/NightPad`.
+- Verdict: real-data import and save preservation pass; picker selection and
+  device composition remain.
+- Next: keep the device build ready for the handoff once a signing identity and
+  hardware are available.
+
+## 2026-10-27T19:25:00Z — in-process action-to-driving handoff
+
+- Goal: G04. Requirements: R05, R07 in progress.
+- Hypothesis: the engine's own psiLaunchDriving page can drive a real in-app
+  transition if the shell joins the action thread and starts the named engine
+  from `psiLaunch.bin`.
+- Observed: a new macOS gate starts action, triggers the game's own driving
+  request, joins action, then starts driving. Driving reads the 3072-byte page,
+  boots `paris_mis01`, runs the intro and requests `D:\DEFAULT.XBE` when stopped
+  before joining. Driving gained a nonblocking poll, cooperative pause with
+  sound pause/resume, a frame counter and its own host-pad/rumble bridges.
+- Observed: the shell host now records the requested image, stops the running
+  engine on that thread, then joins, closes and starts the target; poll, pause,
+  input suspension, pad publication and rumble are routed to the active engine.
+- Evidence: `scripts/test_engine_handoff.sh` and `scripts/test_driving_pause.sh`
+  pass; action pause still passes; both shell lanes build; the patch series
+  applies to the pin. Decision recorded as 0010.
+- Verdict: the campaign-direction transition works in-process on macOS. The
+  iOS shell wiring compiles and links but cannot be exercised without hardware.
+- Next: quit-during-loading stability, then device execution of the handoff.
+

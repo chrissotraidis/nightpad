@@ -27,4 +27,12 @@ for symbol in _NightPadActionEngineStart _NightPadActionEngineRequestStop \
     }
 done
 
+for symbol in _NightPadDrivingEnginePollWindow _NightPadDrivingEngineSetPaused \
+              _NightPadDrivingEngineSetInputSuspended _NightPadDrivingEngineSetHostPadsEnabled; do
+    printf '%s\n' "$symbols" | grep -q " T $symbol$" || {
+        echo "NightPadShell is missing $symbol" >&2
+        exit 1
+    }
+done
+
 echo "NightPadShell: arm64 app with action and driving engine symbols; no loose SDL/FFmpeg/SPIRV dylibs"
