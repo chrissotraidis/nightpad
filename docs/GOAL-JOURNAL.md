@@ -1402,3 +1402,19 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the build and package recipes reproduce from a clean shell tree.
   Signing/install and a full clean engine/dependency rebuild remain.
 
+## 2026-10-28T17:55:00Z — startup errors are no longer lost
+
+- Goal: G06. Requirement: R12/R25.
+- Observed: with a bad `settings.txt` and a bad touch layout, the app started on
+  defaults but could drop one of the two errors: the presentation ran before
+  the view was in a window, and a second presentation was skipped while the
+  first was up.
+- Observed: `presentAfterMenu:` now retries briefly until the view has a window
+  and lets alerts stack on the alert that is already up; sheets still wait for
+  the top of the stack. Both errors now appear, one after the other, and the
+  app keeps working on defaults.
+- Evidence: iPhone 17 simulator, iOS 26.5: `version=99` settings and an
+  unsupported layout header produced "Saved touch layout ignored" over "Saved
+  settings ignored" with no crash; restoring both files gave a clean launch.
+- Verdict: a corrupt profile or layout is reported and survivable.
+

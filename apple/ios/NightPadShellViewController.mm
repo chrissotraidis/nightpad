@@ -43,6 +43,7 @@ using nightpad::Paths;
 @end
 
 @interface NightPadShellViewController () <UIDocumentPickerDelegate>
+- (void)presentAfterMenu:(UIViewController *)controller attempt:(NSInteger)tries;
 @end
 
 @implementation NightPadShellViewController {
@@ -320,13 +321,29 @@ static uint64_t ShellResidentBytes(void) {
 
 - (void)presentAfterMenu:(UIViewController *)controller {
     // UIMenu is still dismissing while its action runs; presenting in the same
-    // turn is ignored.
+    // turn is ignored. A launch-time error can run before the view is in a
+    // window, where a presentation is dropped too, so retry briefly.
+    [self presentAfterMenu:controller attempt:8];
+}
+
+- (void)presentAfterMenu:(UIViewController *)controller attempt:(NSInteger)tries {
     __weak NightPadShellViewController *weakSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 150 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
         NightPadShellViewController *strongSelf = weakSelf;
-        if (strongSelf == nil || strongSelf.presentedViewController != nil)
+        if (strongSelf == nil)
             return;
-        [strongSelf presentViewController:controller animated:YES completion:nil];
+        if (strongSelf.view.window == nil && tries > 0) {
+            [strongSelf presentAfterMenu:controller attempt:tries - 1];
+            return;
+        }
+        // A sheet waits for whatever is up, but an alert may stack: a second
+        // startup error must not be lost behind the first.
+        UIViewController *presenter = strongSelf;
+        while (presenter.presentedViewController != nil && !presenter.presentedViewController.isBeingDismissed)
+            presenter = presenter.presentedViewController;
+        if (presenter != strongSelf && ![controller isKindOfClass:[UIAlertController class]])
+            return;
+        [presenter presentViewController:controller animated:YES completion:nil];
     });
 }
 

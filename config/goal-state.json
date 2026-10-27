@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T17:35:00Z",
+  "last_updated_at": "2026-10-28T17:55:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -1220,6 +1220,15 @@
         "scripts/test_clean_shell_build.sh",
         "docs/DEVICE-HANDOFF.md",
         "docs/CANDIDATE.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T17:55:00Z",
+      "goal": "G06",
+      "summary": "Deferred presentations now wait for the window and alerts stack, so a corrupt settings file and a corrupt layout are both reported instead of one being lost.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
       ]
     }
   ],
