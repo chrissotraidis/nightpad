@@ -616,3 +616,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: inventory coverage is expanding without hardware. Mode/map support
   matrices, unlocks and every match behaviour remain to be exercised.
 
+## 2026-10-27T23:40:00Z — cheat inventory
+
+- Goal: G10. Requirement: R20 in progress.
+- Observed: catalogued the original debug menu's checkboxes and the globals they
+  drive. Immortal and all-weapons/unlimited-ammo are the two smallest useful
+  assists; the rest are developer or performance switches.
+- Observed: loading a codename resets the cheat state, so an assist must be
+  applied after a level is live.
+- Evidence: `docs/CHEATS-RESEARCH.md`; test-matrix entry.
+- Verdict: research and a bounded plan are recorded. No assist is implemented,
+  and none may enter core acceptance runs.
+
