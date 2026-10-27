@@ -38,5 +38,15 @@ while IFS= read -r file; do
     fi
 done < "$listed"
 
+# The app must not gain a network path by accident. About-page links open in
+# the user's browser; nothing in the app talks to a server.
+if git grep -nEi 'URLSession|NSURLConnection|CFStream|NWConnection|getaddrinfo|socket\(' -- apple > /tmp/nightpad-network.txt 2>/dev/null; then
+    echo "privacy: networking API found in apple/:" >&2
+    cat /tmp/nightpad-network.txt >&2
+    rm -f /tmp/nightpad-network.txt
+    exit 1
+fi
+rm -f /tmp/nightpad-network.txt
+
 count=$(wc -l < "$listed" | tr -d ' ')
-echo "privacy: PASS ($count tracked source files; no retail, binary or private trees)"
+echo "privacy: PASS ($count tracked source files; no retail, binary or private trees; no network APIs in the app)"

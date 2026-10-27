@@ -997,3 +997,13 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: device captures will produce comparable records. Real measurements
   still need hardware.
 
+## 2026-10-28T10:40:00Z — no network path in the app
+
+- Goal: G00. Requirement: R27 in progress.
+- Observed: `apple/` contains no `URLSession`, `NSURLConnection`, `CFStream`,
+  `NWConnection`, `getaddrinfo` or socket call. The About page opens links in
+  the browser; diagnostics write locally and leave only through the share sheet.
+- Evidence: `scripts/check_privacy.sh` now fails on any of those APIs and runs in
+  the quick pass; `docs/PROVENANCE.md` states the boundary.
+- Verdict: the "no automatic upload" claim is checked mechanically.
+

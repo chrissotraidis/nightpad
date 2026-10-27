@@ -577,7 +577,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Private-data exclusion is checked mechanically (172 source files, no retail/binary/private trees). Provenance and licensing uncertainty are documented in docs/PROVENANCE.md."
+        "Private-data exclusion is checked, the app has no networking APIs, and provenance/licensing uncertainty are documented."
       ]
     },
     "R28": {

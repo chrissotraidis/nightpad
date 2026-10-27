@@ -251,9 +251,11 @@ simulator probe and remains blocked on physical-device access.
   CMake/Xcode trees and still passes the device link check.
 - The full engine suite passed end to end at `3e7a133`: lifecycles, both pauses
   with audio, assists, early stop, transitions, handoff and the round trip.
-- `scripts/check_privacy.sh` verifies the repository tracks only source: 172
-  files, no ref/build/vendor/evidence trees, and no retail, movie or binary
-  artefacts. It runs in the quick pass.
+- `scripts/check_privacy.sh` verifies the repository tracks only source: no
+  ref/build/vendor/evidence trees, and no retail, movie or binary artefacts. It
+  runs in the quick pass.
+- The privacy gate also rejects networking APIs in `apple/`; About-page links
+  open in the browser, and diagnostics stay local until shared.
 - [CANDIDATE.md](CANDIDATE.md) is the draft candidate manifest: identity fields
   to freeze, support matrix, verified evidence, known issues and the device
   next step. It is not an acceptance claim.

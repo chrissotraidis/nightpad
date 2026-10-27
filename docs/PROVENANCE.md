@@ -18,6 +18,11 @@ outside the source commit. `prepare_game_data.py` preserves the source image,
 validates member paths and only activates a content-addressed extracted tree
 after a complete listing/tree comparison.
 
+The app contains no networking APIs: diagnostics are written locally and shared
+only through the system sheet, and the About page's links open in the user's
+browser. `scripts/check_privacy.sh` fails if `URLSession`, `NSURLConnection`,
+`CFStream`, `NWConnection`, `getaddrinfo` or a socket call appears in `apple/`.
+
 This document records provenance; it is not a legal conclusion or a public
 distribution approval.
 
