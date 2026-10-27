@@ -66,6 +66,11 @@ original Secret Unlocks screen rather than a blanket switch.
 ## Open questions
 
 - Whether the debug page is reachable in this build without a devtool command.
+- The all-weapons equip needs a scripted way into a level. Booting the action
+  engine directly with `-level 0x07000005` in the standalone harness crashes
+  during startup, so the equip is deferred until a demo or device run can reach
+  a live player. The equip itself was prototyped and removed rather than left
+  unverified.
 - Whether `AllWeapons` survives a level transition or must be re-applied.
 - Whether any assist interferes with recording playback (it must not).
 - Which original Secret Unlocks codes remain valid; that belongs to R19.

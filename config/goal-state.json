@@ -481,7 +481,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Immortality and unlimited ammo are implemented, persisted, applied by the action loop each frame and tested on/off. All-weapons equip, death/restart/load checks and recording isolation remain."
+        "Immortality and unlimited ammo are implemented, persisted, applied by the action loop each frame and tested on/off. All-weapons equip is deferred: direct -level boot crashes in the harness, so there is no scripted live player yet."
       ]
     },
     "R21": {
@@ -1032,5 +1032,5 @@
       "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "G04: device execution of the round trip; G10: all-weapons equip and assist regression; G07/G08 inventory continues."
+  "next_step": "G04: device execution of the round trip; G10: all-weapons needs a scripted level path; G07/G08 inventory continues."
 }
