@@ -48,6 +48,7 @@
 | G05 | Transactional prepared-data import | macOS arm64 | passed for core | `scripts/test_data_import.sh`: preflight, staging, validation, cancel, atomic activation, replacement and rollback retention |
 | G05 | Shell prepared-data import and relaunch | iPhone simulator | passed with synthetic fixture | Real shell import path; active tree and identity survive relaunch; existing save unchanged; production Files picker still needs a retail package |
 | G06 | Four-port Xbox input mixer | macOS arm64 / iPhoneOS build | passed for core | `scripts/test_input.sh`: short taps, edges, dead zones, triggers, source merge, release-before-acquire and port isolation |
+| G06 | Versioned touch-layout model | macOS arm64 / iPhoneOS build | passed for core | `scripts/test_touch_layout.sh`: phone/tablet defaults, safe-area/44-point clamp, round trip, reset, unknown rows and bad versions |
 | G06 | Touch layout and controller UI | iPhone/iPad | unverified | No touch layout, controller mapping UI or physical controller run yet |
 | G05 | Native shell home, menu and data panel | iPhone simulator / iOS 26.5 | passed visual smoke | `NightPadShell` builds; screenshots show persistent menu, data status/import panel, pause/about/diagnostics entries |
 | G05 | Shell device compilation | iPhoneOS 26.5 | passed | `scripts/build_ios_shell.sh device` builds arm64 app without signing |

@@ -124,6 +124,10 @@ simulator probe and remains blocked on physical-device access.
   source merger, short-tap edge latching, dead zones, trigger thresholds and
   release-before-reacquire for newly acquired controllers. Native tests pass and
   the core compiles into simulator/device shells.
+- Added `NightPadTouchLayout`: independent phone/tablet defaults, normalized
+  safe-area geometry, 44-point minimum clamping, opacity bounds, reset and atomic
+  versioned persistence. Unknown/malformed layouts are rejected without
+  replacing the active model.
 
 ## Current uncertainty and blockers
 

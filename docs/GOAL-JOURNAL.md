@@ -313,3 +313,17 @@ are ignored and may contain paths, hashes, captures or device identities.
   wiring and physical runs remain.
 - Next: build the Xbox touch layout and mapping adapter on this core.
 
+## 2026-10-27T15:15:56Z — versioned touch-layout model
+
+- Goal: G06. Requirement: R12 in progress.
+- Hypothesis: normalized default geometry and a versioned atomic file can cover
+  phone/tablet authoring and recovery without committing UIKit layout first.
+- Observed: added independent landscape phone/tablet defaults for two sticks,
+  D-pad, Xbox face buttons, LT/RT, White/Black and Start/Back; safe-area clamping,
+  44-point minimum size and opacity bounds; atomic versioned persistence, reset,
+  unknown-row tolerance and rejection of malformed/unknown versions.
+- Evidence: `scripts/test_touch_layout.sh` passes; both shell targets build.
+- Verdict: layout model/persistence passes; touch views, drag/resize editor,
+  accessibility and physical ergonomics remain.
+- Next: render the authored layout as UIKit controls and add the editor.
+

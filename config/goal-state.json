@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T15:13:56Z",
+  "last_updated_at": "2026-10-27T15:15:56Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -150,10 +150,14 @@
         "apple/shared/NightPadInput.cpp",
         "tests/native/test_input.cpp",
         "scripts/test_input.sh",
-        "apple/ios/CMakeLists.txt"
+        "apple/ios/CMakeLists.txt",
+        "apple/shared/NightPadTouchLayout.h",
+        "apple/shared/NightPadTouchLayout.cpp",
+        "tests/native/test_touch_layout.cpp",
+        "scripts/test_touch_layout.sh"
       ],
       "blockers": [],
-      "next_step": "Build the Xbox touch layout/editor and a single physical-controller authority on the tested four-port mixer."
+      "next_step": "Render the versioned phone/tablet layout as UIKit touch controls and add the drag/resize editor with reset and persistence."
     },
     "G07": {
       "status": "pending",
@@ -307,10 +311,15 @@
       "notes": []
     },
     "R12": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "apple/shared/NightPadTouchLayout.cpp",
+        "scripts/test_touch_layout.sh"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Phone/tablet defaults, normalized safe-area geometry, 44-point clamp and versioned persistence pass; UIKit rendering/editor and physical ergonomics remain."
+      ]
     },
     "R13": {
       "status": "unverified",
@@ -795,6 +804,16 @@
       "evidence": [
         "apple/shared/NightPadInput.cpp",
         "scripts/test_input.sh",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T15:15:56Z",
+      "goal": "G06",
+      "summary": "Added a versioned normalized touch-layout model with independent phone/tablet defaults, clamping, reset and atomic persistence.",
+      "evidence": [
+        "apple/shared/NightPadTouchLayout.cpp",
+        "scripts/test_touch_layout.sh",
         "docs/TEST-MATRIX.md"
       ]
     }

@@ -24,7 +24,8 @@ add_library(nightpad_core STATIC
   ../shared/NightPadPaths.cpp
   ../shared/NightPadGameDataImport.cpp
   ../shared/NightPadDiagnostics.cpp
-  ../shared/NightPadInput.cpp)
+  ../shared/NightPadInput.cpp
+  ../shared/NightPadTouchLayout.cpp)
 target_include_directories(nightpad_core PUBLIC ../shared)
 target_compile_features(nightpad_core PUBLIC cxx_std_20)
 target_compile_options(nightpad_core PRIVATE -fno-exceptions)
