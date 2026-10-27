@@ -601,3 +601,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the options are wired and the engine consumes them. Correct aspect,
   scope/HUD behaviour and sustained device performance at higher targets remain.
 
+## 2026-10-27T23:20:00Z — media coverage and multiplayer inventory
+
+- Goal: G07/G08. Requirements: R08 and R17 in progress.
+- Observed: the supplied 30 fps bundle has sixteen XMV files whose names are the
+  level hashcodes for exactly the seven action missions' intros and outros, plus
+  two menu loops. Driving intros/outros live inside the mission VIVs, and the
+  handoff gate has already played `paris_intro.mad`.
+- Observed: source limits are four players plus six bots, ten maps, thirteen
+  game modes, eleven weapon sets, three respawn modes and five Enviro-Mods
+  options; Ravine disables bots, and arena/KOTH kills do not score.
+- Evidence: `docs/CAMPAIGN-INVENTORY.md` (media section) and
+  `docs/MULTIPLAYER-INVENTORY.md`.
+- Verdict: inventory coverage is expanding without hardware. Mode/map support
+  matrices, unlocks and every match behaviour remain to be exercised.
+

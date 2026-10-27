@@ -150,6 +150,36 @@ reaches `0x07000006` before its final frames.
 ## Still missing
 
 - Mission-to-level-script and mission-to-drive-bundle mapping.
-- Per-mission start/end state, movies, saves and unique inputs.
+- Per-mission start/end state, saves and unique inputs.
 - The original difficulty ladder and failure/restart routes.
 - Any device-specific rendering differences.
+
+## Mission media
+
+The supplied `eurocom/30_fps` bundle holds sixteen XMV files whose names are
+exactly the level hashcodes the engine assigns to mission intros and outros,
+plus two menu loops: seven mission intros, seven mission outros and the loops.
+They line up exactly with the seven action missions on the wheel.
+
+| Mission | Intro (id) | Present | Outro (level, id) | Present |
+| --- | --- | --- | --- | --- |
+| The Exchange | CastleExterior `07100005` | yes | CastleIndoors2 `07300008` | yes |
+| Double Cross | HendersonA `07100001` | yes | HendersonD `07300004` | yes |
+| Night Shift | TowerA `07100009` | yes | TowerC `0730000b` | yes |
+| Chain Reaction | PowerStationA1 `0710000c` | yes | PowerStationA2 `0730000d` | yes |
+| Phoenix Fire | Tower2A `07100011` | yes | Tower2C `07300013` | yes |
+| Countdown | EvilBase `07100014` | yes | EvilBaseC `07300017` | yes |
+| Equinox | SpaceStationD `07100018` | yes | SpaceStationD `0730001b` | yes |
+
+The two menu loops are `07330048` (background) and `07350048` (front end).
+Other menu movies the engine knows (EA and MGM logos, trailer, attract movie)
+are not in this bundle; the engine tolerates their absence.
+
+The five driving missions play `.mad` movies from inside their `mis*.viv`
+bundles (`paris_intro/outro`, `snow_intro/outro`, `alps_intro`,
+`island_outro`, `ja_intro/outro`, `jc_intro/outro`). A real driving boot has
+already played `NTSC\\eng\\paris_intro.mad` during the handoff gate, so that
+path is exercised.
+
+The known PAL gap is separate: the supplied image has only the `30_fps` movie
+bundle, while one action recording expects a `25_fps` movie.

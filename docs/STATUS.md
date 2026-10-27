@@ -170,6 +170,10 @@ simulator probe and remains blocked on physical-device access.
   game's widescreen option. They persist in NightPad's settings and are written
   to the engine's settings.ini at the next Start; a macOS run at 1280x960
   confirms the backend builds the larger target.
+- The campaign media bundle is inventoried: the 30 fps set matches the seven
+  action missions' intro and outro ids plus two menu loops, and driving movies
+  live inside their mission VIVs. Multiplayer limits, modes, maps, weapon sets
+  and Enviro-Mods are recorded in [MULTIPLAYER-INVENTORY.md](MULTIPLAYER-INVENTORY.md).
 
 ## Current uncertainty and blockers
 
