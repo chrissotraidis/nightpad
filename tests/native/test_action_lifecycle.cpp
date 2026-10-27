@@ -73,7 +73,11 @@ static void DumpThreads(const char *label) {
 
 static void *StopLater(void *) {
     sleep(6);
+    printf("[lifecycle] watchdog requesting stop\n");
+    fflush(stdout);
     ENGINE_REQUEST_STOP();
+    printf("[lifecycle] watchdog stop returned\n");
+    fflush(stdout);
     return nullptr;
 }
 
@@ -101,8 +105,8 @@ int main(int argc, char **argv) {
         pthread_create(&stopper, nullptr, StopLater, nullptr);
         ENGINE_RUN_WINDOW();
         pthread_join(stopper, nullptr);
-        int joined = ENGINE_JOIN(30000);
         ENGINE_CLOSE_WINDOW();
+        int joined = ENGINE_JOIN(30000);
         sleep(2);
         mach_msg_type_number_t after = ThreadCount();
         if (cycle == 0)

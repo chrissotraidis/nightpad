@@ -3,6 +3,7 @@
 #include "../../vendor/nightfire/src/driving/platform/XboxStartup.h"
 #include "../../vendor/nightfire/src/common/launchInfo.h"
 #include "../../vendor/nightfire/src/common/engineLifecycle.h"
+#include "../../vendor/nightfire/src/driving/platform/HostWindow.h"
 #include "NightPadEngineBridge.h"
 
 static NightPadLaunchRequestCallback g_launchRequestCallback = nullptr;
@@ -24,5 +25,6 @@ extern "C" unsigned NightPadDrivingEngineThread(void *unused) {
 
 extern "C" void NightPadDrivingEngineRequestStop(void) {
     EngineLifecycle_RequestStop();
+    HostWindow_RequestQuit();
 }
 

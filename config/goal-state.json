@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T12:18:00Z",
+  "last_updated_at": "2026-10-27T12:28:00Z",
   "active_goal": "G04",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -94,7 +94,7 @@
         "patches/0006-engine-stop-lifecycle.patch"
       ],
       "blockers": [],
-      "next_step": "Fix driving DEFAULT.XBE request thread exit/join and then run action-to-driving and return transitions."
+      "next_step": "Start the action and driving engines sequentially in one process using the saved page and verify all transition directions."
     },
     "G05": {
       "status": "pending",
@@ -517,6 +517,15 @@
         "docs/DECISIONS/0006-engine-stop-boundary.md",
         "scripts/test_driving_lifecycle.sh"
       ]
+    },
+    {
+      "at": "2026-10-27T12:28:00Z",
+      "goal": "G04",
+      "summary": "Fault was missing window quit in driving stop plus join-before-close ordering; driving one-cycle lifecycle now joins.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "scripts/test_driving_lifecycle.sh"
+      ]
     }
   ],
   "completed_tests": [
@@ -598,6 +607,11 @@
     {
       "name": "driving engine start/stop/request",
       "result": "Mission 1 cleanup completes; in-process DEFAULT.XBE request captured but game thread hangs at join",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "driving lifecycle boundary",
+      "result": "PASS: stop, DEFAULT.XBE callback, close-before-join, 3072-byte page, thread joined",
       "target": "macOS 27 arm64"
     }
   ],

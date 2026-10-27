@@ -36,7 +36,7 @@
 | G04 | Repeated action start/stop/join stability | macOS arm64 | passed | Three cycles; each joins; settled 7 OS threads unchanged after first |
 | G04 | Symbol-isolated start/stop heap and shader boundary | macOS arm64 | passed | Shared GameWindow/HostPosix allocator runtime; no shader crash |
 | G04 | Driving engine start and cleanup | macOS arm64 | passed | Mission 1 starts, cooperative stop runs GameLoop_CleanUp and Bond_CleanUp |
-| G04 | Driving launch request completes transition | macOS arm64 | failed | Callback gets 3,072-byte page but game thread does not join; process hangs |
+| G04 | Driving launch request completes established boundary | macOS arm64 | passed | Callback receives 3,072-byte page; close-before-join completes and joins |
 | G04 | Action to driving and return transitions | iPhoneOS/macOS | unverified | Not run |
 
 Only rows with explicit execution evidence are marked passed. Source inspection
