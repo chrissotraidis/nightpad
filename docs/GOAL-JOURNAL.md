@@ -940,3 +940,13 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the engine layer is green as a whole, not only gate by gate. Device
   execution remains the acceptance step.
 
+## 2026-10-28T09:05:00Z — repository privacy gate
+
+- Goal: G00. Requirement: R27 in progress.
+- Observed: the repository tracks 172 source files and no ref/build/vendor/
+  evidence tree, retail image, movie, or binary artefact. The ignore rules the
+  build relies on are present.
+- Evidence: `scripts/check_privacy.sh`, now part of `verify_quick.sh`.
+- Verdict: the private-data boundary is checked mechanically. Notices and
+  licensing uncertainty remain documented in `docs/PROVENANCE.md`.
+

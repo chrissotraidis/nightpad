@@ -20,4 +20,5 @@ repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 "$repo/scripts/build_ios_shell.sh" device >/dev/null
 "$repo/scripts/check_ios_shell_link.sh"
 "$repo/scripts/verify_patches.sh"
+"$repo/scripts/check_privacy.sh"
 echo "quick verification: PASS"

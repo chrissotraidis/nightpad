@@ -559,14 +559,17 @@
       ]
     },
     "R27": {
-      "status": "passed",
+      "status": "in_progress",
       "evidence": [
         "docs/PROVENANCE.md",
         ".gitignore",
-        "docs/UPSTREAM-DELTA.md"
+        "docs/UPSTREAM-DELTA.md",
+        "scripts/check_privacy.sh"
       ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Private-data exclusion is checked mechanically (172 source files, no retail/binary/private trees). Provenance and licensing uncertainty are documented in docs/PROVENANCE.md."
+      ]
     },
     "R28": {
       "status": "unverified",

@@ -251,6 +251,9 @@ simulator probe and remains blocked on physical-device access.
   CMake/Xcode trees and still passes the device link check.
 - The full engine suite passed end to end at `3e7a133`: lifecycles, both pauses
   with audio, assists, early stop, transitions, handoff and the round trip.
+- `scripts/check_privacy.sh` verifies the repository tracks only source: 172
+  files, no ref/build/vendor/evidence trees, and no retail, movie or binary
+  artefacts. It runs in the quick pass.
 
 ## Current uncertainty and blockers
 

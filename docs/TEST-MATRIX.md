@@ -5,6 +5,7 @@
 | G00 | Public source pins resolve exactly | Host | passed | `config/dependencies.lock.json` |
 | G00 | Full Xcode and both Apple SDKs resolve | Host | passed | `config/toolchain.json` |
 | G00 | Code signing and physical-device availability | Host | blocked | No identity or device visible |
+| G00 | Private and retail data stay untracked (R27) | Host | passed | `scripts/check_privacy.sh` finds 172 tracked source files, no ref/build/vendor/evidence trees, no ISO/XBE/movie/binary artefacts, and the ignore rules it relies on |
 | G13 | Patch series reproduces the pinned engine | Host | passed | `scripts/verify_patches.sh` applies every patch to a clean worktree at `8779cf79` and matches 53 files byte-for-byte; linker map files are excluded as build output |
 | G13 | Device package recipe | Host | passed for unsigned artifact | `scripts/package_device_app.sh` builds Release, packages `Payload/NightPadShell.app` as a 3.6 MB unsigned IPA, checks `Info.plist` and rejects loose dylibs; signing/install remains the handoff step |
 | G13 | Clean shell build from empty trees | Host | passed | `scripts/test_clean_shell_build.sh` removes the CMake/Xcode build trees and rebuilds simulator and device lanes; the link contract still passes |
