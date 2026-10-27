@@ -11,7 +11,7 @@ tester would see, what is blocked, and where the detail lives.
 | The supplied image has only the 30 fps movie bundle | One action recording stops early on a movie the image lacks; NightPad writes `Region=NTSC` | `docs/STATUS.md`, G02 blocker |
 | All-weapons assist is not wired | The menu offers immortality and unlimited ammo only | `docs/CHEATS-RESEARCH.md`, R20 |
 | Texture overrides are not implemented | A `textures` folder does nothing | `docs/DECISIONS/0013-texture-overrides.md`, R21 |
-| Driving objectives are not attributed per mission | The strings are located but not mapped to Paris, Alpine and the rest | `docs/CAMPAIGN-INVENTORY.md`, G07 |
+| Driving objectives are not attributed per mission | The strings are located but not mapped to Paris, Alpine and the rest; headless runs do not reach the trigger | `docs/CAMPAIGN-INVENTORY.md`, G07 |
 | Secret Unlocks have no automated path here | Only a device run through the original front end can confirm persistence | `docs/SOURCES.md`, R19 |
 | Interrupted engine writes are untested | A crash during a save write has no evidence either way | R11 notes |
 | The simulator has no SDL GPU | The shell UI runs there, but gameplay, audio and transitions need macOS engine gates or a device | `docs/STATUS.md` |
