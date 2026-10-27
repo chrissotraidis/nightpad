@@ -262,12 +262,12 @@
       "next_step": "Decision recorded. No online work is scheduled; revisit only on explicit request or upstream support, and G11 still depends on G08."
     },
     "G12": {
-      "status": "pending",
-      "started_at": null,
+      "status": "in_progress",
+      "started_at": "2026-10-28T06:10:00Z",
       "completed_at": null,
       "evidence": [],
       "blockers": [],
-      "next_step": null
+      "next_step": "Device stability, audio, save round trip and 15-minute performance runs; depends on G07/G08/G09 completion."
     },
     "G13": {
       "status": "pending",
@@ -1067,5 +1067,5 @@
       "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "Device acceptance is the gate; finish per-mission details and exercise difficulty/failure routes once runs are possible."
+  "next_step": "Run scripts/device_handoff.sh with an identity and trusted device, then work docs/DEVICE-HANDOFF.md; continue per-mission and multiplayer inventories meanwhile."
 }

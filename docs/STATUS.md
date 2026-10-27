@@ -239,11 +239,16 @@ simulator probe and remains blocked on physical-device access.
 
 ## Next step
 
-G06 continues with the in-game touch overlay and the single controller
-authority: render the authored layout during play, feed touch and physical pad
-state through the mixer into the engine, and then run the device composition
-and Files checks. Keep the ten-cycle lifecycle, pause and data-import tests as
-regression gates.
+Physical acceptance is the gate. Run `scripts/device_handoff.sh --install` once
+a signing identity and a trusted device exist, then work the checklist in
+[DEVICE-HANDOFF.md](DEVICE-HANDOFF.md): the probe, the picker and save round
+trip, touch and controller sessions, Secret Unlocks, display modes and the
+fifteen-minute stability runs.
+
+Independent work that can continue meanwhile: per-mission details and the
+difficulty/failure routes in the campaign inventory, and the multiplayer
+mode/map support matrix. Keep the ten-cycle lifecycle, pause, transition,
+handoff and data-import gates as regressions.
 
 Verification entry points are `scripts/verify_quick.sh` (host logic, both
 shell builds, device link contract) and `scripts/verify_engine.sh` (lifecycle,
