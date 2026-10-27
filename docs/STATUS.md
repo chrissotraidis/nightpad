@@ -99,6 +99,10 @@ simulator probe and remains blocked on physical-device access.
   transparent touch-through overlay above the game window, and requests
   stop/join/close from the menu. This path is device-build verified; running it
   still requires a signed physical device because the simulator has no SDL GPU.
+- Native pause now lives at the engine frame boundary: action SFX and streams are
+  suspended, frames stop advancing, and resume restores them. The shell's App
+  Pause enters this state and Back to Game resumes it; the action pause frame
+  test passes.
 
 ## Current uncertainty and blockers
 
@@ -115,9 +119,8 @@ simulator probe and remains blocked on physical-device access.
 
 ## Next step
 
-Wire the linked engine host to Start Game: create the SDL window under the
-shell overlay, run its event loop, pass real stopped/pause state into the menu
-and import gate, clear input while native UI is open, and exercise the Files
-import flow end to end. Keep the ten-cycle lifecycle and data-import tests as
-regression gates.
+Run the device shell to verify SDL window/overlay composition and pause/resume,
+then clear input while native UI is open and exercise the Files import flow end
+to end. Keep the ten-cycle lifecycle, pause and data-import tests as regression
+gates.
 

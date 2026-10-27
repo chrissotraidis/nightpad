@@ -23,6 +23,8 @@ cat > "$out/exports.txt" <<'EOF'
 _NightPadActionEngineThread
 _NightPadActionEngineSetLaunchRequestCallback
 _NightPadActionEngineRequestStop
+_NightPadActionEngineSetPaused
+_NightPadActionEngineFrameCount
 _NightPadActionEngineStart
 _NightPadActionEngineRunWindow
 _NightPadActionEngineJoin

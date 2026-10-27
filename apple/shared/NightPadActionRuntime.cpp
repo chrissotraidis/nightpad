@@ -62,3 +62,10 @@ extern "C" void NightPadActionEngineRequestStop(void) {
     HostWindow_RequestQuit();
 }
 
+extern "C" void NightPadActionEngineSetPaused(int paused) {
+    if (paused)
+        EngineLifecycle_RequestPause();
+    else
+        EngineLifecycle_ReleasePause();
+}
+

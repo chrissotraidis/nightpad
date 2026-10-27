@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <atomic>
 
 #if defined(NIGHTPAD_DRIVING_LIFECYCLE)
 #define ENGINE_START NightPadDrivingEngineStart
@@ -80,8 +81,17 @@ static void DumpThreads(const char *label) {
                   count * sizeof(thread_t));
 }
 
+static std::atomic<bool> g_pauseCancel{false};
+static std::atomic<bool> g_pauseDone{false};
+static std::atomic<bool> g_pauseOk{false};
+
 static void *StopLater(void *) {
-    sleep(6);
+    int seconds = 6;
+    const char *stopAfter = getenv("NIGHTPAD_STOP_AFTER_S");
+    if (stopAfter != nullptr && atoi(stopAfter) > 0)
+        seconds = atoi(stopAfter);
+    sleep(static_cast<unsigned>(seconds));
+    g_pauseCancel.store(true);
     printf("[lifecycle] watchdog requesting stop\n");
     fflush(stdout);
     ENGINE_REQUEST_STOP();
@@ -95,6 +105,35 @@ static int CaptureLaunch(NightPadEngineId, const char *image, const void *, unsi
     return 1;
 }
 
+#ifndef NIGHTPAD_DRIVING_LIFECYCLE
+static void *PauseProbe(void *) {
+    unsigned long first = NightPadActionEngineFrameCount();
+    for (int wait = 0; wait < 1500 && !g_pauseCancel.load() && NightPadActionEngineFrameCount() == first; ++wait)
+        usleep(10000);
+    if (g_pauseCancel.load()) {
+        g_pauseOk.store(false);
+        g_pauseDone.store(true);
+        return nullptr;
+    }
+    unsigned long running = NightPadActionEngineFrameCount();
+    NightPadActionEngineSetPaused(1);
+    usleep(300000);
+    unsigned long paused = NightPadActionEngineFrameCount();
+    usleep(500000);
+    unsigned long stillPaused = NightPadActionEngineFrameCount();
+    NightPadActionEngineSetPaused(0);
+    usleep(500000);
+    unsigned long resumed = NightPadActionEngineFrameCount();
+    bool ok = running > first && stillPaused == paused && resumed > stillPaused;
+    printf("[lifecycle] pause frames: %lu -> %lu, paused %lu -> %lu, resumed %lu (%s)\n",
+           first, running, paused, stillPaused, resumed, ok ? "PASS" : "FAIL");
+    fflush(stdout);
+    g_pauseOk.store(ok);
+    g_pauseDone.store(true);
+    return nullptr;
+}
+#endif
+
 int main(int argc, char **argv) {
     mach_msg_type_number_t before = ThreadCount();
     mach_msg_type_number_t firstAfter = 0;
@@ -105,12 +144,23 @@ int main(int argc, char **argv) {
         cycles = 1;
     const char *joinText = getenv("NIGHTPAD_JOIN_MS");
     unsigned joinTimeout = joinText != nullptr ? static_cast<unsigned>(atoi(joinText)) : 30000;
+    const bool pauseTest = getenv("NIGHTPAD_PAUSE_TEST") != nullptr;
     ENGINE_SET_LAUNCH_CALLBACK(CaptureLaunch);
     for (int cycle = 0; cycle < cycles; ++cycle) {
         if (!ENGINE_START(argc, argv)) {
             fprintf(stderr, "action lifecycle: start failed on cycle %d\n", cycle + 1);
             return 1;
         }
+#ifndef NIGHTPAD_DRIVING_LIFECYCLE
+        if (cycle == 0 && pauseTest) {
+            g_pauseCancel.store(false);
+            g_pauseDone.store(false);
+            g_pauseOk.store(false);
+            pthread_t probe;
+            pthread_create(&probe, nullptr, PauseProbe, nullptr);
+            pthread_detach(probe);
+        }
+#endif
         const char *startPauseText = getenv("NIGHTPAD_START_PAUSE_MS");
         if (startPauseText != nullptr)
             usleep(static_cast<useconds_t>(atoi(startPauseText)) * 1000);
@@ -119,6 +169,13 @@ int main(int argc, char **argv) {
         pthread_create(&stopper, nullptr, StopLater, nullptr);
         ENGINE_RUN_WINDOW();
         pthread_join(stopper, nullptr);
+#ifndef NIGHTPAD_DRIVING_LIFECYCLE
+        if (cycle == 0 && pauseTest) {
+            for (int wait = 0; wait < 300 && !g_pauseDone.load(); ++wait)
+                usleep(10000);
+            ok = ok && g_pauseDone.load() && g_pauseOk.load();
+        }
+#endif
         ENGINE_CLOSE_WINDOW();
         int joined = ENGINE_JOIN(joinTimeout);
         sleep(2);

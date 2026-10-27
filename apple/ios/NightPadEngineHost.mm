@@ -70,6 +70,14 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
 #endif
 }
 
+- (void)setPaused:(BOOL)paused {
+#if NIGHTPAD_HAS_ENGINE
+    NightPadActionEngineSetPaused(paused ? 1 : 0);
+#else
+    (void)paused;
+#endif
+}
+
 - (void)requestStop {
 #if NIGHTPAD_HAS_ENGINE
     NightPadActionEngineRequestStop();

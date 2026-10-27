@@ -8,6 +8,7 @@
                  launchState:(NSString *)launchState
                        error:(NSString **)error;
 - (BOOL)startAction;
+- (void)setPaused:(BOOL)paused;
 - (BOOL)pollWindow;
 - (void)requestStop;
 - (int)joinWithTimeout:(unsigned)milliseconds;

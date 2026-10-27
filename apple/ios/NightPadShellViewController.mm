@@ -40,6 +40,7 @@ using nightpad::Paths;
     BOOL _importing;
     NightPadEngineHost *_engineHost;
     BOOL _engineRunning;
+    BOOL _enginePaused;
     BOOL _gameplayMode;
     NSTimer *_engineTimer;
 
@@ -290,7 +291,7 @@ using nightpad::Paths;
     detail.numberOfLines = 0;
     detail.translatesAutoresizingMaskIntoConstraints = NO;
     [_pausePanel addSubview:detail];
-    UIButton *back = [self panelButton:@"Back to Game" action:@selector(closePanels)];
+    UIButton *back = [self panelButton:@"Back to Game" action:@selector(resumeFromPause)];
     back.translatesAutoresizingMaskIntoConstraints = NO;
     [_pausePanel addSubview:back];
     [NSLayoutConstraint activateConstraints:@[
@@ -335,6 +336,8 @@ using nightpad::Paths;
 }
 
 - (void)toggleMenu {
+    if (_enginePaused)
+        [self resumeFromPause];
     BOOL show = _menuPanel.hidden;
     [self closePanels];
     _menuPanel.hidden = !show;
@@ -356,9 +359,20 @@ using nightpad::Paths;
 }
 
 - (void)showPausePanel {
+    if (_engineRunning) {
+        _enginePaused = YES;
+        [_engineHost setPaused:YES];
+    }
     [self closePanels];
     _pausePanel.hidden = NO;
     [self.view bringSubviewToFront:_pausePanel];
+}
+
+- (void)resumeFromPause {
+    if (_enginePaused)
+        [_engineHost setPaused:NO];
+    _enginePaused = NO;
+    [self closePanels];
 }
 
 - (void)openAboutPanel {
@@ -390,6 +404,7 @@ using nightpad::Paths;
     }
     [self closePanels];
     _engineRunning = YES;
+    _enginePaused = NO;
     _gameplayMode = YES;
     [self updateGameplaySurface];
     _engineTimer = [NSTimer timerWithTimeInterval:1.0 / 60.0 target:self selector:@selector(pollEngine) userInfo:nil repeats:YES];
@@ -409,6 +424,9 @@ using nightpad::Paths;
 - (void)stopGame {
     if (!_engineRunning) return;
     _engineRunning = NO;
+    if (_enginePaused)
+        [_engineHost setPaused:NO];
+    _enginePaused = NO;
     [_engineTimer invalidate];
     _engineTimer = nil;
     [_engineHost requestStop];

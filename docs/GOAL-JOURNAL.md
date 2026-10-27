@@ -200,3 +200,20 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: run the device shell, verify the SDL window/overlay composition, then
   add real engine pause and neutral-input/audio gating.
 
+## 2026-10-27T14:52:35Z — native engine pause boundary
+
+- Goal: G05. Requirements: R15 in progress.
+- Hypothesis: a cooperative pause at the action loop boundary can freeze frame
+  progress and suspend SFX/streams without destroying the session.
+- Observed: `EngineLifecycle` now carries a pause flag separate from stop. The
+  action loop pauses SFX and all streams, sleeps until resumed, unpauses on the
+  way back, and exposes a frame counter and pause setter through the bridge. The
+  shell App Pause uses the setter; Back to Game resumes.
+- Evidence: `scripts/test_action_pause.sh` reports frames `0 -> 2`, paused
+  `3 -> 3`, resumed `33`; the normal three-cycle action gate and the mixed
+  transition gate still pass. Patch: `0012-native-engine-pause.patch`.
+- Verdict: pause semantics and shell wiring pass on macOS; physical-device
+  composition and neutral-input routing remain.
+- Next: run the device shell through start/pause/resume/stop, then gate input
+  and audio around native UI.
+

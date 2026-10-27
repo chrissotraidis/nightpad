@@ -51,7 +51,8 @@
 | G05 | Combined engine archive links into shell | iPhoneOS 26.5 | passed for link | `scripts/check_ios_shell_link.sh`: arm64, action bridge plus driving start, no loose SDL/FFmpeg/SPIRV dylibs |
 | G05 | Host-owned SDL poll loop | macOS arm64 / iPhoneOS 26.5 | passed for build; device runtime unverified | `HostWindow_Poll` bridge exported; shell uses a 60 Hz timer; macOS transition gate still passes |
 | G05 | Engine Start/Stop under the shell | iPhone/iPad | unverified | Start prepares data, starts action engine and polls events; physical device run is unavailable |
-| G05 | Native pause/input/audio gating | iPhone/iPad | unverified | App-pause card exists; engine pause and neutral-input routing are not wired |
+| G05 | Native pause/input/audio gating | iPhone/iPad | partial | Engine pause/audio and shell App Pause are wired; physical run and neutral-input routing remain |
+| G05 | Cooperative engine pause boundary | macOS arm64 | passed | `scripts/test_action_pause.sh`: frames 0→2, hold 3→3, resume→33; audio pause path exercised; normal cycles/transition still pass |
 
 Only rows with explicit execution evidence are marked passed. Source inspection
 does not satisfy runtime acceptance.
