@@ -59,3 +59,10 @@ DirectorQueue.cpp, Gain.cpp, Decals.cpp, Materials.cpp, PostProcessing.cpp and
 PlayMPC.cpp. The common graphics constructor running from both engine copies is
 the first thing to defer or share.
 
+Making the Fmv player and LaunchOptions text singletons allocate and construct
+on first use removed two action load-time constructors. With that change, the
+combined page-driven harness passes: driving boots and stops, requests
+DEFAULT.XBE, closes and joins, then action starts from the page, closes and
+joins. The remaining sdlGpuBackend constructors no longer prevent the
+transition.
+

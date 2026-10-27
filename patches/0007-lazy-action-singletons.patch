@@ -1,0 +1,48 @@
+diff --git a/src/action/engine/Fmv.cpp b/src/action/engine/Fmv.cpp
+index 9b22e0b..46c7fa7 100644
+--- a/src/action/engine/Fmv.cpp
++++ b/src/action/engine/Fmv.cpp
+@@ -53,7 +53,7 @@
+ // The player
+ // ---------------------------------------------------------------------------------------------------------------
+ 
+-static struct {
++struct FmvState {
+     AVFormatContext *format;
+     AVCodecContext *video;
+     AVCodecContext *audio;
+@@ -74,7 +74,15 @@ static struct {
+     FmvAudio audio_;                         // the voice and the clock (common/fmv/FmvAudio.cpp)
+ 
+     bool isPlaying;
+-} M;
++};
++
++// A process-wide movie singleton whose constructor runs on first movie use, not when a combined app loads.
++static FmvState &MovieState(void) {
++    static FmvState *state = new FmvState{};
++    return *state;
++}
++
++#define M MovieState()
+ 
+ // The movie volume, 0..100, kept across movies (only the original BackgroundMovieSetVolume and
+ // BackgroundMoviePlayFile used it). The originals' own state, the BackgroundMovie block, is replaced by M.
+diff --git a/src/action/engine/LaunchOptions.cpp b/src/action/engine/LaunchOptions.cpp
+index f7fc290..2dce4b9 100644
+--- a/src/action/engine/LaunchOptions.cpp
++++ b/src/action/engine/LaunchOptions.cpp
+@@ -55,7 +55,12 @@ static const struct { const char *name; uint32_t hash; } kLevels[] = {
+ 
+ static uint32_t g_level = 0;        // 0: the front end, as usual
+ static int g_difficulty = 0;        // 0: the game's default
+-static std::string g_text;
++static std::string &LaunchText(void) {
++    static std::string *text = new std::string();
++    return *text;
++}
++
++#define g_text LaunchText()
+ 
+ static void ListLevels(void) {
+     printf("[launch] -level takes one of:");

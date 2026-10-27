@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T12:52:00Z",
+  "last_updated_at": "2026-10-27T13:00:00Z",
   "active_goal": "G04",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -94,7 +94,7 @@
         "patches/0006-engine-stop-lifecycle.patch"
       ],
       "blockers": [],
-      "next_step": "Share or defer sdlGpuBackend initialization and isolate remaining mod-init constructors by engine."
+      "next_step": "Add action-to-driving route, repeat all three transition directions, and verify resource/pointer invariants after each cycle."
     },
     "G05": {
       "status": "pending",
@@ -553,6 +553,15 @@
       "evidence": [
         "docs/DECISIONS/0006-engine-stop-boundary.md"
       ]
+    },
+    {
+      "at": "2026-10-27T13:00:00Z",
+      "goal": "G04",
+      "summary": "Lazy Fmv/LaunchOptions singletons fixed combined load-time conflict; page-driven driving-to-action transition passes.",
+      "evidence": [
+        "patches/0007-lazy-action-singletons.patch",
+        "tests/native/test_engine_transition.cpp"
+      ]
     }
   ],
   "completed_tests": [
@@ -643,7 +652,7 @@
     },
     {
       "name": "combined driving-to-action restart",
-      "result": "FAIL: MEM_size fault in RCARPFile::LoadEAGLMaterials after shader 7; both engines pass separately",
+      "result": "PASS: driving page request, close/join, action start from page, close/join; threads 11->10",
       "target": "macOS 27 arm64"
     }
   ],
