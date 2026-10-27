@@ -857,3 +857,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the package recipe reproduces. Signing/install and a clean-checkout
   build remain.
 
+## 2026-10-28T07:10:00Z — multiplayer unlock matrix
+
+- Goal: G08. Requirement: R17 in progress.
+- Observed: the scenario wheel has 13 modes; seven are default and six
+  (Uplink, Demolition, Protection, GoldenEye Strike, Assassination, Team KOTH)
+  are reward-gated. Explosive Scenery is also gated. The character wheel has 29
+  entries, 17 of them reward-locked (indices 12-28).
+- Observed: mission medals and Secret Unlocks write the same reward mask, so
+  both routes open the same content and the codename save persists it.
+- Evidence: `docs/MULTIPLAYER-INVENTORY.md`, from the scenario and character
+  tables plus the unlock code.
+- Verdict: the unlock matrix is source-complete. Runtime checks remain with the
+  rest of multiplayer.
+

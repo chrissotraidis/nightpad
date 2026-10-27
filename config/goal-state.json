@@ -462,7 +462,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Limits, modes, maps, weapon sets, Enviro-Mods and map rules are inventoried; Ravine disables bots and mini vehicles and no mode-to-map gate exists in source. Match execution and unlocks remain."
+        "Limits, modes, maps, weapon sets, Enviro-Mods, map rules and the unlock matrix are inventoried (7/13 modes and 12/29 characters default; the rest reward-gated). Match execution remains."
       ]
     },
     "R18": {

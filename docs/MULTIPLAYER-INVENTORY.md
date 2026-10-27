@@ -66,6 +66,19 @@ No source check ties a game mode to a map. The setup wheel offers every mode on
 every map, and the only map-level exception is bots/vehicles on Ravine. That
 should still be confirmed by playing each mode family on at least two maps.
 
+### Unlock matrix
+
+The scenario wheel holds thirteen modes. Seven are available by default:
+Quick Game, Arena, Team Arena, Capture the Flag, Top Agent, Espionage/Blueprint
+and King of the Hill. Six are earned rewards: Uplink, Demolition, Protection,
+GoldenEye Strike, Assassination and Team King of the Hill. Explosive Scenery is
+also reward-gated.
+
+The character wheel has 29 entries. Indices 12-28 (17 characters) are locked
+until a reward bit or Secret Unlock grants them; the first twelve are available
+by default. Mission medals and codes both feed the same reward mask, so either
+route opens the same set, and the codename save persists it.
+
 ## Still missing
 
 - Which modes each map supports, and the win-condition details per mode.
