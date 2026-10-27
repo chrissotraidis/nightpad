@@ -409,11 +409,13 @@ static uint64_t ShellResidentBytes(void) {
     UIAction *removeAction = [self menuAction:@"Remove Previous Game Data" image:@"trash"
                                      disabled:!(_importer && _importer->previousDataRetained())
                                       handler:^{ [weakSelf discardPrevious]; }];
+    UIAction *shareAction = [self menuAction:@"Share Saves…" image:@"square.and.arrow.up" disabled:NO
+                                     handler:^{ [weakSelf shareSaves]; }];
     UIMenu *dataMenu = [UIMenu menuWithTitle:@"Game Data & Saves"
                                        image:[UIImage systemImageNamed:@"internaldrive"]
                                   identifier:nil
                                      options:0
-                                    children:@[ data, importAction, removeAction ]];
+                                    children:@[ data, importAction, shareAction, removeAction ]];
 
     UIAction *about = [self menuAction:@"About NightPad" image:@"info.circle" disabled:NO
                                 handler:^{ [weakSelf openAbout]; }];
@@ -1041,6 +1043,40 @@ static uint64_t ShellResidentBytes(void) {
     } else {
         [self showError:error.empty() ? @"Previous data could not be removed." : [NSString stringWithUTF8String:error.c_str()]];
     }
+}
+
+- (void)shareSaves {
+    NSString *directory = [NSString stringWithUTF8String:_paths.saves.c_str()];
+    NSArray<NSString *> *names = [NSFileManager.defaultManager contentsOfDirectoryAtPath:directory error:nil];
+    NSMutableArray<NSURL *> *urls = [NSMutableArray array];
+    for (NSString *name in names) {
+        if ([name hasPrefix:@"."])
+            continue;
+        NSString *path = [directory stringByAppendingPathComponent:name];
+        BOOL isDirectory = NO;
+        if ([NSFileManager.defaultManager fileExistsAtPath:path isDirectory:&isDirectory] && !isDirectory)
+            [urls addObject:[NSURL fileURLWithPath:path]];
+    }
+    if (urls.count == 0) {
+        [self showInfo:@"No saves yet" detail:@"Saves appear here after the game writes one."];
+        return;
+    }
+    [self beginNativeUI];
+    __weak NightPadShellViewController *weakSelf = self;
+    UIActivityViewController *share = [[UIActivityViewController alloc] initWithActivityItems:urls
+                                                                      applicationActivities:nil];
+    share.completionWithItemsHandler = ^(UIActivityType type, BOOL completed, NSArray *items, NSError *error) {
+        (void)type;
+        (void)completed;
+        (void)items;
+        (void)error;
+        [weakSelf endNativeUI];
+    };
+    UIPopoverPresentationController *popover = share.popoverPresentationController;
+    popover.sourceView = _menuButton;
+    popover.sourceRect = _menuButton.bounds;
+    [self presentViewController:share animated:YES completion:nil];
+    [self logSessionEvent:@"saves shared"];
 }
 
 - (void)openDiagnostics {

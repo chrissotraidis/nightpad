@@ -199,6 +199,9 @@ simulator probe and remains blocked on physical-device access.
   simulator itself.
 - Overlay, editor and help text now scale with Dynamic Type using font metrics
   capped so labels still fit their controls; verified at XXXL on the simulator.
+- Game Data > Share Saves exports the save files through the system sheet
+  (Copy, Save to Files), giving players a backup path now that the engine writes
+  through the durable Saves link. Restoring a save is not built yet.
 
 ## Current uncertainty and blockers
 

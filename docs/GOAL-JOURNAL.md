@@ -738,3 +738,15 @@ are ignored and may contain paths, hashes, captures or device identities.
   capped at 17 pt, and the editor screenshot at XXXL shows the cluster separated
   again.
 
+## 2026-10-28T03:30:00Z — save export
+
+- Goal: G05. Requirement: R11 in progress.
+- Hypothesis: the existing Saves directory can be exported with the system
+  share sheet without inventing a new container format.
+- Observed: Game Data > Share Saves collects the files in Saves and presents
+  the system sheet; the simulator run shows two documents with Copy and Save to
+  Files, and the sheet pauses the engine while open.
+- Evidence: ignored `evidence/ios-shell/share-saves.png`.
+- Verdict: backup/export has a real path now. Restoring a save, a real
+  in-game save, and the app-update case remain.
+

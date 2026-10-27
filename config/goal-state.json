@@ -377,11 +377,12 @@
         "apple/shared/NightPadSaves.h",
         "apple/shared/NightPadSaves.cpp",
         "tests/native/test_saves_link.cpp",
-        "scripts/test_saves_link.sh"
+        "scripts/test_saves_link.sh",
+        "apple/ios/NightPadShellViewController.mm"
       ],
       "decision_id": null,
       "notes": [
-        "The engine writes to a relative saves folder; the host now links it to the durable Saves directory. File-level write-through and protection of existing saves pass; a real in-game save and relaunch remain."
+        "The engine writes through a durable Saves link; the shell exports saves via the system sheet (Copy/Save to Files). Restore, a real in-game save and the app-update case remain."
       ]
     },
     "R12": {
