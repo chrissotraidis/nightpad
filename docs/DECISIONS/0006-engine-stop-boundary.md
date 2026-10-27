@@ -53,3 +53,9 @@ RCARPFile::LoadEAGLMaterials, not shader translation. The likely boundary is
 that both engines' startup constructors run when the combined image loads,
 before the coordinator selects an engine.
 
+The load-time tables name the exact constructors. Action contributes Fmv.cpp,
+LaunchOptions.cpp and sdlGpuBackend.cpp. Driving contributes sdlGpuBackend.cpp,
+DirectorQueue.cpp, Gain.cpp, Decals.cpp, Materials.cpp, PostProcessing.cpp and
+PlayMPC.cpp. The common graphics constructor running from both engine copies is
+the first thing to defer or share.
+

@@ -38,6 +38,7 @@
 | G04 | Driving engine start and cleanup | macOS arm64 | passed | Mission 1 starts, cooperative stop runs GameLoop_CleanUp and Bond_CleanUp |
 | G04 | Driving launch request completes established boundary | macOS arm64 | passed | Callback receives 3,072-byte page; close-before-join completes and joins |
 | G04 | Driving-to-action live restart in one process | macOS arm64 | failed | Combined link faults in MEM_size during RCARPFile::LoadEAGLMaterials |
+| G04 | Load-time initializer ownership | macOS arm64 | unverified | Action: Fmv, LaunchOptions, sdlGpuBackend; driving: sdlGpuBackend plus six render modules |
 | G04 | Action to driving and return transitions | iPhoneOS/macOS | unverified | Not run |
 
 Only rows with explicit execution evidence are marked passed. Source inspection
