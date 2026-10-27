@@ -750,3 +750,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: backup/export has a real path now. Restoring a save, a real
   in-game save, and the app-update case remain.
 
+## 2026-10-28T03:50:00Z — save restore
+
+- Goal: G05. Requirement: R11 in progress.
+- Observed: Import Saves opens the system document picker and copies the chosen
+  files into the durable Saves directory. Same-name files trigger a
+  confirmation before replacement, and cancelling the picker clears its state.
+- Evidence: the picker presents on the simulator; screenshot under ignored
+  `evidence/ios-shell/`. Selection is manual because the remote picker is not
+  scriptable.
+- Verdict: backup and restore now exist in the UI. A real in-game save,
+  end-to-end restore and the app-update case remain.
+

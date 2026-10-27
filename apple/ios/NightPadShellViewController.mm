@@ -61,6 +61,7 @@ using nightpad::Paths;
     BOOL _pendingDiagnostics;
     BOOL _pendingAbout;
     BOOL _pendingFixtureImport;
+    BOOL _pickingSaveFiles;
     BOOL _pendingTouchLayout;
     BOOL _pendingControlsHelp;
     BOOL _pendingGameplayPreview;
@@ -411,11 +412,14 @@ static uint64_t ShellResidentBytes(void) {
                                       handler:^{ [weakSelf discardPrevious]; }];
     UIAction *shareAction = [self menuAction:@"Share Saves…" image:@"square.and.arrow.up" disabled:NO
                                      handler:^{ [weakSelf shareSaves]; }];
+    UIAction *restoreAction = [self menuAction:@"Import Saves…" image:@"square.and.arrow.down"
+                                      disabled:_engineRunning
+                                       handler:^{ [weakSelf chooseSaveFiles]; }];
     UIMenu *dataMenu = [UIMenu menuWithTitle:@"Game Data & Saves"
                                        image:[UIImage systemImageNamed:@"internaldrive"]
                                   identifier:nil
                                      options:0
-                                    children:@[ data, importAction, shareAction, removeAction ]];
+                                    children:@[ data, importAction, shareAction, restoreAction, removeAction ]];
 
     UIAction *about = [self menuAction:@"About NightPad" image:@"info.circle" disabled:NO
                                 handler:^{ [weakSelf openAbout]; }];
@@ -973,9 +977,89 @@ static uint64_t ShellResidentBytes(void) {
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
     (void)controller;
+    if (_pickingSaveFiles) {
+        _pickingSaveFiles = NO;
+        [self restoreSaves:urls];
+        return;
+    }
     NSURL *url = urls.firstObject;
     if (url == nil) return;
     [self importPreparedFolder:url];
+}
+
+- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller {
+    (void)controller;
+    _pickingSaveFiles = NO;
+}
+
+- (void)chooseSaveFiles {
+    if (_engineRunning) {
+        [self showInfo:@"Stop the game first" detail:@"Saves can only be restored while the engine is stopped."];
+        return;
+    }
+    _pickingSaveFiles = YES;
+    UIDocumentPickerViewController *picker = [[UIDocumentPickerViewController alloc]
+        initForOpeningContentTypes:@[ UTTypeData ] asCopy:NO];
+    picker.delegate = self;
+    picker.allowsMultipleSelection = YES;
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+- (void)restoreSaves:(NSArray<NSURL *> *)urls {
+    if (urls.count == 0)
+        return;
+    NSString *directory = [NSString stringWithUTF8String:_paths.saves.c_str()];
+    NSMutableArray<NSString *> *collisions = [NSMutableArray array];
+    for (NSURL *url in urls) {
+        NSString *destination = [directory stringByAppendingPathComponent:url.lastPathComponent];
+        if ([NSFileManager.defaultManager fileExistsAtPath:destination])
+            [collisions addObject:url.lastPathComponent];
+    }
+    if (collisions.count == 0) {
+        [self copySaves:urls];
+        return;
+    }
+    __weak NightPadShellViewController *weakSelf = self;
+    UIAlertController *alert = [UIAlertController
+        alertControllerWithTitle:@"Replace existing saves?"
+                         message:[NSString stringWithFormat:@"%lu save%@ already exist%@. Importing will replace %@.",
+                                                            (unsigned long)collisions.count,
+                                                            collisions.count == 1 ? @"" : @"s",
+                                                            collisions.count == 1 ? @"s" : @"",
+                                                            collisions.count == 1 ? @"it" : @"them"]
+                  preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Replace" style:UIAlertActionStyleDestructive
+                                            handler:^(UIAlertAction *action) {
+        (void)action;
+        [weakSelf copySaves:urls];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)copySaves:(NSArray<NSURL *> *)urls {
+    NSString *directory = [NSString stringWithUTF8String:_paths.saves.c_str()];
+    [NSFileManager.defaultManager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:nil];
+    NSError *error = nil;
+    NSUInteger copied = 0;
+    for (NSURL *url in urls) {
+        const BOOL scoped = [url startAccessingSecurityScopedResource];
+        NSString *destination = [directory stringByAppendingPathComponent:url.lastPathComponent];
+        if ([NSFileManager.defaultManager fileExistsAtPath:destination])
+            [NSFileManager.defaultManager removeItemAtPath:destination error:&error];
+        if ([NSFileManager.defaultManager copyItemAtPath:url.path toPath:destination error:&error])
+            ++copied;
+        if (scoped)
+            [url stopAccessingSecurityScopedResource];
+    }
+    if (copied == 0) {
+        [self showError:error.localizedDescription ?: @"The saves could not be imported."];
+        return;
+    }
+    [self logSessionEvent:@"saves imported"];
+    [self showInfo:@"Saves imported"
+           detail:[NSString stringWithFormat:@"%lu file%@ restored to Saves.", (unsigned long)copied,
+                                             copied == 1 ? @"" : @"s"]];
 }
 
 - (void)importPreparedFolder:(NSURL *)url {
