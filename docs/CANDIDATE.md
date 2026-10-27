@@ -16,7 +16,7 @@ SunPad, extract-xiso and the FFmpeg submodule — and fails on drift before
 printing any identity.
 
 Draft snapshot from 2026-10-28 (illustrative; regenerate). Taken at commit
-`66af620` on a clean tree:
+`be72825` on a clean tree:
 
 ```
 engine_pin=8779cf79ff623b83b53b9acf9c0b0cd6639b75ab
@@ -25,11 +25,12 @@ patch_series_sha256=5331fea387832e7e7f6072a41e5926a864a4eee6e783d9aec90e6cdf43f2
 dependency_lock_sha256=f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e
 data_identity=data-8a0dc0e713f44e48b000
 content_sha256=8a0dc0e713f44e48b00054ca021fb027571e6f7877b8225cc5ae275af2435ebe
-ipa_sha256=ee803d577fb6ab1e70c540ac5f2244c03e5c348eca93ad83e817d20ff2193d10
+ipa_sha256=26eb958e2799b8ac0f6856da255f241b2abad762a6a45c11151001f869da2f95
 ```
 
 `scripts/package_device_app.sh` rebuilt the unsigned 3.6 MB IPA on that tree;
-the hash above is the current one, not the earlier draft's.
+it rebuilds the zip on every run, so the hash changes with the archive's
+timestamps even when the app is identical. `build/candidate.txt` is the record.
 
 The fields a freeze must record:
 

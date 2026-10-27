@@ -21,7 +21,8 @@ fi
 
 out="$repo/build/package"
 mkdir -p "$out"
-log="$out/candidate.txt"
+# package_device_app.sh empties build/package, so the log lives beside it.
+log="$repo/build/candidate.txt"
 step() {
     label=$1
     shift

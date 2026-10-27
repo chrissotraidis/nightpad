@@ -69,12 +69,8 @@ scripts/freeze_candidate.sh --full   # adds the slow engine suite
 
 It refuses a dirty tree, runs the gates in order, rebuilds the unsigned package
 and prints the identity, writing the whole run to
-`build/package/candidate.txt`. Device acceptance is never claimed by it.
-
-`scripts/freeze_candidate.sh` rebuilds the package and records its hash in
-`build/package/candidate.txt`. The last manual build was
-`ee803d577fb6ab1e70c540ac5f2244c03e5c348eca93ad83e817d20ff2193d10` (app code
-at `ba3a56e`). Do not install a stale copy.
+`build/candidate.txt`. Device acceptance is never claimed by it, and every run
+rebuilds the package, so read its hash from that log rather than copying one.
 
 ## Not in this candidate
 
