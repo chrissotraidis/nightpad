@@ -396,3 +396,21 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: device pad verification, then a scheme/preference pass against the
   engine's own menus.
 
+## 2026-10-27T16:55:00Z — versioned app settings
+
+- Goal: G06. Requirement: R12 in progress.
+- Hypothesis: a small NightPad-owned settings file can persist touch
+  visibility, controller auto-hide and rumble without importing a donor's
+  Nintendo keys.
+- Observed: added `AppSettings` with an explicit version, atomic save, known-key
+  parsing and unknown-key tolerance. The Controls menu now toggles auto-hide and
+  rumble, and the touch-visibility choice persists.
+- Evidence: `scripts/test_settings.sh` covers defaults, round trip, donor-key
+  rejection, a wrong or missing version, invalid values and a missing file. In
+  the simulator, turning rumble off wrote `settings.txt` with `rumble=0`; the
+  relaunched menu showed Controller Rumble unselected.
+- Verdict: settings persistence passes. Touch visibility still needs a gameplay
+  run to exercise, and device behavior is unchanged.
+- Next: confirm engine pad consumption on device; keep layout/settings gates in
+  the regression set.
+

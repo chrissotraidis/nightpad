@@ -149,6 +149,10 @@ simulator probe and remains blocked on physical-device access.
   mappings. Vehicle rows come from the game's own drivecfg/POV definitions
   (RT gas, LT brake, B handbrake, A/X/Y secondary actions); the game's eight
   schemes and its inversion/aim/crouch preferences remain engine-owned.
+- App settings are versioned at `Application Support/NightPad/settings.txt`:
+  touch-control visibility, controller auto-hide and rumble. Unknown keys and
+  another donor's Nintendo preferences are ignored, bad versions are refused,
+  and a toggle survives relaunch (verified with rumble on the simulator).
 
 ## Current uncertainty and blockers
 

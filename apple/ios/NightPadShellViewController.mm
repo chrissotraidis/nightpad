@@ -9,6 +9,7 @@
 
 #include "../shared/NightPadGameDataImport.h"
 #include "../shared/NightPadDiagnostics.h"
+#include "../shared/NightPadSettings.h"
 #include "../shared/NightPadTouchLayout.h"
 
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
@@ -59,7 +60,7 @@ using nightpad::Paths;
     BOOL _pendingTouchLayout;
     BOOL _pendingControlsHelp;
     BOOL _pendingGameplayPreview;
-    BOOL _touchControlsAlwaysVisible;
+    nightpad::AppSettings _settings;
     BOOL _gameplayMode;
     NSTimer *_engineTimer;
 
@@ -155,11 +156,15 @@ static uint64_t ShellResidentBytes(void) {
     _paths = Paths::ForContainer(NSHomeDirectory().UTF8String);
     if (!_paths.CreateDirectories(&pathError))
         [self showError:[NSString stringWithUTF8String:pathError.c_str()]];
+    std::string settingsError;
+    if (!_settings.Load(_paths.appSupport / "settings.txt", &settingsError) &&
+        settingsError != "The settings file is missing.")
+        [self showError:[NSString stringWithFormat:@"Saved settings ignored: %s", settingsError.c_str()]];
     [self refreshDataState];
     [self refreshMenu];
     // Deterministic shell screenshots and UI smoke tests.
     if ([NSProcessInfo.processInfo.arguments containsObject:@"--show-touch-controls"])
-        _touchControlsAlwaysVisible = YES;
+        _settings.touchControlsAlwaysVisible = true;
     if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-data"])
         [self openDataPanel];
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-diagnostics"])
@@ -307,10 +312,17 @@ static uint64_t ShellResidentBytes(void) {
     UIAction *help = [self menuAction:@"Control Help…" image:@"questionmark.circle" disabled:NO
                               handler:^{ [weakSelf openControlsHelp]; }];
     UIAction *show = [self menuAction:@"Show Touch Controls"
-                                image:(_touchControlsAlwaysVisible ? @"checkmark.circle.fill" : @"circle")
+                                image:(_settings.touchControlsAlwaysVisible ? @"checkmark.circle.fill" : @"circle")
                              disabled:!_engineRunning
                               handler:^{ [weakSelf toggleTouchControls]; }];
-    show.state = _touchControlsAlwaysVisible ? UIMenuElementStateOn : UIMenuElementStateOff;
+    show.state = _settings.touchControlsAlwaysVisible ? UIMenuElementStateOn : UIMenuElementStateOff;
+    UIAction *autoHide = [self menuAction:@"Auto-Hide Touch With Controller" image:@"gamecontroller"
+                                 disabled:NO
+                                  handler:^{ [weakSelf toggleAutoHideTouch]; }];
+    autoHide.state = _settings.hideTouchControlsWithController ? UIMenuElementStateOn : UIMenuElementStateOff;
+    UIAction *rumble = [self menuAction:@"Controller Rumble" image:@"waveform" disabled:NO
+                                handler:^{ [weakSelf toggleRumble]; }];
+    rumble.state = _settings.rumble ? UIMenuElementStateOn : UIMenuElementStateOff;
     const int controllers = _gameInput.controllers.controllerCount;
     NSString *controllerTitle = controllers == 0 ? @"No controller connected"
                                                  : [NSString stringWithFormat:@"%d controller%@ connected",
@@ -320,7 +332,7 @@ static uint64_t ShellResidentBytes(void) {
                                        image:[UIImage systemImageNamed:@"hand.draw"]
                                   identifier:nil
                                      options:0
-                                    children:@[ layout, help, show, controllerStatus ]];
+                                    children:@[ layout, help, show, autoHide, rumble, controllerStatus ]];
 
     UIAction *data = [self menuAction:@"Game Data & Saves" image:@"internaldrive" disabled:NO
                                handler:^{ [weakSelf openDataPanel]; }];
@@ -565,6 +577,7 @@ static uint64_t ShellResidentBytes(void) {
     [_touchControls setTouchLayout:[self loadTouchLayout]];
     [self.view insertSubview:_touchControls belowSubview:_menuButton];
     _gameInput = [[NightPadGameInput alloc] initWithEngineHost:_engineHost touchView:_touchControls];
+    [_gameInput.controllers setRumbleAllowed:_settings.rumble];
     __weak NightPadShellViewController *weakSelf = self;
     _gameInput.controllerConnectionChanged = ^{
         [weakSelf updateTouchControlsVisibility];
@@ -584,16 +597,38 @@ static uint64_t ShellResidentBytes(void) {
 - (void)updateTouchControlsVisibility {
     if (_touchControls == nil)
         return;
-    const BOOL hide = _gameInput.controllerConnected && !_touchControlsAlwaysVisible;
+    const BOOL hide = _gameInput.controllerConnected && !_settings.touchControlsAlwaysVisible &&
+                      _settings.hideTouchControlsWithController;
     [_touchControls setControlsHidden:hide animated:YES];
 }
 
+- (void)saveSettings {
+    std::string error;
+    if (!_settings.Save(_paths.appSupport / "settings.txt", &error))
+        [self showError:[NSString stringWithFormat:@"Settings were not saved: %s", error.c_str()]];
+}
+
 - (void)toggleTouchControls {
-    _touchControlsAlwaysVisible = !_touchControlsAlwaysVisible;
-    if (_touchControlsAlwaysVisible)
+    _settings.touchControlsAlwaysVisible = !_settings.touchControlsAlwaysVisible;
+    if (_settings.touchControlsAlwaysVisible)
         [_touchControls setControlsHidden:NO animated:YES];
     else
         [self updateTouchControlsVisibility];
+    [self saveSettings];
+    [self refreshMenu];
+}
+
+- (void)toggleAutoHideTouch {
+    _settings.hideTouchControlsWithController = !_settings.hideTouchControlsWithController;
+    [self updateTouchControlsVisibility];
+    [self saveSettings];
+    [self refreshMenu];
+}
+
+- (void)toggleRumble {
+    _settings.rumble = !_settings.rumble;
+    [_gameInput.controllers setRumbleAllowed:_settings.rumble];
+    [self saveSettings];
     [self refreshMenu];
 }
 

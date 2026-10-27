@@ -209,4 +209,8 @@ PadState PadFromController(GCController *controller) {
     [_rumble stopPort:port];
 }
 
+- (void)setRumbleAllowed:(BOOL)allowed {
+    _rumble.allowed = allowed;
+}
+
 @end

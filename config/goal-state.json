@@ -176,7 +176,11 @@
         "patches/0014-host-pad-override.patch",
         "docs/DECISIONS/0009-input-authority.md",
         "apple/ios/NightPadControlsHelpViewController.h",
-        "apple/ios/NightPadControlsHelpViewController.mm"
+        "apple/ios/NightPadControlsHelpViewController.mm",
+        "apple/shared/NightPadSettings.h",
+        "apple/shared/NightPadSettings.cpp",
+        "tests/native/test_settings.cpp",
+        "scripts/test_settings.sh"
       ],
       "blockers": [],
       "next_step": "Verify engine pad consumption and rumble on device, then map the eight original control schemes and Driving/POV layouts."
@@ -342,11 +346,13 @@
         "apple/shared/NightPadTouchInput.h",
         "apple/shared/NightPadTouchInput.cpp",
         "tests/native/test_touch_input.cpp",
-        "apple/ios/NightPadTouchControlsView.mm"
+        "apple/ios/NightPadTouchControlsView.mm",
+        "apple/shared/NightPadSettings.cpp",
+        "scripts/test_settings.sh"
       ],
       "decision_id": null,
       "notes": [
-        "Phone/tablet defaults, clamping, editor persistence, in-game overlay and five-finger simultaneous mapping pass their core/simulator checks. Physical touch ergonomics remain."
+        "Phone/tablet defaults, clamping, editor persistence, in-game overlay, five-finger mapping and versioned app settings pass their core/simulator checks. Physical touch ergonomics remain."
       ]
     },
     "R13": {

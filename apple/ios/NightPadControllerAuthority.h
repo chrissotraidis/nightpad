@@ -21,5 +21,7 @@
 - (nightpad::PadState)padForPort:(int)port present:(BOOL *)present;
 - (void)setRumbleLeft:(uint16_t)left right:(uint16_t)right port:(int)port;
 - (void)stopRumbleForPort:(int)port;
+// Player preference; off stops rumble at once.
+- (void)setRumbleAllowed:(BOOL)allowed;
 
 @end

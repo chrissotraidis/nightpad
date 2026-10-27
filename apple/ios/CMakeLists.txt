@@ -26,6 +26,7 @@ add_library(nightpad_core STATIC
   ../shared/NightPadDiagnostics.cpp
   ../shared/NightPadInput.cpp
   ../shared/NightPadControllerSlots.cpp
+  ../shared/NightPadSettings.cpp
   ../shared/NightPadTouchInput.cpp
   ../shared/NightPadTouchLayout.cpp)
 target_include_directories(nightpad_core PUBLIC ../shared)
