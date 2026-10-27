@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T20:10:00Z",
+  "last_updated_at": "2026-10-28T20:30:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -200,7 +200,8 @@
         "tests/native/test_settings.cpp",
         "scripts/test_settings.sh",
         "docs/DECISIONS/0012-donor-ui-benchmark.md",
-        "docs/CONTROL-SCHEMES.md"
+        "docs/CONTROL-SCHEMES.md",
+        "apple/ios/NightPadShellViewController.mm"
       ],
       "blockers": [],
       "next_step": "Verify engine pad consumption and rumble on device, then map the eight original control schemes and Driving/POV layouts."
@@ -1289,6 +1290,15 @@
         "apple/ios/NightPadTouchLayoutViewController.mm",
         "docs/TEST-MATRIX.md",
         "evidence/ios-shell/touch-opacity.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T20:30:00Z",
+      "goal": "G06",
+      "summary": "Sheets now report interactive dismissal, so swiping a sheet away clears native UI instead of leaving the game flagged paused; unsaved editor changes are dropped like Cancel.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
       ]
     }
   ],

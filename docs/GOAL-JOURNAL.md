@@ -1508,3 +1508,20 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: opacity is reachable and persisted. Physical readability over a
   bright scene remains a device check.
 
+## 2026-10-28T20:30:00Z — a swiped-away sheet no longer strands the pause
+
+- Goal: G06. Requirement: R15 in progress.
+- Observed: the shell marks native UI as open before presenting an editor or
+  reference sheet and only clears it from the sheet's own close handler. A
+  sheet dismissed interactively never calls that handler, so on iPad the game
+  would stay flagged paused with input suspended until another sheet closed.
+- Observed: the shell now becomes the presentation delegate for the sheets it
+  presents. `presentationControllerDidDismiss:` reloads the saved touch layout
+  (so unsaved changes are dropped, as Cancel does) and ends native UI.
+- Evidence: iPad Pro 13-inch simulator, iOS 26.5: dismissing the Touch Layout
+  form sheet with its dismiss affordance logged `native UI resume` in the
+  diagnostics session events and returned to the home screen; before the
+  change no such event was produced.
+- Verdict: an interactively dismissed sheet leaves the shell in its normal
+  state. The paused-engine case still needs a device run with the game live.
+

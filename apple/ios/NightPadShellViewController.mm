@@ -42,7 +42,7 @@ using nightpad::Paths;
 }
 @end
 
-@interface NightPadShellViewController () <UIDocumentPickerDelegate>
+@interface NightPadShellViewController () <UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate>
 - (void)presentAfterMenu:(UIViewController *)controller attempt:(NSInteger)tries;
 @end
 
@@ -343,8 +343,22 @@ static uint64_t ShellResidentBytes(void) {
             presenter = presenter.presentedViewController;
         if (presenter != strongSelf && ![controller isKindOfClass:[UIAlertController class]])
             return;
-        [presenter presentViewController:controller animated:YES completion:nil];
+        [presenter presentViewController:controller animated:YES completion:^{
+            // A sheet swiped away never calls its own close handler; without
+            // this the shell would stay in its paused state.
+            if ([controller isKindOfClass:[UINavigationController class]])
+                controller.presentationController.delegate = strongSelf;
+        }];
     });
+}
+
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController {
+    (void)presentationController;
+    // Interactive dismissal discards unsaved editor changes, as Cancel does.
+    if (_touchControls != nil)
+        [_touchControls setTouchLayout:[self loadTouchLayout]];
+    [self endNativeUI];
+    [self refreshMenu];
 }
 
 - (void)refreshMenu {
