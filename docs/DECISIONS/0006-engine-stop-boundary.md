@@ -48,6 +48,8 @@ the game thread returns.
 
 The combined harness then starts the action engine from the page. It crashes
 during the driving boot after shader 7 with the two isolated engines linked
-together, while each engine passes alone. This leaves an unresolved
-cross-engine static state or symbol collision above the stop boundary.
+together, while each engine passes alone. The fault is MEM_size called from
+RCARPFile::LoadEAGLMaterials, not shader translation. The likely boundary is
+that both engines' startup constructors run when the combined image loads,
+before the coordinator selects an engine.
 

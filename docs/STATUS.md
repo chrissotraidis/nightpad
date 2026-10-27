@@ -53,7 +53,9 @@ simulator probe and remains blocked on physical-device access.
   closing the window before joining lets the cleanup complete and the thread
   join.
 - The combined driving-to-action harness crashes during driving boot after
-  shader 7; both engines still pass their separate lifecycle harnesses.
+  shader 7 with MEM_size inside RCARPFile::LoadEAGLMaterials; both engines still
+  pass their separate lifecycle harnesses. Both engines' load-time startup
+  side effects are the leading hypothesis.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
   mask `0x7`, with only the `30_fps` movie bundle present.
 - The driving/POV control definitions were safely decoded from `misc.viv`:
