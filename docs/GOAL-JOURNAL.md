@@ -350,3 +350,32 @@ are ignored and may contain paths, hashes, captures or device identities.
   simultaneous gameplay touches, controller authority and physical runs remain.
 - Next: feed the mixer into the engine and render the overlay during gameplay.
 
+## 2026-10-27T16:05:00Z — overlay, controller authority and native menu
+
+- Goal: G06. Requirements: R12, R14 in progress.
+- Hypothesis: SunPad's structure — one pass-through overlay owning per-control
+  views, one GameController authority, a native three-dot menu — transfers to
+  Xbox semantics once the pad shape and mappings are NightPad's.
+- Observed: added `NightPadTouchInput`, which turns live finger samples into an
+  Xbox pad (stick vectors, eight-way D-pad, analog trigger depth, digital
+  buttons, five simultaneous fingers). The shell now renders the authored
+  layout over the game with press feedback, accessibility labels and
+  auto-hide when a physical controller is present.
+- Observed: added `NightPadControllerAuthority` over GameController with
+  session-local player slots, LB/RB on White/Black, analog triggers, Start/Back
+  and per-port Core Haptics rumble. The engine gained a host-pad override so SDL
+  gamepads are bypassed while the app is the authority; rumble returns to the
+  owning port.
+- Observed: the shell's three-dot button is now a native UIMenu with Game,
+  Controls, Game Data & Saves and Info submenus, following SunPad's menu shape
+  instead of a custom card.
+- Evidence: `scripts/test_touch_input.sh` and `scripts/test_controller_slots.sh`
+  pass; both shell lanes build; the device link exports the host-pad and rumble
+  bridge. Simulator evidence is under `evidence/ios-shell/touch-overlay.png` and
+  `menu-controls.png`.
+- Verdict: overlay, mapping, authority and menu pass their core and visual
+  checks. Device connect/reconnect, rumble and multi-finger ergonomics remain
+  unverified, and the game's own scheme/vehicle mappings are untouched.
+- Next: verify the engine's pad consumption on device, then map Driving/POV
+  definitions and the eight original schemes.
+

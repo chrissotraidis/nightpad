@@ -86,6 +86,32 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
 #endif
 }
 
+- (void)setHostPadsEnabled:(BOOL)enabled {
+#if NIGHTPAD_HAS_ENGINE
+    NightPadActionEngineSetHostPadsEnabled(enabled ? 1 : 0);
+#else
+    (void)enabled;
+#endif
+}
+
+- (void)setPad:(int)port state:(const nightpad::PadState &)state {
+#if NIGHTPAD_HAS_ENGINE
+    NightPadActionEngineSetHostPad(port, state.buttons, state.leftX, state.leftY, state.rightX, state.rightY,
+                                   state.leftTrigger, state.rightTrigger, state.connected ? 1 : 0);
+#else
+    (void)port;
+    (void)state;
+#endif
+}
+
+- (void)setRumbleHandler:(void (*)(int, unsigned, unsigned))handler {
+#if NIGHTPAD_HAS_ENGINE
+    NightPadActionEngineSetRumbleHandler(handler);
+#else
+    (void)handler;
+#endif
+}
+
 - (void)requestStop {
 #if NIGHTPAD_HAS_ENGINE
     NightPadActionEngineRequestStop();

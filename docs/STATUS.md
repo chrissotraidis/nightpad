@@ -135,6 +135,16 @@ simulator probe and remains blocked on physical-device access.
   Reset plus Save restored the defaults. The default face-button diamond was
   re-spaced after the simulator showed it collapsing under the size floor; a
   test now asserts overlap-free geometry at three landscape sizes.
+- G06 now has the in-game path: touch samples become an Xbox pad (sticks,
+  eight-way D-pad, analog LT/RT, face/shoulder/system buttons, five fingers at
+  once), and a pass-through overlay renders the authored layout with press
+  feedback, accessibility labels and controller auto-hide.
+- Apple's GameController framework is the single physical authority. Player slots
+  are session stable, LB/RB map to White/Black, triggers stay analog, and rumble
+  returns to the port that produced it. A new engine patch lets the app publish
+  each port and bypass SDL's own gamepads.
+- The three-dot button is now a native UIMenu with Game, Controls, Game Data &
+  Saves and Info submenus, following SunPad's menu shape.
 
 ## Current uncertainty and blockers
 

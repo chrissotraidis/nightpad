@@ -22,6 +22,13 @@ void NightPadDrivingEngineSetLaunchRequestCallback(NightPadLaunchRequestCallback
 void NightPadActionEngineRequestStop(void);
 void NightPadActionEngineSetPaused(int paused);
 void NightPadActionEngineSetInputSuspended(int suspended);
+// The app owns the pads: publish each port's state (connected = 0 removes it) before the engine reads input.
+// Rumble requests are handed to the shell so they reach the controller the player actually holds.
+typedef void (*NightPadRumbleHandler)(int port, unsigned leftMotor, unsigned rightMotor);
+void NightPadActionEngineSetHostPadsEnabled(int enabled);
+void NightPadActionEngineSetHostPad(int port, unsigned buttons, int leftX, int leftY, int rightX, int rightY,
+                                    unsigned leftTrigger, unsigned rightTrigger, int connected);
+void NightPadActionEngineSetRumbleHandler(NightPadRumbleHandler handler);
 unsigned long NightPadActionEngineFrameCount(void);
 void NightPadDrivingEngineRequestStop(void);
 int NightPadActionEngineStart(int argc, char **argv);

@@ -25,6 +25,8 @@ add_library(nightpad_core STATIC
   ../shared/NightPadGameDataImport.cpp
   ../shared/NightPadDiagnostics.cpp
   ../shared/NightPadInput.cpp
+  ../shared/NightPadControllerSlots.cpp
+  ../shared/NightPadTouchInput.cpp
   ../shared/NightPadTouchLayout.cpp)
 target_include_directories(nightpad_core PUBLIC ../shared)
 target_compile_features(nightpad_core PUBLIC cxx_std_20)
@@ -36,12 +38,17 @@ add_executable(NightPadShell MACOSX_BUNDLE
   NightPadDiagnosticsViewController.mm
   NightPadAboutViewController.mm
   NightPadTouchLayoutViewController.mm
+  NightPadTouchControlsView.mm
+  NightPadControllerAuthority.mm
+  NightPadControllerRumble.mm
+  NightPadGameInput.mm
   NightPadEngineHost.mm)
 target_compile_features(NightPadShell PRIVATE cxx_std_20)
 target_compile_options(NightPadShell PRIVATE -fobjc-arc)
 target_compile_definitions(NightPadShell PRIVATE $<$<CONFIG:Debug>:DEBUG=1>)
 target_link_libraries(NightPadShell PRIVATE nightpad_core
-  "-framework UIKit" "-framework Foundation" "-framework CoreGraphics" "-framework UniformTypeIdentifiers")
+  "-framework UIKit" "-framework Foundation" "-framework CoreGraphics" "-framework UniformTypeIdentifiers"
+  "-framework GameController" "-framework CoreHaptics")
 set(NIGHTPAD_ENGINE_ARCHIVE "" CACHE FILEPATH "Combined engine archive from build_combined_engine_link.sh")
 if(NIGHTPAD_ENGINE_ARCHIVE)
   target_compile_definitions(NightPadShell PRIVATE NIGHTPAD_HAS_ENGINE=1)

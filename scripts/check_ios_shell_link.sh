@@ -19,7 +19,8 @@ for symbol in _NightPadActionEngineStart _NightPadActionEngineRequestStop \
               _NightPadActionEnginePollWindow \
               _NightPadActionEngineSetPaused _NightPadActionEngineSetInputSuspended \
               _NightPadActionEngineJoin _NightPadActionEngineCloseWindow \
-              _NightPadDrivingEngineStart; do
+              _NightPadActionEngineSetHostPadsEnabled _NightPadActionEngineSetHostPad \
+              _NightPadActionEngineSetRumbleHandler _NightPadDrivingEngineStart; do
     printf '%s\n' "$symbols" | grep -q " T $symbol$" || {
         echo "NightPadShell is missing $symbol" >&2
         exit 1

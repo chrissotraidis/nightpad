@@ -3,6 +3,8 @@
 #import "NightPadDiagnosticsViewController.h"
 #import "NightPadAboutViewController.h"
 #import "NightPadTouchLayoutViewController.h"
+#import "NightPadGameInput.h"
+#import "NightPadTouchControlsView.h"
 
 #include "../shared/NightPadGameDataImport.h"
 #include "../shared/NightPadDiagnostics.h"
@@ -54,20 +56,22 @@ using nightpad::Paths;
     BOOL _pendingAbout;
     BOOL _pendingFixtureImport;
     BOOL _pendingTouchLayout;
+    BOOL _pendingGameplayPreview;
+    BOOL _touchControlsAlwaysVisible;
     BOOL _gameplayMode;
     NSTimer *_engineTimer;
 
     UILabel *_title;
     UILabel *_status;
     NightPadMenuButton *_menuButton;
-    UIView *_menuPanel;
     UIView *_dataPanel;
     UIView *_pausePanel;
     UIProgressView *_progress;
     UILabel *_progressLabel;
     UIButton *_importButton;
     UIButton *_discardButton;
-    UIButton *_startButton;
+    NightPadTouchControlsView *_touchControls;
+    NightPadGameInput *_gameInput;
     NSString *_lastError;
 }
 
@@ -125,11 +129,10 @@ static uint64_t ShellResidentBytes(void) {
     _menuButton.layer.borderWidth = 1;
     _menuButton.accessibilityLabel = @"Menu";
     _menuButton.accessibilityIdentifier = @"nightpad.menu";
+    _menuButton.showsMenuAsPrimaryAction = YES;
     _menuButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [_menuButton addTarget:self action:@selector(toggleMenu) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_menuButton];
 
-    [self buildMenuPanel];
     [self buildDataPanel];
     [self buildPausePanel];
 
@@ -151,10 +154,11 @@ static uint64_t ShellResidentBytes(void) {
     if (!_paths.CreateDirectories(&pathError))
         [self showError:[NSString stringWithUTF8String:pathError.c_str()]];
     [self refreshDataState];
+    [self refreshMenu];
     // Deterministic shell screenshots and UI smoke tests.
-    if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-menu"])
-        [self toggleMenu];
-    else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-data"])
+    if ([NSProcessInfo.processInfo.arguments containsObject:@"--show-touch-controls"])
+        _touchControlsAlwaysVisible = YES;
+    if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-data"])
         [self openDataPanel];
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-diagnostics"])
         _pendingDiagnostics = YES;
@@ -164,6 +168,8 @@ static uint64_t ShellResidentBytes(void) {
         _pendingFixtureImport = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-touch-layout"])
         _pendingTouchLayout = YES;
+    else if ([NSProcessInfo.processInfo.arguments containsObject:@"--preview-gameplay"])
+        _pendingGameplayPreview = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -193,6 +199,14 @@ static uint64_t ShellResidentBytes(void) {
         _pendingTouchLayout = NO;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             [self openTouchLayout];
+        });
+    }
+    if (_pendingGameplayPreview) {
+        _pendingGameplayPreview = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            self->_gameplayMode = YES;
+            [self updateGameplaySurface];
+            [self installTouchControls];
         });
     }
 }
@@ -239,30 +253,87 @@ static uint64_t ShellResidentBytes(void) {
     return card;
 }
 
-- (void)buildMenuPanel {
-    _menuPanel = [self cardWithFrame:CGRectZero];
-    [self.view addSubview:_menuPanel];
-    UIStackView *stack = [[UIStackView alloc] init];
-    stack.axis = UILayoutConstraintAxisVertical;
-    stack.translatesAutoresizingMaskIntoConstraints = NO;
-    [_menuPanel addSubview:stack];
-    _startButton = [self panelButton:@"Start Game" action:@selector(startGame)];
-    _startButton.enabled = NO;
-    [stack addArrangedSubview:_startButton];
-    [stack addArrangedSubview:[self panelButton:@"Game Data & Saves" action:@selector(openDataPanel)]];
-    [stack addArrangedSubview:[self panelButton:@"Touch Layout" action:@selector(openTouchLayout)]];
-    [stack addArrangedSubview:[self panelButton:@"App Pause" action:@selector(showPausePanel)]];
-    [stack addArrangedSubview:[self panelButton:@"About NightPad" action:@selector(openAbout)]];
-    [stack addArrangedSubview:[self panelButton:@"Diagnostics" action:@selector(openDiagnostics)]];
-    [NSLayoutConstraint activateConstraints:@[
-        [stack.leadingAnchor constraintEqualToAnchor:_menuPanel.leadingAnchor constant:8],
-        [stack.trailingAnchor constraintEqualToAnchor:_menuPanel.trailingAnchor constant:-8],
-        [stack.topAnchor constraintEqualToAnchor:_menuPanel.topAnchor constant:8],
-        [stack.bottomAnchor constraintEqualToAnchor:_menuPanel.bottomAnchor constant:-8],
-        [_menuPanel.trailingAnchor constraintEqualToAnchor:_menuButton.trailingAnchor],
-        [_menuPanel.topAnchor constraintEqualToAnchor:_menuButton.bottomAnchor constant:8],
-        [_menuPanel.widthAnchor constraintGreaterThanOrEqualToConstant:250],
-    ]];
+- (void)refreshMenu {
+    if (_menuButton == nil)
+        return;
+    _menuButton.menu = [self buildMenu];
+}
+
+- (UIAction *)menuAction:(NSString *)title
+                   image:(NSString *)imageName
+                disabled:(BOOL)disabled
+                 handler:(void (^)(void))handler {
+    __weak NightPadShellViewController *weakSelf = self;
+    UIAction *action = [UIAction actionWithTitle:title
+                                           image:imageName.length ? [UIImage systemImageNamed:imageName] : nil
+                                      identifier:nil
+                                         handler:^(__kindof UIAction *selected) {
+        (void)selected;
+        if (weakSelf != nil && handler != nil)
+            handler();
+    }];
+    if (disabled)
+        action.attributes = UIMenuElementAttributesDisabled;
+    return action;
+}
+
+- (UIMenu *)buildMenu {
+    __weak NightPadShellViewController *weakSelf = self;
+    const BOOL canStart = _engineRunning || ([NightPadEngineHost isLinked] && _state == DataState::Ready);
+    UIAction *start = [self menuAction:(_engineRunning ? @"Stop Game" : @"Start Game")
+                                 image:(_engineRunning ? @"stop.fill" : @"play.fill")
+                              disabled:!canStart
+                               handler:^{ [weakSelf startGame]; }];
+    UIAction *pause = [self menuAction:@"App Pause" image:@"pause.fill" disabled:!_engineRunning
+                               handler:^{ [weakSelf showPausePanel]; }];
+    UIMenu *game = [UIMenu menuWithTitle:@"Game"
+                                   image:[UIImage systemImageNamed:@"gamecontroller"]
+                               identifier:nil
+                                  options:0
+                                 children:@[ start, pause ]];
+
+    UIAction *layout = [self menuAction:@"Touch Layout…" image:@"hand.draw" disabled:NO
+                                handler:^{ [weakSelf openTouchLayout]; }];
+    UIAction *show = [self menuAction:@"Show Touch Controls"
+                                image:(_touchControlsAlwaysVisible ? @"checkmark.circle.fill" : @"circle")
+                             disabled:!_engineRunning
+                              handler:^{ [weakSelf toggleTouchControls]; }];
+    show.state = _touchControlsAlwaysVisible ? UIMenuElementStateOn : UIMenuElementStateOff;
+    const int controllers = _gameInput.controllers.controllerCount;
+    NSString *controllerTitle = controllers == 0 ? @"No controller connected"
+                                                 : [NSString stringWithFormat:@"%d controller%@ connected",
+                                                          controllers, controllers == 1 ? @"" : @"s"];
+    UIAction *controllerStatus = [self menuAction:controllerTitle image:@"gamecontroller" disabled:YES handler:nil];
+    UIMenu *controls = [UIMenu menuWithTitle:@"Controls"
+                                       image:[UIImage systemImageNamed:@"hand.draw"]
+                                  identifier:nil
+                                     options:0
+                                    children:@[ layout, show, controllerStatus ]];
+
+    UIAction *data = [self menuAction:@"Game Data & Saves" image:@"internaldrive" disabled:NO
+                               handler:^{ [weakSelf openDataPanel]; }];
+    UIAction *importAction = [self menuAction:@"Import Prepared Game Data…" image:@"folder" disabled:_engineRunning
+                                      handler:^{ [weakSelf chooseImportFolder]; }];
+    UIAction *removeAction = [self menuAction:@"Remove Previous Game Data" image:@"trash"
+                                     disabled:!(_importer && _importer->previousDataRetained())
+                                      handler:^{ [weakSelf discardPrevious]; }];
+    UIMenu *dataMenu = [UIMenu menuWithTitle:@"Game Data & Saves"
+                                       image:[UIImage systemImageNamed:@"internaldrive"]
+                                  identifier:nil
+                                     options:0
+                                    children:@[ data, importAction, removeAction ]];
+
+    UIAction *about = [self menuAction:@"About NightPad" image:@"info.circle" disabled:NO
+                                handler:^{ [weakSelf openAbout]; }];
+    UIAction *diagnostics = [self menuAction:@"Diagnostics" image:@"doc.text.magnifyingglass" disabled:NO
+                                     handler:^{ [weakSelf openDiagnostics]; }];
+    UIMenu *info = [UIMenu menuWithTitle:@"Info"
+                                   image:[UIImage systemImageNamed:@"info.circle"]
+                              identifier:nil
+                                 options:0
+                                children:@[ about, diagnostics ]];
+
+    return [UIMenu menuWithTitle:@"NightPad" children:@[ game, controls, dataMenu, info ]];
 }
 
 - (void)buildDataPanel {
@@ -380,20 +451,7 @@ static uint64_t ShellResidentBytes(void) {
     ]];
 }
 
-- (void)toggleMenu {
-    BOOL show = _menuPanel.hidden;
-    [self closePanels];
-    _menuPanel.hidden = !show;
-    if (show) {
-        [self beginNativeUI];
-        [self.view bringSubviewToFront:_menuPanel];
-    } else {
-        [self endNativeUI];
-    }
-}
-
 - (void)closePanels {
-    _menuPanel.hidden = YES;
     _dataPanel.hidden = YES;
     _pausePanel.hidden = YES;
 }
@@ -445,22 +503,75 @@ static uint64_t ShellResidentBytes(void) {
     return [NSURL fileURLWithPath:[controls stringByAppendingPathComponent:name]];
 }
 
+- (nightpad::TouchLayout)loadTouchLayout {
+    nightpad::TouchLayout layout = nightpad::TouchLayout::Defaults([self touchDeviceClass]);
+    std::string loadError;
+    if (!layout.Load([self touchLayoutURL].fileSystemRepresentation, &loadError) &&
+        loadError != "The layout file is missing.")
+        [self showError:[NSString stringWithFormat:@"Saved touch layout ignored: %s", loadError.c_str()]];
+    return layout;
+}
+
 - (void)openTouchLayout {
     [self beginNativeUI];
     [self closePanels];
-    const nightpad::TouchDeviceClass device = [self touchDeviceClass];
-    nightpad::TouchLayout layout = nightpad::TouchLayout::Defaults(device);
+    nightpad::TouchLayout layout = [self loadTouchLayout];
     NSURL *url = [self touchLayoutURL];
-    std::string loadError;
-    if (!layout.Load(url.fileSystemRepresentation, &loadError) && loadError != "The layout file is missing.")
-        [self showError:[NSString stringWithFormat:@"Saved touch layout ignored: %s", loadError.c_str()]];
     NightPadTouchLayoutViewController *editor = [[NightPadTouchLayoutViewController alloc]
         initWithLayout:layout savePath:url];
     __weak NightPadShellViewController *weakSelf = self;
-    editor.onClose = ^{ [weakSelf endNativeUI]; };
+    editor.onClose = ^{
+        NightPadShellViewController *strongSelf = weakSelf;
+        if (strongSelf == nil)
+            return;
+        if (strongSelf->_touchControls != nil)
+            [strongSelf->_touchControls setTouchLayout:[strongSelf loadTouchLayout]];
+        [strongSelf endNativeUI];
+        [strongSelf refreshMenu];
+    };
     UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:editor];
     navigation.modalPresentationStyle = UIModalPresentationPageSheet;
     [self presentViewController:navigation animated:YES completion:nil];
+}
+
+- (void)installTouchControls {
+    if (_touchControls != nil)
+        return;
+    _touchControls = [[NightPadTouchControlsView alloc] initWithFrame:self.view.bounds];
+    _touchControls.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [_touchControls setTouchLayout:[self loadTouchLayout]];
+    [self.view insertSubview:_touchControls belowSubview:_menuButton];
+    _gameInput = [[NightPadGameInput alloc] initWithEngineHost:_engineHost touchView:_touchControls];
+    __weak NightPadShellViewController *weakSelf = self;
+    _gameInput.controllerConnectionChanged = ^{
+        [weakSelf updateTouchControlsVisibility];
+        [weakSelf refreshMenu];
+    };
+    [_gameInput start];
+    [self updateTouchControlsVisibility];
+}
+
+- (void)removeTouchControls {
+    [_gameInput stop];
+    _gameInput = nil;
+    [_touchControls removeFromSuperview];
+    _touchControls = nil;
+}
+
+- (void)updateTouchControlsVisibility {
+    if (_touchControls == nil)
+        return;
+    const BOOL hide = _gameInput.controllerConnected && !_touchControlsAlwaysVisible;
+    [_touchControls setControlsHidden:hide animated:YES];
+}
+
+- (void)toggleTouchControls {
+    _touchControlsAlwaysVisible = !_touchControlsAlwaysVisible;
+    if (_touchControlsAlwaysVisible)
+        [_touchControls setControlsHidden:NO animated:YES];
+    else
+        [self updateTouchControlsVisibility];
+    [self refreshMenu];
 }
 
 - (void)beginNativeUI {
@@ -475,6 +586,7 @@ static uint64_t ShellResidentBytes(void) {
         [_engineHost setInputSuspended:YES];
         _uiInputSuspended = YES;
     }
+    [_gameInput setSuspended:YES];
 }
 
 - (void)endNativeUI {
@@ -487,6 +599,7 @@ static uint64_t ShellResidentBytes(void) {
         _enginePaused = NO;
         _uiPausedEngine = NO;
     }
+    [_gameInput setSuspended:NO];
 }
 
 - (void)startGame {
@@ -515,13 +628,13 @@ static uint64_t ShellResidentBytes(void) {
     _engineRunning = YES;
     _enginePaused = NO;
     _gameplayMode = YES;
+    [self installTouchControls];
     [self updateGameplaySurface];
+    [self refreshMenu];
     _engineTimer = [NSTimer timerWithTimeInterval:1.0 / 60.0 target:self selector:@selector(pollEngine) userInfo:nil repeats:YES];
     [NSRunLoop.mainRunLoop addTimer:_engineTimer forMode:NSRunLoopCommonModes];
-    UIButtonConfiguration *runningConfiguration = _startButton.configuration;
-    runningConfiguration.title = @"Stop Game";
-    _startButton.configuration = runningConfiguration;
     _importButton.enabled = NO;
+    [self refreshMenu];
 }
 
 - (void)pollEngine {
@@ -534,6 +647,7 @@ static uint64_t ShellResidentBytes(void) {
     if (!_engineRunning) return;
     _engineRunning = NO;
     [self endNativeUI];
+    [self removeTouchControls];
     [_engineTimer invalidate];
     _engineTimer = nil;
     [_engineHost requestStop];
@@ -571,11 +685,8 @@ static uint64_t ShellResidentBytes(void) {
     std::string identity, error;
     _state = _importer->CurrentState(&identity, &error);
     _identity = identity.empty() ? nil : [NSString stringWithUTF8String:identity.c_str()];
-    _startButton.enabled = (_state == DataState::Ready && [NightPadEngineHost isLinked]) || _engineRunning;
-    UIButtonConfiguration *startConfiguration = _startButton.configuration;
-    startConfiguration.title = _engineRunning ? @"Stop Game" : @"Start Game";
-    _startButton.configuration = startConfiguration;
     _importButton.enabled = !_engineRunning && !_importing;
+    [self refreshMenu];
     if (_state == DataState::Ready)
         _status.text = [NSString stringWithFormat:@"Game data ready\n%@", _identity];
     else if (_state == DataState::RecoverableError)

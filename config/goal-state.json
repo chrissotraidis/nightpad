@@ -156,10 +156,28 @@
         "tests/native/test_touch_layout.cpp",
         "scripts/test_touch_layout.sh",
         "apple/ios/NightPadTouchLayoutViewController.h",
-        "apple/ios/NightPadTouchLayoutViewController.mm"
+        "apple/ios/NightPadTouchLayoutViewController.mm",
+        "apple/shared/NightPadTouchInput.h",
+        "apple/shared/NightPadTouchInput.cpp",
+        "tests/native/test_touch_input.cpp",
+        "scripts/test_touch_input.sh",
+        "apple/shared/NightPadControllerSlots.h",
+        "apple/shared/NightPadControllerSlots.cpp",
+        "tests/native/test_controller_slots.cpp",
+        "scripts/test_controller_slots.sh",
+        "apple/ios/NightPadTouchControlsView.h",
+        "apple/ios/NightPadTouchControlsView.mm",
+        "apple/ios/NightPadControllerAuthority.h",
+        "apple/ios/NightPadControllerAuthority.mm",
+        "apple/ios/NightPadControllerRumble.h",
+        "apple/ios/NightPadControllerRumble.mm",
+        "apple/ios/NightPadGameInput.h",
+        "apple/ios/NightPadGameInput.mm",
+        "patches/0014-host-pad-override.patch",
+        "docs/DECISIONS/0009-input-authority.md"
       ],
       "blockers": [],
-      "next_step": "Render the touch controls over gameplay, feed touch and controller state into the engine, and verify simultaneous input on device."
+      "next_step": "Verify engine pad consumption and rumble on device, then map the eight original control schemes and Driving/POV layouts."
     },
     "G07": {
       "status": "pending",
@@ -318,11 +336,15 @@
         "apple/shared/NightPadTouchLayout.cpp",
         "scripts/test_touch_layout.sh",
         "apple/ios/NightPadTouchLayoutViewController.h",
-        "apple/ios/NightPadTouchLayoutViewController.mm"
+        "apple/ios/NightPadTouchLayoutViewController.mm",
+        "apple/shared/NightPadTouchInput.h",
+        "apple/shared/NightPadTouchInput.cpp",
+        "tests/native/test_touch_input.cpp",
+        "apple/ios/NightPadTouchControlsView.mm"
       ],
       "decision_id": null,
       "notes": [
-        "Phone/tablet defaults, safe-area/44-point clamp, overlap-free geometry and versioned persistence pass. UIKit editor saves, resets and reloads on the iPhone 17 simulator; in-game overlay and physical ergonomics remain."
+        "Phone/tablet defaults, clamping, editor persistence, in-game overlay and five-finger simultaneous mapping pass their core/simulator checks. Physical touch ergonomics remain."
       ]
     },
     "R13": {
@@ -338,11 +360,16 @@
         "apple/shared/NightPadInput.cpp",
         "tests/native/test_input.cpp",
         "scripts/test_input.sh",
-        "apple/ios/CMakeLists.txt"
+        "apple/ios/CMakeLists.txt",
+        "apple/ios/NightPadControllerAuthority.mm",
+        "apple/ios/NightPadControllerRumble.mm",
+        "apple/shared/NightPadControllerSlots.cpp",
+        "scripts/test_controller_slots.sh",
+        "patches/0014-host-pad-override.patch"
       ],
       "decision_id": null,
       "notes": [
-        "Four-port mixer passes edge/dead-zone/trigger/reacquire/isolation tests; SDL or GameController ownership wiring and physical runs remain."
+        "Four-port mixer, touch mapping, GameController authority, slot reconciliation, per-port rumble and the engine host-pad override are implemented and linked. Physical connect/reconnect and rumble feel remain."
       ]
     },
     "R15": {
@@ -934,5 +961,5 @@
       "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "G06: render the touch overlay for gameplay and feed touch/controller pad state into the engine."
+  "next_step": "G06: verify engine pad consumption on device, then map original schemes and Driving/POV layouts."
 }

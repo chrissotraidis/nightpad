@@ -13,6 +13,10 @@
 #include "../../vendor/nightfire/src/driving/platform/HostWindow.h"
 #include "../../vendor/nightfire/src/driving/platform/HostInput.h"
 
+#include "NightPadEngineBridge.h"
+
+#include <string.h>
+
 static HostHandle g_gameThread = nullptr;
 
 extern "C" int NightPadActionEngineStart(int argc, char **argv) {
@@ -72,5 +76,37 @@ extern "C" void NightPadActionEngineSetPaused(int paused) {
 
 extern "C" void NightPadActionEngineSetInputSuspended(int suspended) {
     HostInput_SetSuspended(suspended != 0);
+}
+
+static NightPadRumbleHandler g_rumbleHandler = nullptr;
+
+static void ForwardRumble(int port, uint16_t leftMotor, uint16_t rightMotor) {
+    if (g_rumbleHandler != nullptr)
+        g_rumbleHandler(port, leftMotor, rightMotor);
+}
+
+extern "C" void NightPadActionEngineSetHostPadsEnabled(int enabled) {
+    HostInput_SetHostPadsEnabled(enabled != 0);
+    HostInput_SetRumbleHandler(enabled != 0 ? ForwardRumble : nullptr);
+}
+
+extern "C" void NightPadActionEngineSetHostPad(int port, unsigned buttons, int leftX, int leftY, int rightX,
+                                                int rightY, unsigned leftTrigger, unsigned rightTrigger,
+                                                int connected) {
+    HostPadState state;
+    memset(&state, 0, sizeof(state));
+    state.buttons = static_cast<uint16_t>(buttons);
+    state.thumbLX = static_cast<int16_t>(leftX);
+    state.thumbLY = static_cast<int16_t>(leftY);
+    state.thumbRX = static_cast<int16_t>(rightX);
+    state.thumbRY = static_cast<int16_t>(rightY);
+    state.leftTrigger = static_cast<uint8_t>(leftTrigger);
+    state.rightTrigger = static_cast<uint8_t>(rightTrigger);
+    HostInput_SetHostPad(port, connected != 0 ? &state : nullptr);
+}
+
+extern "C" void NightPadActionEngineSetRumbleHandler(NightPadRumbleHandler handler) {
+    g_rumbleHandler = handler;
+    HostInput_SetRumbleHandler(handler != nullptr ? ForwardRumble : nullptr);
 }
 

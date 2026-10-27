@@ -51,6 +51,10 @@
 | G06 | Versioned touch-layout model | macOS arm64 / iPhoneOS build | passed for core | `scripts/test_touch_layout.sh`: phone/tablet defaults, safe-area/44-point clamp, overlap-free defaults, round trip, reset, unknown rows and bad versions |
 | G06 | Touch-layout editor save/reset/relaunch | iPhone 17 simulator / iOS 26.5 | passed | `--open-touch-layout`; Save wrote `Controls/layout-phone.txt`, relaunch rendered the saved geometry, Reset restored defaults and Save persisted them; evidence `evidence/ios-shell/touch-layout-editor.png` |
 | G06 | In-game touch overlay and controller UI | iPhone/iPad | unverified | Editor only; no gameplay overlay, controller authority or physical run yet |
+| G06 | Touch samples to Xbox pad and simultaneous input | macOS arm64 / iPhoneOS build | passed for core | `scripts/test_touch_input.sh`: stick vectors, eight-way D-pad, analog trigger depth, shoulder/system bits, five simultaneous touches and newest-finger ownership |
+| G06 | Controller slot reconciliation | macOS arm64 / iPhoneOS build | passed for core | `scripts/test_controller_slots.sh`: stable slots, free-slot reuse, sole-controller reclaim, duplicates and four-player cap |
+| G06 | Native three-dot menu and in-game overlay | iPhone 17 simulator / iOS 26.5 | passed visual smoke | Native UIMenu with Game/Controls/Data/Info submenus and the Xbox overlay render; evidence `evidence/ios-shell/menu-controls.png`, `touch-overlay.png` |
+| G06 | App-owned pad bridge into the engine | iPhoneOS 26.5 | passed for link | Host pad override and rumble callbacks exported; device input behavior still unverified |
 | G05 | Native shell home, menu and data panel | iPhone simulator / iOS 26.5 | passed visual smoke | `NightPadShell` builds; screenshots show persistent menu, data status/import panel, pause/about/diagnostics entries |
 | G05 | Shell device compilation | iPhoneOS 26.5 | passed | `scripts/build_ios_shell.sh device` builds arm64 app without signing |
 | G05 | Combined engine archive links into shell | iPhoneOS 26.5 | passed for link | `scripts/check_ios_shell_link.sh`: arm64, action bridge plus driving start, no loose SDL/FFmpeg/SPIRV dylibs |
