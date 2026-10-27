@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T14:05:00Z",
+  "last_updated_at": "2026-10-28T14:20:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -1044,6 +1044,18 @@
         "docs/CAMPAIGN-INVENTORY.md",
         "vendor/nightfire/src/action/ui/ui_nightfire.cpp",
         "vendor/nightfire/src/action/ui/ui_codenames.cpp"
+      ]
+    },
+    {
+      "at": "2026-10-28T14:20:00Z",
+      "goal": "G06",
+      "summary": "The touch editor can hide or show a control from a long-press menu; the flag round-trips and the live overlay omits hidden controls.",
+      "evidence": [
+        "apple/ios/NightPadTouchLayoutViewController.mm",
+        "tests/native/test_touch_layout.cpp",
+        "scripts/test_touch_layout.sh",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/touch-layout-hidden.png"
       ]
     }
   ],

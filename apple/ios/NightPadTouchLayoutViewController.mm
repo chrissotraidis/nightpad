@@ -9,6 +9,9 @@
 @implementation NightPadLayoutControlView
 @end
 
+@interface NightPadTouchLayoutViewController () <UIContextMenuInteractionDelegate>
+@end
+
 @implementation NightPadTouchLayoutViewController {
     nightpad::TouchLayout _layout;
     NSURL *_savePath;
@@ -36,7 +39,7 @@
     self.navigationItem.rightBarButtonItem.accessibilityIdentifier = @"nightpad.touch.save";
 
     UILabel *hint = [UILabel new];
-    hint.text = @"Drag to move · pinch to resize · 44 pt minimum";
+    hint.text = @"Drag to move · pinch to resize · long press to hide · 44 pt minimum";
     hint.textColor = [UIColor colorWithWhite:1 alpha:0.72];
     UIFont *hintBase = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
     hint.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleFootnote]
@@ -156,8 +159,10 @@
         [view addGestureRecognizer:pan];
         UIPinchGestureRecognizer *pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinch:)];
         [view addGestureRecognizer:pinch];
+        [view addInteraction:[[UIContextMenuInteraction alloc] initWithDelegate:self]];
         [_canvas addSubview:view];
         [_controlViews addObject:view];
+        [self applyVisibilityAppearance:view];
     }
     NSArray<NightPadLayoutControlView *> *ordered = [_controlViews sortedArrayUsingComparator:^NSComparisonResult(
         NightPadLayoutControlView *first, NightPadLayoutControlView *second) {
@@ -167,6 +172,48 @@
     }];
     _canvas.accessibilityElements = ordered;
     [self.view setNeedsLayout];
+}
+
+- (void)applyVisibilityAppearance:(NightPadLayoutControlView *)view {
+    auto *control = [self controlForId:view.controlId];
+    if (control == nullptr)
+        return;
+    const BOOL hidden = !control->visible;
+    view.alpha = hidden ? 0.35 : 1.0;
+    view.layer.borderWidth = hidden ? 2.0 : 1.0;
+    view.layer.borderColor = [UIColor colorWithWhite:1 alpha:(hidden ? 0.85 : 0.35)].CGColor;
+    view.accessibilityValue = hidden ? @"Hidden" : nil;
+}
+
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction
+                        configurationForMenuAtLocation:(CGPoint)location {
+    (void)location;
+    NightPadLayoutControlView *view = (NightPadLayoutControlView *)interaction.view;
+    auto *control = [self controlForId:view.controlId];
+    if (control == nullptr)
+        return nil;
+    const BOOL hidden = !control->visible;
+    __weak NightPadTouchLayoutViewController *weakSelf = self;
+    UIAction *toggle = [UIAction actionWithTitle:(hidden ? @"Show Control" : @"Hide Control")
+                                           image:[UIImage systemImageNamed:(hidden ? @"eye" : @"eye.slash")]
+                                      identifier:nil
+                                         handler:^(__kindof UIAction *selected) {
+        (void)selected;
+        NightPadTouchLayoutViewController *strongSelf = weakSelf;
+        if (strongSelf == nil)
+            return;
+        auto *target = [strongSelf controlForId:view.controlId];
+        if (target == nullptr)
+            return;
+        target->visible = !target->visible;
+        [strongSelf applyVisibilityAppearance:view];
+    }];
+    return [UIContextMenuConfiguration configurationWithIdentifier:nil
+                                                   previewProvider:nil
+                                                    actionProvider:^UIMenu *(NSArray<UIMenuElement *> *suggested) {
+        (void)suggested;
+        return [UIMenu menuWithTitle:@"" children:@[ toggle ]];
+    }];
 }
 
 - (void)pan:(UIPanGestureRecognizer *)gesture {

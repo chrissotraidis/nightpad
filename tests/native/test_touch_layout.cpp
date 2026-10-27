@@ -85,6 +85,11 @@ int main() {
     Check(loaded.device == TouchDeviceClass::Phone, "device restored");
     Check(loaded.controls[0].x == phone.controls[0].x && loaded.controls[0].opacity == phone.controls[0].opacity,
           "geometry restored");
+    phone.controls[1].visible = false;
+    Check(phone.Save(path, &error), "save hidden control");
+    TouchLayout hidden = TouchLayout::Defaults(TouchDeviceClass::Phone);
+    Check(hidden.Load(path, &error), "load hidden control");
+    Check(!hidden.controls[1].visible && hidden.controls[0].visible, "visibility restored");
     loaded.Reset();
     Check(loaded.controls[0].x == TouchLayout::Defaults(TouchDeviceClass::Phone).controls[0].x, "reset to defaults");
 

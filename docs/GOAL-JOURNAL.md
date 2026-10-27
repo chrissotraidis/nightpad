@@ -1177,3 +1177,22 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the save question for action missions is answered. Driving-mission
   objectives remain the last open inventory item.
 
+## 2026-10-28T14:20:00Z — touch controls can be hidden like GalaxyPad's
+
+- Goal: G06. Requirement: R12 in progress.
+- Observed: the layout model already stored a `visible` flag and the overlay
+  already skipped hidden controls, but the editor offered no way to set it.
+  GalaxyPad's in-game editor has a visibility toggle, so this was a parity gap.
+- Observed: long-pressing a control now offers Hide Control or Show Control.
+  Hidden controls stay visible while editing, dimmed with a brighter outline and
+  the value "Hidden" for VoiceOver, so they can be turned back on. The hint line
+  names the gesture.
+- Evidence: iPhone 17 simulator, iOS 26.5: hiding the left stick, saving and
+  relaunching with `--show-touch-controls --preview-gameplay` left
+  `nightpad.touch.left_stick` out of the live overlay; Show Control and Save
+  restored it. `scripts/test_touch_layout.sh` now also proves the flag survives
+  save and load, and `scripts/verify_quick.sh` passes. Evidence
+  `evidence/ios-shell/touch-layout-hidden.png`.
+- Verdict: hiding a control is end-to-end and reversible. Physical ergonomics
+  and the in-game overlay on a device remain.
+
