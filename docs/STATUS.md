@@ -177,6 +177,9 @@ simulator probe and remains blocked on physical-device access.
 - Two optional assists now work: immortality and unlimited ammo, applied by the
   action loop each frame so a codename load cannot clear them. They are off by
   default, persisted, and must stay out of acceptance runs.
+- The coordinator loop is proven in one process: action hands off to driving,
+  driving hands back, and action restarts from the page driving wrote. All three
+  phases join and advance frames (`scripts/test_engine_roundtrip.sh`).
 
 ## Current uncertainty and blockers
 

@@ -13,4 +13,5 @@ repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 "$repo/scripts/test_driving_early_stop.sh"
 "$repo/scripts/test_engine_transition.sh"
 "$repo/scripts/test_engine_handoff.sh"
+"$repo/scripts/test_engine_roundtrip.sh"
 echo "engine verification: PASS"

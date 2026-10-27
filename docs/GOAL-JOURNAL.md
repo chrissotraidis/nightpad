@@ -643,3 +643,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: both flags work. The all-weapons equip is intentionally not wired,
   and none of this enters acceptance runs.
 
+## 2026-10-28T00:45:00Z — campaign-shaped engine round trip
+
+- Goal: G04. Requirement: R05/R07 in progress.
+- Hypothesis: the app coordinator's whole loop can run in one process: action
+  hands off to driving, driving hands back, and action boots from the second
+  page.
+- Observed: `scripts/test_engine_roundtrip.sh` starts action, lets the game's own
+  psiLaunchDriving fire, joins it, starts driving (which reads the page and
+  boots `paris_mis01`), stops it, then starts action again from the page
+  driving wrote. All three phases advance frames and join; two launch requests
+  are observed.
+- Evidence: the gate; added to the engine verification pass.
+- Verdict: the coordinator loop the campaign needs works in process on macOS.
+  Device execution is still the gate.
+

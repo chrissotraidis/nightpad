@@ -105,7 +105,9 @@
         "apple/shared/NightPadDrivingRuntime.cpp",
         "apple/shared/NightPadEngineBridge.h",
         "tests/native/test_driving_early_stop.cpp",
-        "scripts/test_driving_early_stop.sh"
+        "scripts/test_driving_early_stop.sh",
+        "tests/native/test_engine_roundtrip.cpp",
+        "scripts/test_engine_roundtrip.sh"
       ],
       "blockers": [
         "B01"
@@ -1030,5 +1032,5 @@
       "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "G10: all-weapons equip and assist regression across death/restart/load; device acceptance remains the gate for G05/G06/G09."
+  "next_step": "G04: device execution of the round trip; G10: all-weapons equip and assist regression; G07/G08 inventory continues."
 }

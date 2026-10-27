@@ -42,6 +42,7 @@
 | G04 | Repeated mixed transition soak | macOS arm64 | passed, 10 cycles | 20 launches; both directions; real Boot_GetPTPData page; all joins; settled 8-9 OS threads |
 | G04 | Ten repeated driving sessions | macOS arm64 | passed | Every cycle joins; resident memory warms to about 296 MB and the tenth cycle is lower than the ninth |
 | G04 | In-process action-to-driving handoff boots the target | macOS arm64 | passed | `scripts/test_engine_handoff.sh`: action requests `d:\driving.xbe`, joins; driving reads the 3072-byte page, boots `paris_mis01`, requests `D:\DEFAULT.XBE` on stop and joins |
+| G04 | Action, driving, then action again in one process | macOS arm64 | passed | `scripts/test_engine_roundtrip.sh`: action hands off to driving (its page read), driving hands back, action restarts from the handed page and runs; all three phases join |
 | G04 | Driving simulation pause and resume | macOS arm64 | passed | `scripts/test_driving_pause.sh`: frames held while paused, advanced after resume, clean join |
 | G04 | Stop requested during engine boot | iPhoneOS 26.5 build | implemented, unverified on hardware | The shell holds the stop until the active engine advances a frame (180 s fallback) because cleanup from a half-built engine crashed in testing; menu shows "Stopping After Load…" |
 | G04 | Engine stop during boot joins cleanly | macOS arm64 | passed | `scripts/test_driving_early_stop.sh` at 2 s (frames 0) and 8 s (frames 3577), plus the action lifecycle at a 1 s stop: every thread joins and the process exits 0 |
