@@ -78,6 +78,14 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
 #endif
 }
 
+- (void)setInputSuspended:(BOOL)suspended {
+#if NIGHTPAD_HAS_ENGINE
+    NightPadActionEngineSetInputSuspended(suspended ? 1 : 0);
+#else
+    (void)suspended;
+#endif
+}
+
 - (void)requestStop {
 #if NIGHTPAD_HAS_ENGINE
     NightPadActionEngineRequestStop();

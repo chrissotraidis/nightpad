@@ -9,6 +9,7 @@
                        error:(NSString **)error;
 - (BOOL)startAction;
 - (void)setPaused:(BOOL)paused;
+- (void)setInputSuspended:(BOOL)suspended;
 - (BOOL)pollWindow;
 - (void)requestStop;
 - (int)joinWithTimeout:(unsigned)milliseconds;

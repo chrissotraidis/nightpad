@@ -103,6 +103,9 @@ simulator probe and remains blocked on physical-device access.
   suspended, frames stop advancing, and resume restores them. The shell's App
   Pause enters this state and Back to Game resumes it; the action pause frame
   test passes.
+- Opening native menu/pause surfaces now pauses the engine and suspends input;
+  pad and keyboard reads answer neutral and pointer deltas are discarded until
+  the surface closes. The shell exposes the input bridge in the device link.
 
 ## Current uncertainty and blockers
 

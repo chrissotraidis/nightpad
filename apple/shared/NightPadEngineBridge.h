@@ -21,6 +21,7 @@ void NightPadDrivingEngineSetLaunchRequestCallback(NightPadLaunchRequestCallback
 // Ask the active game loop to leave at its next safe frame boundary. The engine's normal cleanup then runs.
 void NightPadActionEngineRequestStop(void);
 void NightPadActionEngineSetPaused(int paused);
+void NightPadActionEngineSetInputSuspended(int suspended);
 unsigned long NightPadActionEngineFrameCount(void);
 void NightPadDrivingEngineRequestStop(void);
 int NightPadActionEngineStart(int argc, char **argv);

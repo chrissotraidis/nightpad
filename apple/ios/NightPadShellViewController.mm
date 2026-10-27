@@ -41,6 +41,8 @@ using nightpad::Paths;
     NightPadEngineHost *_engineHost;
     BOOL _engineRunning;
     BOOL _enginePaused;
+    BOOL _uiPausedEngine;
+    BOOL _uiInputSuspended;
     BOOL _gameplayMode;
     NSTimer *_engineTimer;
 
@@ -245,7 +247,7 @@ using nightpad::Paths;
     UIButton *cancel = [self panelButton:@"Cancel Import" action:@selector(cancelImport)];
     cancel.translatesAutoresizingMaskIntoConstraints = NO;
     [_dataPanel addSubview:cancel];
-    UIButton *close = [self panelButton:@"Close" action:@selector(closePanels)];
+    UIButton *close = [self panelButton:@"Close" action:@selector(dismissPanels)];
     close.translatesAutoresizingMaskIntoConstraints = NO;
     [_dataPanel addSubview:close];
 
@@ -319,7 +321,7 @@ using nightpad::Paths;
     label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     label.translatesAutoresizingMaskIntoConstraints = NO;
     [_aboutPanel addSubview:label];
-    UIButton *close = [self panelButton:@"Close" action:@selector(closePanels)];
+    UIButton *close = [self panelButton:@"Close" action:@selector(dismissPanels)];
     close.translatesAutoresizingMaskIntoConstraints = NO;
     [_aboutPanel addSubview:close];
     [NSLayoutConstraint activateConstraints:@[
@@ -336,13 +338,15 @@ using nightpad::Paths;
 }
 
 - (void)toggleMenu {
-    if (_enginePaused)
-        [self resumeFromPause];
     BOOL show = _menuPanel.hidden;
     [self closePanels];
     _menuPanel.hidden = !show;
-    if (show)
+    if (show) {
+        [self beginNativeUI];
         [self.view bringSubviewToFront:_menuPanel];
+    } else {
+        [self endNativeUI];
+    }
 }
 
 - (void)closePanels {
@@ -353,32 +357,60 @@ using nightpad::Paths;
 }
 
 - (void)openDataPanel {
+    [self beginNativeUI];
     [self closePanels];
     _dataPanel.hidden = NO;
     [self.view bringSubviewToFront:_dataPanel];
 }
 
 - (void)showPausePanel {
-    if (_engineRunning) {
-        _enginePaused = YES;
-        [_engineHost setPaused:YES];
-    }
+    [self beginNativeUI];
     [self closePanels];
     _pausePanel.hidden = NO;
     [self.view bringSubviewToFront:_pausePanel];
 }
 
 - (void)resumeFromPause {
-    if (_enginePaused)
-        [_engineHost setPaused:NO];
-    _enginePaused = NO;
+    [self endNativeUI];
     [self closePanels];
 }
 
 - (void)openAboutPanel {
+    [self beginNativeUI];
     [self closePanels];
     _aboutPanel.hidden = NO;
     [self.view bringSubviewToFront:_aboutPanel];
+}
+
+- (void)dismissPanels {
+    [self closePanels];
+    [self endNativeUI];
+}
+
+- (void)beginNativeUI {
+    if (!_engineRunning)
+        return;
+    if (!_uiPausedEngine) {
+        [_engineHost setPaused:YES];
+        _enginePaused = YES;
+        _uiPausedEngine = YES;
+    }
+    if (!_uiInputSuspended) {
+        [_engineHost setInputSuspended:YES];
+        _uiInputSuspended = YES;
+    }
+}
+
+- (void)endNativeUI {
+    if (_uiInputSuspended) {
+        [_engineHost setInputSuspended:NO];
+        _uiInputSuspended = NO;
+    }
+    if (_uiPausedEngine) {
+        [_engineHost setPaused:NO];
+        _enginePaused = NO;
+        _uiPausedEngine = NO;
+    }
 }
 
 - (void)startGame {
@@ -403,6 +435,7 @@ using nightpad::Paths;
         return;
     }
     [self closePanels];
+    [self endNativeUI];
     _engineRunning = YES;
     _enginePaused = NO;
     _gameplayMode = YES;
@@ -424,9 +457,7 @@ using nightpad::Paths;
 - (void)stopGame {
     if (!_engineRunning) return;
     _engineRunning = NO;
-    if (_enginePaused)
-        [_engineHost setPaused:NO];
-    _enginePaused = NO;
+    [self endNativeUI];
     [_engineTimer invalidate];
     _engineTimer = nil;
     [_engineHost requestStop];

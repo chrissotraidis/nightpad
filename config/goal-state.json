@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T14:52:35Z",
+  "last_updated_at": "2026-10-27T14:56:00Z",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -127,10 +127,11 @@
         "patches/0011-nonblocking-window-poll.patch",
         "scripts/check_ios_shell_link.sh",
         "patches/0012-native-engine-pause.patch",
-        "scripts/test_action_pause.sh"
+        "scripts/test_action_pause.sh",
+        "patches/0013-native-input-suspension.patch"
       ],
       "blockers": [],
-      "next_step": "Run the device shell through live start/pause/resume/stop; verify SDL/overlay composition, then add neutral-input routing around native UI."
+      "next_step": "Run the device shell through menu-open/pause/resume and the Files import flow; verify SDL/overlay composition on phone and tablet."
     },
     "G06": {
       "status": "pending",
@@ -317,7 +318,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Engine pause freezes frames and suspends SFX/streams; shell App Pause/Back to Game are wired. Physical-device run and neutral-input routing remain."
+        "Engine pause freezes frames and suspends SFX/streams; native menu/pause surfaces also suspend pad/keyboard and pointer input. Physical-device composition and import flow remain."
       ]
     },
     "R16": {
@@ -708,6 +709,16 @@
       "evidence": [
         "patches/0012-native-engine-pause.patch",
         "scripts/test_action_pause.sh",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:56:00Z",
+      "goal": "G05",
+      "summary": "Suspended pad/keyboard/pointer input while native UI is open and tied it to shell menu/pause surfaces; device builds pass.",
+      "evidence": [
+        "patches/0013-native-input-suspension.patch",
+        "apple/ios/NightPadShellViewController.mm",
         "docs/TEST-MATRIX.md"
       ]
     }

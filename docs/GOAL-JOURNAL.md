@@ -217,3 +217,20 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: run the device shell through start/pause/resume/stop, then gate input
   and audio around native UI.
 
+## 2026-10-27T14:56:00Z — native UI input suspension
+
+- Goal: G05. Requirements: R15 in progress.
+- Hypothesis: native surfaces must neutralize input before they cover the game,
+  rather than relying on the paused sim loop to discard it later.
+- Observed: `HostInput_SetSuspended` makes pad/keyboard reads neutral and drops
+  pointer motion/wheel deltas. The bridge exports the switch; shell menu, data,
+  About and pause surfaces suspend input and pause the engine while open, then
+  release both when the native surface closes.
+- Evidence: `patches/0013-native-input-suspension.patch`; simulator/device shell
+  builds pass; device binary contains the input bridge; macOS pause and mixed
+  transition gates still pass.
+- Verdict: input/audio gating is wired at the native boundary; physical device
+  behavior remains the gate.
+- Next: run the device shell through menu-open/pause/resume and the Files import
+  flow; inspect overlay/window composition on the phone and tablet.
+

@@ -11,6 +11,7 @@
 #include "../../vendor/nightfire/src/action/memory.h"
 #include "../../vendor/nightfire/src/driving/platform/Host.h"
 #include "../../vendor/nightfire/src/driving/platform/HostWindow.h"
+#include "../../vendor/nightfire/src/driving/platform/HostInput.h"
 
 static HostHandle g_gameThread = nullptr;
 
@@ -67,5 +68,9 @@ extern "C" void NightPadActionEngineSetPaused(int paused) {
         EngineLifecycle_RequestPause();
     else
         EngineLifecycle_ReleasePause();
+}
+
+extern "C" void NightPadActionEngineSetInputSuspended(int suspended) {
+    HostInput_SetSuspended(suspended != 0);
 }
 
