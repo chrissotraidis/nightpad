@@ -35,6 +35,7 @@ ignored `evidence/device/<date>/`.
 | G06 | Edit the layout, Save, relaunch, Reset | Geometry persists; every editor action remains reachable |
 | G07 | First-play route: front end, Paris, a transition, save, relaunch | Transitions, media and saves work on device |
 | G09 | Original and 2x targets, 4:3 and 16:9, FXAA off/on | Correct fit, no scope/HUD regressions, sustained frame rate |
+| G09 | Secret Unlocks: mission toggle, reward set, upgrade, invalid code, save/relaunch | Unlocks persist; invalid code changes nothing |
 | G12 | Ten start/stop cycles, backgrounding, thermal run | Every session joins; memory plateaus; no crash |
 
 ## Evidence to bring back

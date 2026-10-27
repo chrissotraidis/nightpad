@@ -809,3 +809,17 @@ are ignored and may contain paths, hashes, captures or device identities.
   its simulator AX tree lists L, D-PAD, LT, WHITE, BACK, START, BLACK, RT, R,
   A, B, X, Y, then Reset Layout.
 
+## 2026-10-28T06:00:00Z — Secret Unlocks inventory
+
+- Goal: G09. Requirement: R19 in progress.
+- Observed: the codename menu's Secret Unlocks page holds 52 codes in five
+  families: open all missions, toggle one mission, add a reward set, toggle one
+  reward, or add weapon/gadget upgrades. Effects apply to the codename being
+  edited and are saved with it; an unmatched code changes nothing.
+- Observed: closing every mission leaves the first two open, and reward changes
+  rebuild the player's upgrade set from the reward mask.
+- Evidence: `docs/CAMPAIGN-INVENTORY.md` and the device handoff checklist. The
+  codes themselves stay in source and ignored output.
+- Verdict: the mechanism and a concrete device test plan are recorded. Physical
+  entry and persistence remain.
+

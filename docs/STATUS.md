@@ -219,6 +219,10 @@ simulator probe and remains blocked on physical-device access.
   reverse subview order.
 - The layout editor uses the same order, so editing with VoiceOver visits the
   controls predictably too.
+- Secret Unlocks is inventoried: 52 codes in five families (all missions, one
+  mission toggle, reward sets, single rewards, upgrades) applied to the codename
+  being edited. The device test plan is in the campaign inventory; the codes
+  themselves stay out of the repository docs.
 
 ## Current uncertainty and blockers
 

@@ -212,3 +212,30 @@ Each level's objective count comes from the same table:
 
 The labels behind those objectives are retail text and stay in the ignored
 dump; only the structure is recorded here.
+
+## Secret Unlocks (R19)
+
+The codename menu's Secret Unlocks page is engine-owned
+(`ui_secrets.cpp`, `MenuUnlocks.cpp`). It holds 52 codes in five families:
+
+- open every mission;
+- toggle one mission on or off;
+- add a whole reward set (multiplayer characters or scenarios);
+- toggle one reward (a character or a multiplayer mode);
+- grant one or more weapon and gadget upgrades.
+
+Effects apply to the codename being edited. Mission codes flip that mission's
+enable bit; if every mission would be closed, the first two are reopened. Reward
+codes set or flip bits in the 64-bit reward mask, which also rebuilds that
+player's gadget upgrades. Upgrade codes combine their upgrades with the mask as
+it was before the code. The codename save persists the result.
+
+An unmatched code returns "not applied": nothing changes and there is no success
+message, matching the original. Some pairs are aliases; the first match wins.
+The codes themselves are retail content and stay in the source and ignored
+build output rather than this document.
+
+Device test plan: enter one mission code twice (on, then off), a reward-set code,
+a single-reward toggle, an upgrade code and an invalid string; save the codename,
+relaunch, and confirm the unlocks and upgrades persisted while the invalid entry
+left everything unchanged.

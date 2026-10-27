@@ -476,10 +476,14 @@
       ]
     },
     "R19": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Secret Unlocks has 52 codes in five families applied to the edited codename; mechanism and device test plan recorded. Physical entry/persistence remains."
+      ]
     },
     "R20": {
       "status": "in_progress",
