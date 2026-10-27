@@ -602,6 +602,27 @@ static uint64_t ShellResidentBytes(void) {
     [_discardButton addTarget:self action:@selector(discardPrevious) forControlEvents:UIControlEventTouchUpInside];
     [_dataPanel addSubview:_discardButton];
 
+    // The panel is "Game Data & Saves", so the save actions belong here too,
+    // not only in the three-dot menu.
+    UIButton *share = [UIButton buttonWithType:UIButtonTypeSystem];
+    UIButtonConfiguration *shareConfiguration = [UIButtonConfiguration tintedButtonConfiguration];
+    shareConfiguration.title = @"Share Saves…";
+    shareConfiguration.image = [UIImage systemImageNamed:@"square.and.arrow.up"];
+    shareConfiguration.imagePadding = 6;
+    share.configuration = shareConfiguration;
+    share.translatesAutoresizingMaskIntoConstraints = NO;
+    [share addTarget:self action:@selector(shareSaves) forControlEvents:UIControlEventTouchUpInside];
+    [_dataPanel addSubview:share];
+    UIButton *restore = [UIButton buttonWithType:UIButtonTypeSystem];
+    UIButtonConfiguration *restoreConfiguration = [UIButtonConfiguration tintedButtonConfiguration];
+    restoreConfiguration.title = @"Restore Saves…";
+    restoreConfiguration.image = [UIImage systemImageNamed:@"square.and.arrow.down"];
+    restoreConfiguration.imagePadding = 6;
+    restore.configuration = restoreConfiguration;
+    restore.translatesAutoresizingMaskIntoConstraints = NO;
+    [restore addTarget:self action:@selector(restoreSavesFromAppFolder) forControlEvents:UIControlEventTouchUpInside];
+    [_dataPanel addSubview:restore];
+
     _progress = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
     _progress.translatesAutoresizingMaskIntoConstraints = NO;
     _progress.hidden = YES;
@@ -637,9 +658,13 @@ static uint64_t ShellResidentBytes(void) {
         [_importButton.topAnchor constraintEqualToAnchor:_dataStatus.bottomAnchor constant:14],
         [_discardButton.leadingAnchor constraintEqualToAnchor:_importButton.trailingAnchor constant:12],
         [_discardButton.centerYAnchor constraintEqualToAnchor:_importButton.centerYAnchor],
+        [share.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
+        [share.topAnchor constraintEqualToAnchor:_importButton.bottomAnchor constant:10],
+        [restore.leadingAnchor constraintEqualToAnchor:share.trailingAnchor constant:12],
+        [restore.centerYAnchor constraintEqualToAnchor:share.centerYAnchor],
         [_progress.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
         [_progress.trailingAnchor constraintEqualToAnchor:detail.trailingAnchor],
-        [_progress.topAnchor constraintEqualToAnchor:_importButton.bottomAnchor constant:16],
+        [_progress.topAnchor constraintEqualToAnchor:share.bottomAnchor constant:12],
         [_progressLabel.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
         [_progressLabel.trailingAnchor constraintEqualToAnchor:detail.trailingAnchor],
         [_progressLabel.topAnchor constraintEqualToAnchor:_progress.bottomAnchor constant:6],
@@ -1175,6 +1200,10 @@ static uint64_t ShellResidentBytes(void) {
 }
 
 - (void)restoreSavesFromFolderNamed:(NSString *)name promptTitle:(NSString *)title detail:(NSString *)detail {
+    if (_engineRunning) {
+        [self showInfo:@"Stop the game first" detail:@"Saves can only be restored while the engine is stopped."];
+        return;
+    }
     // The document picker's remote UI is not scriptable, so the save-restore
     // path can also take its inputs from a folder in Documents.
     NSString *documents = [NSString stringWithUTF8String:_paths.documents.string().c_str()];

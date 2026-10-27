@@ -1551,3 +1551,17 @@ are ignored and may contain paths, hashes, captures or device identities.
   `evidence/ios-shell/panel-status.png` shows a clean card.
 - Verdict: the panel reads as one surface. Nothing else changes.
 
+## 2026-10-28T21:10:00Z — saves belong to the data panel too
+
+- Goal: G05. Requirement: R11 in progress.
+- Observed: the panel is called "Game Data & Saves" but only handled game
+  data; Share Saves and Import Saves lived solely in the three-dot menu.
+- Observed: the panel now has Share Saves and Restore Saves beside the import
+  actions. Share opens the system sheet with the two saves; Restore with no
+  `Documents/Save Import` folder says where to copy files. Restoring is refused
+  while the engine runs, matching the menu item's rule.
+- Evidence: iPhone 17 simulator, iOS 26.5, `--open-data`;
+  `evidence/ios-shell/panel-saves.png`.
+- Verdict: the panel matches its name. The running-engine refusal shares the
+  existing message and still needs a live-engine run for evidence.
+

@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T20:55:00Z",
+  "last_updated_at": "2026-10-28T21:10:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -1318,6 +1318,16 @@
       "evidence": [
         "apple/ios/NightPadShellViewController.mm",
         "evidence/ios-shell/panel-status.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T21:10:00Z",
+      "goal": "G05",
+      "summary": "The Game Data & Saves panel now offers Share Saves and Restore Saves beside import, with restore refused while the engine runs.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/panel-saves.png"
       ]
     }
   ],
