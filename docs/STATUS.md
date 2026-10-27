@@ -265,6 +265,9 @@ simulator probe and remains blocked on physical-device access.
 - Cancelling a game-data import no longer blocks later imports. A new import
   starts a fresh transaction, the cancelled one leaves no stage, and the shell
   reports cancellation as information rather than an error.
+- Bot setup is inventoried: six slots with playing, accuracy, aggression, speed,
+  health 50-300, reaction/recovery 50-200 and side-dependent personalities;
+  higher-index characters use fixed stats.
 - [CANDIDATE.md](CANDIDATE.md) is the draft candidate manifest: identity fields
   to freeze, support matrix, verified evidence, known issues and the device
   next step. It is not an acceptance claim.

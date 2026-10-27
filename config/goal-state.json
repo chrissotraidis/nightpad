@@ -473,7 +473,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Limits, modes, maps, weapon sets, Enviro-Mods, map rules, unlock matrix and match rules/scoring are inventoried. Match execution and physical controller runs remain."
+        "Limits, modes, maps, weapon sets, Enviro-Mods, map rules, unlock matrix, match rules and bot setup options are inventoried. Match execution and physical ports remain."
       ]
     },
     "R18": {

@@ -91,6 +91,24 @@ route opens the same set, and the codename save persists it.
   score because its mode owns the result. Team scores sum the players' points.
 - Kills do not score in Arena or King of the Hill.
 
+### Bot setup
+
+Each of the six bot slots has:
+
+- Playing: yes or no.
+- Accuracy: poor, average, good or very good.
+- Aggression: normal, high or very high.
+- Speed: slow, normal or fast.
+- Health: 50, 75, 100, 125, 150, 175, 200, 250 or 300.
+- Reaction and recovery: 50 to 200 in seven steps.
+- Personality, which depends on the bot's side. The good side offers none,
+  judge, collector, guardian or team player; the other side offers none,
+  berserker, greedy, vengeful or assassin.
+
+Characters with a skin index of 15 or above use fixed stats and cannot edit
+these values. One-per-game characters (Bond and the good-side bots) are handed
+back when the bot is benched or stops playing.
+
 ## Still missing
 
 - Which modes each map supports, and the win-condition details per mode.

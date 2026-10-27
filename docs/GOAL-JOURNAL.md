@@ -1057,3 +1057,14 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: import cancellation is recoverable. Device picker selection remains
   manual.
 
+## 2026-10-28T12:15:00Z — bot setup options
+
+- Goal: G08. Requirement: R17 in progress.
+- Observed: each of the six bot slots exposes playing, accuracy
+  (poor-very good), aggression (normal-very high), speed (slow-fast), health
+  50-300, reaction and recovery 50-200, and a personality list that depends on
+  the bot's side. Characters at skin index 15 and above have fixed stats.
+- Evidence: `docs/MULTIPLAYER-INVENTORY.md`, from the bot setup page.
+- Verdict: the bot option surface is source-complete. Behaviour at six bots and
+  team composition still need matches.
+
