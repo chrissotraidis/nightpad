@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T11:36:00Z",
+  "last_updated_at": "2026-10-27T11:40:00Z",
   "active_goal": "G04",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -543,6 +543,11 @@
     {
       "name": "iOS static FFmpeg engine link",
       "result": "Both complete engines and combined link use pinned static FFmpeg archives; no FFmpeg dylib dependency",
+      "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "iOS engine build recipe",
+      "result": "scripts/build_ios_engines.sh device builds both full engines with static SDL/FFmpeg and rejects loose dylibs",
       "target": "iPhoneOS 26.5 arm64"
     }
   ],
