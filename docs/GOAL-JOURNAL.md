@@ -1247,3 +1247,22 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: import no longer depends on the picker. Choosing a folder from
   outside the app still needs the picker and remains manual.
 
+## 2026-10-28T15:20:00Z — texture overrides decided
+
+- Goal: G11. Requirement: R21 decision.
+- Observed: the engine's DDS replacement (`textureReplace.cpp`) is part of the
+  D3D9 backend, which this target does not compile. The SDL GPU backend's own
+  header lists replacement and dumps as not carried over; the built action
+  binary exports no `TextureReplace` symbols, and a headless run with
+  `DumpTextures=1` produced no dump folder and no log line.
+- Observed: the public Nightfire modding scene targets the PC, PS2 and Dolphin
+  builds (BSP decompiler, GearCraft, editor suites, HD texture work). No Xbox
+  texture injector or packaged Xbox texture pack was found, and upstream's own
+  extraction notes say `filesys.dxx` is not fully unpacked.
+- Evidence: `docs/DECISIONS/0013-texture-overrides.md`;
+  `vendor/nightfire/src/common/gfx/sdlGpuBackend.cpp`;
+  `vendor/nightfire/src/common/gfx/textureReplace.cpp`; the headless
+  `DumpTextures=1` run.
+- Verdict: R21 decided - inventory complete, bounded SDL/Metal prototype
+  deferred with a four-step plan recorded. No texture mods are advertised.
+

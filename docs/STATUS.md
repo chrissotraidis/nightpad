@@ -161,6 +161,10 @@ simulator probe and remains blocked on physical-device access.
 - Game Data & Saves can import `Documents/NightPad Import` with one tap, so
   the prepared tree no longer has to go through the system picker; both import
   paths open the data panel so progress and Cancel Import are visible.
+- External texture overrides are decided: the engine's DDS replacement belongs
+  to the D3D9 backend this port does not compile, no Xbox texture-pack scene
+  exists to consume it, and the bounded SDL/Metal port is planned but deferred
+  (`docs/DECISIONS/0013-texture-overrides.md`).
 - Controls now includes a native reference for on-foot, vehicle and menu
   mappings. Vehicle rows come from the game's own drivecfg/POV definitions
   (RT gas, LT brake, B handbrake, A/X/Y secondary actions); the game's eight

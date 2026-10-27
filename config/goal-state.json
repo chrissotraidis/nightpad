@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T15:05:00Z",
+  "last_updated_at": "2026-10-28T15:20:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -514,10 +514,16 @@
       ]
     },
     "R21": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "decision_complete",
+      "evidence": [
+        "docs/DECISIONS/0013-texture-overrides.md",
+        "vendor/nightfire/src/common/gfx/sdlGpuBackend.cpp",
+        "vendor/nightfire/src/common/gfx/textureReplace.cpp"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "D3D9-only DDS replacement; SDL/Metal port planned but deferred because no Xbox texture pack scene exists."
+      ]
     },
     "R22": {
       "status": "decision_complete",
@@ -649,6 +655,11 @@
       "id": "0012-donor-ui-benchmark",
       "path": "docs/DECISIONS/0012-donor-ui-benchmark.md",
       "summary": "SunPad and GalaxyPad are the UI quality bar."
+    },
+    {
+      "id": "0013-texture-overrides",
+      "path": "docs/DECISIONS/0013-texture-overrides.md",
+      "summary": "No texture-override feature in this candidate; bounded SDL/Metal port deferred."
     }
   ],
   "blockers": [
@@ -1088,6 +1099,15 @@
         "apple/ios/NightPadShellViewController.mm",
         "docs/TEST-MATRIX.md",
         "evidence/ios-shell/import-from-folder.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T15:20:00Z",
+      "goal": "G11",
+      "summary": "Decided R21: the engine DDS replacement is D3D9-only, the SDL backend has no hook, and no Xbox texture pack scene exists; prototype deferred with a plan.",
+      "evidence": [
+        "docs/DECISIONS/0013-texture-overrides.md",
+        "docs/TEST-MATRIX.md"
       ]
     }
   ],
