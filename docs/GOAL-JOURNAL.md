@@ -904,3 +904,16 @@ are ignored and may contain paths, hashes, captures or device identities.
   function.
 - Verdict: rule ranges and scoring are source-complete. Match execution remains.
 
+## 2026-10-28T08:25:00Z — media tolerance and region choice
+
+- Goal: G07. Requirement: R08 in progress.
+- Observed: the engine maps every level to an intro id, but the supply ships
+  intros only for mission starts. The CastleExterior recording requests
+  CastleCourtyard's missing movie, logs "cannot open", and still matches all
+  5,649 frames.
+- Observed: NightPad writes `Region=NTSC`, matching the shipped 30 fps movie
+  bundle; a PAL run would request 25 fps files the image does not contain.
+- Evidence: the recording log in ignored `build/` and the campaign inventory.
+- Verdict: missing sub-level intros are safe, and NTSC is the correct region for
+  this image. PAL media remains an external content gap.
+

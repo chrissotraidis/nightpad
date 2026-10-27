@@ -184,6 +184,16 @@ path is exercised.
 The known PAL gap is separate: the supplied image has only the `30_fps` movie
 bundle, while one action recording expects a `25_fps` movie.
 
+The engine maps every level to an intro id, not only mission starts. The
+supplied bundle ships intros for the mission-start levels; a sub-level intro
+such as CastleCourtyard's is requested and logged as "cannot open", and playback
+continues. The CastleExterior recording crosses into that level and still
+matches every frame.
+
+NightPad writes `Region=NTSC` because the supplied image is the 30 fps movie
+bundle. A PAL/25 fps run would look for files the image does not contain, which
+is the recorded PAL media blocker rather than a NightPad setting.
+
 ## Difficulty, objectives and failure
 
 The front end offers three difficulties (`ui_nightfire.cpp`): Operative,

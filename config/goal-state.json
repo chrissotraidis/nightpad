@@ -358,7 +358,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Names/order, start levels, chains, media coverage and the difficulty/failure structure are inventoried. Objective labels are retail text kept out of the repo. Runs and completion evidence remain."
+        "Names/order, start levels, chains, media coverage, difficulty/failure structure and missing-intro tolerance are inventoried; NTSC matches the supplied 30 fps bundle. Runs and completion evidence remain."
       ]
     },
     "R09": {
