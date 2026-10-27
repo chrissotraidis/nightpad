@@ -1,6 +1,7 @@
 #import "NightPadShellViewController.h"
 #import "NightPadEngineHost.h"
 #import "NightPadDiagnosticsViewController.h"
+#import "NightPadAboutViewController.h"
 
 #include "../shared/NightPadGameDataImport.h"
 #include "../shared/NightPadDiagnostics.h"
@@ -48,6 +49,7 @@ using nightpad::Paths;
     BOOL _uiPausedEngine;
     BOOL _uiInputSuspended;
     BOOL _pendingDiagnostics;
+    BOOL _pendingAbout;
     BOOL _gameplayMode;
     NSTimer *_engineTimer;
 
@@ -57,7 +59,6 @@ using nightpad::Paths;
     UIView *_menuPanel;
     UIView *_dataPanel;
     UIView *_pausePanel;
-    UIView *_aboutPanel;
     UIProgressView *_progress;
     UILabel *_progressLabel;
     UIButton *_importButton;
@@ -127,7 +128,6 @@ static uint64_t ShellResidentBytes(void) {
     [self buildMenuPanel];
     [self buildDataPanel];
     [self buildPausePanel];
-    [self buildAboutPanel];
 
     [NSLayoutConstraint activateConstraints:@[
         [_title.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
@@ -154,6 +154,8 @@ static uint64_t ShellResidentBytes(void) {
         [self openDataPanel];
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-diagnostics"])
         _pendingDiagnostics = YES;
+    else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-about"])
+        _pendingAbout = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -162,6 +164,12 @@ static uint64_t ShellResidentBytes(void) {
         _pendingDiagnostics = NO;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             [self openDiagnostics];
+        });
+    }
+    if (_pendingAbout) {
+        _pendingAbout = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            [self openAbout];
         });
     }
 }
@@ -220,7 +228,7 @@ static uint64_t ShellResidentBytes(void) {
     [stack addArrangedSubview:_startButton];
     [stack addArrangedSubview:[self panelButton:@"Game Data & Saves" action:@selector(openDataPanel)]];
     [stack addArrangedSubview:[self panelButton:@"App Pause" action:@selector(showPausePanel)]];
-    [stack addArrangedSubview:[self panelButton:@"About NightPad" action:@selector(openAboutPanel)]];
+    [stack addArrangedSubview:[self panelButton:@"About NightPad" action:@selector(openAbout)]];
     [stack addArrangedSubview:[self panelButton:@"Diagnostics" action:@selector(openDiagnostics)]];
     [NSLayoutConstraint activateConstraints:@[
         [stack.leadingAnchor constraintEqualToAnchor:_menuPanel.leadingAnchor constant:8],
@@ -348,32 +356,6 @@ static uint64_t ShellResidentBytes(void) {
     ]];
 }
 
-- (void)buildAboutPanel {
-    _aboutPanel = [self cardWithFrame:CGRectZero];
-    [self.view addSubview:_aboutPanel];
-    UILabel *label = [UILabel new];
-    label.text = @"NightPad\n\nA native Apple port of 007: Nightfire.\n\nEngine: NightfireResearch/nightfire-cxbx\nInterface donors: GalaxyPad and SunPad.\n\nSource and notices are included in the app bundle and project repository.";
-    label.textColor = UIColor.whiteColor;
-    label.numberOfLines = 0;
-    label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-    label.translatesAutoresizingMaskIntoConstraints = NO;
-    [_aboutPanel addSubview:label];
-    UIButton *close = [self panelButton:@"Close" action:@selector(dismissPanels)];
-    close.translatesAutoresizingMaskIntoConstraints = NO;
-    [_aboutPanel addSubview:close];
-    [NSLayoutConstraint activateConstraints:@[
-        [_aboutPanel.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
-        [_aboutPanel.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor],
-        [_aboutPanel.widthAnchor constraintEqualToConstant:500],
-        [label.leadingAnchor constraintEqualToAnchor:_aboutPanel.leadingAnchor constant:24],
-        [label.trailingAnchor constraintEqualToAnchor:_aboutPanel.trailingAnchor constant:-24],
-        [label.topAnchor constraintEqualToAnchor:_aboutPanel.topAnchor constant:22],
-        [close.leadingAnchor constraintEqualToAnchor:label.leadingAnchor],
-        [close.topAnchor constraintEqualToAnchor:label.bottomAnchor constant:14],
-        [close.bottomAnchor constraintEqualToAnchor:_aboutPanel.bottomAnchor constant:-14],
-    ]];
-}
-
 - (void)toggleMenu {
     BOOL show = _menuPanel.hidden;
     [self closePanels];
@@ -390,7 +372,6 @@ static uint64_t ShellResidentBytes(void) {
     _menuPanel.hidden = YES;
     _dataPanel.hidden = YES;
     _pausePanel.hidden = YES;
-    _aboutPanel.hidden = YES;
 }
 
 - (void)openDataPanel {
@@ -412,11 +393,15 @@ static uint64_t ShellResidentBytes(void) {
     [self closePanels];
 }
 
-- (void)openAboutPanel {
+- (void)openAbout {
     [self beginNativeUI];
     [self closePanels];
-    _aboutPanel.hidden = NO;
-    [self.view bringSubviewToFront:_aboutPanel];
+    NightPadAboutViewController *about = [NightPadAboutViewController new];
+    __weak NightPadShellViewController *weakSelf = self;
+    about.onClose = ^{ [weakSelf endNativeUI]; };
+    UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:about];
+    navigation.modalPresentationStyle = UIModalPresentationPageSheet;
+    [self presentViewController:navigation animated:YES completion:nil];
 }
 
 - (void)dismissPanels {

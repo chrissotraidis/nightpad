@@ -114,6 +114,9 @@ simulator probe and remains blocked on physical-device access.
 - The simulator share sheet exposes Save to Files and Copy for the reviewed
   report; a generated report was read back from `Library/Logs/NightPad` and
   contains no home path, container UUID or game/save content.
+- About NightPad is now a native page with version, product identity, source and
+  interface-donor links, non-affiliation/game-data notices and accessibility
+  identifiers. It renders in the simulator and is included in both app builds.
 
 ## Current uncertainty and blockers
 

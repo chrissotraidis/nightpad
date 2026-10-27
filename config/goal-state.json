@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T15:05:57Z",
+  "last_updated_at": "2026-10-27T15:08:56Z",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -134,10 +134,12 @@
         "apple/ios/NightPadDiagnosticsViewController.h",
         "apple/ios/NightPadDiagnosticsViewController.mm",
         "tests/native/test_diagnostics.cpp",
-        "scripts/test_diagnostics.sh"
+        "scripts/test_diagnostics.sh",
+        "apple/ios/NightPadAboutViewController.h",
+        "apple/ios/NightPadAboutViewController.mm"
       ],
       "blockers": [],
-      "next_step": "Exercise diagnostic Share/Save to Files, then run device shell through start/pause/import and verify SDL/overlay composition."
+      "next_step": "Smoke-test external About links, then run the device shell through start/pause/resume, diagnostic export and Files import with overlay composition."
     },
     "G06": {
       "status": "pending",
@@ -751,6 +753,15 @@
       "evidence": [
         "apple/ios/NightPadDiagnosticsViewController.mm",
         "scripts/test_diagnostics.sh",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T15:08:56Z",
+      "goal": "G05",
+      "summary": "Added a native About page with source/donor links and independence/game-data notices; builds and simulator rendering pass.",
+      "evidence": [
+        "apple/ios/NightPadAboutViewController.mm",
         "docs/TEST-MATRIX.md"
       ]
     }

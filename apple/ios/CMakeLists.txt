@@ -32,6 +32,7 @@ add_executable(NightPadShell MACOSX_BUNDLE
   main.mm
   NightPadShellViewController.mm
   NightPadDiagnosticsViewController.mm
+  NightPadAboutViewController.mm
   NightPadEngineHost.mm)
 target_compile_features(NightPadShell PRIVATE cxx_std_20)
 target_compile_options(NightPadShell PRIVATE -fobjc-arc)

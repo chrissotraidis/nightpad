@@ -267,3 +267,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: exercise the final save action and return to device shell composition /
   Files import when hardware access is available.
 
+## 2026-10-27T15:08:56Z — About page and source notices
+
+- Goal: G05. Requirements: branding/source disclosure under R25.
+- Hypothesis: the About surface should identify NightPad and its donors without
+  pretending to be affiliated with the game's rights holders.
+- Observed: added a native About page with version, product description,
+  Nightfire/GalaxyPad/SunPad links, non-affiliation and game-data notices, and
+  accessibility identifiers. The old static About card was removed.
+- Evidence: simulator screenshot `evidence/ios-shell/about.png`; simulator and
+  device builds pass; link check unchanged.
+- Verdict: surface and disclosure content pass; opening each external link and
+  physical-device presentation remain unverified.
+- Next: open-link smoke and the remaining device composition/import gates.
+

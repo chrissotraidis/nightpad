@@ -56,6 +56,7 @@
 | G05 | Native-UI input suspension | iPhoneOS/macOS | passed for build/boundary | Pad/keyboard reads answer neutral and pointer deltas drop while suspended; shell menu/pause uses it; device behavior pending |
 | G05 | Local diagnostic report review | iPhone simulator / iPhoneOS build | passed for core/review | `scripts/test_diagnostics.sh`; redacts home/container paths and credentials; simulator shows review/share screen; no automatic upload |
 | G05 | Diagnostic report share/export | iPhone simulator | passed for presentation | Share sheet shows Save to Files and Copy; generated file read back from Logs/NightPad; deliberate save click and device use remain |
+| G05 | About and source notices | iPhone simulator / iPhoneOS build | passed for surface | Version, source/donor links, independence and game-data notices render; link opening and device use remain |
 
 Only rows with explicit execution evidence are marked passed. Source inspection
 does not satisfy runtime acceptance.
