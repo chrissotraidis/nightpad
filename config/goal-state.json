@@ -174,7 +174,9 @@
         "apple/ios/NightPadGameInput.h",
         "apple/ios/NightPadGameInput.mm",
         "patches/0014-host-pad-override.patch",
-        "docs/DECISIONS/0009-input-authority.md"
+        "docs/DECISIONS/0009-input-authority.md",
+        "apple/ios/NightPadControlsHelpViewController.h",
+        "apple/ios/NightPadControlsHelpViewController.mm"
       ],
       "blockers": [],
       "next_step": "Verify engine pad consumption and rumble on device, then map the eight original control schemes and Driving/POV layouts."
@@ -348,10 +350,14 @@
       ]
     },
     "R13": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "apple/ios/NightPadControlsHelpViewController.mm"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "The engine keeps its eight schemes and inversion/aim/crouch preferences; the app sends Xbox bits and now documents on-foot, vehicle and menu mappings from drivecfg.def/POV definitions. Runtime scheme and vehicle verification remains."
+      ]
     },
     "R14": {
       "status": "in_progress",

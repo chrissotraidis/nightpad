@@ -379,3 +379,20 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: verify the engine's pad consumption on device, then map Driving/POV
   definitions and the eight original schemes.
 
+## 2026-10-27T16:35:00Z — contextual control help
+
+- Goal: G06. Requirement: R13 in progress.
+- Hypothesis: the game already consumes Xbox bits for every scheme, so the app
+  owes players an accurate reference rather than a second mapping layer.
+- Observed: added a native Controls page with on-foot, vehicle/turret and menu
+  sections. Vehicle rows follow the supplied drivecfg.def and POV definitions
+  (RT gas, LT brake, B handbrake, A secondary fire, X gadget, Y camera,
+  White/Black and D-pad secondary selection).
+- Evidence: the page renders on the iPhone 17 simulator from the Controls menu;
+  screenshot at ignored `evidence/ios-shell/control-help.png`.
+- Verdict: contextual help exists and matches the definitions; the eight
+  schemes, inversion/aim preferences and vehicle behavior still need runtime
+  verification with game data.
+- Next: device pad verification, then a scheme/preference pass against the
+  engine's own menus.
+

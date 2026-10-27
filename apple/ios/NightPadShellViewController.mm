@@ -3,6 +3,7 @@
 #import "NightPadDiagnosticsViewController.h"
 #import "NightPadAboutViewController.h"
 #import "NightPadTouchLayoutViewController.h"
+#import "NightPadControlsHelpViewController.h"
 #import "NightPadGameInput.h"
 #import "NightPadTouchControlsView.h"
 
@@ -56,6 +57,7 @@ using nightpad::Paths;
     BOOL _pendingAbout;
     BOOL _pendingFixtureImport;
     BOOL _pendingTouchLayout;
+    BOOL _pendingControlsHelp;
     BOOL _pendingGameplayPreview;
     BOOL _touchControlsAlwaysVisible;
     BOOL _gameplayMode;
@@ -170,6 +172,8 @@ static uint64_t ShellResidentBytes(void) {
         _pendingTouchLayout = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--preview-gameplay"])
         _pendingGameplayPreview = YES;
+    else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-control-help"])
+        _pendingControlsHelp = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -207,6 +211,12 @@ static uint64_t ShellResidentBytes(void) {
             self->_gameplayMode = YES;
             [self updateGameplaySurface];
             [self installTouchControls];
+        });
+    }
+    if (_pendingControlsHelp) {
+        _pendingControlsHelp = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            [self openControlsHelp];
         });
     }
 }
@@ -294,6 +304,8 @@ static uint64_t ShellResidentBytes(void) {
 
     UIAction *layout = [self menuAction:@"Touch Layout…" image:@"hand.draw" disabled:NO
                                 handler:^{ [weakSelf openTouchLayout]; }];
+    UIAction *help = [self menuAction:@"Control Help…" image:@"questionmark.circle" disabled:NO
+                              handler:^{ [weakSelf openControlsHelp]; }];
     UIAction *show = [self menuAction:@"Show Touch Controls"
                                 image:(_touchControlsAlwaysVisible ? @"checkmark.circle.fill" : @"circle")
                              disabled:!_engineRunning
@@ -308,7 +320,7 @@ static uint64_t ShellResidentBytes(void) {
                                        image:[UIImage systemImageNamed:@"hand.draw"]
                                   identifier:nil
                                      options:0
-                                    children:@[ layout, show, controllerStatus ]];
+                                    children:@[ layout, help, show, controllerStatus ]];
 
     UIAction *data = [self menuAction:@"Game Data & Saves" image:@"internaldrive" disabled:NO
                                handler:^{ [weakSelf openDataPanel]; }];
@@ -530,6 +542,17 @@ static uint64_t ShellResidentBytes(void) {
         [strongSelf refreshMenu];
     };
     UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:editor];
+    navigation.modalPresentationStyle = UIModalPresentationPageSheet;
+    [self presentViewController:navigation animated:YES completion:nil];
+}
+
+- (void)openControlsHelp {
+    [self beginNativeUI];
+    [self closePanels];
+    NightPadControlsHelpViewController *help = [NightPadControlsHelpViewController new];
+    __weak NightPadShellViewController *weakSelf = self;
+    help.onClose = ^{ [weakSelf endNativeUI]; };
+    UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:help];
     navigation.modalPresentationStyle = UIModalPresentationPageSheet;
     [self presentViewController:navigation animated:YES completion:nil];
 }

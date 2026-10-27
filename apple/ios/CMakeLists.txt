@@ -38,6 +38,7 @@ add_executable(NightPadShell MACOSX_BUNDLE
   NightPadDiagnosticsViewController.mm
   NightPadAboutViewController.mm
   NightPadTouchLayoutViewController.mm
+  NightPadControlsHelpViewController.mm
   NightPadTouchControlsView.mm
   NightPadControllerAuthority.mm
   NightPadControllerRumble.mm

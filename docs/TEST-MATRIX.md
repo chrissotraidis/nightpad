@@ -55,6 +55,7 @@
 | G06 | Controller slot reconciliation | macOS arm64 / iPhoneOS build | passed for core | `scripts/test_controller_slots.sh`: stable slots, free-slot reuse, sole-controller reclaim, duplicates and four-player cap |
 | G06 | Native three-dot menu and in-game overlay | iPhone 17 simulator / iOS 26.5 | passed visual smoke | Native UIMenu with Game/Controls/Data/Info submenus and the Xbox overlay render; evidence `evidence/ios-shell/menu-controls.png`, `touch-overlay.png` |
 | G06 | App-owned pad bridge into the engine | iPhoneOS 26.5 | passed for link | Host pad override and rumble callbacks exported; device input behavior still unverified |
+| G06 | Contextual control help from game definitions | iPhone 17 simulator / iOS 26.5 | passed visual smoke | Controls menu opens a native reference using the engine's on-foot mapping and the drivecfg.def/POV pairings (RT gas, LT brake, B handbrake, A/X/Y secondary actions); evidence `evidence/ios-shell/control-help.png` |
 | G05 | Native shell home, menu and data panel | iPhone simulator / iOS 26.5 | passed visual smoke | `NightPadShell` builds; screenshots show persistent menu, data status/import panel, pause/about/diagnostics entries |
 | G05 | Shell device compilation | iPhoneOS 26.5 | passed | `scripts/build_ios_shell.sh device` builds arm64 app without signing |
 | G05 | Combined engine archive links into shell | iPhoneOS 26.5 | passed for link | `scripts/check_ios_shell_link.sh`: arm64, action bridge plus driving start, no loose SDL/FFmpeg/SPIRV dylibs |

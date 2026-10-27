@@ -145,6 +145,10 @@ simulator probe and remains blocked on physical-device access.
   each port and bypass SDL's own gamepads.
 - The three-dot button is now a native UIMenu with Game, Controls, Game Data &
   Saves and Info submenus, following SunPad's menu shape.
+- Controls now includes a native reference for on-foot, vehicle and menu
+  mappings. Vehicle rows come from the game's own drivecfg/POV definitions
+  (RT gas, LT brake, B handbrake, A/X/Y secondary actions); the game's eight
+  schemes and its inversion/aim/crouch preferences remain engine-owned.
 
 ## Current uncertainty and blockers
 
