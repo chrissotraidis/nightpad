@@ -214,6 +214,9 @@ simulator probe and remains blocked on physical-device access.
 - Touch auto-hide now depends only on the controller that owns the touch
   player's port. A second player's controller can no longer take player one's
   touch controls away.
+- The touch overlay's accessibility order is explicit: movement, shoulders,
+  system buttons, look, then the face buttons, with the menu last. It used to be
+  reverse subview order.
 
 ## Current uncertainty and blockers
 

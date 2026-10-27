@@ -796,3 +796,13 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the requirement's ownership rule holds in code and in the simulator.
   A real second controller is still needed to confirm slot assignment.
 
+## 2026-10-28T05:35:00Z — overlay reading order
+
+- Goal: G06. Requirement: R29 in progress.
+- Observed: the accessibility tree used reverse subview order. The overlay now
+  sets `accessibilityElements` explicitly: movement stick, D-pad, LT, White,
+  Back, Start, Black, RT, look stick, then A, B, X, Y, with the menu last.
+- Evidence: the simulator AX tree lists exactly that order.
+- Verdict: reading order is deliberate. Physical VoiceOver use and the editor
+  order still need a session.
+

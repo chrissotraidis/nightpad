@@ -54,6 +54,27 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
     }
 }
 
+// VoiceOver order: movement, shoulders, system, look, then the face buttons.
+// Without this, the accessibility tree follows reverse subview order.
+int AccessibilityRank(TouchControlId id) {
+    switch (id) {
+        case TouchControlId::LeftStick: return 0;
+        case TouchControlId::Dpad: return 1;
+        case TouchControlId::LeftTrigger: return 2;
+        case TouchControlId::White: return 3;
+        case TouchControlId::Back: return 4;
+        case TouchControlId::Start: return 5;
+        case TouchControlId::Black: return 6;
+        case TouchControlId::RightTrigger: return 7;
+        case TouchControlId::RightStick: return 8;
+        case TouchControlId::A: return 9;
+        case TouchControlId::B: return 10;
+        case TouchControlId::X: return 11;
+        case TouchControlId::Y: return 12;
+    }
+    return 13;
+}
+
 }  // namespace
 
 @interface NightPadOverlayControlView : UIView
@@ -267,6 +288,13 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
         [self addSubview:view];
         [_controlViews addObject:view];
     }
+    NSArray<NightPadOverlayControlView *> *ordered = [_controlViews sortedArrayUsingComparator:^NSComparisonResult(
+        NightPadOverlayControlView *first, NightPadOverlayControlView *second) {
+        const int left = AccessibilityRank(first.controlId);
+        const int right = AccessibilityRank(second.controlId);
+        return left < right ? NSOrderedAscending : (left > right ? NSOrderedDescending : NSOrderedSame);
+    }];
+    self.accessibilityElements = ordered;
     [self setNeedsLayout];
 }
 
