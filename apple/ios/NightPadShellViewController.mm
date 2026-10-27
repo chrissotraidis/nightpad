@@ -69,6 +69,7 @@ using nightpad::Paths;
     BOOL _pendingTouchLayout;
     BOOL _pendingControlsHelp;
     BOOL _pendingSaveFixture;
+    BOOL _pendingPausePanel;
     BOOL _pendingGameplayPreview;
     nightpad::AppSettings _settings;
     BOOL _gameplayMode;
@@ -213,6 +214,8 @@ static uint64_t ShellResidentBytes(void) {
         _pendingControlsHelp = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--restore-saves-fixture"])
         _pendingSaveFixture = YES;
+    else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-pause"])
+        _pendingPausePanel = YES;
     [self logSessionEvent:@"app launch"];
 }
 
@@ -263,6 +266,12 @@ static uint64_t ShellResidentBytes(void) {
         _pendingSaveFixture = NO;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             [self restoreSavesFromFixture];
+        });
+    }
+    if (_pendingPausePanel) {
+        _pendingPausePanel = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            [self showPausePanel];
         });
     }
 }
@@ -762,6 +771,7 @@ static uint64_t ShellResidentBytes(void) {
     [self beginNativeUI];
     [self closePanels];
     _pausePanel.hidden = NO;
+    _status.hidden = YES;
     [self.view bringSubviewToFront:_pausePanel];
 }
 

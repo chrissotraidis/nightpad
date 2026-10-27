@@ -1792,3 +1792,16 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the tools the inventory relies on are under test. The real-data
   behaviour still needs the owner's image, which the tests never touch.
 
+## 2026-10-29T02:40:00Z — the pause card can be seen without an engine
+
+- Goal: G06. Requirement: R15 in progress.
+- Observed: the App Pause card is only reachable while the engine runs, so its
+  layout and Dynamic Type sizing were the last shell surface never inspected.
+- Observed: a `--open-pause` launch hook, like the other deterministic screen
+  hooks, shows the card directly. It renders correctly at the default size and
+  at extra-extra-large, and the home status label is now hidden under the card
+  as it already was under the data panel.
+- Evidence: `evidence/ios-shell/pause-panel.png`.
+- Verdict: every native surface has a screenshot. The card's behaviour with a
+  live engine still needs the device.
+

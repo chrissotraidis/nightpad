@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T02:20:00Z",
+  "last_updated_at": "2026-10-29T02:40:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -1530,6 +1530,16 @@
         "tests/test_data_tools.py",
         "scripts/test_data_tools.sh",
         "scripts/verify_quick.sh"
+      ]
+    },
+    {
+      "at": "2026-10-29T02:40:00Z",
+      "goal": "G06",
+      "summary": "Added --open-pause so the App Pause card can be inspected without an engine; it renders and scales, and the home status label stays hidden under it.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/pause-panel.png"
       ]
     }
   ],
