@@ -255,9 +255,11 @@
       "status": "pending",
       "started_at": null,
       "completed_at": null,
-      "evidence": [],
+      "evidence": [
+        "docs/DECISIONS/0011-netplay-deferral.md"
+      ],
       "blockers": [],
-      "next_step": null
+      "next_step": "Decision recorded. No online work is scheduled; revisit only on explicit request or upstream support, and G11 still depends on G08."
     },
     "G12": {
       "status": "pending",
@@ -493,16 +495,22 @@
       "notes": []
     },
     "R22": {
-      "status": "unverified",
-      "evidence": [],
-      "decision_id": null,
-      "notes": []
+      "status": "decision_complete",
+      "evidence": [
+        "docs/DECISIONS/0011-netplay-deferral.md"
+      ],
+      "decision_id": "0011-netplay-deferral",
+      "notes": [
+        "Source has no networking layer and the front-end exposes only local multiplayer. Two approaches analysed; both are out of scope without source support, so online play is deferred."
+      ]
     },
     "R23": {
-      "status": "unverified",
+      "status": "not_applicable",
       "evidence": [],
-      "decision_id": null,
-      "notes": []
+      "decision_id": "0011-netplay-deferral",
+      "notes": [
+        "Netplay is deferred, so two-device consistency and impairment testing do not apply."
+      ]
     },
     "R24": {
       "status": "unverified",
@@ -576,7 +584,13 @@
     }
   },
   "physical_targets": [],
-  "decisions": [],
+  "decisions": [
+    {
+      "id": "0011-netplay-deferral",
+      "path": "docs/DECISIONS/0011-netplay-deferral.md",
+      "summary": "Online netplay deferred; local multiplayer only."
+    }
+  ],
   "blockers": [
     {
       "id": "B01",
@@ -1034,5 +1048,5 @@
       "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "Provide a signing identity and a trusted device, then run scripts/device_handoff.sh --install and work the checklist in docs/DEVICE-HANDOFF.md."
+  "next_step": "Physical acceptance is the gate; local multiplayer inventory and assist polish continue in the meantime."
 }

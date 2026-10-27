@@ -670,3 +670,16 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the smallest handoff is prepared. Nothing physical can be accepted
   until the machine has an identity and a trusted device.
 
+## 2026-10-28T01:35:00Z — netplay deferred
+
+- Goal: G11. Requirement: R22 decision complete; R23 not applicable.
+- Observed: the reconstruction contains no `WSA*`, `XNet`, `XOnline`,
+  `DirectPlay`, `sockaddr` or netplay code, and the front-end text has no
+  system-link or online entries. The only multiplayer surface is local.
+- Observed: two approaches were assessed — emulating Xbox System Link, or
+  host-authoritative netplay — and both need architecture the project does not
+  have; a prototype would still leave R23's two-device work open.
+- Evidence: `docs/DECISIONS/0011-netplay-deferral.md`.
+- Verdict: online play is deferred with a concrete reason; local multiplayer
+  remains the supported scope.
+

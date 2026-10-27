@@ -185,6 +185,10 @@ simulator probe and remains blocked on physical-device access.
   install and launch once a team and trusted device are present. The session
   checklist is [DEVICE-HANDOFF.md](DEVICE-HANDOFF.md). The install path is
   untested here because this machine still has no identity or device.
+- Online netplay is formally deferred (decision 0011): the reconstruction has
+  no networking layer and the front end exposes only local multiplayer. The
+  original split-screen, bots and port rules remain the supported multiplayer
+  scope; R23 is not applicable.
 
 ## Current uncertainty and blockers
 
