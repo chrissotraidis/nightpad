@@ -108,6 +108,57 @@ Infiltration.
 | Evil Base | EvilBase, EvilSilo, EvilBaseC |
 | Space Station | SpaceStationD |
 
+## Mission parts and objectives
+
+`MissionData` in `src/action/game/sp/Mission.cpp` lists every action level with
+its base map, its order inside that mission, and the objective array it points
+at. The objective arrays hold text ids; the strings are in the ignored
+`UKTxt.Dat` dump and are paraphrased here.
+
+| Mission | Part (order) | Objectives |
+| --- | --- | --- |
+| The Exchange | CastleExterior (0) | Breach the castle walls. |
+| | CastleCourtyard (1) | Get inside to the party. |
+| | CastleIndoors1 (2) | Meet the undercover agents without breaking cover; observe the secret meeting. |
+| | CastleIndoors2 (3) | Recover the guidance chip; escape with Zoe by gondola. |
+| Double Cross | HendersonA (0) | Escort Mayhew to the bunker. |
+| | HendersonB (1) | Destroy Mayhew's computer; rescue the geisha; find the servants' door. |
+| | HendersonC (2) | Open the dragon safe; rescue Mayhew's servants; find the door to Mayhew. |
+| | HendersonD (3) | Defeat the assassin. |
+| Night Shift | TowerA (0) | Avoid raising the alarm; reach the lobby and activate the elevators; ride to the office floor. |
+| | TowerB (1) | Install Q-Worm on the office systems; unlock the exterior door from the security centre; reach the balcony. |
+| | TowerC (2) | Install Q-Worm on Mayhew's system; find the secure terminal; retrieve the files; reach the roof; parachute away. |
+| Chain Reaction | PowerStationA1 (0) | Investigate ST-1; photograph the jetpack prototype; leave through TR-2. |
+| | PowerStationA2 (1) | Investigate ST-3; photograph the laser prototype; destroy door C5 with the catwalk laser. |
+| Phoenix Fire | Tower2A (0) | Escape the tower; reach the lower office floor. |
+| | Tower2B (1) | Activate the elevator override; escape down the shaft. |
+| | Tower2Elevator (2) | Reach the lobby. |
+| | Tower2C (3) | Raise the security gate; leave by the front entrance. |
+| Countdown | EvilBase (0) | Infiltrate undetected; follow Kiko; sabotage security; stop Rook cutting Delta's power; reach Delta. |
+| | EvilSilo (1) | Find the exit to Omega Sector. |
+| | EvilBaseC (2) | Reach the launch silo; stop Kiko launching. |
+| Equinox | SpaceStationD (0) | Disable the missiles; defeat Drake before the station fails. |
+
+Two base maps sit outside the wheel and hold the evidence for the cut
+chapters above.
+
+| Base map | Part (order) | Objectives |
+| --- | --- | --- |
+| Cut_Level1 | Cut_Level1 (0) | Disable the building security before using the lift: three systems. |
+| | Cut_Level2 (1) | One placeholder objective. |
+| Cut_Level3 | Cut_Level3 (0) | Three placeholder objectives. |
+
+`Cut_Level1` and `Cut_Level2` most plausibly fill the "Hidden Agenda" chapter:
+they follow the power plant and their only real objectives are about disabling
+its security, but the second part keeps an unlocalised placeholder.
+`Cut_Level3` is the "Island Caves" chapter - its objective array is even named
+`Caves` - and has no real objectives at all. Both support the reading that
+these chapters were dropped before their text was finished.
+
+The five driving missions (Paris Prelude, Alpine Escape, Enemies Vanquished,
+Deep Descent, Island Infiltration) have no `MissionData` rows: their goals are
+handled inside the driving engine and still need inventorying.
+
 ## Driving content present in the supplied data
 
 `driving/mis*.viv` holds seven mission bundles: `mis01`, `mis3`, `mis4`,
@@ -176,8 +227,8 @@ reaches `0x07000006` before its final frames.
 
 ## Still missing
 
-- Mission-to-level-script and mission-to-drive-bundle mapping.
-- Per-mission start/end state, saves and unique inputs.
+- Start and end state per mission part, including which part writes a save.
+- Driving-mission objectives, which live outside `MissionData`.
 - The original difficulty ladder and failure/restart routes.
 - Any device-specific rendering differences.
 

@@ -152,6 +152,9 @@ simulator probe and remains blocked on physical-device access.
 - The three-dot menu, the settings surfaces and the touch editor are held to
   the pinned SunPad and GalaxyPad implementations as the quality bar
   (`docs/DECISIONS/0012-donor-ui-benchmark.md`).
+- Campaign objectives are inventoried for all nine action missions and their
+  24 level parts, including the two out-of-wheel cut chapters; driving-mission
+  objectives and per-part start/end state remain open.
 - Controls now includes a native reference for on-foot, vehicle and menu
   mappings. Vehicle rows come from the game's own drivecfg/POV definitions
   (RT gas, LT brake, B handbrake, A/X/Y secondary actions); the game's eight

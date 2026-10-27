@@ -1127,3 +1127,23 @@ are ignored and may contain paths, hashes, captures or device identities.
   keeps listing twelve starts. Per-mission start/end state and objectives
   remain open.
 
+## 2026-10-28T13:35:00Z — mission parts and objectives inventoried
+
+- Goal: G07. Requirement: campaign inventory.
+- Observed: `MissionData` lists 24 action level parts with their base map and
+  order, and each part's objective array. Resolving those ids through the text
+  dump gives the objectives for every action mission, including the four-part
+  Castle, Henderson, Tower and Tower 2 chains.
+- Observed: the two out-of-wheel base maps confirm the earlier cut-chapter
+  reading. `Cut_Level1` and `Cut_Level2` hold the power-plant security
+  objectives for "Hidden Agenda", with a placeholder in part two;
+  `Cut_Level3`'s array is named `Caves` and holds three placeholders for
+  "Island Caves".
+- Observed: the five driving missions have no `MissionData` rows, so their
+  objectives are engine-side and still open.
+- Evidence: `vendor/nightfire/src/action/game/sp/Mission.cpp` and `UKTxt.Dat`
+  ids `0x04000000`-`0x04000069`; the paraphrased table is in
+  `docs/CAMPAIGN-INVENTORY.md`.
+- Verdict: objectives are inventoried for all nine action missions. Start/end
+  state per part, saves and the driving objectives remain.
+
