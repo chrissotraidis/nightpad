@@ -67,6 +67,7 @@ using nightpad::Paths;
     BOOL _pickingSaveFiles;
     BOOL _pendingTouchLayout;
     BOOL _pendingControlsHelp;
+    BOOL _pendingSaveFixture;
     BOOL _pendingGameplayPreview;
     nightpad::AppSettings _settings;
     BOOL _gameplayMode;
@@ -194,6 +195,8 @@ static uint64_t ShellResidentBytes(void) {
         _pendingGameplayPreview = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-control-help"])
         _pendingControlsHelp = YES;
+    else if ([NSProcessInfo.processInfo.arguments containsObject:@"--restore-saves-fixture"])
+        _pendingSaveFixture = YES;
     [self logSessionEvent:@"app launch"];
 }
 
@@ -238,6 +241,12 @@ static uint64_t ShellResidentBytes(void) {
         _pendingControlsHelp = NO;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             [self openControlsHelp];
+        });
+    }
+    if (_pendingSaveFixture) {
+        _pendingSaveFixture = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            [self restoreSavesFromFixture];
         });
     }
 }
@@ -1097,6 +1106,26 @@ static uint64_t ShellResidentBytes(void) {
     [self presentViewController:picker animated:YES completion:nil];
 }
 
+- (void)restoreSavesFromFixture {
+    // The document picker's remote UI is not scriptable, so the save-restore
+    // path takes its inputs from Documents/SaveFixture in automated runs.
+    NSString *documents = [NSString stringWithUTF8String:_paths.documents.string().c_str()];
+    NSURL *folder = [[NSURL fileURLWithPath:documents isDirectory:YES]
+        URLByAppendingPathComponent:@"SaveFixture" isDirectory:YES];
+    NSArray<NSString *> *names = [NSFileManager.defaultManager contentsOfDirectoryAtPath:folder.path error:nil];
+    NSMutableArray<NSURL *> *urls = [NSMutableArray array];
+    for (NSString *name in names) {
+        if ([name hasPrefix:@"."])
+            continue;
+        [urls addObject:[folder URLByAppendingPathComponent:name]];
+    }
+    if (urls.count == 0) {
+        [self showInfo:@"No save fixture" detail:@"Put save files in Documents/SaveFixture to test restore."];
+        return;
+    }
+    [self restoreSaves:urls];
+}
+
 - (void)restoreSaves:(NSArray<NSURL *> *)urls {
     if (urls.count == 0)
         return;
@@ -1137,9 +1166,10 @@ static uint64_t ShellResidentBytes(void) {
     for (NSURL *url in urls) {
         const BOOL scoped = [url startAccessingSecurityScopedResource];
         NSString *destination = [directory stringByAppendingPathComponent:url.lastPathComponent];
-        if ([NSFileManager.defaultManager fileExistsAtPath:destination])
-            [NSFileManager.defaultManager removeItemAtPath:destination error:&error];
-        if ([NSFileManager.defaultManager copyItemAtPath:url.path toPath:destination error:&error])
+        // Atomic, so an interrupted restore leaves the previous save intact
+        // rather than a deleted or half-written slot.
+        NSData *contents = [NSData dataWithContentsOfURL:url options:0 error:&error];
+        if (contents != nil && [contents writeToFile:destination options:NSDataWritingAtomic error:&error])
             ++copied;
         if (scoped)
             [url stopAccessingSecurityScopedResource];

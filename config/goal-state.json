@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T16:35:00Z",
+  "last_updated_at": "2026-10-28T16:50:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -399,12 +399,14 @@
         "scripts/test_saves_link.sh",
         "apple/ios/NightPadShellViewController.mm",
         "docs/TEST-MATRIX.md",
-        "apple/shared/NightPadPaths.cpp"
+        "apple/shared/NightPadPaths.cpp",
+        "evidence/ios-shell/save-restore.png"
       ],
       "decision_id": null,
       "notes": [
         "The engine writes through a durable Saves link; Share Saves exports via the system sheet and Import Saves copies chosen files back with a replace confirmation. Picker selection, a real in-game save and the app-update case remain.",
-        "An app reinstall (the simulator update path) kept the save, settings file, touch layout and imported tree byte-identical."
+        "An app reinstall (the simulator update path) kept the save, settings file, touch layout and imported tree byte-identical.",
+        "Save restore now writes atomically, so an interrupted restore keeps the previous file; the fixture hook proved the collision prompt, replacement and unrelated-file isolation."
       ]
     },
     "R12": {
@@ -1177,6 +1179,16 @@
       "summary": "Verified that an app reinstall keeps saves, settings, touch layout and imported game data byte-identical; only interrupted engine writes and a signed store update remain for R11.",
       "evidence": [
         "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T16:50:00Z",
+      "goal": "G05",
+      "summary": "Save restore writes atomically and is now driven end to end by a fixture hook: collision prompt, exact contents, unrelated files untouched.",
+      "evidence": [
+        "docs/TEST-MATRIX.md",
+        "apple/ios/NightPadShellViewController.mm",
+        "evidence/ios-shell/save-restore.png"
       ]
     }
   ],

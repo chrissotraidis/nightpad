@@ -1337,3 +1337,21 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: app updates keep saves, settings, layouts and imported data.
   Interrupted engine writes and a signed store update remain open.
 
+## 2026-10-28T16:50:00Z — save restore verified, and atomic
+
+- Goal: G05. Requirement: R11 in progress.
+- Observed: save restore deleted the destination before copying, so an
+  interruption could leave a missing or half-written slot. It now writes the
+  bytes atomically through `NSDataWritingAtomic`.
+- Observed: the restore path had no automated input because the picker's remote
+  UI is not scriptable. A `--restore-saves-fixture` launch hook feeds
+  `Documents/SaveFixture` into the same `restoreSaves:` call, so the collision
+  prompt and replacement are exercisable.
+- Evidence: iPhone 17 simulator, iOS 26.5: a 32-byte `slot1.sav` and an 8-byte
+  `newslot.sav` for the fixture - the app asked to replace the existing slot,
+  reported "2 files restored", wrote both contents exactly and left the
+  unrelated codename file untouched. `evidence/ios-shell/save-restore.png`.
+- Verdict: save restore and replacement are verified and atomic. Picking files
+  from outside the app stays manual, and an interrupted engine write still
+  needs a device run.
+
