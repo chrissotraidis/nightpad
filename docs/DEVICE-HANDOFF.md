@@ -60,9 +60,9 @@ ignored `evidence/device/<date>/`.
 `build/package/NightPadShell-unsigned.ipa` for inspection. It is not
 installable until it is signed.
 
-The current unsigned package hash is
-`aea729242d38522315759819ec3564435297908e312377dd91b33f52839b22b2` (app code
-at `e0dcb73`). Regenerate it at freeze time; do not install a stale copy.
+The last unsigned package built from this tree is
+`fc654387f50e80d42f57e8960ec67cec0023411b775bdefacedb3bc31f2b6f1c` (app code
+at `66af620`). Regenerate it at freeze time; do not install a stale copy.
 
 ## Not in this candidate
 
