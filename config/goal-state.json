@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T14:37:38Z",
+  "last_updated_at": "2026-10-27T14:43:28Z",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -123,10 +123,12 @@
         "apple/ios/NightPadEngineHost.h",
         "apple/ios/NightPadEngineHost.mm",
         "scripts/build_combined_engine_link.sh",
-        "build/ios-combined/libnightpad-engines.a"
+        "build/ios-combined/libnightpad-engines.a",
+        "patches/0011-nonblocking-window-poll.patch",
+        "scripts/check_ios_shell_link.sh"
       ],
       "blockers": [],
-      "next_step": "Create the SDL window/event loop under the shell overlay, connect real stopped/pause/input state, then enable Start Game and exercise Files import end to end."
+      "next_step": "Run the device shell to verify SDL window/overlay composition and live Start/Stop, then wire real engine pause, neutral input and audio gating."
     },
     "G06": {
       "status": "pending",
@@ -313,7 +315,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Persistent three-dot menu, data panel and app-pause surface render on simulator; engine pause/audio/input gating remains."
+        "Persistent menu, data panel, start/stop path and transparent shell overlay are wired; engine pause/audio/input gating and physical-device run remain."
       ]
     },
     "R16": {
@@ -684,6 +686,16 @@
       "evidence": [
         "apple/ios/NightPadEngineHost.mm",
         "scripts/build_combined_engine_link.sh",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:43:28Z",
+      "goal": "G05",
+      "summary": "Added a nonblocking SDL poll bridge and wired shell Start/Stop with a transparent overlay above the engine window; device runtime and pause gating remain.",
+      "evidence": [
+        "patches/0011-nonblocking-window-poll.patch",
+        "apple/ios/NightPadEngineHost.mm",
         "docs/TEST-MATRIX.md"
       ]
     }

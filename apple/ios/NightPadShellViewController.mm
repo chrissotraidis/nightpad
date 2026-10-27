@@ -1,4 +1,5 @@
 #import "NightPadShellViewController.h"
+#import "NightPadEngineHost.h"
 
 #include "../shared/NightPadGameDataImport.h"
 
@@ -10,6 +11,16 @@ using nightpad::GameDataImporter;
 using nightpad::Paths;
 
 @interface NightPadMenuButton : UIButton
+@end
+
+@interface NightPadPassThroughView : UIView
+@end
+
+@implementation NightPadPassThroughView
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    UIView *hit = [super hitTest:point withEvent:event];
+    return hit == self ? nil : hit;
+}
 @end
 
 @implementation NightPadMenuButton
@@ -27,6 +38,10 @@ using nightpad::Paths;
     NSString *_identity;
     DataState _state;
     BOOL _importing;
+    NightPadEngineHost *_engineHost;
+    BOOL _engineRunning;
+    BOOL _gameplayMode;
+    NSTimer *_engineTimer;
 
     UILabel *_title;
     UILabel *_status;
@@ -42,9 +57,16 @@ using nightpad::Paths;
     UIButton *_startButton;
 }
 
+- (void)loadView {
+    self.view = [[NightPadPassThroughView alloc] initWithFrame:UIScreen.mainScreen.bounds];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = UIColor.blackColor;
+    _engineHost = [NightPadEngineHost new];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowBecameKey:)
+        name:UIWindowDidBecomeKeyNotification object:nil];
 
     _title = [UILabel new];
     _title.text = @"NIGHTPAD";
@@ -110,6 +132,18 @@ using nightpad::Paths;
 
 - (BOOL)prefersStatusBarHidden { return YES; }
 - (BOOL)prefersHomeIndicatorAutoHidden { return YES; }
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_engineTimer invalidate];
+}
+
+- (void)windowBecameKey:(NSNotification *)note {
+    (void)note;
+    if (!_gameplayMode || self.view.window == nil) return;
+    self.view.window.windowLevel = UIWindowLevelNormal + 2;
+    [self.view.window makeKeyAndVisible];
+}
 
 - (UIButton *)panelButton:(NSString *)title action:(SEL)action {
     UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -334,11 +368,76 @@ using nightpad::Paths;
 }
 
 - (void)startGame {
+    if (_engineRunning) {
+        [self stopGame];
+        return;
+    }
+    if (![NightPadEngineHost isLinked]) {
+        [self showInfo:@"Engine not linked" detail:@"Build the device shell to include the combined engine archive."];
+        return;
+    }
+    if (_state != DataState::Ready || _identity.length == 0) {
+        [self showInfo:@"Game data required" detail:@"Import a validated prepared game-data folder first."];
+        return;
+    }
+    NSString *gameData = [NSString stringWithUTF8String:_paths.GameDataFor(_identity.UTF8String).c_str()];
+    NSString *launchState = [NSString stringWithUTF8String:_paths.launchState.c_str()];
+    NSString *error = nil;
+    if (![_engineHost prepareWithGameData:gameData launchState:launchState error:&error] ||
+        ![_engineHost startAction]) {
+        [self showError:error.length ? error : @"The engine could not start."];
+        return;
+    }
     [self closePanels];
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Game Data Ready"
-        message:@"The native engine host is the next shell integration step." preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-    [self presentViewController:alert animated:YES completion:nil];
+    _engineRunning = YES;
+    _gameplayMode = YES;
+    [self updateGameplaySurface];
+    _engineTimer = [NSTimer timerWithTimeInterval:1.0 / 60.0 target:self selector:@selector(pollEngine) userInfo:nil repeats:YES];
+    [NSRunLoop.mainRunLoop addTimer:_engineTimer forMode:NSRunLoopCommonModes];
+    UIButtonConfiguration *runningConfiguration = _startButton.configuration;
+    runningConfiguration.title = @"Stop Game";
+    _startButton.configuration = runningConfiguration;
+    _importButton.enabled = NO;
+}
+
+- (void)pollEngine {
+    if (!_engineRunning || ![_engineHost pollWindow]) {
+        [self stopGame];
+    }
+}
+
+- (void)stopGame {
+    if (!_engineRunning) return;
+    _engineRunning = NO;
+    [_engineTimer invalidate];
+    _engineTimer = nil;
+    [_engineHost requestStop];
+    __weak NightPadShellViewController *weakSelf = self;
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+        NightPadShellViewController *strongSelf = weakSelf;
+        if (strongSelf == nil) return;
+        int joined = [strongSelf->_engineHost joinWithTimeout:30000];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NightPadShellViewController *strongSelf = weakSelf;
+            if (strongSelf == nil) return;
+            [strongSelf->_engineHost closeWindow];
+            strongSelf->_gameplayMode = NO;
+            [strongSelf updateGameplaySurface];
+            [strongSelf refreshDataState];
+            if (!joined)
+                [strongSelf showError:@"The engine did not stop within thirty seconds."];
+        });
+    });
+}
+
+- (void)updateGameplaySurface {
+    self.view.backgroundColor = _gameplayMode ? UIColor.clearColor : UIColor.blackColor;
+    _title.hidden = _gameplayMode;
+    _status.hidden = _gameplayMode;
+    _menuButton.hidden = NO;
+    if (self.view.window != nil)
+        self.view.window.windowLevel = _gameplayMode ? UIWindowLevelNormal + 2 : UIWindowLevelNormal;
+    [self.view bringSubviewToFront:_menuButton];
 }
 
 - (void)refreshDataState {
@@ -347,7 +446,11 @@ using nightpad::Paths;
     std::string identity, error;
     _state = _importer->CurrentState(&identity, &error);
     _identity = identity.empty() ? nil : [NSString stringWithUTF8String:identity.c_str()];
-    _startButton.enabled = _state == DataState::Ready;
+    _startButton.enabled = (_state == DataState::Ready && [NightPadEngineHost isLinked]) || _engineRunning;
+    UIButtonConfiguration *startConfiguration = _startButton.configuration;
+    startConfiguration.title = _engineRunning ? @"Stop Game" : @"Start Game";
+    _startButton.configuration = startConfiguration;
+    _importButton.enabled = !_engineRunning && !_importing;
     if (_state == DataState::Ready)
         _status.text = [NSString stringWithFormat:@"Game data ready\n%@", _identity];
     else if (_state == DataState::RecoverableError)
@@ -361,6 +464,10 @@ using nightpad::Paths;
 
 - (void)chooseImportFolder {
     if (_importing) return;
+    if (_engineRunning) {
+        [self showInfo:@"Stop the game first" detail:@"Game data can only change while the engine is stopped."];
+        return;
+    }
     UIDocumentPickerViewController *picker = [[UIDocumentPickerViewController alloc]
         initForOpeningContentTypes:@[UTTypeFolder] asCopy:NO];
     picker.delegate = self;

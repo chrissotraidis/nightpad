@@ -62,6 +62,14 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
 #endif
 }
 
+- (BOOL)pollWindow {
+#if NIGHTPAD_HAS_ENGINE
+    return NightPadActionEnginePollWindow() != 0;
+#else
+    return NO;
+#endif
+}
+
 - (void)requestStop {
 #if NIGHTPAD_HAS_ENGINE
     NightPadActionEngineRequestStop();

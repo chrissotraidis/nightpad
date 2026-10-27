@@ -23,6 +23,7 @@ void NightPadActionEngineRequestStop(void);
 void NightPadDrivingEngineRequestStop(void);
 int NightPadActionEngineStart(int argc, char **argv);
 void NightPadActionEngineRunWindow(void);
+int NightPadActionEnginePollWindow(void);
 int NightPadActionEngineJoin(unsigned timeoutMilliseconds);
 void NightPadActionEngineCloseWindow(void);
 // Test/coordinator hook: after this many main-loop frames, use the game's own psiLaunchDriving seam.

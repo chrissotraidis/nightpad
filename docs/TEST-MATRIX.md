@@ -49,7 +49,9 @@
 | G05 | Native shell home, menu and data panel | iPhone simulator / iOS 26.5 | passed visual smoke | `NightPadShell` builds; screenshots show persistent menu, data status/import panel, pause/about/diagnostics entries |
 | G05 | Shell device compilation | iPhoneOS 26.5 | passed | `scripts/build_ios_shell.sh device` builds arm64 app without signing |
 | G05 | Combined engine archive links into shell | iPhoneOS 26.5 | passed for link | `scripts/check_ios_shell_link.sh`: arm64, action bridge plus driving start, no loose SDL/FFmpeg/SPIRV dylibs |
-| G05 | Engine host under shell and real pause gating | iPhone/iPad | unverified | Engine archive and host wrapper link, but Start Game is still gated and no SDL window/event loop is attached |
+| G05 | Host-owned SDL poll loop | macOS arm64 / iPhoneOS 26.5 | passed for build; device runtime unverified | `HostWindow_Poll` bridge exported; shell uses a 60 Hz timer; macOS transition gate still passes |
+| G05 | Engine Start/Stop under the shell | iPhone/iPad | unverified | Start prepares data, starts action engine and polls events; physical device run is unavailable |
+| G05 | Native pause/input/audio gating | iPhone/iPad | unverified | App-pause card exists; engine pause and neutral-input routing are not wired |
 
 Only rows with explicit execution evidence are marked passed. Source inspection
 does not satisfy runtime acceptance.

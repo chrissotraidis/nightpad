@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-27 14:37 UTC
+Updated: 2026-10-27 14:43 UTC
 
 ## Outcome
 
@@ -94,6 +94,11 @@ simulator probe and remains blocked on physical-device access.
   FFmpeg and SPIRV-Cross. Its device binary contains the action engine bridge
   and driving start, and the shell has an engine-host wrapper that prepares a
   private settings.ini from the active game-data path.
+- The shell now has a live Start/Stop path: it prepares the active data root,
+  starts the action engine, pumps SDL events from a 60 Hz host timer, keeps a
+  transparent touch-through overlay above the game window, and requests
+  stop/join/close from the menu. This path is device-build verified; running it
+  still requires a signed physical device because the simulator has no SDL GPU.
 
 ## Current uncertainty and blockers
 

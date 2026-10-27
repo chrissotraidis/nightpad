@@ -1,0 +1,31 @@
+--- a/src/driving/platform/HostWindow.h
++++ b/src/driving/platform/HostWindow.h
+@@ -14,6 +14,9 @@
+ bool HostWindow_Open(int width, int height, const char *title);
+ // Runs the window's events on the thread that opened it, until the window is closed.
+ void HostWindow_Run(void);
++// Pumps window events without blocking. False when the window asked to close. For a host-owned run loop that must
++// keep servicing its own UI between frames.
++bool HostWindow_Poll(void);
+ // Asks the event loop to return at its next iteration. Safe from any thread.
+ void HostWindow_RequestQuit(void);
+ // Destroys the window and shuts SDL down. Main thread only, after HostWindow_Run returns.
+--- a/src/driving/platform/HostWindowSdl.cpp
++++ b/src/driving/platform/HostWindowSdl.cpp
+@@ -85,6 +85,16 @@
+     fflush(stdout);
+ }
+ 
++bool HostWindow_Poll(void) {
++    SDL_Event event;
++    while (SDL_PollEvent(&event)) {
++        if (event.type == SDL_EVENT_QUIT || event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)
++            return false;
++        HostInputSdl_Event(&event);
++    }
++    return true;
++}
++
+ void HostWindow_RequestQuit(void) {
+     SDL_Event event;
+     SDL_zero(event);

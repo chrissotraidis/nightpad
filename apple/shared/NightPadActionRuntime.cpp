@@ -36,6 +36,10 @@ extern "C" void NightPadActionEngineRunWindow(void) {
     HostWindow_Run();
 }
 
+extern "C" int NightPadActionEnginePollWindow(void) {
+    return HostWindow_Poll() ? 1 : 0;
+}
+
 extern "C" int NightPadActionEngineJoin(unsigned timeoutMilliseconds) {
     if (g_gameThread == nullptr) {
         return 1;

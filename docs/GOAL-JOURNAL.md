@@ -180,3 +180,23 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: create the SDL window under the shell overlay, run its event loop, and
   connect real stopped/pause/input state before enabling Start Game.
 
+## 2026-10-27T14:43:28Z — host-owned live session loop
+
+- Goal: G05. Requirements: R04, R15 in progress.
+- Hypothesis: a nonblocking SDL poll loop can let the shell own its UIKit timer
+  and overlay while the engine game thread renders independently.
+- Observed: added `HostWindow_Poll`, exported as
+  `NightPadActionEnginePollWindow`, and tracked it as
+  `patches/0011-nonblocking-window-poll.patch`. The shell now prepares the
+  active data path, starts the action engine, polls SDL at 60 Hz, raises a
+  transparent pass-through shell window above the game, and requests
+  stop/join/close from the menu. Import is blocked while the engine runs.
+  Simulator shell UI still renders; simulator cannot run SDL GPU.
+- Evidence: simulator/device shell builds succeed; `check_ios_shell_link.sh`
+  confirms the poll bridge and no loose engine dylibs; the macOS ten-cycle
+  transition gate still passes after the poll change.
+- Verdict: build/event-loop boundary passes; live Start/Stop and input/pause
+  behavior need a signed physical device run.
+- Next: run the device shell, verify the SDL window/overlay composition, then
+  add real engine pause and neutral-input/audio gating.
+

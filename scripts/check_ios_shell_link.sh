@@ -16,6 +16,7 @@ fi
 
 symbols=$(nm -gU "$app")
 for symbol in _NightPadActionEngineStart _NightPadActionEngineRequestStop \
+              _NightPadActionEnginePollWindow \
               _NightPadActionEngineJoin _NightPadActionEngineCloseWindow \
               _NightPadDrivingEngineStart; do
     printf '%s\n' "$symbols" | grep -q " T $symbol$" || {
