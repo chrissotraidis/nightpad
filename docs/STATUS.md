@@ -158,6 +158,9 @@ simulator probe and remains blocked on physical-device access.
   open.
 - The touch editor can hide or show a control by long-pressing it; the choice
   survives save and relaunch and the live overlay drops hidden controls.
+- Game Data & Saves can import `Documents/NightPad Import` with one tap, so
+  the prepared tree no longer has to go through the system picker; both import
+  paths open the data panel so progress and Cancel Import are visible.
 - Controls now includes a native reference for on-foot, vehicle and menu
   mappings. Vehicle rows come from the game's own drivecfg/POV definitions
   (RT gas, LT brake, B handbrake, A/X/Y secondary actions); the game's eight

@@ -1228,3 +1228,22 @@ are ignored and may contain paths, hashes, captures or device identities.
   navigation bar land on the sheet's dismiss region - so tablet persistence and
   drag editing stay open.
 
+## 2026-10-28T15:05:00Z — one-tap import from the app folder
+
+- Goal: G05. Requirement: R04 in progress.
+- Observed: the only import path was the system folder picker, whose remote UI
+  cannot be scripted, so every import test and every tablet import needs manual
+  navigation. SunPad offers a folder inside its own app storage instead.
+- Observed: Game Data & Saves now has "Import from NightPad Folder", which
+  imports `Documents/NightPad Import` and says where to put it when the folder is
+  missing. Both import paths now open the data panel before starting, so the
+  progress bar and Cancel Import are visible; the cancel button hides again when
+  the import ends.
+- Evidence: re-imported the 1.9 GB prepared tree through the new action on the
+  iPhone 17 simulator, from "Copying prepared game data" with a live bar to
+  "Game data imported"; identity stayed `data-a3c98ab965ac41e559ac` and both
+  saves were byte-identical. `scripts/verify_quick.sh` passes. Evidence
+  `evidence/ios-shell/import-from-folder.png`.
+- Verdict: import no longer depends on the picker. Choosing a folder from
+  outside the app still needs the picker and remains manual.
+

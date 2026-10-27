@@ -80,6 +80,7 @@ using nightpad::Paths;
     UIProgressView *_progress;
     UILabel *_progressLabel;
     UIButton *_importButton;
+    UIButton *_cancelImportButton;
     UIButton *_discardButton;
     NightPadTouchControlsView *_touchControls;
     NightPadGameInput *_gameInput;
@@ -464,6 +465,9 @@ static uint64_t ShellResidentBytes(void) {
                                handler:^{ [weakSelf openDataPanel]; }];
     UIAction *importAction = [self menuAction:@"Import Prepared Game Data…" image:@"folder" disabled:_engineRunning
                                       handler:^{ [weakSelf chooseImportFolder]; }];
+    UIAction *folderAction = [self menuAction:@"Import from NightPad Folder" image:@"folder.badge.plus"
+                                     disabled:_engineRunning || _importing
+                                      handler:^{ [weakSelf importFromAppFolder]; }];
     UIAction *removeAction = [self menuAction:@"Remove Previous Game Data" image:@"trash"
                                      disabled:!(_importer && _importer->previousDataRetained())
                                       handler:^{ [weakSelf discardPrevious]; }];
@@ -476,7 +480,8 @@ static uint64_t ShellResidentBytes(void) {
                                        image:[UIImage systemImageNamed:@"internaldrive"]
                                   identifier:nil
                                      options:0
-                                    children:@[ data, importAction, shareAction, restoreAction, removeAction ]];
+                                    children:@[ data, importAction, folderAction, shareAction, restoreAction,
+                                                removeAction ]];
 
     UIAction *about = [self menuAction:@"About NightPad" image:@"info.circle" disabled:NO
                                 handler:^{ [weakSelf openAbout]; }];
@@ -542,6 +547,7 @@ static uint64_t ShellResidentBytes(void) {
     UIButton *cancel = [self panelButton:@"Cancel Import" action:@selector(cancelImport)];
     cancel.translatesAutoresizingMaskIntoConstraints = NO;
     [_dataPanel addSubview:cancel];
+    _cancelImportButton = cancel;
     UIButton *close = [self panelButton:@"Close" action:@selector(dismissPanels)];
     close.translatesAutoresizingMaskIntoConstraints = NO;
     [_dataPanel addSubview:close];
@@ -1029,6 +1035,7 @@ static uint64_t ShellResidentBytes(void) {
     _discardButton.enabled = _importer->previousDataRetained();
     _progress.hidden = !_importing;
     _progressLabel.hidden = !_importing;
+    _cancelImportButton.hidden = !_importing;
 }
 
 - (void)chooseImportFolder {
@@ -1053,6 +1060,7 @@ static uint64_t ShellResidentBytes(void) {
     }
     NSURL *url = urls.firstObject;
     if (url == nil) return;
+    [self openDataPanel];
     [self importPreparedFolder:url];
 }
 
@@ -1131,11 +1139,33 @@ static uint64_t ShellResidentBytes(void) {
                                              copied == 1 ? @"" : @"s"]];
 }
 
+- (void)importFromAppFolder {
+    // The folder picker's remote UI cannot be scripted, and copying a prepared
+    // tree through Files and then re-picking it is clumsy on a tablet. A folder
+    // inside the app's Documents can be imported with one tap, like SunPad's
+    // "Import from SunPad Folder".
+    NSString *documents = [NSString stringWithUTF8String:_paths.documents.string().c_str()];
+    NSURL *folder = [[NSURL fileURLWithPath:documents isDirectory:YES]
+        URLByAppendingPathComponent:@"NightPad Import" isDirectory:YES];
+    BOOL isDirectory = NO;
+    if (![NSFileManager.defaultManager fileExistsAtPath:folder.path isDirectory:&isDirectory] || !isDirectory) {
+        [self showInfo:@"No import folder"
+                 detail:@"Copy a prepared game-data folder named \"NightPad Import\" into NightPad's Documents "
+                        @"in Files, then choose this again."];
+        return;
+    }
+    // The progress bar lives in the data panel; an import started from the menu
+    // must show it.
+    [self openDataPanel];
+    [self importPreparedFolder:folder];
+}
+
 - (void)importPreparedFolder:(NSURL *)url {
     BOOL scoped = [url startAccessingSecurityScopedResource];
     _importing = YES;
     _progress.hidden = NO;
     _progressLabel.hidden = NO;
+    _cancelImportButton.hidden = NO;
     _progress.progress = 0;
     _progressLabel.text = @"Preparing import…";
     _importButton.enabled = NO;

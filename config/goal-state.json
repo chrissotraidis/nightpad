@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T14:50:00Z",
+  "last_updated_at": "2026-10-28T15:05:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -325,7 +325,8 @@
       ],
       "decision_id": null,
       "notes": [
-        "Real prepared-tree import, relaunch, save preservation and cancel-then-retry pass; the shell reports cancellation as information. Picker selection remains manual."
+        "Real prepared-tree import, relaunch, save preservation and cancel-then-retry pass; the shell reports cancellation as information. Picker selection remains manual.",
+        "The picker is no longer the only path: Documents/NightPad Import imports with one tap, with visible progress and cancellation."
       ]
     },
     "R05": {
@@ -1077,6 +1078,16 @@
         "docs/TEST-MATRIX.md",
         "tests/native/test_touch_layout.cpp",
         "evidence/ios-shell/ipad-touch-overlay.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T15:05:00Z",
+      "goal": "G05",
+      "summary": "Added Import from NightPad Folder for Documents/NightPad Import and made both import paths show the data panel with progress and Cancel Import.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/import-from-folder.png"
       ]
     }
   ],
