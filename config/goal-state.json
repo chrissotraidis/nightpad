@@ -525,11 +525,12 @@
         "apple/ios/NightPadDiagnosticsViewController.mm",
         "scripts/test_diagnostics.sh",
         "apple/shared/NightPadDiagnostics.h",
-        "tests/native/test_diagnostics.cpp"
+        "tests/native/test_diagnostics.cpp",
+        "scripts/test_release_diagnostics.sh"
       ],
       "decision_id": null,
       "notes": [
-        "Reports now include render size, display options, assist state and the last 20 shell events with redaction. Diagnostic/performance build separation and device collection remain."
+        "Reports include render size, display options, assist state and the last 20 events with redaction. Release builds identify as performance/release, checked by a single-simulator gate. Device collection remains."
       ]
     },
     "R26": {
@@ -1050,5 +1051,5 @@
       "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "Physical acceptance is the gate; local multiplayer inventory and assist polish continue in the meantime."
+  "next_step": "Collect diagnostics and performance measurements on device; G07/G08 inventory continues."
 }

@@ -2,7 +2,8 @@
 set -eu
 
 repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-app="$repo/build/ios-shell-device/Debug-iphoneos/NightPadShell.app/NightPadShell"
+configuration=${1:-Debug}
+app="$repo/build/ios-shell-device/$configuration-iphoneos/NightPadShell.app/NightPadShell"
 if [ ! -f "$app" ]; then
     echo "Build the device shell first: scripts/build_ios_shell.sh device" >&2
     exit 1

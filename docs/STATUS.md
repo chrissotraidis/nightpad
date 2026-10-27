@@ -193,6 +193,10 @@ simulator probe and remains blocked on physical-device access.
   and the last twenty shell events (launch, import, engine start/stop, handoff,
   native pause/resume, errors). Paths and credential-shaped values are still
   redacted, and the report stays local until shared.
+- The shell builds in Debug and Release lanes. A Release build reports
+  `build_configuration=performance/release`, checked by
+  `scripts/test_release_diagnostics.sh`, which boots and shuts down a single
+  simulator itself.
 
 ## Current uncertainty and blockers
 

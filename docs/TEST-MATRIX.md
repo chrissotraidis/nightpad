@@ -78,6 +78,7 @@
 | G09 | Engine settings file content | macOS arm64 | passed | `scripts/test_engine_settings.sh`: disc path, render size, AA and widescreen keys written in order with expected values |
 | G09 | Engine honors the render target | macOS arm64 | passed for one size | A run with RenderWidth/Height 1280x960 logs `rendering the game's 640x480 at 1280x960`; AA off is accepted silently. Sustained device performance still unverified |
 | G12 | Diagnostics include session history and display state (R25) | macOS arm64 / iPhone 17 simulator | passed | The report now carries render size, display options, assist state and the last 20 events; a simulator report shows them, and event paths and credentials are redacted |
+| G12 | Diagnostic and performance builds are distinguished (R25) | iPhone 17 simulator / iOS 26.5 | passed | `scripts/test_release_diagnostics.sh` builds the Release lane, boots one simulator, and reads a report that says `build_configuration=performance/release`; the script boots and shuts down its own device |
 | G05 | Native shell home, menu and data panel | iPhone simulator / iOS 26.5 | passed visual smoke | `NightPadShell` builds; screenshots show persistent menu, data status/import panel, pause/about/diagnostics entries |
 | G05 | Shell device compilation | iPhoneOS 26.5 | passed | `scripts/build_ios_shell.sh device` builds arm64 app without signing |
 | G05 | Combined engine archive links into shell | iPhoneOS 26.5 | passed for link | `scripts/check_ios_shell_link.sh`: arm64, action bridge plus driving start, no loose SDL/FFmpeg/SPIRV dylibs |

@@ -697,3 +697,16 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: device reports will be materially more useful. Diagnostic versus
   performance build separation and deliberate device collection remain.
 
+## 2026-10-28T02:25:00Z — release lane and performance build identity
+
+- Goal: G12. Requirement: R25 in progress.
+- Observed: `build_ios_shell.sh` now takes `debug` or `release`; the Release
+  simulator build reports `build_configuration=performance/release` when its
+  diagnostics are opened, and the link check accepts a configuration.
+- Evidence: `scripts/test_release_diagnostics.sh` builds Release, boots exactly
+  one simulator, installs, opens diagnostics and asserts the report's build
+  identity, then shuts the device down.
+- Verdict: diagnostic and performance builds are distinguishable in the
+  artifact itself. Deliberate device collection and performance measurement
+  remain.
+
