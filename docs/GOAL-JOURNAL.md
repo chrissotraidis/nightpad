@@ -1418,3 +1418,20 @@ are ignored and may contain paths, hashes, captures or device identities.
   settings ignored" with no crash; restoring both files gave a clean launch.
 - Verdict: a corrupt profile or layout is reported and survivable.
 
+## 2026-10-28T18:15:00Z — the eight action schemes are mapped
+
+- Goal: G06. Requirement: R13 in progress.
+- Observed: `psiInput.cpp` fills 19 action channels for each of the eight
+  controller styles, so the schemes can be compared exactly. Nightfire is the
+  baseline; Moonraker moves crouch and reload; Octopussy, Thunderball and
+  Classic Bond swap the horizontal sticks; Dr. No is fully southpaw with
+  D-pad jump and crouch; Goldfinger and GoldenEye move alternate fire and the
+  cycling buttons, and Dr. No and Goldfinger move night vision off Back.
+- Observed: the Control Help intro now names the eight schemes the game offers,
+  so a player knows what the original Controller Setup page will list.
+- Evidence: `docs/CONTROL-SCHEMES.md`, from `src/action/engine/psiInput.cpp` and
+  the scheme labels in `docs/ui/handlers.md`; the help page read back from the
+  iPhone 17 simulator shows the sentence.
+- Verdict: the action schemes are mapped and described. Device passes per
+  scheme, and the physical pad driving the same channels, remain.
+

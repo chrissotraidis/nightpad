@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T17:55:00Z",
+  "last_updated_at": "2026-10-28T18:15:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -199,7 +199,8 @@
         "apple/shared/NightPadSettings.cpp",
         "tests/native/test_settings.cpp",
         "scripts/test_settings.sh",
-        "docs/DECISIONS/0012-donor-ui-benchmark.md"
+        "docs/DECISIONS/0012-donor-ui-benchmark.md",
+        "docs/CONTROL-SCHEMES.md"
       ],
       "blockers": [],
       "next_step": "Verify engine pad consumption and rumble on device, then map the eight original control schemes and Driving/POV layouts."
@@ -432,11 +433,13 @@
       "status": "in_progress",
       "evidence": [
         "apple/ios/NightPadControlsHelpViewController.mm",
-        "docs/DRIVING-CONTROLS.md"
+        "docs/DRIVING-CONTROLS.md",
+        "docs/CONTROL-SCHEMES.md"
       ],
       "decision_id": null,
       "notes": [
-        "The engine keeps its schemes and preferences; help separates Driving from Mounted views and names the POV variations across eight configurations. In-game checks remain."
+        "The engine keeps its schemes and preferences; help separates Driving from Mounted views and names the POV variations across eight configurations. In-game checks remain.",
+        "All eight action schemes are mapped from psiInput.cpp with their differences from Nightfire recorded in docs/CONTROL-SCHEMES.md."
       ]
     },
     "R14": {
@@ -1228,6 +1231,16 @@
       "summary": "Deferred presentations now wait for the window and alerts stack, so a corrupt settings file and a corrupt layout are both reported instead of one being lost.",
       "evidence": [
         "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T18:15:00Z",
+      "goal": "G06",
+      "summary": "Mapped the eight action control schemes from psiInput.cpp, documented the differences from Nightfire, and named them in Control Help.",
+      "evidence": [
+        "docs/CONTROL-SCHEMES.md",
+        "apple/ios/NightPadControlsHelpViewController.mm",
         "docs/TEST-MATRIX.md"
       ]
     }

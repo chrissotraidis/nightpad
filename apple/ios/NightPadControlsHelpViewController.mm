@@ -61,7 +61,8 @@
     UILabel *intro = [UILabel new];
     intro.text = @"NightPad sends Xbox controls, so the game's eight control schemes and its inversion, "
                  @"aim and crouch preferences stay in charge. A physical controller uses the same mapping as "
-                 @"the touch layout.";
+                 @"the touch layout. The game's Controller Setup offers Nightfire, Moonraker, Octopussy, "
+                 @"Goldfinger, Dr. No, Thunderball, GoldenEye and Classic Bond.";
     intro.numberOfLines = 0;
     intro.adjustsFontForContentSizeCategory = YES;
     intro.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
