@@ -1,12 +1,16 @@
 # NightPad status
 
-Updated: 2026-10-27 14:43 UTC
+Updated: 2026-10-27 20:33 UTC
 
 ## Outcome
 
 The goal loop is active. G00 and G01 are complete on their documented source
-and data scopes. G02 has a working native baseline; G03 has passed the data-free
-simulator probe and remains blocked on physical-device access.
+and data scopes. G02 has a working native baseline and is blocked on the
+missing PAL movie set; G03 has passed the data-free simulator probe and remains
+blocked on physical-device access. The combined engines pass their full host
+suite, and the shell's data, save, touch, diagnostics and handoff surfaces are
+implemented and exercised on the simulator; physical acceptance is the
+remaining gate.
 
 ## Verified
 
@@ -325,14 +329,15 @@ simulator probe and remains blocked on physical-device access.
 
 Physical acceptance is the gate. Run `scripts/device_handoff.sh --install` once
 a signing identity and a trusted device exist, then work the checklist in
-[DEVICE-HANDOFF.md](DEVICE-HANDOFF.md): the probe, the picker and save round
+[DEVICE-HANDOFF.md](DEVICE-HANDOFF.md): the probe, the data import and save round
 trip, touch and controller sessions, Secret Unlocks, display modes and the
 fifteen-minute stability runs.
 
-Independent work that can continue meanwhile: per-mission details and the
-difficulty/failure routes in the campaign inventory, and the multiplayer
-mode/map support matrix. Keep the ten-cycle lifecycle, pause, transition,
-handoff and data-import gates as regressions.
+Independent work that can continue meanwhile: attributing the driving objective
+strings (needs a track parser or an interactive run), the difficulty and
+failure routes in the campaign inventory, and the multiplayer mode/map support
+matrix. Keep the ten-cycle lifecycle, pause, transition, handoff and
+data-import gates as regressions.
 
 Verification entry points are `scripts/verify_quick.sh` (host logic, both
 shell builds, device link contract) and `scripts/verify_engine.sh` (lifecycle,

@@ -1672,3 +1672,16 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: cleanup is invisible at launch. The device will show whether a large
   delete still perturbs storage I/O during play.
 
+## 2026-10-28T23:30:00Z — the status page matches the app
+
+- Goal: G13. Requirement: R30 in progress.
+- Observed: `docs/STATUS.md` still said the outcome was "G02 working baseline,
+  G03 blocked" with a timestamp from the morning, and its next-step list still
+  offered per-mission details that are now done while the driving attribution is
+  the open one.
+- Observed: the outcome now names the missing PAL set, the passing host engine
+  suite and the simulator-verified shell, and the next step points at the data
+  import and save round trip in the handoff plus the track-parser item.
+- Evidence: `docs/STATUS.md`.
+- Verdict: the status page describes the current tree. No code changes.
+
