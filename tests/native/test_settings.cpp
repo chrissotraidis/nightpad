@@ -33,6 +33,7 @@ int main() {
     settings.renderScale = 3;
     settings.antiAliasing = false;
     settings.widescreen = true;
+    settings.fov = 80;
     settings.assistImmortal = true;
     settings.assistUnlimitedAmmo = true;
     Check(settings.Save(path, &error), "save settings");
@@ -42,6 +43,7 @@ int main() {
     Check(loaded.touchControlsAlwaysVisible && !loaded.rumble && loaded.hideTouchControlsWithController,
           "round trip");
     Check(loaded.renderScale == 3 && !loaded.antiAliasing && loaded.widescreen, "display round trip");
+    Check(loaded.fov == 80, "FOV round trip");
     Check(loaded.assistImmortal && loaded.assistUnlimitedAmmo, "assist round trip");
 
     // A donor's Nintendo preferences must not leak into NightPad.
@@ -73,6 +75,9 @@ int main() {
 
     std::ofstream(path, std::ios::trunc) << "version=1\nrender_scale=9\n";
     Check(!kept.Load(path, &error), "render scale out of range rejected");
+
+    std::ofstream(path, std::ios::trunc) << "version=1\nfov=200\n";
+    Check(!kept.Load(path, &error), "FOV out of range rejected");
 
     Check(!AppSettings{}.Load(home / "missing.txt", &error), "missing file reported");
     Check(error == "The settings file is missing.", "missing file has a readable reason");

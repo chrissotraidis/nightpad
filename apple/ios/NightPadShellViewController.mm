@@ -384,11 +384,24 @@ static uint64_t ShellResidentBytes(void) {
                                    options:0
                                   children:@[ wideOff, wideOn ]];
 
+    NSMutableArray<UIAction *> *fovActions = [NSMutableArray array];
+    for (int fov : { 60, 70, 80 }) {
+        NSString *title = fov == 60 ? @"60° (Original)" : [NSString stringWithFormat:@"%d°", fov];
+        UIAction *action = [self menuAction:title image:nil disabled:NO handler:^{ [weakSelf setFov:fov]; }];
+        action.state = (_settings.fov == fov) ? UIMenuElementStateOn : UIMenuElementStateOff;
+        [fovActions addObject:action];
+    }
+    UIMenu *fieldOfView = [UIMenu menuWithTitle:@"Field of View"
+                                          image:[UIImage systemImageNamed:@"camera"]
+                                     identifier:nil
+                                        options:0
+                                       children:fovActions];
+
     UIMenu *display = [UIMenu menuWithTitle:@"Display"
                                       image:[UIImage systemImageNamed:@"display"]
                                  identifier:nil
                                     options:0
-                                   children:@[ resolution, antiAliasing, aspect ]];
+                                   children:@[ resolution, antiAliasing, aspect, fieldOfView ]];
 
     UIAction *immortal = [self menuAction:@"Immortality" image:@"heart.fill" disabled:NO
                                   handler:^{ [weakSelf toggleImmortal]; }];
@@ -741,6 +754,16 @@ static uint64_t ShellResidentBytes(void) {
     [self refreshMenu];
 }
 
+- (void)setFov:(int)fov {
+    if (fov < 30 || fov > 120)
+        return;
+    _settings.fov = fov;
+    [self saveSettings];
+    [self refreshMenu];
+    if (_engineRunning)
+        [self showInfo:@"Display change queued" detail:@"Field of view applies at the next Start."];
+}
+
 - (void)toggleUnlimitedAmmo {
     _settings.assistUnlimitedAmmo = !_settings.assistUnlimitedAmmo;
     [_engineHost setUnlimitedAmmo:_settings.assistUnlimitedAmmo];
@@ -798,6 +821,7 @@ static uint64_t ShellResidentBytes(void) {
     _engineHost.renderHeight = 480 * _settings.renderScale;
     _engineHost.antiAliasing = _settings.antiAliasing;
     _engineHost.widescreen = _settings.widescreen;
+    _engineHost.fov = _settings.fov;
     if (![_engineHost prepareWithGameData:gameData launchState:launchState error:&error] ||
         ![_engineHost startAction]) {
         [self showError:error.length ? error : @"The engine could not start."];

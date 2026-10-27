@@ -26,6 +26,7 @@ static __weak NightPadEngineHost *gHost;
         _renderHeight = 480;
         _antiAliasing = YES;
         _widescreen = NO;
+        _fov = 60;
     }
     return self;
 }
@@ -70,6 +71,7 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
     display.renderHeight = _renderHeight > 0 ? _renderHeight : 480;
     display.antiAliasing = _antiAliasing;
     display.widescreen = _widescreen;
+    display.fov = _fov > 0 ? _fov : 60;
     NSString *settings = [NSString stringWithUTF8String:
         nightpad::BuildEngineSettings(gameData.UTF8String, display).c_str()];
     NSString *path = [launchState stringByAppendingPathComponent:@"settings.ini"];

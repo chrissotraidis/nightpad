@@ -16,6 +16,7 @@ typedef NS_ENUM(NSInteger, NightPadEngineKind) {
 @property(nonatomic) int renderHeight;
 @property(nonatomic) BOOL antiAliasing;
 @property(nonatomic) BOOL widescreen;
+@property(nonatomic) int fov;
 
 + (BOOL)isLinked;
 - (BOOL)prepareWithGameData:(NSString *)gameData

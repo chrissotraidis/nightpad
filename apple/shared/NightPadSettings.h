@@ -18,6 +18,8 @@ struct AppSettings {
     int renderScale = 1;
     bool antiAliasing = true;
     bool widescreen = false;
+    // Vertical field of view in degrees; 60 is the game's own.
+    int fov = 60;
     // Optional assists, off by default and never part of acceptance runs.
     bool assistImmortal = false;
     bool assistUnlimitedAmmo = false;

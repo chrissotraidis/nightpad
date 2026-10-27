@@ -91,6 +91,14 @@ bool AppSettings::Load(const fs::path &path, std::string *error) {
                 if (error) *error = "A settings value is invalid.";
                 return false;
             }
+        } else if (key == "fov") {
+            char *end = nullptr;
+            const long parsed = std::strtol(value.c_str(), &end, 10);
+            if (value.empty() || end == value.c_str() || *end != '\0' || parsed < 30 || parsed > 120) {
+                if (error) *error = "The field of view must be 30 to 120.";
+                return false;
+            }
+            loaded.fov = static_cast<int>(parsed);
         } else if (key == "assist_immortal") {
             if (!ParseBool(value, &loaded.assistImmortal)) {
                 if (error) *error = "A settings value is invalid.";
@@ -132,6 +140,7 @@ bool AppSettings::Save(const fs::path &path, std::string *error) const {
     out << "render_scale=" << renderScale << '\n';
     out << "anti_aliasing=" << (antiAliasing ? 1 : 0) << '\n';
     out << "widescreen=" << (widescreen ? 1 : 0) << '\n';
+    out << "fov=" << fov << '\n';
     out << "assist_immortal=" << (assistImmortal ? 1 : 0) << '\n';
     out << "assist_unlimited_ammo=" << (assistUnlimitedAmmo ? 1 : 0) << '\n';
     out.close();

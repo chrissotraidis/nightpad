@@ -13,6 +13,8 @@ struct EngineDisplaySettings {
     int renderHeight = 480;
     bool antiAliasing = true;
     bool widescreen = false;
+    // Vertical field of view in degrees; the game's own is 60.
+    int fov = 60;
 };
 
 std::string BuildEngineSettings(const std::string &discPath, const EngineDisplaySettings &display);

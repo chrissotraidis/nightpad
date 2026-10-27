@@ -28,11 +28,13 @@ int main() {
     display.renderHeight = 960;
     display.antiAliasing = false;
     display.widescreen = true;
+    display.fov = 70;
     const std::string text = nightpad::BuildEngineSettings("/disc root/with space", display);
     Check(ValueOf(text, "DiscPath") == "/disc root/with space", "disc path preserved");
     Check(ValueOf(text, "RenderWidth") == "1280" && ValueOf(text, "RenderHeight") == "960", "render size written");
     Check(ValueOf(text, "AntiAliasing") == "0", "FXAA off written");
     Check(ValueOf(text, "Widescreen") == "on", "widescreen written");
+    Check(ValueOf(text, "FOV") == "70", "vertical FOV written");
     Check(ValueOf(text, "Region") == "NTSC" && ValueOf(text, "FPS") == "60", "runtime keys written");
     Check(text.rfind("[Settings]\n", 0) == 0, "section header first");
 

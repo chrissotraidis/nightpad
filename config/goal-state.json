@@ -474,7 +474,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Render scale, FXAA and widescreen are exposed, persisted and written to the engine; 1280x960 target construction and 1x-3x host runs are confirmed. The host is not resolution-bound, so device performance still decides defaults; aspect/HUD/scope checks remain."
+        "Render scale, FXAA, widescreen and vertical FOV (60/70/80) are exposed, persisted and written to the engine; host runs at 1x-3x reach the same cap. Aspect/HUD/scope checks and device performance remain."
       ]
     },
     "R19": {

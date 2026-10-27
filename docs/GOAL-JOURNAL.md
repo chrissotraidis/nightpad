@@ -871,3 +871,14 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the unlock matrix is source-complete. Runtime checks remain with the
   rest of multiplayer.
 
+## 2026-10-28T07:30:00Z — vertical field of view
+
+- Goal: G09. Requirement: R18 in progress.
+- Observed: the engine's FOV key is a vertical angle defaulting to 60, clamped
+  to 30-120, with scopes unchanged. Display now offers 60 (original), 70 and 80,
+  persists the choice and writes `FOV=` into settings.ini at the next Start.
+- Evidence: the settings round-trip and engine-file tests pass; choosing 70 on
+  the simulator wrote `fov=70`.
+- Verdict: the option is wired. Aspect, HUD and scope behaviour at each value
+  still need visual validation, which is device work.
+
