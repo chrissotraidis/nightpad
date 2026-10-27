@@ -893,3 +893,14 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: native pause gates both gameplay and audio in the engine layer. The
   shell's menu/editor path calls the same pause, but hearing it needs a device.
 
+## 2026-10-28T08:10:00Z — multiplayer match rules
+
+- Goal: G08. Requirement: R17 in progress.
+- Observed: duration is 1-10 minutes then five-minute steps to 60 or unlimited;
+  the second selector is points (or lives for Top Agent) from 1-10 then
+  five-point steps to 120. Arena and Team Arena score victories; the other
+  scored modes use points. Team scores sum players' points.
+- Evidence: `docs/MULTIPLAYER-INVENTORY.md`, from the rules page and score
+  function.
+- Verdict: rule ranges and scoring are source-complete. Match execution remains.
+

@@ -79,6 +79,18 @@ until a reward bit or Secret Unlock grants them; the first twelve are available
 by default. Mission medals and codes both feed the same reward mask, so either
 route opens the same set, and the codename save persists it.
 
+### Match rules
+
+- Duration is chosen in minutes: 1-10, then five-minute steps to 60, or
+  Unlimited.
+- The second selector offers 1-10 then five-point steps to 120. It is labelled
+  Lives for Top Agent and Points otherwise.
+- Scoring: Arena and Team Arena report victories; Top Agent, Assassination,
+  CTF, Demolition, Protection, Blueprint, GoldenEye Strike, King of the Hill,
+  Uplink and Team King of the Hill report points. Quick Game reports no generic
+  score because its mode owns the result. Team scores sum the players' points.
+- Kills do not score in Arena or King of the Hill.
+
 ## Still missing
 
 - Which modes each map supports, and the win-condition details per mode.

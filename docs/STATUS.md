@@ -235,6 +235,9 @@ simulator probe and remains blocked on physical-device access.
 - Native pause is proven to gate audio as well as frames: action pause reports
   SFX and streams paused then resumed, and driving pause reports the sound
   manager paused then resumed.
+- Multiplayer match rules are mapped: duration 1-10 then 5-minute steps to 60 or
+  unlimited; points/lives 1-10 then 5-point steps to 120; Arena and Team Arena
+  report victories, the scored modes report points.
 - `scripts/verify_patches.sh` now proves the tracked patch series reproduces
   the vendor tree: every patch applies to a clean worktree at the pinned
   revision and 53 files match byte-for-byte. It is part of the quick pass.
