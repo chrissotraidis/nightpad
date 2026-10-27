@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T00:15:00Z",
+  "last_updated_at": "2026-10-29T00:40:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -1478,6 +1478,15 @@
       "evidence": [
         "docs/CAMPAIGN-INVENTORY.md",
         "docs/GOAL-JOURNAL.md"
+      ]
+    },
+    {
+      "at": "2026-10-29T00:40:00Z",
+      "goal": "G07",
+      "summary": "A 180-second event-hook run still produced no objective: the direct -mission boot takes the EU PAL default, misses paris_intro, and starts its main loop a minute in. The harness default is now recorded; the hook was reverted.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/KNOWN-ISSUES.md"
       ]
     }
   ],

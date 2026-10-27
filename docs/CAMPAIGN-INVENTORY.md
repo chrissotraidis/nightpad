@@ -185,8 +185,13 @@ first objective.
 
 A second hook in `ESetObjective_MakeEvent_Callback`, which would print every
 objective record as the track builds its events, also produced nothing in a
-25-second boot: the track's events are not created until the mission reaches
-that stage. That hook was removed too. The remaining routes are unchanged.
+25-second boot or a 180-second one: the track's events are not created until
+the mission reaches that stage. The longer log explains the delay - the direct
+`-mission` boot takes the EU default video mode, asks for
+`PAL\eng\paris_intro.mad`, misses it and only reaches its main loop about a
+minute in. The app's real handover page is NTSC, so this is a harness default
+rather than the product path, but it rules out sitting through the intro
+quickly this way. That hook was removed too; the remaining routes are unchanged.
 
 ### How a part starts and ends
 

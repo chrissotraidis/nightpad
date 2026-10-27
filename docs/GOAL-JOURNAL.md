@@ -1714,3 +1714,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: three headless routes have now been tried and ruled out. Only the
   track parser or an interactive run remains.
 
+## 2026-10-29T00:40:00Z — why the headless driving run is slow
+
+- Goal: G07. Requirement: campaign inventory.
+- Observed: extending the event-creating hook's run to 180 seconds still showed
+  no objective record. The longer log explains the budget: the direct `-mission`
+  boot takes the EU default video mode and asks for `PAL\eng\paris_intro.mad`,
+  which the 30 fps image does not contain, so the main loop only starts around a
+  minute in.
+- Observed: passing `-ntsc` does not help, because the video mode is fixed from
+  the launch page before the game parses its own arguments; the app's handover
+  page is already NTSC, so this is a harness default.
+  The hook was reverted and `scripts/verify_patches.sh` reproduces the 53 files.
+- Verdict: a direct boot cannot sit through the intro quickly enough to be a
+  practical route. The track parser or an interactive device run stands.
+

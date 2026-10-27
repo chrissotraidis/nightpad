@@ -27,3 +27,6 @@ tester would see, what is blocked, and where the detail lives.
   reproduced files still match.
 - A re-import keeps the replaced tree only for that session: the next launch
   clears it, so "Remove Previous Game Data" is a same-session action.
+- The standalone driving harness defaults to the EU launch page's PAL video
+  mode and therefore misses `paris_intro.mad`; the app's handover page is
+  NTSC. It only affects direct `-mission` test runs, not the product path.
