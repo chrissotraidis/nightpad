@@ -57,6 +57,9 @@ simulator probe and remains blocked on physical-device access.
   joins; action starts from the saved page, closes and joins.
 - The same combined harness now triggers action's existing psiLaunchDriving
   seam and completes action-to-driving in the opposite direction.
+- A repeated bidirectional soak passes its first cycle; the second driving
+  start faults after entering main. One-time engine constructors are guarded,
+  leaving mutable process-global engine state as the current reset boundary.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
   mask `0x7`, with only the `30_fps` movie bundle present.
 - The driving/POV control definitions were safely decoded from `misc.viv`:

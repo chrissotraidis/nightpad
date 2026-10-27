@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T13:12:00Z",
+  "last_updated_at": "2026-10-27T13:20:00Z",
   "active_goal": "G04",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -94,7 +94,7 @@
         "patches/0006-engine-stop-lifecycle.patch"
       ],
       "blockers": [],
-      "next_step": "Run repeated mixed transitions for all directions with pointer, thread and resource checks, then begin driving-to-driving coverage."
+      "next_step": "Inventory and reset driving process-global state required for a second start after a completed cycle."
     },
     "G05": {
       "status": "pending",
@@ -571,6 +571,15 @@
         "patches/0008-action-driving-test-seam.patch",
         "tests/native/test_engine_transition.cpp"
       ]
+    },
+    {
+      "at": "2026-10-27T13:20:00Z",
+      "goal": "G04",
+      "summary": "One bidirectional cycle passes; repeated driving start faults after main, isolating mutable engine global reset.",
+      "evidence": [
+        "patches/0009-once-per-process-static-init.patch",
+        "tests/native/test_engine_transition.cpp"
+      ]
     }
   ],
   "completed_tests": [
@@ -667,6 +676,11 @@
     {
       "name": "bidirectional page-driven transition",
       "result": "PASS: driving->action and action->driving in one process; both launch pages captured and both threads joined",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "3-cycle bidirectional transition soak",
+      "result": "FAIL: cycle 1 passes both directions; cycle 2 faults after entering driving main",
       "target": "macOS 27 arm64"
     }
   ],

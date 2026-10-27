@@ -30,5 +30,6 @@ cd "$out/run"
 python3 -c 'import os; os.path.exists("psiLaunch.bin") and os.unlink("psiLaunch.bin")'
 SDL_VIDEO_DRIVER=offscreen SDL_AUDIODRIVER=dummy \
     DYLD_LIBRARY_PATH="$build:$repo/build/deps/ffmpeg-macos-arm64/lib" \
+    NIGHTPAD_TRANSITION_CYCLES=${NIGHTPAD_TRANSITION_CYCLES:-3} \
     ../test_engine_transition -mission 1
 

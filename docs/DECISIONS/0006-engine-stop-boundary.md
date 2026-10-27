@@ -71,3 +71,8 @@ psiLaunchDriving seam. Action starts, reaches the configured frame, writes the
 page, requests DRIVING.XBE, closes and joins. Both launch callbacks are observed
 in sequence and both threads join.
 
+A three-cycle soak passes cycle one and faults as cycle two enters the driving
+engine's main. Engine static constructors are now guarded once per process, so
+the remaining failure is mutable process-global engine state that has not been
+reset between starts.
+
