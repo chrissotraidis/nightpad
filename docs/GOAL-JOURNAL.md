@@ -1147,3 +1147,21 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: objectives are inventoried for all nine action missions. Start/end
   state per part, saves and the driving objectives remain.
 
+## 2026-10-28T13:50:00Z — part start and end state
+
+- Goal: G07. Requirement: campaign inventory.
+- Observed: `Mission_Init` resets only the loaded part's objectives, hidden or
+  not shown by channel, and resets player stats only when the level is the
+  mission's first part; a warm reset leaves earlier parts alone.
+- Observed: winning sets the mission-won channel. The final parts end to their
+  outro level (CastleIndoors2, HendersonD, TowerC, PowerStationA2, Tower2C,
+  EvilBaseC, SpaceStationD, Cut_Level2); other parts hand off through their own
+  level scripts. Failure is per channel - alarm, civilian killed, Kiko escaping,
+  missile launched - plus death, and every failure route opens the mission-end
+  menu.
+- Evidence: `vendor/nightfire/src/action/game/sp/Mission.cpp` (`Mission_Init`,
+  `Mission_Update`, `Mission_GetEndTo`); written up in
+  `docs/CAMPAIGN-INVENTORY.md`.
+- Verdict: the part lifecycle is documented from source. Which part writes a
+  save, and the driving-mission objectives, still need evidence.
+

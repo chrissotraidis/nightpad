@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T13:35:00Z",
+  "last_updated_at": "2026-10-28T13:50:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -213,7 +213,7 @@
         "patches/0016-standalone-file-dump.patch"
       ],
       "blockers": [],
-      "next_step": "G07: inventory per-part start/end state and saves, and locate the driving-mission objectives, then run the first-play route when device execution is available."
+      "next_step": "G07: find which part writes a save and locate the driving-mission objectives, then run the first-play route when device execution is available."
     },
     "G08": {
       "status": "in_progress",
@@ -1025,6 +1025,15 @@
         "vendor/nightfire/src/action/game/sp/Mission.cpp",
         "build/tests/action-dump/run/dump/UKTxt.Dat",
         "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T13:50:00Z",
+      "goal": "G07",
+      "summary": "Documented how each mission part starts and ends: per-part objective reset, first-part stats reset, outro routing for final parts and the four failure channels.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "vendor/nightfire/src/action/game/sp/Mission.cpp"
       ]
     }
   ],

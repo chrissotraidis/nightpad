@@ -159,6 +159,26 @@ The five driving missions (Paris Prelude, Alpine Escape, Enemies Vanquished,
 Deep Descent, Island Infiltration) have no `MissionData` rows: their goals are
 handled inside the driving engine and still need inventorying.
 
+### How a part starts and ends
+
+Starting a level part (`Mission_Init`) records its base map and order, then
+resets the objectives of that part alone: each becomes hidden when it has a
+reveal channel and not-shown otherwise. Player stats are reset only when the
+loaded level is the mission's first part, so a later part keeps the stats the
+earlier parts produced. A warm reset leaves earlier parts untouched.
+
+Finishing every objective of the part sets the mission-won channel. The final
+part of a mission then ends to its outro level — CastleIndoors2, HendersonD,
+TowerC, PowerStationA2, Tower2C, EvilBaseC, SpaceStationD and Cut_Level2 all
+have one — while the other parts hand off through their own level scripts. The
+intermediate hand-offs are what the level chains above describe.
+
+Failure is per channel, not per objective: a raised alarm, a killed civilian,
+Kiko escaping in EvilBaseC or a launched missile in SpaceStationD each set the
+fail channel with their own message, and death ends the level. Every failure
+and death route opens the mission-end menu rather than the results page; a win
+raises the stored base-map progress and shows the results.
+
 ## Driving content present in the supplied data
 
 `driving/mis*.viv` holds seven mission bundles: `mis01`, `mis3`, `mis4`,
