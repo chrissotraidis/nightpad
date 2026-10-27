@@ -183,3 +183,7 @@ state through the mixer into the engine, and then run the device composition
 and Files checks. Keep the ten-cycle lifecycle, pause and data-import tests as
 regression gates.
 
+Verification entry points are `scripts/verify_quick.sh` (host logic, both
+shell builds, device link contract) and `scripts/verify_engine.sh` (lifecycle,
+pause, transition and handoff).
+

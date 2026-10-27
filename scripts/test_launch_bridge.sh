@@ -8,6 +8,7 @@ clang++ -isysroot "$sdk" -arch arm64 -std=c++17 -ffp-contract=off -fms-extension
     -Wno-ignored-attributes -I "$repo/vendor/nightfire/src" \
     "$repo/tests/native/test_launch_bridge.cpp" \
     "$repo/vendor/nightfire/src/common/launchInfo.cpp" \
+    "$repo/vendor/nightfire/src/driving/platform/HostPosix.cpp" \
     -o "$repo/build/tests/test_launch_bridge" -pthread
 "$repo/build/tests/test_launch_bridge"
 

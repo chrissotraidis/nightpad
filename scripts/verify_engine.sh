@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+# Slow engine gates. These run the reconstructed engines headlessly and take
+# several minutes; the handoff gate boots a full driving mission.
+repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+
+"$repo/scripts/test_action_lifecycle.sh"
+"$repo/scripts/test_driving_lifecycle.sh"
+"$repo/scripts/test_action_pause.sh"
+"$repo/scripts/test_driving_pause.sh"
+"$repo/scripts/test_engine_transition.sh"
+"$repo/scripts/test_engine_handoff.sh"
+echo "engine verification: PASS"

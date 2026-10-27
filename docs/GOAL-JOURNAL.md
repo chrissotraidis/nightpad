@@ -511,3 +511,17 @@ are ignored and may contain paths, hashes, captures or device identities.
   real in-game save/relaunch is still required before R11 can pass.
 - Next: run a real save and relaunch once device gameplay is available.
 
+## 2026-10-27T20:35:00Z — one-command verification
+
+- Goal: G00 (kept current). Requirement: R27.
+- Hypothesis: the growing gate set needs two stable entry points so a
+  regression cannot hide behind a forgotten script.
+- Observed: added `scripts/verify_quick.sh` (host logic, shell builds, device
+  link contract) and `scripts/verify_engine.sh` (lifecycle, pause, transition
+  and handoff). Running the quick pass exposed a stale launch-bridge test that
+  no longer linked `HostExitThread`; the test now links the POSIX host layer and
+  passes.
+- Evidence: quick verification passes end to end; the engine pass is the
+  existing slow gates.
+- Next: run both before each commit that touches engine or shell boundaries.
+
