@@ -219,12 +219,17 @@
       "next_step": null
     },
     "G09": {
-      "status": "pending",
-      "started_at": null,
+      "status": "in_progress",
+      "started_at": "2026-10-27T22:45:00Z",
       "completed_at": null,
-      "evidence": [],
+      "evidence": [
+        "apple/shared/NightPadEngineSettings.h",
+        "apple/shared/NightPadEngineSettings.cpp",
+        "tests/native/test_engine_settings.cpp",
+        "scripts/test_engine_settings.sh"
+      ],
       "blockers": [],
-      "next_step": null
+      "next_step": "Validate aspect/scope/HUD behaviour and sustained performance at each advertised size, then finish unlock validation (device required)."
     },
     "G10": {
       "status": "pending",
@@ -437,10 +442,15 @@
       "notes": []
     },
     "R18": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "apple/shared/NightPadEngineSettings.cpp",
+        "scripts/test_engine_settings.sh"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Render scale, FXAA and widescreen are exposed, persisted and written to the engine; 1280x960 target construction confirmed on macOS. Aspect/HUD/scope checks and device performance remain."
+      ]
     },
     "R19": {
       "status": "unverified",

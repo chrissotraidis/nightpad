@@ -1,6 +1,7 @@
 #import "NightPadEngineHost.h"
 
 #include "../shared/NightPadEngineBridge.h"
+#include "../shared/NightPadEngineSettings.h"
 #include "../shared/NightPadPaths.h"
 #include "../shared/NightPadSaves.h"
 
@@ -17,6 +18,16 @@ static __weak NightPadEngineHost *gHost;
     NSString *_launchState;
     NSString *_handoffImage;
     NightPadEngineKind _engine;
+}
+
+- (instancetype)init {
+    if ((self = [super init])) {
+        _renderWidth = 640;
+        _renderHeight = 480;
+        _antiAliasing = YES;
+        _widescreen = NO;
+    }
+    return self;
 }
 
 + (BOOL)isLinked {
@@ -54,8 +65,13 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
         if (error != nullptr) *error = fileError.localizedDescription ?: @"Could not create the launch-state directory.";
         return NO;
     }
-    NSString *settings = [NSString stringWithFormat:
-        @"[Settings]\nDiscPath=%@\nRenderWidth=640\nRenderHeight=480\nRegion=NTSC\nFPS=60\n", gameData];
+    nightpad::EngineDisplaySettings display;
+    display.renderWidth = _renderWidth > 0 ? _renderWidth : 640;
+    display.renderHeight = _renderHeight > 0 ? _renderHeight : 480;
+    display.antiAliasing = _antiAliasing;
+    display.widescreen = _widescreen;
+    NSString *settings = [NSString stringWithUTF8String:
+        nightpad::BuildEngineSettings(gameData.UTF8String, display).c_str()];
     NSString *path = [launchState stringByAppendingPathComponent:@"settings.ini"];
     if (![settings writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&fileError]) {
         if (error != nullptr) *error = fileError.localizedDescription ?: @"Could not write settings.ini.";

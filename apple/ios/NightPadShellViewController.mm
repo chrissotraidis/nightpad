@@ -340,6 +340,51 @@ static uint64_t ShellResidentBytes(void) {
                                      options:0
                                     children:@[ layout, help, show, autoHide, rumble, controllerStatus ]];
 
+    NSArray<NSString *> *scaleTitles = @[
+        @"Original (640×480)", @"2× (1280×960)", @"3× (1920×1440)", @"4× (2560×1920)"
+    ];
+    NSMutableArray<UIAction *> *resolutionActions = [NSMutableArray array];
+    for (int scale = 1; scale <= 4; ++scale) {
+        UIAction *action = [self menuAction:scaleTitles[scale - 1] image:nil disabled:NO handler:^{
+            [weakSelf setRenderScale:scale];
+        }];
+        action.state = (_settings.renderScale == scale) ? UIMenuElementStateOn : UIMenuElementStateOff;
+        [resolutionActions addObject:action];
+    }
+    UIMenu *resolution = [UIMenu menuWithTitle:@"Render Resolution"
+                                         image:[UIImage systemImageNamed:@"rectangle.expand.vertical"]
+                                    identifier:nil
+                                       options:0
+                                      children:resolutionActions];
+
+    UIAction *aaOff = [self menuAction:@"Off" image:nil disabled:NO handler:^{ [weakSelf setAntiAliasing:NO]; }];
+    aaOff.state = _settings.antiAliasing ? UIMenuElementStateOff : UIMenuElementStateOn;
+    UIAction *aaOn = [self menuAction:@"FXAA" image:nil disabled:NO handler:^{ [weakSelf setAntiAliasing:YES]; }];
+    aaOn.state = _settings.antiAliasing ? UIMenuElementStateOn : UIMenuElementStateOff;
+    UIMenu *antiAliasing = [UIMenu menuWithTitle:@"Anti-Aliasing"
+                                           image:[UIImage systemImageNamed:@"sparkles"]
+                                      identifier:nil
+                                         options:0
+                                        children:@[ aaOff, aaOn ]];
+
+    UIAction *wideOff = [self menuAction:@"Original 4:3" image:nil disabled:NO
+                                 handler:^{ [weakSelf setWidescreen:NO]; }];
+    wideOff.state = _settings.widescreen ? UIMenuElementStateOff : UIMenuElementStateOn;
+    UIAction *wideOn = [self menuAction:@"Widescreen 16:9" image:nil disabled:NO
+                                handler:^{ [weakSelf setWidescreen:YES]; }];
+    wideOn.state = _settings.widescreen ? UIMenuElementStateOn : UIMenuElementStateOff;
+    UIMenu *aspect = [UIMenu menuWithTitle:@"Aspect Ratio"
+                                     image:[UIImage systemImageNamed:@"rectangle"]
+                                identifier:nil
+                                   options:0
+                                  children:@[ wideOff, wideOn ]];
+
+    UIMenu *display = [UIMenu menuWithTitle:@"Display"
+                                      image:[UIImage systemImageNamed:@"display"]
+                                 identifier:nil
+                                    options:0
+                                   children:@[ resolution, antiAliasing, aspect ]];
+
     UIAction *data = [self menuAction:@"Game Data & Saves" image:@"internaldrive" disabled:NO
                                handler:^{ [weakSelf openDataPanel]; }];
     UIAction *importAction = [self menuAction:@"Import Prepared Game Data…" image:@"folder" disabled:_engineRunning
@@ -363,7 +408,7 @@ static uint64_t ShellResidentBytes(void) {
                                  options:0
                                 children:@[ about, diagnostics ]];
 
-    return [UIMenu menuWithTitle:@"NightPad" children:@[ game, controls, dataMenu, info ]];
+    return [UIMenu menuWithTitle:@"NightPad" children:@[ game, controls, display, dataMenu, info ]];
 }
 
 - (void)buildDataPanel {
@@ -638,6 +683,32 @@ static uint64_t ShellResidentBytes(void) {
     [self refreshMenu];
 }
 
+- (void)setRenderScale:(int)scale {
+    if (scale < 1 || scale > 4)
+        return;
+    _settings.renderScale = scale;
+    [self saveSettings];
+    [self refreshMenu];
+    if (_engineRunning)
+        [self showInfo:@"Display change queued" detail:@"The new render size applies at the next Start."];
+}
+
+- (void)setAntiAliasing:(BOOL)enabled {
+    _settings.antiAliasing = enabled;
+    [self saveSettings];
+    [self refreshMenu];
+    if (_engineRunning)
+        [self showInfo:@"Display change queued" detail:@"Anti-aliasing applies at the next Start."];
+}
+
+- (void)setWidescreen:(BOOL)enabled {
+    _settings.widescreen = enabled;
+    [self saveSettings];
+    [self refreshMenu];
+    if (_engineRunning)
+        [self showInfo:@"Display change queued" detail:@"Widescreen applies at the next Start."];
+}
+
 - (void)beginNativeUI {
     if (!_engineRunning)
         return;
@@ -682,6 +753,10 @@ static uint64_t ShellResidentBytes(void) {
     NSString *gameData = [NSString stringWithUTF8String:_paths.GameDataFor(_identity.UTF8String).c_str()];
     NSString *launchState = [NSString stringWithUTF8String:_paths.launchState.c_str()];
     NSString *error = nil;
+    _engineHost.renderWidth = 640 * _settings.renderScale;
+    _engineHost.renderHeight = 480 * _settings.renderScale;
+    _engineHost.antiAliasing = _settings.antiAliasing;
+    _engineHost.widescreen = _settings.widescreen;
     if (![_engineHost prepareWithGameData:gameData launchState:launchState error:&error] ||
         ![_engineHost startAction]) {
         [self showError:error.length ? error : @"The engine could not start."];

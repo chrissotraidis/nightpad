@@ -24,6 +24,7 @@ add_library(nightpad_core STATIC
   ../shared/NightPadPaths.cpp
   ../shared/NightPadGameDataImport.cpp
   ../shared/NightPadDiagnostics.cpp
+  ../shared/NightPadEngineSettings.cpp
   ../shared/NightPadInput.cpp
   ../shared/NightPadControllerSlots.cpp
   ../shared/NightPadSaves.cpp

@@ -10,6 +10,13 @@ typedef NS_ENUM(NSInteger, NightPadEngineKind) {
 // Owns the combined engine bridge for the native shell. The engine session is
 // only started after game data is validated and the coordinator is stopped.
 @interface NightPadEngineHost : NSObject
+// Scene render size and display options written to settings.ini when a
+// session is prepared. They take effect for the next engine start.
+@property(nonatomic) int renderWidth;
+@property(nonatomic) int renderHeight;
+@property(nonatomic) BOOL antiAliasing;
+@property(nonatomic) BOOL widescreen;
+
 + (BOOL)isLinked;
 - (BOOL)prepareWithGameData:(NSString *)gameData
                  launchState:(NSString *)launchState

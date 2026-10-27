@@ -166,6 +166,10 @@ simulator probe and remains blocked on physical-device access.
   order and nine multiplayer map names, recorded in
   [CAMPAIGN-INVENTORY.md](CAMPAIGN-INVENTORY.md). Mission-to-script mapping and
   per-mission transitions remain.
+- The Display menu exposes 1x-4x internal render targets, FXAA on/off and the
+  game's widescreen option. They persist in NightPad's settings and are written
+  to the engine's settings.ini at the next Start; a macOS run at 1280x960
+  confirms the backend builds the larger target.
 
 ## Current uncertainty and blockers
 

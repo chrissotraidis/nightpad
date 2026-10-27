@@ -14,6 +14,10 @@ struct AppSettings {
     bool touchControlsAlwaysVisible = false;
     bool hideTouchControlsWithController = true;
     bool rumble = true;
+    // 1 = original 640x480, 2..4 = that multiple for the scene's internal size.
+    int renderScale = 1;
+    bool antiAliasing = true;
+    bool widescreen = false;
 
     bool Load(const std::filesystem::path &path, std::string *error);
     bool Save(const std::filesystem::path &path, std::string *error) const;

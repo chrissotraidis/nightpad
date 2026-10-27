@@ -586,3 +586,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: early stop is currently clean, but the earlier crash was not
   explained, so the shell keeps its stop-until-first-frame guard as defence.
 
+## 2026-10-27T22:45:00Z — display options
+
+- Goal: G09. Requirement: R18 in progress.
+- Hypothesis: RenderWidth/RenderHeight already give the backend a larger
+  internal target, so the app only needs to expose and persist the choices.
+- Observed: added a Display menu with Original/2x/3x/4x resolution, AA off/FXAA
+  and the game's 4:3/16:9 widescreen option, persisted in NightPad's settings
+  and written to settings.ini at the next Start through a shared builder.
+  Choosing 2x on the simulator persisted `render_scale=2`.
+- Evidence: a macOS run with RenderWidth/Height 1280x960 logs
+  `rendering the game's 640x480 at 1280x960`; `scripts/test_engine_settings.sh`
+  checks the file content; screenshot under ignored `evidence/ios-shell/`.
+- Verdict: the options are wired and the engine consumes them. Correct aspect,
+  scope/HUD behaviour and sustained device performance at higher targets remain.
+

@@ -73,6 +73,24 @@ bool AppSettings::Load(const fs::path &path, std::string *error) {
                 if (error) *error = "A settings value is invalid.";
                 return false;
             }
+        } else if (key == "render_scale") {
+            char *end = nullptr;
+            const long parsed = std::strtol(value.c_str(), &end, 10);
+            if (value.empty() || end == value.c_str() || *end != '\0' || parsed < 1 || parsed > 4) {
+                if (error) *error = "The render scale must be 1 to 4.";
+                return false;
+            }
+            loaded.renderScale = static_cast<int>(parsed);
+        } else if (key == "anti_aliasing") {
+            if (!ParseBool(value, &loaded.antiAliasing)) {
+                if (error) *error = "A settings value is invalid.";
+                return false;
+            }
+        } else if (key == "widescreen") {
+            if (!ParseBool(value, &loaded.widescreen)) {
+                if (error) *error = "A settings value is invalid.";
+                return false;
+            }
         }
         // Unknown keys, including another app's preferences, are ignored.
     }
@@ -101,6 +119,9 @@ bool AppSettings::Save(const fs::path &path, std::string *error) const {
     out << "touch_always_visible=" << (touchControlsAlwaysVisible ? 1 : 0) << '\n';
     out << "auto_hide_touch=" << (hideTouchControlsWithController ? 1 : 0) << '\n';
     out << "rumble=" << (rumble ? 1 : 0) << '\n';
+    out << "render_scale=" << renderScale << '\n';
+    out << "anti_aliasing=" << (antiAliasing ? 1 : 0) << '\n';
+    out << "widescreen=" << (widescreen ? 1 : 0) << '\n';
     out.close();
     if (!out) {
         if (error) *error = "Could not finish the settings file.";
