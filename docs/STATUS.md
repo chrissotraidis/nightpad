@@ -45,9 +45,8 @@ simulator probe and remains blocked on physical-device access.
 - Both iPhoneOS engines now bind the pinned FFmpeg codec/demuxer/utility
   archives statically. The combined engine link has no FFmpeg dylib dependency.
 - A real action start/window/stop/join harness reaches the existing cleanup
-  path, but records six leaked threads and a symbol-localization allocator
-  crash in shader translation. The next lifecycle work must make allocator and
-  worker ownership process-wide.
+  path. Moving GameWindow and HostPosix into one shared runtime fixed the
+  localized shader allocator crash; six threads still survive shutdown.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
   mask `0x7`, with only the `30_fps` movie bundle present.
 - The driving/POV control definitions were safely decoded from `misc.viv`:

@@ -27,8 +27,11 @@ done
 
 action_dir="$build/build/action_standalone.build/Release-iphoneos/Objects-normal/arm64"
 driving_dir="$build/build/driving_standalone.build/Release-iphoneos/Objects-normal/arm64"
-find "$action_dir" -name '*.o' ! -name 'StandaloneMain.o' | sort > "$out/action-objects.txt"
-find "$driving_dir" -name '*.o' ! -name 'StandaloneMain.o' | sort > "$out/driving-objects.txt"
+find "$action_dir" -name '*.o' ! -name 'StandaloneMain.o' \
+    ! -name 'GameWindow.o' ! -name 'HostPosix.o' | sort > "$out/action-objects.txt"
+find "$driving_dir" -name '*.o' ! -name 'StandaloneMain.o' \
+    ! -name 'GameWindow.o' ! -name 'HostPosix.o' | sort > "$out/driving-objects.txt"
+printf '%s\n%s\n' "$action_dir/GameWindow.o" "$action_dir/HostPosix.o" > "$out/shared-objects.txt"
 
 sdk=$(xcrun --sdk iphoneos --show-sdk-path)
 common="-target arm64-apple-ios16.0 -isysroot $sdk -std=gnu++20 -ffp-contract=off -fms-extensions -fno-exceptions -Wno-ignored-attributes -DNIGHTFIRE_STANDALONE=1 -DNIGHTFIRE_SDL=1 -DNIGHTFIRE_WINDOW_BASE=0x100000000 -I $repo/vendor/nightfire/src"
@@ -43,6 +46,8 @@ ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/action-raw.o" \
     -filelist "$out/action-objects.txt" "$out/action-entry.o" "$out/action-runtime.o"
 ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/driving-raw.o" \
     -filelist "$out/driving-objects.txt" "$out/driving-entry.o"
+ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/shared-runtime.o" \
+    -filelist "$out/shared-objects.txt"
 printf '_NightPadActionEngineThread\n_NightPadActionEngineSetLaunchRequestCallback\n_NightPadActionEngineRequestStop\n_NightPadActionEngineStart\n_NightPadActionEngineRunWindow\n_NightPadActionEngineJoin\n_NightPadActionEngineCloseWindow\n' > "$out/action-exports.txt"
 printf '_NightPadDrivingEngineThread\n_NightPadDrivingEngineSetLaunchRequestCallback\n_NightPadDrivingEngineRequestStop\n' > "$out/driving-exports.txt"
 nmedit -s "$out/action-exports.txt" -o "$out/action-isolated.o" "$out/action-raw.o"
@@ -55,7 +60,7 @@ clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" \
     -c "$repo/tests/ios/NightPadEngineLinkProbe.cpp" -o "$out/link-probe-main.o"
 clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" -Wl,-no_fixup_chains \
     -o "$out/nightpad-combined-link" \
-    "$out/link-probe-main.o" "$out/action-isolated.o" "$out/driving-isolated.o" "$sdl" \
+    "$out/link-probe-main.o" "$out/shared-runtime.o" "$out/action-isolated.o" "$out/driving-isolated.o" "$sdl" \
     "$ffmpeg/libavformat.a" "$ffmpeg/libavcodec.a" "$ffmpeg/libavutil.a" \
     "$spirv/libspirv-cross-msl.a" "$spirv/libspirv-cross-glsl.a" \
     "$spirv/libspirv-cross-core.a" -fobjc-link-runtime -lm \

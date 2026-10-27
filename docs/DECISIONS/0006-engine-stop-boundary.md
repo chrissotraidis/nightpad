@@ -17,24 +17,21 @@ the window.
   returns from Game_Main, and reports a joined thread.
 - That run exposed a real defect: process thread count rose from 1 to 6 while
   running and remained 7 after join. Worker/audio/SDL shutdown is incomplete.
-- The symbolized isolated action object crashed in ShaderMsl_Translate while
-  freeing a string. The same code and data pass when the action object is linked
-  without nmedit localization. This is an allocator/interposition boundary:
-  engine-local operator new/delete no longer matches allocations made by the
-  external SPIRV-Cross and C++ runtime objects.
+- The first symbolized object crashed in ShaderMsl_Translate while freeing a
+  string. Moving GameWindow and HostPosix into one shared runtime object fixed
+  that allocator/interposition boundary: SPIRV-Cross, the engine and libc++ now
+  resolve the same operator new/delete and host heap.
 
 ## Decision
 
-Do not treat nmedit localization as complete lifecycle isolation. Share the
-process allocator and support runtime explicitly, or give every participating
-static library a matching allocator. Do not claim combined-runtime acceptance
-until the symbolized path runs without that crash and all created threads are
-gone after join.
+Keep GameWindow and HostPosix in one shared support object linked outside both
+localized engines. Symbols that own allocator identity must not be localized
+per engine. The symbolized action start/stop path now runs without the shader
+crash, but lifecycle acceptance still fails while worker threads survive join.
 
 ## Next experiment
 
-Extract GameWindow's operator new/delete and the common runtime support into one
-shared owner used by both engines and SPIRV-Cross. Then rerun the real start,
-stop, join test under symbol isolation and compare thread counts and heap
-identities before, during, and after the cycle.
+Identify the surviving threads by owning subsystem, add an explicit shutdown
+for each audio/SDL/engine worker, and require the symbolized start/stop/join
+test to return to its starting thread count.
 

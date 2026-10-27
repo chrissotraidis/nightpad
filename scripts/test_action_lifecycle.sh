@@ -12,8 +12,13 @@ common="-arch arm64 -isysroot $sdk -mmacosx-version-min=15.0 -std=gnu++20 -ffp-c
 clang++ $common -c "$repo/apple/shared/NightPadActionEngineEntry.cpp" -o "$out/entry.o"
 clang++ $common -c "$repo/apple/shared/NightPadActionRuntime.cpp" -o "$out/runtime.o"
 find "$build/CMakeFiles/action_standalone.dir" -name '*.o' \
-    ! -name 'StandaloneMain.o' ! -name 'StandaloneMain.cpp.o' | sort > "$out/objects.txt"
+    ! -name 'StandaloneMain.o' ! -name 'StandaloneMain.cpp.o' \
+    ! -name 'GameWindow.cpp.o' ! -name 'HostPosix.cpp.o' | sort > "$out/objects.txt"
+printf '%s\n%s\n' \
+    "$build/CMakeFiles/action_standalone.dir/src/driving/platform/GameWindow.cpp.o" \
+    "$build/CMakeFiles/action_standalone.dir/src/driving/platform/HostPosix.cpp.o" > "$out/shared.txt"
 ld -r -arch arm64 -o "$out/combined-raw.o" -filelist "$out/objects.txt" "$out/entry.o" "$out/runtime.o"
+ld -r -arch arm64 -o "$out/shared-runtime.o" -filelist "$out/shared.txt"
 cat > "$out/exports.txt" <<'EOF'
 _NightPadActionEngineThread
 _NightPadActionEngineSetLaunchRequestCallback
@@ -25,13 +30,10 @@ _NightPadActionEngineCloseWindow
 EOF
 nmedit -s "$out/exports.txt" -o "$out/combined.o" "$out/combined-raw.o"
 linked="$out/combined.o"
-if [ "${ISOLATED:-0}" != 1 ]; then
-    linked="$out/combined-raw.o"
-fi
 clang++ -arch arm64 -isysroot "$sdk" -mmacosx-version-min=15.0 \
     -I "$repo/apple/shared" -c "$repo/tests/native/test_action_lifecycle.cpp" -o "$out/main.o"
 clang++ -arch arm64 -isysroot "$sdk" -mmacosx-version-min=15.0 -Wl,-no_fixup_chains \
-    -Wl,-rpath,@executable_path -o "$out/test_action_lifecycle" "$out/main.o" "$linked" \
+    -Wl,-rpath,@executable_path -o "$out/test_action_lifecycle" "$out/main.o" "$out/shared-runtime.o" "$linked" \
     "$build/_deps/sdl3-build/libSDL3.0.dylib" \
     "$build/_deps/spirv_cross-build/libspirv-cross-msl.a" \
     "$build/_deps/spirv_cross-build/libspirv-cross-glsl.a" \
