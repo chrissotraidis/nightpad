@@ -1323,3 +1323,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: both import paths are reachable from the panel. Choosing an
   arbitrary external folder still uses the picker.
 
+## 2026-10-28T16:35:00Z — data survives an app update
+
+- Goal: G05. Requirement: R11 in progress.
+- Observed: reinstalling the app over itself - the simulator's equivalent of an
+  update - moved the app to a new data-container UUID yet kept every file:
+  `slot1.sav`, `settings.txt` and `layout-phone.txt` were byte-identical
+  (SHA-256 compared before and after), the imported tree still reported ready
+  as `data-a3c98ab965ac41e559ac`, and the Controls menu showed the persisted
+  auto-hide and rumble choices.
+- Evidence: iPhone 17 simulator, iOS 26.5; hashes recorded in the run and the
+  row added to `docs/TEST-MATRIX.md`.
+- Verdict: app updates keep saves, settings, layouts and imported data.
+  Interrupted engine writes and a signed store update remain open.
+
