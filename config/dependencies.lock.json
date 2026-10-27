@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "product": "NightPad",
+  "recorded_at": "2026-10-27T10:34:02Z",
+  "source_graph": {
+    "nightfire": {
+      "url": "https://github.com/NightfireResearch/nightfire-cxbx.git",
+      "revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
+      "path": "vendor/nightfire",
+      "verified_full_commit": true
+    },
+    "galaxypad": {
+      "url": "https://github.com/chrissotraidis/galaxypad.git",
+      "revision": "4db10c4c11e35958aae8da23b4d80fe6e5fe88e3",
+      "path": "references/galaxypad",
+      "verified_full_commit": true,
+      "role": "read-only interface and lifecycle donor"
+    },
+    "sunpad": {
+      "url": "https://github.com/chrissotraidis/sunpad.git",
+      "revision": "d40a0674afa7189c14bfd6ce6f099dd275b46397",
+      "path": "references/sunpad",
+      "verified_full_commit": true,
+      "role": "read-only dual-stick and input-mixing donor"
+    },
+    "extract_xiso": {
+      "url": "https://github.com/XboxDev/extract-xiso.git",
+      "revision": "3f5b62cfe68f000b0e3c8a30104973f3a297948e",
+      "path": "tools/extract-xiso",
+      "verified_full_commit": true,
+      "allowed_modes": ["list", "extract"]
+    },
+    "ffmpeg": {
+      "url": "https://github.com/FFmpeg/FFmpeg.git",
+      "revision": "8ae0b34901ba60a802f183ee75a250a9fc3e09a5",
+      "path": "vendor/nightfire/third_party/ffmpeg",
+      "relationship": "nightfire-cxbx submodule",
+      "verified_full_commit": true
+    },
+    "sdl3": {
+      "url": "https://github.com/libsdl-org/SDL.git",
+      "revision": "829a65d769d935c4852f8159e964312c0957260a",
+      "resolved_tag": "release-3.4.18",
+      "acquired_by": "Nightfire CMake FetchContent",
+      "verified_full_commit": true
+    },
+    "spirv_cross": {
+      "url": "https://github.com/KhronosGroup/SPIRV-Cross.git",
+      "revision": "f11ba9f0b21ba8fc15153d50a2a1ae31ab1cf8f7",
+      "resolved_tag": "vulkan-sdk-1.4.363.0",
+      "acquired_by": "Nightfire CMake FetchContent",
+      "verified_full_commit": true
+    }
+  },
+  "native_baseline": {
+    "preset": "macos-arm64",
+    "build_type": "Release",
+    "nightfire_sdl": true,
+    "nightfire_gfx": "sdlgpu",
+    "nightfire_window_base": "0x100000000",
+    "ffmpeg_prefix": "build/deps/ffmpeg-macos-arm64",
+    "environment": {
+      "SDKROOT": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk"
+    }
+  },
+  "game_data": {
+    "acquisition": "owner-supplied ref/ or REF/ image only",
+    "downloaded_by_agent": false,
+    "retail_hash_allowlist_found": false
+  }
+}
+

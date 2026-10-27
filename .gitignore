@@ -1,0 +1,27 @@
+.DS_Store
+.env
+.env.*
+
+# Owner-supplied retail data and derived private material.
+/ref/
+/REF/
+/evidence/
+/generated/
+
+# Reproducible dependency checkouts, caches and build products.
+/vendor/
+/references/
+/tools/extract-xiso/
+/build/
+/DerivedData/
+
+# Apple build products and signing material.
+*.ipa
+*.dSYM
+*.mobileprovision
+*.p12
+*.cer
+*.xcconfig.local
+xcuserdata/
+*.xcuserstate
+

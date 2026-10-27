@@ -1,0 +1,36 @@
+# Test matrix
+
+| Gate | Scenario | Target | Status | Evidence |
+| --- | --- | --- | --- | --- |
+| G00 | Public source pins resolve exactly | Host | passed | `config/dependencies.lock.json` |
+| G00 | Full Xcode and both Apple SDKs resolve | Host | passed | `config/toolchain.json` |
+| G00 | Code signing and physical-device availability | Host | blocked | No identity or device visible |
+| G01 | ISO is unique and unchanged | Host | passed | Local source manifest |
+| G01 | Listing is contained and has required Xbox trees | Host | passed | Private ISO listing and guarded script |
+| G01 | Validated extraction and activation | Host | passed | 55 files, 2,062,585,542 bytes, source hash unchanged |
+| G01 | Xbox title/revision identity | Host | passed | Title 0x45410026, version 1, region mask 0x7 |
+| G01 | PAL 25 fps media bundle | Host | blocked | Supplied image contains only 30_fps |
+| G01 | Driving/POV definitions | Host | passed | 12 definitions decoded from misc.viv |
+| G02 | Native Mac targets build | macOS arm64 | passed | Both engines and test targets link arm64 |
+| G02 | Game-window pointer workload | macOS arm64 | passed | 200,029 checks, 0 differ |
+| G02 | Floating-point audit | macOS arm64 | passed | 12 expected fused operations, 0 unexpected |
+| G02 | Action replay corpus | macOS arm64 | partial | 11 of 12, 208,364 frames every frame matched |
+| G02 | SpaceStationD replay | macOS arm64 | blocked | Missing 073f0048.xmv in supplied media |
+| G02 | Driving baseline run | macOS arm64 | passed | Mission 1, 9,000 ticks, 16 frames, sound trace |
+| G02 | Driving baseline repeat comparison | macOS arm64 | passed with known GPU variance | 16 frames each; 5 pixels differ; 381,193-line sound traces byte-identical |
+| G03 | Signed app launch without debugger/JIT | iPhone/iPad | blocked | No device or signing identity |
+| G03 | Simulator pointer/linker probe | iPhone 17 / iOS 26.5 | passed | 200,029 checks, 0 differ at 0x100000000 |
+| G03 | Simulator Metal fixture | iPhone 17 / iOS 26.5 | passed | MSL compile, dispatch, texture readback |
+| G03 | Simulator XMV media fixture | iPhone 17 / iOS 26.5 | passed | WMV2 plus Xbox ADPCM decoded |
+| G03 | Unsigned iPhoneOS build | iPhoneOS 26.5 | passed | Mach-O arm64, deployment 16.0 |
+| G03 | Physical pointer/linker probe | iPhone/iPad | blocked | Same external dependency |
+| G03 | Physical Metal/shader/media fixture | iPhone/iPad | blocked | Same external dependency |
+| G04 | Complete action engine compiles for iPhoneOS | iPhoneOS 26.5 | passed | Mach-O arm64 app target |
+| G04 | Complete driving engine compiles for iPhoneOS | iPhoneOS 26.5 | passed | Mach-O arm64 app target |
+| G04 | Both isolated engine objects link in one iOS executable | iPhoneOS 26.5 | passed | Exactly two engine entrypoints exported |
+| G04 | In-process launch request and clean shutdown | iPhoneOS/macOS | unverified | Not implemented |
+| G04 | Action to driving and return transitions | iPhoneOS/macOS | unverified | Not run |
+
+Only rows with explicit execution evidence are marked passed. Source inspection
+does not satisfy runtime acceptance.
+

@@ -1,0 +1,501 @@
+{
+  "schema_version": 1,
+  "product": "NightPad",
+  "plan_version": "1.0",
+  "project_status": "implementation_in_progress",
+  "implementation_started": true,
+  "execution_started_at": "2026-10-27T10:34:02Z",
+  "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
+  "last_updated_at": "2026-10-27T11:18:00Z",
+  "active_goal": "G04",
+  "source_lock_file": "sources.lock.json",
+  "actual_dependency_lock": "config/dependencies.lock.json",
+  "actual_source_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
+  "content_identity": {
+    "source_sha256": "8a0dc0e713f44e48b00054ca021fb027571e6f7877b8225cc5ae275af2435ebe",
+    "source_bytes": 2063740928,
+    "extracted_bytes": 2062585542,
+    "file_count": 55,
+    "title_id": "0x45410026",
+    "title_name": "007: Nightfire",
+    "version": 1,
+    "region_mask": "0x00000007",
+    "media_bundle": "30_fps only",
+    "data_identity": "data-8a0dc0e713f44e48b000"
+  },
+  "current_build": null,
+  "last_known_good_build": null,
+  "goals": {
+    "G00": {
+      "status": "passed",
+      "started_at": "2026-10-27T10:34:02Z",
+      "completed_at": "2026-10-27T11:05:00Z",
+      "evidence": [
+        "config/dependencies.lock.json",
+        "config/toolchain.json",
+        "docs/PROVENANCE.md"
+      ],
+      "blockers": [],
+      "next_step": null
+    },
+    "G01": {
+      "status": "passed",
+      "started_at": "2026-10-27T10:34:02Z",
+      "completed_at": "2026-10-27T11:05:00Z",
+      "evidence": [
+        "scripts/prepare_game_data.py",
+        "build/data/iso-list.txt"
+      ],
+      "blockers": [],
+      "next_step": null
+    },
+    "G02": {
+      "status": "blocked_external",
+      "started_at": "2026-10-27T11:05:00Z",
+      "completed_at": null,
+      "evidence": [
+        "vendor/nightfire/build/macos-arm64",
+        "evidence/action-demos",
+        "evidence/driving-baseline-a.log",
+        "evidence/driving-baseline-b.log"
+      ],
+      "blockers": [
+        "B02"
+      ],
+      "next_step": "Provide matching PAL movie data or explicitly waive the SpaceStationD route; native baseline otherwise reproduced."
+    },
+    "G03": {
+      "status": "blocked_external",
+      "started_at": "2026-10-27T11:05:00Z",
+      "completed_at": null,
+      "evidence": [
+        "evidence/ios-probe/result.json",
+        "evidence/ios-probe/platform-probe-result.png",
+        "docs/DECISIONS/0001-ios-platform-probe.md",
+        "build/ios-device/Debug-iphoneos/NightPadProbe.app"
+      ],
+      "blockers": [
+        "B01"
+      ],
+      "next_step": "Install and run the signed probe on a trusted iPhone and iPad; simulator prerequisites already pass."
+    },
+    "G04": {
+      "status": "in_progress",
+      "started_at": "2026-10-27T11:18:00Z",
+      "completed_at": null,
+      "evidence": [
+        "scripts/build_combined_engine_link.sh",
+        "build/ios-combined/nightpad-combined-link",
+        "docs/DECISIONS/0002-engine-object-isolation.md"
+      ],
+      "blockers": [],
+      "next_step": "Implement launch-request hook and clean engine stop/reset contract; test all three transition directions."
+    },
+    "G05": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G06": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G07": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G08": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G09": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G10": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G11": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G12": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G13": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    }
+  },
+  "requirements": {
+    "R01": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R02": {
+      "status": "passed",
+      "evidence": [
+        "config/dependencies.lock.json",
+        "config/toolchain.json",
+        "patches/0001-ios-host-vm-abi.patch"
+      ],
+      "decision_id": null,
+      "notes": []
+    },
+    "R03": {
+      "status": "passed",
+      "evidence": [
+        "private ISO manifest",
+        "docs/TEST-MATRIX.md"
+      ],
+      "decision_id": null,
+      "notes": []
+    },
+    "R04": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R05": {
+      "status": "in_progress",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R06": {
+      "status": "in_progress",
+      "evidence": [
+        "evidence/ios-probe/result.json"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Simulator passed the pointer/heap/thread workload; physical device and integrated transitions remain unverified."
+      ]
+    },
+    "R07": {
+      "status": "in_progress",
+      "evidence": [
+        "docs/DECISIONS/0002-engine-object-isolation.md"
+      ],
+      "decision_id": null,
+      "notes": []
+    },
+    "R08": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R09": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R10": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R11": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R12": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R13": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R14": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R15": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R16": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R17": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R18": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R19": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R20": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R21": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R22": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R23": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R24": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R25": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R26": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R27": {
+      "status": "passed",
+      "evidence": [
+        "docs/PROVENANCE.md",
+        ".gitignore",
+        "docs/UPSTREAM-DELTA.md"
+      ],
+      "decision_id": null,
+      "notes": []
+    },
+    "R28": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R29": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R30": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    }
+  },
+  "features": {
+    "debug_cheats": {
+      "status": "uninvestigated",
+      "adopted": false,
+      "decision_id": null
+    },
+    "texture_overrides": {
+      "status": "uninvestigated",
+      "adopted": false,
+      "decision_id": null
+    },
+    "network_play": {
+      "status": "uninvestigated",
+      "adopted": false,
+      "scope": null,
+      "decision_id": null
+    }
+  },
+  "physical_targets": [],
+  "decisions": [],
+  "blockers": [
+    {
+      "id": "B01",
+      "scope": [
+        "G03",
+        "G06",
+        "G12"
+      ],
+      "status": "open",
+      "description": "No valid Apple code-signing identity and no connected physical iPhone/iPad were visible to xcrun.",
+      "evidence": [
+        "config/toolchain.json",
+        "docs/DECISIONS/0001-ios-platform-probe.md"
+      ],
+      "next_step": "Make an ordinary signing identity and trusted device available; install the prepared probe."
+    },
+    {
+      "id": "B02",
+      "scope": [
+        "G02",
+        "G07",
+        "G12"
+      ],
+      "status": "open",
+      "description": "The supplied image lacks the PAL 25_fps movie bundle and 073f0048.xmv, so one recording cannot reach its final frames.",
+      "evidence": [
+        "evidence/action-demos"
+      ],
+      "next_step": "Provide the matching PAL image data, or explicitly accept the affected SpaceStationD route as untestable on this content."
+    }
+  ],
+  "journal_entries": [
+    {
+      "at": "2026-10-27T10:34:02Z",
+      "goal": "G00",
+      "summary": "Loop activated; pinned sources, toolchain and ownership boundaries recorded.",
+      "evidence": [
+        "config/dependencies.lock.json",
+        "config/toolchain.json",
+        "docs/PROVENANCE.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T10:34:02Z",
+      "goal": "G01",
+      "summary": "Supplied image deduplicated, hashed and listed; required trees present.",
+      "evidence": [
+        "build/data/iso-list.txt",
+        "scripts/prepare_game_data.py"
+      ]
+    },
+    {
+      "at": "2026-10-27T11:05:00Z",
+      "goal": "G02/G03",
+      "summary": "Native baseline built; replay and iOS simulator probes reached their content/device boundaries.",
+      "evidence": [
+        "evidence/action-demos",
+        "evidence/ios-probe",
+        "docs/DECISIONS/0001-ios-platform-probe.md",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T11:18:00Z",
+      "goal": "G04",
+      "summary": "Both full engines compile for iPhoneOS and their isolated objects link in one executable with two bridge symbols.",
+      "evidence": [
+        "docs/DECISIONS/0002-engine-object-isolation.md",
+        "build/ios-combined/nightpad-combined-link"
+      ]
+    }
+  ],
+  "completed_tests": [
+    {
+      "name": "macOS gamewindow_test 200000 operations",
+      "result": "0 of 200029 differ",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "macOS action replay set with 25/30 fps alias",
+      "result": "11 of 12 pass, 208364 frames; SpaceStationD blocked by missing 073f0048.xmv",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "macOS driving Mission 1 lockstep repeat",
+      "result": "16 frames each; 5 pixels differ; 381193-line sound traces byte-identical to tick 9000",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "iOS simulator platform probe",
+      "result": "pointer 0 differ, Metal pass, XMV video/audio pass",
+      "target": "iPhone 17 / iOS 26.5 simulator"
+    },
+    {
+      "name": "unsigned iPhoneOS build",
+      "result": "Mach-O arm64, iOS 16 deployment target, link pass; not installed",
+      "target": "iPhoneOS 26.5"
+    },
+    {
+      "name": "iPhoneOS action_standalone build",
+      "result": "Complete Mach-O arm64 app target built and linked unsigned",
+      "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "iPhoneOS driving_standalone build",
+      "result": "Complete Mach-O arm64 app target built and linked unsigned",
+      "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "combined iOS engine link proof",
+      "result": "Both isolated engine objects link in one Mach-O arm64 executable with exactly 2 exported engine entrypoints",
+      "target": "iPhoneOS 26.5 arm64"
+    }
+  ],
+  "next_step": "Implement the launch request bridge and engine stop/reset contract, then exercise action/driving transitions."
+}
