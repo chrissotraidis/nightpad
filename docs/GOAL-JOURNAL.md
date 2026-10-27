@@ -1565,3 +1565,16 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the panel matches its name. The running-engine refusal shares the
   existing message and still needs a live-engine run for evidence.
 
+## 2026-10-28T21:25:00Z — restore from the panel offers both sources
+
+- Goal: G05. Requirement: R11 in progress.
+- Observed: the panel's Restore button only used `Documents/Save Import`, while
+  the import button next to it offered both the picker and the app folder.
+- Observed: Restore is now a menu - "Choose Files…" opens the system picker,
+  "Use Save Import Folder" uses the folder - so the two rows behave alike.
+- Evidence: iPhone 17 simulator, iOS 26.5: both menu items appear, the folder
+  one gives the "No save folder" explanation, and the picker opens (its remote
+  UI is still not scriptable).
+- Verdict: the panel's save and data rows are symmetric. Picker selection stays
+  manual.
+

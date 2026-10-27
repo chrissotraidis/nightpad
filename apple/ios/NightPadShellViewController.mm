@@ -620,7 +620,21 @@ static uint64_t ShellResidentBytes(void) {
     restoreConfiguration.imagePadding = 6;
     restore.configuration = restoreConfiguration;
     restore.translatesAutoresizingMaskIntoConstraints = NO;
-    [restore addTarget:self action:@selector(restoreSavesFromAppFolder) forControlEvents:UIControlEventTouchUpInside];
+    restore.showsMenuAsPrimaryAction = YES;
+    restore.menu = [UIMenu menuWithTitle:@"Restore Saves" children:@[
+        [UIAction actionWithTitle:@"Choose Files…" image:[UIImage systemImageNamed:@"folder"]
+                       identifier:nil
+                          handler:^(__kindof UIAction *selected) {
+            (void)selected;
+            [weakSelf chooseSaveFiles];
+        }],
+        [UIAction actionWithTitle:@"Use Save Import Folder" image:[UIImage systemImageNamed:@"folder.badge.plus"]
+                       identifier:nil
+                          handler:^(__kindof UIAction *selected) {
+            (void)selected;
+            [weakSelf restoreSavesFromAppFolder];
+        }],
+    ]];
     [_dataPanel addSubview:restore];
 
     _progress = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
