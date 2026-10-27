@@ -16,6 +16,7 @@ repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 "$repo/scripts/test_engine_settings.sh"
 "$repo/scripts/test_saves_link.sh"
 "$repo/scripts/test_data_import.sh"
+"$repo/scripts/test_data_tools.sh" 2>/dev/null
 "$repo/scripts/test_diagnostics.sh"
 "$repo/scripts/test_launch_bridge.sh"
 "$repo/scripts/build_ios_shell.sh" simulator >/dev/null

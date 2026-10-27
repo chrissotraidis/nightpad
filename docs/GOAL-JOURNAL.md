@@ -1778,3 +1778,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: every driving mission now has a goal and hint summary. G07's
   inventory is complete except the first-play route, which is device work.
 
+## 2026-10-29T02:20:00Z — the data tools now run in the gate
+
+- Goal: G03. Requirement: R03 in progress.
+- Observed: `tests/test_data_tools.py` covered the disc listing, the BIGF and
+  RefPack readers, but nothing ran it; it was outside `verify_quick.sh`.
+- Observed: the track inspector had no test at all. The test file now builds a
+  synthetic CARP document - root, `Map ` group, one rule, one `elNN` list with
+  an `ESetObjective` event - and checks that the inspector finds the map, reads
+  both data items and decodes the event.
+- Evidence: `scripts/test_data_tools.sh` passes (eight tests) and
+  `scripts/verify_quick.sh` now runs it.
+- Verdict: the tools the inventory relies on are under test. The real-data
+  behaviour still needs the owner's image, which the tests never touch.
+
