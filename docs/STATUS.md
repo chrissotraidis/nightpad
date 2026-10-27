@@ -249,6 +249,8 @@ simulator probe and remains blocked on physical-device access.
   handoff step.
 - `scripts/test_clean_shell_build.sh` rebuilds both shell lanes from empty
   CMake/Xcode trees and still passes the device link check.
+- The full engine suite passed end to end at `3e7a133`: lifecycles, both pauses
+  with audio, assists, early stop, transitions, handoff and the round trip.
 
 ## Current uncertainty and blockers
 

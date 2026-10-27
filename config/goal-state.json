@@ -23,7 +23,7 @@
     "media_bundle": "30_fps only",
     "data_identity": "data-8a0dc0e713f44e48b000"
   },
-  "current_build": null,
+  "current_build": {},
   "last_known_good_build": null,
   "goals": {
     "G00": {
@@ -1075,6 +1075,13 @@
       "name": "real handover page repeated transition",
       "result": "FAIL: cycle 1 passes using Boot_GetPTPData; cycle 2 still faults after driving main",
       "target": "macOS 27 arm64"
+    },
+    {
+      "name": "full-engine-suite",
+      "revision": "3e7a133",
+      "run_at": "2026-10-27T18:15:40Z",
+      "verdict": "passed",
+      "command": "scripts/verify_engine.sh"
     }
   ],
   "next_step": "Run scripts/device_handoff.sh with an identity and trusted device, then work docs/DEVICE-HANDOFF.md; continue per-mission and multiplayer inventories meanwhile."

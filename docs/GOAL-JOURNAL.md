@@ -929,3 +929,14 @@ are ignored and may contain paths, hashes, captures or device identities.
   dependency layers still come from cached builds; a full clean-checkout
   rebuild remains.
 
+## 2026-10-28T08:50:00Z — full engine suite green
+
+- Goal: G04/G12. Requirements: R05, R11 in progress.
+- Observed: `scripts/verify_engine.sh` ran end to end at commit `3e7a133`:
+  action and driving lifecycles, action pause with audio, assists, driving pause
+  with audio, early stop, the three-cycle transition, the handoff and the
+  action-driving-action round trip all pass.
+- Evidence: the suite's own output; `engine verification: PASS`.
+- Verdict: the engine layer is green as a whole, not only gate by gate. Device
+  execution remains the acceptance step.
+
