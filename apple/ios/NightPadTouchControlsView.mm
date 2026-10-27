@@ -264,6 +264,9 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
         if (!control.visible)
             continue;
         NightPadOverlayControlView *view = [[NightPadOverlayControlView alloc] initWithControl:control];
+        // A layout rebuild must not reveal controls the controller-hide policy
+        // has hidden.
+        view.alpha = _hidden ? 0.0 : 1.0;
         [self addSubview:view];
         [_controlViews addObject:view];
     }
@@ -274,6 +277,7 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
         return left < right ? NSOrderedAscending : (left > right ? NSOrderedDescending : NSOrderedSame);
     }];
     self.accessibilityElements = ordered;
+    self.accessibilityElementsHidden = _hidden;
     [self setNeedsLayout];
 }
 
@@ -282,6 +286,7 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
         return;
     _hidden = hidden;
     [self releaseAllTouches];
+    self.accessibilityElementsHidden = hidden;
     void (^apply)(void) = ^{
         for (UIView *view in self->_controlViews)
             view.alpha = hidden ? 0.0 : 1.0;

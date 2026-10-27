@@ -1078,3 +1078,32 @@ are ignored and may contain paths, hashes, captures or device identities.
   case.
 - Verdict: adding settings keys does not invalidate an existing profile.
 
+## 2026-10-28T12:45:00Z — menu actions present their sheets
+
+- Goal: G06. Requirements: R12 and R13 in progress.
+- Observed: with a game preview on screen, tapping a three-dot menu action that
+  presents a view controller did nothing. Touch Layout, Control Help, About,
+  Diagnostics and Share Saves all dismissed the menu and left the screen
+  unchanged, because UIKit ignores a presentation started in the same turn as
+  the menu dismissal.
+- Observed: those six call sites now go through `presentAfterMenu:`, which waits
+  150 ms and skips when a controller is already presented. Informational and
+  error alerts use the same route, so "No saves yet" and "Game data required"
+  appear instead of being dropped.
+- Observed: rebuilding the touch layout reset every view's alpha to 1 and
+  cleared `accessibilityElementsHidden`, so controls hidden by the
+  controller-hide policy flashed back and VoiceOver saw them. Both properties
+  now follow the hidden state in `setTouchLayout:` and `setControlsHidden:`.
+- Evidence: iPhone 17 simulator, iOS 26.5, `--preview-gameplay`. Controls >
+  Touch Layout opens the editor (`evidence/ios-shell/menu-touch-layout.png`);
+  Control Help, About and Info > Diagnostics open
+  (`evidence/ios-shell/menu-diagnostics.png`); Game Data & Saves > Share Saves
+  opens the system sheet with the two saves, and shows "No saves yet" when the
+  folder is emptied. `scripts/verify_quick.sh` passes.
+- Note: the first cell of a nested submenu cannot be hit through the
+  simulator's accessibility bridge; its reported frame lands on the submenu
+  header, which navigates back. The editor was opened with a direct tap on the
+  cell instead.
+- Verdict: menu actions reach their sheets during a running session. Physical
+  device confirmation and an in-game save remain.
+

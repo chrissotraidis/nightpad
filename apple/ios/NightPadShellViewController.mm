@@ -308,6 +308,18 @@ static uint64_t ShellResidentBytes(void) {
     return card;
 }
 
+- (void)presentAfterMenu:(UIViewController *)controller {
+    // UIMenu is still dismissing while its action runs; presenting in the same
+    // turn is ignored.
+    __weak NightPadShellViewController *weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 150 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+        NightPadShellViewController *strongSelf = weakSelf;
+        if (strongSelf == nil || strongSelf.presentedViewController != nil)
+            return;
+        [strongSelf presentViewController:controller animated:YES completion:nil];
+    });
+}
+
 - (void)refreshMenu {
     if (_menuButton == nil)
         return;
@@ -626,7 +638,7 @@ static uint64_t ShellResidentBytes(void) {
     about.onClose = ^{ [weakSelf endNativeUI]; };
     UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:about];
     navigation.modalPresentationStyle = UIModalPresentationPageSheet;
-    [self presentViewController:navigation animated:YES completion:nil];
+    [self presentAfterMenu:navigation];
 }
 
 - (void)dismissPanels {
@@ -674,7 +686,7 @@ static uint64_t ShellResidentBytes(void) {
     };
     UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:editor];
     navigation.modalPresentationStyle = UIModalPresentationPageSheet;
-    [self presentViewController:navigation animated:YES completion:nil];
+    [self presentAfterMenu:navigation];
 }
 
 - (void)openControlsHelp {
@@ -685,7 +697,7 @@ static uint64_t ShellResidentBytes(void) {
     help.onClose = ^{ [weakSelf endNativeUI]; };
     UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:help];
     navigation.modalPresentationStyle = UIModalPresentationPageSheet;
-    [self presentViewController:navigation animated:YES completion:nil];
+    [self presentAfterMenu:navigation];
 }
 
 - (void)installTouchControls {
@@ -1222,7 +1234,7 @@ static uint64_t ShellResidentBytes(void) {
     UIPopoverPresentationController *popover = share.popoverPresentationController;
     popover.sourceView = _menuButton;
     popover.sourceRect = _menuButton.bounds;
-    [self presentViewController:share animated:YES completion:nil];
+    [self presentAfterMenu:share];
     [self logSessionEvent:@"saves shared"];
 }
 
@@ -1289,17 +1301,21 @@ static uint64_t ShellResidentBytes(void) {
     review.onClose = ^{ [weakSelf endNativeUI]; };
     UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:review];
     navigation.modalPresentationStyle = UIModalPresentationPageSheet;
-    [self presentViewController:navigation animated:YES completion:nil];
+    [self presentAfterMenu:navigation];
 }
 
 - (void)showError:(NSString *)message {
     _lastError = [message copy];
     [self logSessionEvent:@"error shown"];
+    __weak NightPadShellViewController *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
+        NightPadShellViewController *strongSelf = weakSelf;
+        if (strongSelf == nil)
+            return;
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"NightPad"
             message:message preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-        [self presentViewController:alert animated:YES completion:nil];
+        [strongSelf presentAfterMenu:alert];
     });
 }
 
@@ -1317,7 +1333,7 @@ static uint64_t ShellResidentBytes(void) {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
         message:detail preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-    [self presentViewController:alert animated:YES completion:nil];
+    [self presentAfterMenu:alert];
 }
 
 @end
