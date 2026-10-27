@@ -1762,3 +1762,19 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the mission-to-text mapping is known. Resolving the ids needs the
   `.loc` index decoded, which is the remaining step for paraphrased text.
 
+## 2026-10-29T02:00:00Z — the driving missions' goals, paraphrased
+
+- Goal: G07. Requirement: campaign inventory.
+- Observed: a temporary print in `InitLoadScreen` resolved each mission's
+  description and every `HINT_IDn` through the engine's own locale lookup, so
+  the `.loc` index does not need decoding for this.
+- Observed: the five driving missions' goals are protecting Dominique (Paris),
+  leaving Drake's castle grounds (Alpine), reaching Q at extraction (Enemies
+  Vanquished), getting past the island's defences (Deep Descent) and taking
+  those defences apart (Island Infiltration), each with two to seven hints.
+- Evidence: five headless boots with the print enabled; the hook was removed,
+  `scripts/verify_patches.sh` reproduces the 53 files, and
+  `docs/CAMPAIGN-INVENTORY.md` carries paraphrases only - no retail strings.
+- Verdict: every driving mission now has a goal and hint summary. G07's
+  inventory is complete except the first-play route, which is device work.
+

@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T01:30:00Z",
+  "last_updated_at": "2026-10-29T02:00:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -216,7 +216,7 @@
         "scripts/inspect_driving_track.py"
       ],
       "blockers": [],
-      "next_step": "G07: decode the driving locale file index so the loading-screen description and hint ids resolve to text, then run the first-play route when device execution is available."
+      "next_step": "G07: run the first-play route when device execution is available; the campaign and driving-mission inventories are complete."
     },
     "G08": {
       "status": "in_progress",
@@ -1506,6 +1506,15 @@
       "evidence": [
         "docs/CAMPAIGN-INVENTORY.md",
         "scripts/inspect_driving_track.py"
+      ]
+    },
+    {
+      "at": "2026-10-29T02:00:00Z",
+      "goal": "G07",
+      "summary": "Resolved the driving missions descriptions and hints through the engine during headless boots and wrote the paraphrased goals into the campaign inventory; the temporary hook was reverted.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/TEST-MATRIX.md"
       ]
     }
   ],

@@ -223,6 +223,18 @@ match the string table's own numbering; resolving them needs the `.loc` index
 decoded. Until then this table is the mission-to-text mapping, with the strings
 left in the game data.
 
+The engine resolves them itself: a temporary print in `InitLoadScreen` showed
+the description and every hint for each mission during a headless boot, without
+decoding the `.loc` index. Paraphrased, the missions read:
+
+| Mission | Goal | Hints (paraphrased) |
+| --- | --- | --- |
+| Paris Prelude | Keep Dominique safe | Use the sniper scope to take targets from range |
+| Alpine Escape | Leave Drake's castle grounds | Try alternate ways to drop henchmen; armoured snowmobiles take work; follow Zoe's callouts; rockets hit hard but stray; oil barrels are volatile; use the weapon zoom; danger comes from every side |
+| Enemies Vanquished | Reach Q at the extraction point | The Vanquish gadgets help; civilians must not be hurt; avoid police blockades; look for another route |
+| Deep Descent | Get past the island's defences | Stay hidden until communications are down; use the terrain against torpedoes; mines can bring a cave down; firing gives you away; enemy subs cannot see behind them |
+| Island Infiltration | Take the island's defences apart | Avoid Sentinel fire; Sentinels are very strong |
+
 ### How a part starts and ends
 
 Starting a level part (`Mission_Init`) records its base map and order, then
