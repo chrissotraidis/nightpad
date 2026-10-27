@@ -55,6 +55,10 @@ ignored `evidence/device/<date>/`.
    choose the NightPadShell scheme, set the team and bundle id, and run on the
    device.
 
+`scripts/package_device_app.sh` builds the Release app and writes an unsigned
+`build/package/NightPadShell-unsigned.ipa` for inspection. It is not
+installable until it is signed.
+
 ## What cannot be claimed before this pass
 
 Physical touch ergonomics, controller reconnect and rumble feel, real device

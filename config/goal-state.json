@@ -547,11 +547,12 @@
     "R26": {
       "status": "in_progress",
       "evidence": [
-        "scripts/verify_patches.sh"
+        "scripts/verify_patches.sh",
+        "scripts/package_device_app.sh"
       ],
       "decision_id": null,
       "notes": [
-        "Patch provenance is automated and passes (53 files from the pin). A clean-checkout build, signing/install recipe and package recipe remain."
+        "Patch provenance and an unsigned device IPA recipe pass. Signing/install and a full clean-checkout build remain."
       ]
     },
     "R27": {

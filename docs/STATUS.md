@@ -229,6 +229,9 @@ simulator probe and remains blocked on physical-device access.
 - `scripts/verify_patches.sh` now proves the tracked patch series reproduces
   the vendor tree: every patch applies to a clean worktree at the pinned
   revision and 53 files match byte-for-byte. It is part of the quick pass.
+- `scripts/package_device_app.sh` builds the Release app and writes a 3.6 MB
+  unsigned IPA with no loose dylibs; signing and installation remain the device
+  handoff step.
 
 ## Current uncertainty and blockers
 

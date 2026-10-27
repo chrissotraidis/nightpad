@@ -846,3 +846,14 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: engine provenance is reproducible. A full clean-checkout build and
   package recipe remain.
 
+## 2026-10-28T06:55:00Z — device package recipe
+
+- Goal: G13. Requirement: R26 in progress.
+- Observed: `scripts/package_device_app.sh` builds the Release app, packages
+  `Payload/NightPadShell.app` into an unsigned IPA, checks the Info.plist and
+  rejects loose dylibs.
+- Evidence: a 3.6 MB IPA with SHA-256 `6f1f9667…44d3ec`; it is not installed
+  because the machine cannot sign.
+- Verdict: the package recipe reproduces. Signing/install and a clean-checkout
+  build remain.
+
