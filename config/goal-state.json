@@ -6,8 +6,8 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T13:52:00Z",
-  "active_goal": "G04",
+  "last_updated_at": "2026-10-27T14:21:36Z",
+  "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
   "actual_source_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
@@ -80,7 +80,7 @@
       "next_step": "Install and run the signed probe on a trusted iPhone and iPad; simulator prerequisites already pass."
     },
     "G04": {
-      "status": "in_progress",
+      "status": "blocked_external",
       "started_at": "2026-10-27T11:18:00Z",
       "completed_at": null,
       "evidence": [
@@ -96,16 +96,18 @@
         "tests/native/test_action_lifecycle.cpp",
         "docs/TEST-MATRIX.md"
       ],
-      "blockers": [],
-      "next_step": "Profile the action engine's per-session Metal/SDL graphics allocations; the game-state reset passes three driving and three mixed cycles, but the ten-cycle action soak still grows about 105 MB per session."
+      "blockers": [
+        "B01"
+      ],
+      "next_step": "Run the ten-cycle lifecycle and transition gates on a signed physical iPhone and iPad; the macOS reset contract passes."
     },
     "G05": {
-      "status": "pending",
+      "status": "ready",
       "started_at": null,
       "completed_at": null,
       "evidence": [],
       "blockers": [],
-      "next_step": null
+      "next_step": "Implement the native shell, data path service and three-dot menu while physical-device access remains blocked."
     },
     "G06": {
       "status": "pending",
@@ -209,7 +211,7 @@
       "evidence": [],
       "decision_id": null,
       "notes": [
-        "Both complete iPhoneOS engines build and link in one executable with 15 intended bridge symbols; macOS mixed transitions pass three cycles."
+        "Both complete iPhoneOS engines build and link in one executable with 15 intended bridge symbols; macOS mixed transitions pass ten cycles."
       ]
     },
     "R06": {
@@ -219,7 +221,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Simulator pointer/Metal/media probes pass; macOS driving and mixed cycles pass three cycles. Physical device remains blocked, and the ten-cycle action soak still exposes Metal session-memory growth."
+        "Simulator pointer/Metal/media probes pass; macOS action, driving and mixed ten-cycle gates pass. Physical device execution remains blocked."
       ]
     },
     "R07": {
@@ -229,7 +231,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Cooperative stop, worker shutdown, heap re-arm and explicit session-static reset work for three driving and three mixed cycles; the ten-cycle action soak remains the open gate."
+        "Cooperative stop, worker and file-slot shutdown, heap re-arm, explicit session-static reset and GPU-cache reset pass ten action, ten driving and ten mixed cycles."
       ]
     },
     "R08": {
@@ -400,6 +402,7 @@
       "id": "B01",
       "scope": [
         "G03",
+        "G04",
         "G06",
         "G12"
       ],
@@ -604,6 +607,16 @@
       "at": "2026-10-27T13:49:54Z",
       "goal": "G04",
       "summary": "Session-scoped heap/static reset and in-window thread stacks make three driving and three mixed cycles pass; ten action cycles still grow Metal graphics memory.",
+      "evidence": [
+        "patches/0010-engine-session-reset.patch",
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:21:36Z",
+      "goal": "G04",
+      "summary": "Ten action, driving and mixed cycles pass with stable joins and plateauing memory; G04 now waits only on physical-device evidence.",
       "evidence": [
         "patches/0010-engine-session-reset.patch",
         "docs/DECISIONS/0006-engine-stop-boundary.md",

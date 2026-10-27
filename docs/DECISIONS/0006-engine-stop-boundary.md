@@ -117,19 +117,38 @@ smaller-reservation fallback. This is not a leak allowance: it gives each
 session a valid in-window stack while the general window remains available for
 game memory.
 
-## Evidence and remaining gap
+## Verified ten-cycle boundary
 
-Three complete driving start/stop cycles pass, with each thread joined and the
-OS thread count settling at nine. Three combined driving/action cycles pass,
-including both directions through the real launch page, with joins and a stable
-thread count. The three-cycle action-only soak also passes.
+The first ten-cycle failure had two independent causes. The action engine's
+`FS_Init` opened the archive set but never closed it, so after six sessions the
+64 file-operation slots were full and `openOrCreateFile` returned zero; the
+initialisation loop then spun forever. `FS_Init` now closes the previous
+session's open handles and clears the async-stream table before rebuilding.
 
-A ten-cycle action-only soak still fails after cycle six: resident memory grows
-by about 105 MB per action session, mostly `IOAccelerator (graphics)` and
-owned graphics mappings. Destroying the GPU device at the next start, destroying
-it before the window goes away, reusing one device, waiting for GPU idle, and
-reusing one window were each tried; none removed the growth, and the persistent
-window also leaked threads. This is a Metal/SDL session-resource problem, not
-the heap or game-static reset fixed here. It remains open for G04; the mixed
-three-cycle transition is the current verified boundary.
+The second cause was the SDL GPU backend reallocating its 64 MB vertex ring,
+ring transfer and upload transfer buffers on every renderer initialisation.
+Those allocations are now device-scoped: the device is reused across sessions
+and the buffers, back buffer, depth cache and black textures are created only
+when absent. The driving boot also releases the previous session's per-game
+textures, shaders, samplers and pipelines while keeping the device and its
+reusable resources.
+
+Thread stacks initially exhausted the general window because `GameWindow`
+reserves the whole 1 GB upper in-window arena. The image reserve now holds 1 GB
+for the heap arena and 1 GB for thread stacks across repeated launches, and
+stacks still fall back through smaller reservations.
+
+Evidence on the final source:
+
+- ten action start/stop/join cycles pass; resident memory grows about 2.4 MB per
+  cycle after warm-up, from 224 MB to 248 MB over ten cycles;
+- ten driving start/stop/join cycles pass; resident memory rises during cache
+  warm-up and settles near 296 MB, with the last cycle lower than the ninth;
+- ten mixed driving/action cycles pass: 20 launch requests, both directions each
+  cycle, every thread joined, and the settled OS thread count is eight to nine;
+- both complete iPhoneOS engines and the combined iOS arm64 link rebuild with
+  static SDL and FFmpeg.
+
+The game-state, file, worker, GPU-cache and thread-reset contract is therefore
+verified on macOS. Physical-device execution remains the external G04 gate.
 

@@ -1,3 +1,173 @@
+--- a/src/action/engine/FS.cpp
++++ b/src/action/engine/FS.cpp
+@@ -245,6 +245,16 @@
+ 
+ // AUTOINJECT
+ void FS_Init(void) {
++
++    // A relaunch in this host process starts a new session with the same static slots. Close what the previous
++    // session left open, or the 64-slot table fills and openOrCreateFile starts answering 0.
++    for (int i = 1; i < MAX_FILE_OPERATIONS; i++) {
++        FileOperationXbox *op = &XboxFileOperations[i];
++        if (op->open != 0 && op->fileHandle != NULL && op->fileHandle != INVALID_HANDLE_VALUE)
++            DoNtClose(op->fileHandle);
++    }
++    memset(XboxFileOperations, 0, sizeof(XboxFileOperations));
++    memset(AsyncStreams, 0, sizeof(AsyncStreams));
+ 
+     // Initialise to zero
+     memset(&FileSystem, 0, sizeof(FileSystem));
+--- a/src/common/gfx/d3d9Backend.cpp
++++ b/src/common/gfx/d3d9Backend.cpp
+@@ -3372,4 +3372,8 @@
+ void D3D9_KickOffAndWaitForIdle(void) {
+     // Nothing to wait for: the resources the game frees after this are its own memory, which Direct3D 9 never
+     // reads directly (the backend copies what it is told has changed)
++}
++
++void D3D9_ResetSessionCache() {
++    // Direct3D 9 owns its resource lifetime; the native process path has no session cache to clear here.
+ }
+--- a/src/common/gfx/sdlGpuBackend.cpp
++++ b/src/common/gfx/sdlGpuBackend.cpp
+@@ -1010,8 +1010,10 @@
+         GpuLog("[sdlgpu] the D3D8 state table addresses were never set - see g_xboxTextureStateTable\n");
+ 
+     const char *debug = getenv("NIGHTFIRE_GPUDEBUG");
+-    g_device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_MSL, debug != NULL && debug[0] == '1',
+-                                   NULL);
++    const bool freshDevice = g_device == NULL;
++    if (freshDevice)
++        g_device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_MSL,
++                                       debug != NULL && debug[0] == '1', NULL);
+     if (g_device == NULL) {
+         GpuLog("[sdlgpu] SDL_CreateGPUDevice failed: %s\n", SDL_GetError());
+         return 0x8876086Cu;   // D3DERR_INVALIDCALL
+@@ -1043,31 +1045,36 @@
+                     SDL_GPUTextureSupportsFormat(g_device, SDL_GPU_TEXTUREFORMAT_BC3_RGBA_UNORM, SDL_GPU_TEXTURETYPE_2D,
+                                                  SDL_GPU_TEXTUREUSAGE_SAMPLER);
+ 
+-    SDL_GPUBufferCreateInfo ringInfo = { SDL_GPU_BUFFERUSAGE_VERTEX | SDL_GPU_BUFFERUSAGE_INDEX, RING_BYTES, 0 };
+-    g_ring = SDL_CreateGPUBuffer(g_device, &ringInfo);
+-    SDL_GPUTransferBufferCreateInfo ringTransfer = { SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, RING_BYTES, 0 };
+-    g_ringTransfer = SDL_CreateGPUTransferBuffer(g_device, &ringTransfer);
+-    SDL_GPUTransferBufferCreateInfo uploadTransfer = { SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, UPLOAD_BYTES, 0 };
+-    g_uploadTransfer = SDL_CreateGPUTransferBuffer(g_device, &uploadTransfer);
+-    if (g_ring == NULL || g_ringTransfer == NULL || g_uploadTransfer == NULL) {
+-        GpuLog("[sdlgpu] buffers: %s\n", SDL_GetError());
+-        return 0x8876086Cu;
++    if (freshDevice || g_ring == NULL) {
++        SDL_GPUBufferCreateInfo ringInfo = { SDL_GPU_BUFFERUSAGE_VERTEX | SDL_GPU_BUFFERUSAGE_INDEX, RING_BYTES, 0 };
++        g_ring = SDL_CreateGPUBuffer(g_device, &ringInfo);
++        SDL_GPUTransferBufferCreateInfo ringTransfer = { SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, RING_BYTES, 0 };
++        g_ringTransfer = SDL_CreateGPUTransferBuffer(g_device, &ringTransfer);
++        SDL_GPUTransferBufferCreateInfo uploadTransfer = { SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, UPLOAD_BYTES, 0 };
++        g_uploadTransfer = SDL_CreateGPUTransferBuffer(g_device, &uploadTransfer);
++        if (g_ring == NULL || g_ringTransfer == NULL || g_uploadTransfer == NULL) {
++            GpuLog("[sdlgpu] buffers: %s\n", SDL_GetError());
++            return 0x8876086Cu;
++        }
++        MapTransferBuffers();
+     }
+-    MapTransferBuffers();
+ 
+-    g_backBuffer.colour = CreateTexture(SDL_GPU_TEXTUREFORMAT_B8G8R8A8_UNORM, width, height, 1,
+-                                        SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER);
+-    g_backBuffer.width = width;
+-    g_backBuffer.height = height;
+-    g_backBuffer.opaque = true;   // X8R8G8B8: alpha reads as 1
+-    g_backBuffer.depth = GetDepthFor(width, height);
+-    if (g_backBuffer.colour == NULL || g_backBuffer.depth == NULL)
+-        return 0x8876086Cu;
+-    SDL_FColor black = { 0, 0, 0, 1 };
+-    ClearPass(g_backBuffer.colour, g_backBuffer.depth, true, black, true, g_reversedDepth ? 0.0f : 1.0f);
++    if (freshDevice || g_backBuffer.colour == NULL ||
++        g_backBuffer.width != width || g_backBuffer.height != height) {
++        g_backBuffer.colour = CreateTexture(SDL_GPU_TEXTUREFORMAT_B8G8R8A8_UNORM, width, height, 1,
++                                            SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER);
++        g_backBuffer.width = width;
++        g_backBuffer.height = height;
++        g_backBuffer.opaque = true;   // X8R8G8B8: alpha reads as 1
++        g_backBuffer.depth = GetDepthFor(width, height);
++        if (g_backBuffer.colour == NULL || g_backBuffer.depth == NULL)
++            return 0x8876086Cu;
++        SDL_FColor black = { 0, 0, 0, 1 };
++        ClearPass(g_backBuffer.colour, g_backBuffer.depth, true, black, true, g_reversedDepth ? 0.0f : 1.0f);
++        g_blackTexture = MakeConstantTexture(SDL_GPU_TEXTURETYPE_2D);
++        g_blackCube = MakeConstantTexture(SDL_GPU_TEXTURETYPE_CUBE);
++    }
+     g_currentTarget = g_backBuffer;
+-    g_blackTexture = MakeConstantTexture(SDL_GPU_TEXTURETYPE_2D);
+-    g_blackCube = MakeConstantTexture(SDL_GPU_TEXTURETYPE_CUBE);
+ 
+     HostQueryPerformanceFrequency(&g_qpcFrequency);
+     HostRaiseTimerResolution();
+@@ -2929,3 +2936,65 @@
+ 
+ void D3D9_BlockUntilNotBusy(void *pResource) { (void)pResource; }
+ void D3D9_KickOffAndWaitForIdle(void) {}
++
++// Release what the previous game session loaded into the persistent device. The ring, transfer buffers, black
++// textures and back buffer are device-scoped and stay; the game's textures, shaders, samplers and pipelines are not.
++void D3D9_ResetSessionCache() {
++    if (g_device == NULL)
++        return;
++    for (int i = 0; i < g_textureCount; i++)
++        if (g_textures[i].texture != NULL)
++            SDL_ReleaseGPUTexture(g_device, g_textures[i].texture);
++    memset(g_textures, 0, sizeof(g_textures));
++    g_textureCount = 0;
++    for (int i = 0; i < g_pixelShaderCount; i++)
++        if (g_pixelShaders[i].shader != NULL)
++            SDL_ReleaseGPUShader(g_device, g_pixelShaders[i].shader);
++    g_pixelShaderCount = 0;
++    g_currentPixelShader = -1;
++    for (int i = 0; i < g_vertexShaderCount; i++) {
++        if (g_vertexShaders[i].shader != NULL)
++            SDL_ReleaseGPUShader(g_device, g_vertexShaders[i].shader);
++        if (g_vertexShaders[i].spriteShader != NULL)
++            SDL_ReleaseGPUShader(g_device, g_vertexShaders[i].spriteShader);
++    }
++    g_vertexShaderCount = 0;
++    g_currentVertexShader = -1;
++    for (std::map<std::string, SDL_GPUGraphicsPipeline *>::iterator it = g_pipelines.begin();
++         it != g_pipelines.end(); ++it)
++        SDL_ReleaseGPUGraphicsPipeline(g_device, it->second);
++    g_pipelines.clear();
++    for (std::map<std::string, SDL_GPUShader *>::iterator it = g_fixedPrograms.begin(); it != g_fixedPrograms.end(); ++it)
++        SDL_ReleaseGPUShader(g_device, it->second);
++    g_fixedPrograms.clear();
++    g_fixedProgramSamplers.clear();
++    for (std::map<std::string, SDL_GPUSampler *>::iterator it = g_samplers.begin(); it != g_samplers.end(); ++it)
++        SDL_ReleaseGPUSampler(g_device, it->second);
++    g_samplers.clear();
++    // g_backBuffer.depth is an entry of g_depthTextures: keep that cache, or the persistent back buffer dangles.
++    if (g_readBackScaled != NULL) SDL_ReleaseGPUTexture(g_device, g_readBackScaled);
++    if (g_visibilityMask != NULL) SDL_ReleaseGPUTexture(g_device, g_visibilityMask);
++    if (g_movieTexture != NULL) SDL_ReleaseGPUTexture(g_device, g_movieTexture);
++    if (g_fxaaCopy != NULL) SDL_ReleaseGPUTexture(g_device, g_fxaaCopy);
++    if (g_fxaaVertexShader != NULL) SDL_ReleaseGPUShader(g_device, g_fxaaVertexShader);
++    if (g_fxaaPixelShader != NULL) SDL_ReleaseGPUShader(g_device, g_fxaaPixelShader);
++    if (g_pretransformedShader != NULL) SDL_ReleaseGPUShader(g_device, g_pretransformedShader);
++    g_readBackScaled = g_visibilityMask = g_movieTexture = g_fxaaCopy = NULL;
++    g_fxaaVertexShader = g_fxaaPixelShader = g_pretransformedShader = NULL;
++    g_movieWidth = g_movieHeight = g_movieBatch = 0;
++    if (g_frameFence != NULL)
++        SDL_ReleaseGPUFence(g_device, g_frameFence);
++    g_frameFence = NULL;
++    g_releaseAfterFlush.clear();
++    g_textureUploads.clear();
++    g_commands.clear();
++    g_passes.clear();
++    g_draws.clear();
++    g_blits.clear();
++    g_downloads.clear();
++    g_vertexUniformSnapshots.clear();
++    g_pixelUniformSnapshots.clear();
++    g_passOpen = false;
++    g_passColour = g_passDepth = NULL;
++    g_currentTarget = g_backBuffer;
++}
 --- a/src/driving/audio/Mix.cpp
 +++ b/src/driving/audio/Mix.cpp
 @@ -274,6 +274,14 @@
@@ -203,13 +373,24 @@
  #include "../../common/launchInfo.h"
  #include "../../common/engineLifecycle.h"
  #include "../../helpers.h"
-@@ -341,6 +353,26 @@
+@@ -72,6 +84,8 @@
+ #include "../platform/Sse.h"
+ #include <stdlib.h>
+ #include <string.h>
++
++void D3D9_ResetSessionCache();
+ 
+ // ---------------------------------------------------------------------------------------------------------------
+ // main, the start-up and clean-up, the game loop and the launch page - see GameLoop.h for the shape. Each function
+@@ -340,6 +354,27 @@
+         UMemory::Init(0x2400000, 0, NULL);
          UMemory::AddFastBlocks(0x10);
          HeapConfigured = true;
-     }
++    }
 +    // Bond_CleanUp takes the heap down. A launch in this host process is a fresh game boot, so the allocator has to
 +    // come back up even though the device and video-mode setup above is still valid.
 +    if (ClassMemory[0] == NULL) {
++        D3D9_ResetSessionCache();
 +        UMemory::Init(0x2400000, 0, NULL);
 +        UMemory::AddFastBlocks(0x10);
 +        EAGL_ResetSession();
@@ -226,11 +407,10 @@
 +        ActionQueueManager_ResetSession();
 +        Voice_ResetSession();
 +        Targeting_ResetSession();
-+    }
+     }
      NullFunction();
      return true;
- }
-@@ -491,6 +523,7 @@
+@@ -491,6 +526,7 @@
      DiscError_Shutdown();
      FreeEAGLMaterialsThunk();
      RRenderer::Shutdown();
@@ -559,7 +739,23 @@
          thread->references = 1;
          Release(thread);
          LastError = kErrorNotEnoughMemory;
-@@ -849,12 +871,13 @@
+@@ -764,11 +786,12 @@
+ // image holds the reservations instead, as a zero-fill section, whose pages cost nothing until they are used.
+ // Contiguous memory goes below 256 MB of the window (KernelImports.cpp), where the image and so this section lie too.
+ // The section's part below that serves it, a 64 KB granule at a time, inaccessible while free; the rest serves the
+-// reservations, at least 1 GB. Given back, the low part would take the system's libraries: the window's frameworks
+-// loaded there, among the game's own memory.
++// reservations: 1 GB for the heap arena and 1 GB more for the thread stacks a process can start across repeated
++// engine launches. Given back, the low part would take the system's libraries: the window's frameworks loaded there,
++// among the game's own memory.
+ const uintptr_t kContiguousEnd = 0x10000000;
+ const size_t kGranule = 0x10000;
+-alignas(0x4000) static char ImageReserve[(size_t(1) << 30) + kContiguousEnd];
++alignas(0x4000) static char ImageReserve[(size_t(2) << 30) + kContiguousEnd];
+ static char *ImageReserveStart;
+ static size_t ImageReserveUsed;
+ static uintptr_t LowPagesStart, LowPagesEnd;
+@@ -849,12 +872,13 @@
  }
  
  // The game's data may hold addresses on its threads' stacks (a draw's vertex arrays), so the threads it runs on have

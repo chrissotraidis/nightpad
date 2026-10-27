@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-27 13:52 UTC
+Updated: 2026-10-27 14:21 UTC
 
 ## Outcome
 
@@ -65,12 +65,12 @@ simulator probe and remains blocked on physical-device access.
 - Thread stacks are reserved from the image's in-window arena rather than the
   fragmented general window, so repeated launches no longer fail with
   `ENOMEM` on the third start.
-- Three driving start/stop cycles join and settle at nine OS threads. Three
-  combined driving/action cycles pass in both directions with the real launch
-  page, every thread joined, and the same settled thread count.
-- The action-only soak still grows about 105 MB of `IOAccelerator (graphics)`
-  resident memory per session and fails to start the seventh cycle. Device
-  teardown and window-reuse experiments did not remove the growth.
+- Ten action start/stop/join cycles pass. Resident memory grows about 2.4 MB
+  per cycle after warm-up (224 MB to 248 MB over ten cycles).
+- Ten driving start/stop/join cycles pass. Resident memory warms to about
+  296 MB and the tenth cycle is lower than the ninth.
+- Ten mixed driving/action cycles pass: 20 launch requests, both directions,
+  every thread joined, and the settled OS thread count stays at eight to nine.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
   mask `0x7`, with only the `30_fps` movie bundle present.
 - The driving/POV control definitions were safely decoded from `misc.viv`:
@@ -86,13 +86,13 @@ simulator probe and remains blocked on physical-device access.
   `073f0048.xmv` movie required by one recording. The alias is an explicitly
   labeled compatibility experiment, not a verified PAL replacement.
 - Physical pointer, Metal, SDL and lifecycle behavior is unverified.
-- G04's game-state reset contract and mixed transitions now pass for three
-  cycles on macOS. The remaining issue is Metal/SDL per-session graphics memory
-  growth in the action engine; physical-device evidence also remains blocked.
+- G04's game-state, file-handle, GPU-cache, worker-thread and stack-reset
+  contract passes ten cycles on macOS. Physical-device lifecycle evidence
+  remains blocked by the missing signing identity and connected hardware.
 
 ## Next step
 
-Profile the action engine's per-session Metal allocations and find a reset that
-returns the window/device resources. Keep the ten-cycle action soak as the gate;
-do not relax it. The physical-device blocker remains separate and visible.
+Begin G05's native shell and data-flow work while physical-device access for G03
+and G04 remains unavailable. Keep the ten-cycle lifecycle scripts as regression
+gates for every engine change.
 

@@ -96,3 +96,26 @@ are ignored and may contain paths, hashes, captures or device identities.
   (window claim, swapchain, textures, pipelines) and find the resource that the
   driver retains. Keep the ten-cycle soak as the gate.
 
+## 2026-10-27T14:21:36Z — ten-cycle lifecycle gate
+
+- Goal: G04. Requirements: R05, R06, R07.
+- Hypothesis: the action failures were the two large per-session allocations
+  (64 MB of GPU ring/upload buffers) and the action file system never closing
+  its 64 operation slots; driving growth was a per-session texture/shader cache.
+- Observed: the SDL GPU backend now keeps the device and its ring, transfer,
+  back buffer, depth cache and black textures across sessions. The driving boot
+  releases the previous game's textures, shaders, samplers and pipelines while
+  preserving device-scoped resources. `FS_Init` closes the previous session's
+  open handles and clears the async-stream table. The in-window reserve is 2 GB
+  (1 GB heap arena plus 1 GB for repeated thread stacks), and stacks fall back
+  through smaller reservations.
+- Evidence: ten action cycles pass (224 MB to 248 MB resident, every join); ten
+  driving cycles pass (warm to about 296 MB, tenth lower than ninth); ten mixed
+  cycles pass, 20 launch requests in both directions, every join, settled 8-9 OS
+  threads. Both complete iPhoneOS engines and the combined arm64 link rebuild.
+- Verdict: the macOS G04 lifecycle/reset contract passes. Physical-device
+  execution remains blocked external; G04 cannot close until that evidence
+  exists.
+- Next: start G05's native shell and data flow while device access remains
+  unavailable, and keep all three ten-cycle scripts as regression gates.
+
