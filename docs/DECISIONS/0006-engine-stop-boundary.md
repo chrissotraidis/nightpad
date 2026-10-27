@@ -46,3 +46,8 @@ thread ends. One cycle now passes with the window closed before joining; the
 driving cleanup path needs the main-thread window shutdown to complete before
 the game thread returns.
 
+The combined harness then starts the action engine from the page. It crashes
+during the driving boot after shader 7 with the two isolated engines linked
+together, while each engine passes alone. This leaves an unresolved
+cross-engine static state or symbol collision above the stop boundary.
+
