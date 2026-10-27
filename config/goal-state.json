@@ -72,7 +72,9 @@
         "evidence/ios-probe/result.json",
         "evidence/ios-probe/platform-probe-result.png",
         "docs/DECISIONS/0001-ios-platform-probe.md",
-        "build/ios-device/Debug-iphoneos/NightPadProbe.app"
+        "build/ios-device/Debug-iphoneos/NightPadProbe.app",
+        "scripts/device_handoff.sh",
+        "docs/DEVICE-HANDOFF.md"
       ],
       "blockers": [
         "B01"
@@ -1032,5 +1034,5 @@
       "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "G04: device execution of the round trip; G10: all-weapons needs a scripted level path; G07/G08 inventory continues."
+  "next_step": "Provide a signing identity and a trusted device, then run scripts/device_handoff.sh --install and work the checklist in docs/DEVICE-HANDOFF.md."
 }

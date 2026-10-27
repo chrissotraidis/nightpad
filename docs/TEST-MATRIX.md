@@ -19,6 +19,7 @@
 | G02 | Driving baseline run | macOS arm64 | passed | Mission 1, 9,000 ticks, 16 frames, sound trace |
 | G02 | Driving baseline repeat comparison | macOS arm64 | passed with known GPU variance | 16 frames each; 5 pixels differ; 381,193-line sound traces byte-identical |
 | G03 | Signed app launch without debugger/JIT | iPhone/iPad | blocked | No device or signing identity |
+| G03 | Device handoff prepared | Host | passed for build, untested install | `scripts/device_handoff.sh` builds and links the device shell, reports missing identity/device, and signs/installs/launches once both exist; checklist in `docs/DEVICE-HANDOFF.md` |
 | G03 | Simulator pointer/linker probe | iPhone 17 / iOS 26.5 | passed | 200,029 checks, 0 differ at 0x100000000 |
 | G03 | Simulator Metal fixture | iPhone 17 / iOS 26.5 | passed | MSL compile, dispatch, texture readback |
 | G03 | Simulator XMV media fixture | iPhone 17 / iOS 26.5 | passed | WMV2 plus Xbox ADPCM decoded |

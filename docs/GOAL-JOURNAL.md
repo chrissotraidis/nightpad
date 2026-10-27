@@ -658,3 +658,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the coordinator loop the campaign needs works in process on macOS.
   Device execution is still the gate.
 
+## 2026-10-28T01:20:00Z — device handoff
+
+- Goal: G03. Requirement: R27/handoff preparation.
+- Observed: added `scripts/device_handoff.sh` and `docs/DEVICE-HANDOFF.md`. The
+  script builds and links the device shell, reports the exact missing
+  prerequisites (identity, trusted device, team), and signs, installs and
+  launches with a console once they exist.
+- Evidence: dry run builds the arm64 shell, passes the link check and reports
+  zero identities and no devices, exiting 0. The install path is untested.
+- Verdict: the smallest handoff is prepared. Nothing physical can be accepted
+  until the machine has an identity and a trusted device.
+

@@ -180,6 +180,11 @@ simulator probe and remains blocked on physical-device access.
 - The coordinator loop is proven in one process: action hands off to driving,
   driving hands back, and action restarts from the page driving wrote. All three
   phases join and advance frames (`scripts/test_engine_roundtrip.sh`).
+- A device handoff exists: `scripts/device_handoff.sh` rebuilds and links the
+  device shell, states exactly which prerequisites are missing, and can sign,
+  install and launch once a team and trusted device are present. The session
+  checklist is [DEVICE-HANDOFF.md](DEVICE-HANDOFF.md). The install path is
+  untested here because this machine still has no identity or device.
 
 ## Current uncertainty and blockers
 
