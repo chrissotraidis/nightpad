@@ -28,7 +28,8 @@
 | G04 | Complete action engine compiles for iPhoneOS | iPhoneOS 26.5 | passed | Mach-O arm64 app target |
 | G04 | Complete driving engine compiles for iPhoneOS | iPhoneOS 26.5 | passed | Mach-O arm64 app target |
 | G04 | Both isolated engine objects link in one iOS executable | iPhoneOS 26.5 | passed | Exactly two engine entrypoints exported |
-| G04 | In-process launch request and clean shutdown | iPhoneOS/macOS | unverified | Not implemented |
+| G04 | In-process launch request captures page without child process | macOS arm64 | passed | 3,072-byte page identical; requesting thread exits; process remains alive |
+| G04 | Engine stop, worker-thread join and resource reset | iPhoneOS/macOS | unverified | Not implemented |
 | G04 | Action to driving and return transitions | iPhoneOS/macOS | unverified | Not run |
 
 Only rows with explicit execution evidence are marked passed. Source inspection

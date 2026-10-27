@@ -35,7 +35,10 @@ simulator probe and remains blocked on physical-device access.
 - The unsigned iPhoneOS arm64 probe builds and links with deployment target 16.
 - Both complete engines compile and link as separate iPhoneOS arm64 app
   targets. A relocatable-object isolation pass links them into one combined
-  iOS executable with exactly two engine entrypoints exported.
+  iOS executable with two engine thread entries and two launch-callback setters.
+- The launch seam now hands the 3,072-byte page to an in-process coordinator
+  and ends only the requesting game thread. A native pthread test confirms the
+  page and image identity, no child process, and continued process execution.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
   mask `0x7`, with only the `30_fps` movie bundle present.
 - The driving/POV control definitions were safely decoded from `misc.viv`:
@@ -51,8 +54,8 @@ simulator probe and remains blocked on physical-device access.
   `073f0048.xmv` movie required by one recording. The alias is an explicitly
   labeled compatibility experiment, not a verified PAL replacement.
 - Physical pointer, Metal, SDL and lifecycle behavior is unverified.
-- G04's transition hook, thread/resource shutdown, reset contract and repeated
-  in-process transitions remain to be implemented.
+- G04's worker-thread shutdown, audio/GPU ownership transfer, reset contract and
+  repeated in-process transitions remain to be implemented.
 
 ## Next step
 

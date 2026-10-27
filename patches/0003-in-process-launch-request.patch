@@ -1,0 +1,63 @@
+diff --git a/src/common/launchInfo.cpp b/src/common/launchInfo.cpp
+index ff6ec52..e11752e 100644
+--- a/src/common/launchInfo.cpp
++++ b/src/common/launchInfo.cpp
+@@ -8,6 +8,7 @@
+ #include <windows.h>
+ #else
+ #include <limits.h>
++#include <pthread.h>
+ #include <strings.h>
+ #include <unistd.h>
+ #ifdef __APPLE__
+@@ -43,11 +44,16 @@
+ #define LAUNCH_WORDS 0x300
+ 
+ static LaunchPageHook g_pageHook = NULL;
++static LaunchRequestHook g_requestHook = NULL;
+ 
+ void LaunchInfo_SetPageHook(LaunchPageHook hook) {
+     g_pageHook = hook;
+ }
+ 
++void LaunchInfo_SetRequestHook(LaunchRequestHook hook) {
++    g_requestHook = hook;
++}
++
+ // Replaces XAPILIB::XGetLaunchInfo
+ int __stdcall XGetLaunchInfo(int *launchDataType, void *data) {
+     printf("[launch] XGetLaunchInfo: data at 0x%08" PRIxPTR "\n", uintptr_t(data));
+@@ -227,6 +233,17 @@ int __stdcall XLaunchNewImageA(char *executableName, void *launchInfo) {
+     else
+         printf("[launch] launch data written to " LAUNCH_FILE "\n");
+ 
++    if (g_requestHook != NULL && g_requestHook(executableName, launchInfo, LAUNCH_WORDS * 4)) {
++        printf("[launch] handed %s to the in-process coordinator; ending the requesting game thread\n",
++               executableName);
++        fflush(stdout);
++#ifdef _WIN32
++        ExitThread(0);
++#else
++        pthread_exit(NULL);
++#endif
++    }
++
+     bool started = StartLoaderFor(executableName);
+     if (!started)
+         printf("[launch] the data is in " LAUNCH_FILE " for whichever loader runs %s next. Exiting.\n", executableName);
+diff --git a/src/common/launchInfo.h b/src/common/launchInfo.h
+index 4b68174..72c1964 100644
+--- a/src/common/launchInfo.h
++++ b/src/common/launchInfo.h
+@@ -11,4 +11,11 @@ int __stdcall XLaunchNewImageA(char *executableName,void *launchInfo);
+ typedef bool (*LaunchPageHook)(void *page, bool fromFile);
+ void LaunchInfo_SetPageHook(LaunchPageHook hook);
+ 
++// An in-process coordinator's chance to take the hand-over instead of starting another process. Called after
++// XLaunchNewImageA has written the page. Returning true means the coordinator owns the transition: the requesting
++// game thread ends without spawning a child process or terminating the app. Returning false keeps the standalone
++// executable's existing child-process behaviour.
++typedef bool (*LaunchRequestHook)(const char *executableName, const void *page, unsigned bytes);
++void LaunchInfo_SetRequestHook(LaunchRequestHook hook);
++
+ #endif // COMMON_LAUNCHINFO_H_

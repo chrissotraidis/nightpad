@@ -34,8 +34,8 @@ ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/action-raw.o" \
     -filelist "$out/action-objects.txt" "$out/action-entry.o"
 ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/driving-raw.o" \
     -filelist "$out/driving-objects.txt" "$out/driving-entry.o"
-printf '_NightPadActionEngineThread\n' > "$out/action-exports.txt"
-printf '_NightPadDrivingEngineThread\n' > "$out/driving-exports.txt"
+printf '_NightPadActionEngineThread\n_NightPadActionEngineSetLaunchRequestCallback\n' > "$out/action-exports.txt"
+printf '_NightPadDrivingEngineThread\n_NightPadDrivingEngineSetLaunchRequestCallback\n' > "$out/driving-exports.txt"
 nmedit -s "$out/action-exports.txt" -o "$out/action-isolated.o" "$out/action-raw.o"
 nmedit -s "$out/driving-exports.txt" -o "$out/driving-isolated.o" "$out/driving-raw.o"
 
@@ -49,11 +49,11 @@ clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" -Wl,-no_fixup_chains \
     "$spirv/libspirv-cross-msl.a" "$spirv/libspirv-cross-glsl.a" \
     "$spirv/libspirv-cross-core.a" 2> "$out/combined-link.log"
 
-exports=$(nm -gU "$out/nightpad-combined-link" | grep -c 'NightPad.*EngineThread' || true)
-if [ "$exports" -ne 2 ]; then
-    echo "Expected two engine entrypoints, found $exports" >&2
+exports=$(nm -gU "$out/nightpad-combined-link" | grep -c 'NightPad.*Engine' || true)
+if [ "$exports" -ne 4 ]; then
+    echo "Expected four engine bridge exports, found $exports" >&2
     exit 1
 fi
 file "$out/nightpad-combined-link"
-nm -gU "$out/nightpad-combined-link" | grep 'NightPad.*EngineThread'
+nm -gU "$out/nightpad-combined-link" | grep 'NightPad.*Engine'
 

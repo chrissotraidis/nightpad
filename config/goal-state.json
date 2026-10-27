@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T11:18:00Z",
+  "last_updated_at": "2026-10-27T11:22:00Z",
   "active_goal": "G04",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -86,10 +86,11 @@
       "evidence": [
         "scripts/build_combined_engine_link.sh",
         "build/ios-combined/nightpad-combined-link",
-        "docs/DECISIONS/0002-engine-object-isolation.md"
+        "docs/DECISIONS/0002-engine-object-isolation.md",
+        "docs/DECISIONS/0003-launch-request-bridge.md"
       ],
       "blockers": [],
-      "next_step": "Implement launch-request hook and clean engine stop/reset contract; test all three transition directions."
+      "next_step": "Implement engine stop, worker-thread join and audio/GPU reset, then exercise all transition directions."
     },
     "G05": {
       "status": "pending",
@@ -218,7 +219,9 @@
         "docs/DECISIONS/0002-engine-object-isolation.md"
       ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Launch page request seam implemented and unit-tested; worker/audio/GPU shutdown and reset remain."
+      ]
     },
     "R08": {
       "status": "unverified",
@@ -453,6 +456,15 @@
         "docs/DECISIONS/0002-engine-object-isolation.md",
         "build/ios-combined/nightpad-combined-link"
       ]
+    },
+    {
+      "at": "2026-10-27T11:22:00Z",
+      "goal": "G04",
+      "summary": "Added opt-in in-process launch request seam; page and requesting thread verified without child process.",
+      "evidence": [
+        "patches/0003-in-process-launch-request.patch",
+        "docs/DECISIONS/0003-launch-request-bridge.md"
+      ]
     }
   ],
   "completed_tests": [
@@ -495,7 +507,12 @@
       "name": "combined iOS engine link proof",
       "result": "Both isolated engine objects link in one Mach-O arm64 executable with exactly 2 exported engine entrypoints",
       "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "launch request bridge page/thread test",
+      "result": "3072-byte page identical, image DRIVING.XBE, callback once, requesting thread exits, process continues",
+      "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "Implement the launch request bridge and engine stop/reset contract, then exercise action/driving transitions."
+  "next_step": "Implement engine stop, worker-thread join and audio/GPU reset, then exercise action-to-driving, driving-to-driving and driving-to-action transitions."
 }
