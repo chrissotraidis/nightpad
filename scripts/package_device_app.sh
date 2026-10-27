@@ -33,3 +33,4 @@ hash=$(shasum -a 256 "$ipa" | awk '{print $1}')
 echo "package: $ipa ($size)"
 echo "package: sha256=$hash"
 echo "package: unsigned; sign and install with scripts/device_handoff.sh"
+"$repo/scripts/check_package.sh"

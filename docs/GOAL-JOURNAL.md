@@ -1594,3 +1594,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the diagnostics session history matches what happened. Engine-
   paused resumes still need a device run to be observed.
 
+## 2026-10-28T22:00:00Z — the package is checked, not just built
+
+- Goal: G13. Requirement: R26 in progress.
+- Observed: `package_device_app.sh` produced an IPA and rejected loose dylibs,
+  but nothing asserted what the bundle actually contains or links.
+- Observed: `scripts/check_package.sh` now unpacks the IPA and checks exactly
+  three app entries, an arm64 executable, libraries only from `/System/Library`
+  or `/usr/lib`, a 16.0 minimum, landscape-only orientations and file sharing.
+  The package script runs it last, so a bad package fails the build.
+- Evidence: `scripts/check_package.sh` PASS on the rebuilt package
+  (`aea72924…f52839b22b2`), which is now the hash in `docs/DEVICE-HANDOFF.md`
+  and `docs/CANDIDATE.md`.
+- Verdict: packaging has a content gate. Signing and installation remain the
+  device handoff.
+

@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T21:40:00Z",
+  "last_updated_at": "2026-10-28T22:00:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -282,7 +282,8 @@
         "scripts/verify_patches.sh",
         "docs/CANDIDATE.md",
         "scripts/package_device_app.sh",
-        "docs/KNOWN-ISSUES.md"
+        "docs/KNOWN-ISSUES.md",
+        "scripts/check_package.sh"
       ],
       "blockers": [],
       "next_step": "Clean-checkout build and package recipe; final candidate after device acceptance."
@@ -604,7 +605,8 @@
       "decision_id": null,
       "notes": [
         "Patch provenance, a clean shell build and an unsigned device IPA recipe pass. Signing/install and a full clean-checkout rebuild of engine and dependencies remain.",
-        "scripts/test_clean_shell_build.sh rebuilt both lanes from empty trees at 5b8583a and the link check passed; the unsigned package was rebuilt at the same commit."
+        "scripts/test_clean_shell_build.sh rebuilt both lanes from empty trees at 5b8583a and the link check passed; the unsigned package was rebuilt at the same commit.",
+        "scripts/check_package.sh verifies the IPA contents, arm64 slice, system-only linkage and the required Info.plist keys; the package script runs it."
       ]
     },
     "R27": {
@@ -1346,6 +1348,16 @@
       "evidence": [
         "apple/ios/NightPadShellViewController.mm",
         "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T22:00:00Z",
+      "goal": "G13",
+      "summary": "Added a package content check (three entries, arm64, system libraries only, minimum OS, landscape, file sharing) and wired it into the packaging script; manifests carry the rebuilt hash.",
+      "evidence": [
+        "scripts/check_package.sh",
+        "docs/TEST-MATRIX.md",
+        "docs/CANDIDATE.md"
       ]
     }
   ],
