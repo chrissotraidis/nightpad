@@ -15,7 +15,8 @@ It also verifies every pinned checkout in `source_graph` — engine, GalaxyPad,
 SunPad, extract-xiso and the FFmpeg submodule — and fails on drift before
 printing any identity.
 
-Draft snapshot from 2026-10-28 (illustrative; regenerate):
+Draft snapshot from 2026-10-28 (illustrative; regenerate). Taken at commit
+`b014135b8ca08419fc83247b1868b1bca77fb948` on a clean tree:
 
 ```
 engine_pin=8779cf79ff623b83b53b9acf9c0b0cd6639b75ab
@@ -24,7 +25,11 @@ patch_series_sha256=5331fea387832e7e7f6072a41e5926a864a4eee6e783d9aec90e6cdf43f2
 dependency_lock_sha256=f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e
 data_identity=data-8a0dc0e713f44e48b000
 content_sha256=8a0dc0e713f44e48b00054ca021fb027571e6f7877b8225cc5ae275af2435ebe
+ipa_sha256=af8b1cd031a5d4e5cc048841fb978281609c5bc4e3ed9bcb35891bb057aa78c7
 ```
+
+`scripts/package_device_app.sh` rebuilt the unsigned 3.6 MB IPA on that tree;
+the hash above is the current one, not the earlier draft's.
 
 The fields a freeze must record:
 

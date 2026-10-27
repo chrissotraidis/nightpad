@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T14:20:00Z",
+  "last_updated_at": "2026-10-28T14:35:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -278,7 +278,8 @@
       "completed_at": null,
       "evidence": [
         "scripts/verify_patches.sh",
-        "docs/CANDIDATE.md"
+        "docs/CANDIDATE.md",
+        "scripts/package_device_app.sh"
       ],
       "blockers": [],
       "next_step": "Clean-checkout build and package recipe; final candidate after device acceptance."
@@ -1056,6 +1057,16 @@
         "scripts/test_touch_layout.sh",
         "docs/TEST-MATRIX.md",
         "evidence/ios-shell/touch-layout-hidden.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T14:35:00Z",
+      "goal": "G13",
+      "summary": "Refreshed the draft candidate identity and rebuilt the unsigned IPA on the current clean tree; final freeze still needs device acceptance.",
+      "evidence": [
+        "docs/CANDIDATE.md",
+        "scripts/candidate_identity.sh",
+        "scripts/package_device_app.sh"
       ]
     }
   ],

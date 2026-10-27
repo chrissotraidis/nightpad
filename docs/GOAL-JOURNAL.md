@@ -1196,3 +1196,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: hiding a control is end-to-end and reversible. Physical ergonomics
   and the in-game overlay on a device remain.
 
+## 2026-10-28T14:35:00Z — candidate identity and package refreshed
+
+- Goal: G13. Requirement: R29/R30 draft.
+- Observed: `scripts/candidate_identity.sh --require-clean` passes on the current
+  tree: all five pinned checkouts match, the tree is clean, 17 patches still
+  reproduce 53 files, and the data identity is unchanged.
+- Observed: `scripts/package_device_app.sh` rebuilt the unsigned IPA from that
+  tree. New SHA-256
+  `af8b1cd031a5d4e5cc048841fb978281609c5bc4e3ed9bcb35891bb057aa78c7`; the
+  earlier draft's `6f1f9667…` package predates the menu and editor changes.
+- Evidence: `docs/CANDIDATE.md` snapshot, `build/package/NightPadShell-unsigned.ipa`.
+- Verdict: the draft manifest now points at the tree that is actually current.
+  Final freeze still waits on device acceptance.
+
