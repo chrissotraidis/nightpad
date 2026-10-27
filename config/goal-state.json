@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T01:00:00Z",
+  "last_updated_at": "2026-10-29T01:30:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -216,7 +216,7 @@
         "scripts/inspect_driving_track.py"
       ],
       "blockers": [],
-      "next_step": "G07: decode the event families that carry text ids in each track (Paris objective events have empty comments), then run the first-play route when device execution is available."
+      "next_step": "G07: decode the driving locale file index so the loading-screen description and hint ids resolve to text, then run the first-play route when device execution is available."
     },
     "G08": {
       "status": "in_progress",
@@ -1497,6 +1497,15 @@
       "evidence": [
         "scripts/inspect_driving_track.py",
         "docs/CAMPAIGN-INVENTORY.md"
+      ]
+    },
+    {
+      "at": "2026-10-29T01:30:00Z",
+      "goal": "G07",
+      "summary": "The driving missions name their description and hints in loading-screen layouts, not objective comments; the five missions and their ids are inventoried, and resolving them needs the locale index decoded.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "scripts/inspect_driving_track.py"
       ]
     }
   ],

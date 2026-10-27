@@ -202,6 +202,27 @@ Paris's objective text must come from another event type - the families to
 decode next are the ones carrying small text ids, such as 40 and 112. The
 script prints those ids; it never prints the locale strings.
 
+### The driving missions' text is the loading screen
+
+Scanning every driving track shows the objective-comment route is a dead end:
+only Paris has `ESetObjective` events, all with a zero comment, and the other
+tracks have none. The missions' descriptions and hints are named by their loading
+screen layouts instead (`data/loading/<track>.ini` inside `misc.viv`), which the
+loading screen reads as `DESC_ID` and one of `HINT_ID1..` per launch:
+
+| Mission | Track | Description id | Hint ids |
+| --- | --- | --- | --- |
+| Paris Prelude | paris_mis01 | 2800 | 2803 |
+| Alpine Escape | snow1a_mis3 | 2900 | 2902-2908 |
+| Enemies Vanquished | snow2a_mis4 | 3000 | 3005, 3007, 3006, 3008 |
+| Deep Descent | uw_mis11 | 2650 | 2661, 2668, 2670-2672 |
+| Island Infiltration | junglea_mis13a | 2753 | 2770, 2771 |
+
+The ids are read through the driving locale file's indexed ids, so they do not
+match the string table's own numbering; resolving them needs the `.loc` index
+decoded. Until then this table is the mission-to-text mapping, with the strings
+left in the game data.
+
 ### How a part starts and ends
 
 Starting a level part (`Mission_Init`) records its base map and order, then

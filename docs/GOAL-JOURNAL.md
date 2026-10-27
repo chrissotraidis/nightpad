@@ -1746,3 +1746,19 @@ are ignored and may contain paths, hashes, captures or device identities.
   decoding the right event family rather than parsing the container. The
   per-mission list is still open.
 
+## 2026-10-29T01:30:00Z — the driving text lives in the loading screens
+
+- Goal: G07. Requirement: campaign inventory.
+- Observed: scanning every driving track settles the objective question - only
+  Paris has `ESetObjective` events, all with a zero comment, and the others
+  have none. The missions' description and hints are named by their loading
+  screen layouts instead: `DESC_ID` plus one of `HINT_ID1..` per launch.
+- Observed: the five missions' ids are 2800/2803 (Paris), 2900/2902-2908
+  (Alpine), 3000/3005-3008 (Enemies Vanquished), 2650/2661-2672 (Deep
+  Descent) and 2753/2770-2771 (Island Infiltration). They go through the locale
+  file's indexed ids, so they do not match the string table's numbering.
+- Evidence: `data/loading/*.ini` from `misc.viv` and
+  `docs/CAMPAIGN-INVENTORY.md`; the strings themselves stay in the game data.
+- Verdict: the mission-to-text mapping is known. Resolving the ids needs the
+  `.loc` index decoded, which is the remaining step for paraphrased text.
+
