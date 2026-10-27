@@ -35,14 +35,16 @@ common="-target arm64-apple-ios16.0 -isysroot $sdk -std=gnu++20 -ffp-contract=of
 # shellcheck disable=SC2086
 clang++ $common -c "$repo/apple/shared/NightPadActionEngineEntry.cpp" -o "$out/action-entry.o"
 # shellcheck disable=SC2086
+clang++ $common -c "$repo/apple/shared/NightPadActionRuntime.cpp" -o "$out/action-runtime.o"
+# shellcheck disable=SC2086
 clang++ $common -c "$repo/apple/shared/NightPadDrivingEngineEntry.cpp" -o "$out/driving-entry.o"
 
 ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/action-raw.o" \
-    -filelist "$out/action-objects.txt" "$out/action-entry.o"
+    -filelist "$out/action-objects.txt" "$out/action-entry.o" "$out/action-runtime.o"
 ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/driving-raw.o" \
     -filelist "$out/driving-objects.txt" "$out/driving-entry.o"
-printf '_NightPadActionEngineThread\n_NightPadActionEngineSetLaunchRequestCallback\n' > "$out/action-exports.txt"
-printf '_NightPadDrivingEngineThread\n_NightPadDrivingEngineSetLaunchRequestCallback\n' > "$out/driving-exports.txt"
+printf '_NightPadActionEngineThread\n_NightPadActionEngineSetLaunchRequestCallback\n_NightPadActionEngineRequestStop\n_NightPadActionEngineStart\n_NightPadActionEngineRunWindow\n_NightPadActionEngineJoin\n_NightPadActionEngineCloseWindow\n' > "$out/action-exports.txt"
+printf '_NightPadDrivingEngineThread\n_NightPadDrivingEngineSetLaunchRequestCallback\n_NightPadDrivingEngineRequestStop\n' > "$out/driving-exports.txt"
 nmedit -s "$out/action-exports.txt" -o "$out/action-isolated.o" "$out/action-raw.o"
 nmedit -s "$out/driving-exports.txt" -o "$out/driving-isolated.o" "$out/driving-raw.o"
 
@@ -64,8 +66,8 @@ clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" -Wl,-no_fixup_chains \
     -weak_framework CoreHaptics 2> "$out/combined-link.log"
 
 exports=$(nm -gU "$out/nightpad-combined-link" | grep -c 'NightPad.*Engine' || true)
-if [ "$exports" -ne 4 ]; then
-    echo "Expected four engine bridge exports, found $exports" >&2
+if [ "$exports" -ne 10 ]; then
+    echo "Expected ten engine bridge exports, found $exports" >&2
     exit 1
 fi
 file "$out/nightpad-combined-link"

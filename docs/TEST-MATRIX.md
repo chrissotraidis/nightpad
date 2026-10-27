@@ -32,6 +32,9 @@
 | G04 | iOS FFmpeg linkage is static | iPhoneOS 26.5 | passed for link | Three pinned archives; no FFmpeg dylib dependency |
 | G04 | In-process launch request captures page without child process | macOS arm64 | passed | 3,072-byte page identical; requesting thread exits; process remains alive |
 | G04 | Engine stop, worker-thread join and resource reset | iPhoneOS/macOS | unverified | Not implemented |
+| G04 | Cooperative game-loop stop reaches existing cleanup | macOS arm64 | passed in raw-link harness | Game_Main returns and thread joins |
+| G04 | Worker/audio/SDL threads released after stop | macOS arm64 | failed | Thread count 1 -> 6 -> 7 |
+| G04 | Symbol-isolated start/stop heap and shader boundary | macOS arm64 | failed | Segfault freeing string in ShaderMsl_Translate; raw link passes |
 | G04 | Action to driving and return transitions | iPhoneOS/macOS | unverified | Not run |
 
 Only rows with explicit execution evidence are marked passed. Source inspection

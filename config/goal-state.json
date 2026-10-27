@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T11:40:00Z",
+  "last_updated_at": "2026-10-27T11:50:00Z",
   "active_goal": "G04",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -89,10 +89,12 @@
         "docs/DECISIONS/0002-engine-object-isolation.md",
         "docs/DECISIONS/0003-launch-request-bridge.md",
         "docs/DECISIONS/0004-ios-static-sdl.md",
-        "docs/DECISIONS/0005-ios-static-ffmpeg.md"
+        "docs/DECISIONS/0005-ios-static-ffmpeg.md",
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "patches/0006-engine-stop-lifecycle.patch"
       ],
       "blockers": [],
-      "next_step": "Implement engine stop, worker-thread join and audio/GPU reset, then exercise all transition directions."
+      "next_step": "Unify allocator/runtime ownership, remove the nmedit heap failure and all worker/audio/SDL threads after join."
     },
     "G05": {
       "status": "pending",
@@ -224,7 +226,8 @@
       ],
       "decision_id": null,
       "notes": [
-        "Launch page request seam implemented and unit-tested; worker/audio/GPU shutdown and reset remain."
+        "Launch page request seam implemented and unit-tested; worker/audio/GPU shutdown and reset remain.",
+        "Cooperative loop stop and join work in a raw-link harness; thread count leaked 1->6->7 and the symbol-localized path crashes in ShaderMsl_Translate."
       ]
     },
     "R08": {
@@ -549,6 +552,11 @@
       "name": "iOS engine build recipe",
       "result": "scripts/build_ios_engines.sh device builds both full engines with static SDL/FFmpeg and rejects loose dylibs",
       "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "action cooperative stop raw-link harness",
+      "result": "FAIL: Game_Main returns and thread joins, but thread count 1->6->7; localized variant segfaults in ShaderMsl_Translate",
+      "target": "macOS 27 arm64"
     }
   ],
   "next_step": "Implement the engine start/stop coordinator and prove thread/resource teardown before transition tests."

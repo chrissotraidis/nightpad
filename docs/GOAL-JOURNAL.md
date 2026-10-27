@@ -52,3 +52,14 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next step: add start/stop ownership, join the game thread and quiesce audio,
   GPU and worker threads before starting the target engine.
 
+## 2026-10-27T11:50:00Z — stop boundary exposes allocator and worker gaps
+
+- Goal: G04.
+- Observed: raw-link action start/stop reached Game_Main return and joined.
+  Thread count rose 1 -> 6 and stayed at 7. Symbol-localized action crashed in
+  ShaderMsl_Translate freeing a string; the raw-link build runs through the same
+  startup and front end.
+- Verdict: stop plumbing passes; lifecycle and isolation do not.
+- Next experiment: one shared allocator/support runtime for both engines, SDL
+  and SPIRV-Cross, then repeat start/stop/join with thread and heap checks.
+

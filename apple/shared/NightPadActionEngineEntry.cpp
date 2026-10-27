@@ -3,6 +3,7 @@
 
 #include "../../vendor/nightfire/src/action/engine/XboxStartup.h"
 #include "../../vendor/nightfire/src/common/launchInfo.h"
+#include "../../vendor/nightfire/src/common/engineLifecycle.h"
 #include "NightPadEngineBridge.h"
 
 static NightPadLaunchRequestCallback g_launchRequestCallback = nullptr;
@@ -18,6 +19,8 @@ extern "C" void NightPadActionEngineSetLaunchRequestCallback(NightPadLaunchReque
 }
 
 extern "C" unsigned NightPadActionEngineThread(void *unused) {
+    EngineLifecycle_ResetStop();
     return (unsigned)mainXapiStartup(unused);
 }
+
 

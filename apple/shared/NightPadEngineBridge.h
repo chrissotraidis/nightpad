@@ -18,6 +18,14 @@ typedef int (*NightPadLaunchRequestCallback)(NightPadEngineId engine, const char
 void NightPadActionEngineSetLaunchRequestCallback(NightPadLaunchRequestCallback callback);
 void NightPadDrivingEngineSetLaunchRequestCallback(NightPadLaunchRequestCallback callback);
 
+// Ask the active game loop to leave at its next safe frame boundary. The engine's normal cleanup then runs.
+void NightPadActionEngineRequestStop(void);
+void NightPadDrivingEngineRequestStop(void);
+int NightPadActionEngineStart(int argc, char **argv);
+void NightPadActionEngineRunWindow(void);
+int NightPadActionEngineJoin(unsigned timeoutMilliseconds);
+void NightPadActionEngineCloseWindow(void);
+
 unsigned NightPadActionEngineThread(void *unused);
 unsigned NightPadDrivingEngineThread(void *unused);
 
