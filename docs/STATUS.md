@@ -42,6 +42,8 @@ simulator probe and remains blocked on physical-device access.
 - iOS SDL is now linked statically. The combined engine executable has no
   loose SDL dylib dependency; a clean bundle still needs to prove no stale copy
   is emitted.
+- Both iPhoneOS engines now bind the pinned FFmpeg codec/demuxer/utility
+  archives statically. The combined engine link has no FFmpeg dylib dependency.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
   mask `0x7`, with only the `30_fps` movie bundle present.
 - The driving/POV control definitions were safely decoded from `misc.viv`:

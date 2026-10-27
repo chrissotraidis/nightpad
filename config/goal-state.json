@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T11:32:00Z",
+  "last_updated_at": "2026-10-27T11:36:00Z",
   "active_goal": "G04",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -88,7 +88,8 @@
         "build/ios-combined/nightpad-combined-link",
         "docs/DECISIONS/0002-engine-object-isolation.md",
         "docs/DECISIONS/0003-launch-request-bridge.md",
-        "docs/DECISIONS/0004-ios-static-sdl.md"
+        "docs/DECISIONS/0004-ios-static-sdl.md",
+        "docs/DECISIONS/0005-ios-static-ffmpeg.md"
       ],
       "blockers": [],
       "next_step": "Implement engine stop, worker-thread join and audio/GPU reset, then exercise all transition directions."
@@ -477,6 +478,15 @@
         "patches/0004-ios-static-sdl.patch",
         "docs/DECISIONS/0004-ios-static-sdl.md"
       ]
+    },
+    {
+      "at": "2026-10-27T11:36:00Z",
+      "goal": "G04",
+      "summary": "Bound FFmpeg statically in both iOS engines and preserved the native dynamic path; native 635-frame smoke still passes.",
+      "evidence": [
+        "patches/0005-ios-static-ffmpeg.patch",
+        "docs/DECISIONS/0005-ios-static-ffmpeg.md"
+      ]
     }
   ],
   "completed_tests": [
@@ -529,7 +539,12 @@
       "name": "iOS static SDL engine link",
       "result": "Both engines and combined link use libSDL3.a; no SDL dylib dependency",
       "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "iOS static FFmpeg engine link",
+      "result": "Both complete engines and combined link use pinned static FFmpeg archives; no FFmpeg dylib dependency",
+      "target": "iPhoneOS 26.5 arm64"
     }
   ],
-  "next_step": "Implement engine stop, worker-thread join and audio/GPU reset, then exercise action-to-driving, driving-to-driving and driving-to-action transitions."
+  "next_step": "Implement the engine start/stop coordinator and prove thread/resource teardown before transition tests."
 }

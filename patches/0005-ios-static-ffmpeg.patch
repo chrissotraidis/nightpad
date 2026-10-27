@@ -1,0 +1,120 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4d389d6..da43b4e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1210,6 +1210,13 @@ else()
+   # The same release's shared libraries for the host, which the committed headers fit: built by
+   # "tools/fmv/build_ffmpeg.sh linux-i386 <prefix>" (or macos-arm64) and named here by <prefix>/lib.
+   set(NF_FFMPEG_LIB_DIR "" CACHE PATH "The host's FFmpeg shared libraries (libavutil.so.60...)")
++  set(NF_FFMPEG_STATIC_LIB_DIR "" CACHE PATH "A prefix of static FFmpeg libraries for an embedded target (iOS)")
++  if(NF_FFMPEG_STATIC_LIB_DIR)
++    set(NF_FFMPEG_STATIC_LIBS
++        "${NF_FFMPEG_STATIC_LIB_DIR}/libavformat.a"
++        "${NF_FFMPEG_STATIC_LIB_DIR}/libavcodec.a"
++        "${NF_FFMPEG_STATIC_LIB_DIR}/libavutil.a")
++  endif()
+   if(NF_FFMPEG_LIB_DIR AND APPLE)
+     set(NF_FFMPEG_FILES ${NF_FFMPEG_LIB_DIR}/libavutil.60.dylib ${NF_FFMPEG_LIB_DIR}/libavcodec.62.dylib
+                         ${NF_FFMPEG_LIB_DIR}/libavformat.62.dylib)
+@@ -1220,9 +1227,11 @@ else()
+   if(NF_FFMPEG_LIB_DIR)
+     file(GLOB nf_ffmpeg_notes ${NF_FFMPEG_DIR}/FFmpeg-*.txt)
+     list(APPEND NF_FFMPEG_FILES ${nf_ffmpeg_notes})
+-  else()
++  elseif(NOT NF_FFMPEG_STATIC_LIBS)
+     message(WARNING "NF_FFMPEG_LIB_DIR is not set: the movies need FFmpeg 8.0's shared libraries on the library path")
+     file(GLOB NF_FFMPEG_FILES ${NF_FFMPEG_DIR}/FFmpeg-*.txt)
++  else()
++    file(GLOB NF_FFMPEG_FILES ${NF_FFMPEG_DIR}/FFmpeg-*.txt)
+   endif()
+ endif()
+ 
+@@ -1387,6 +1396,10 @@ foreach(target action_standalone action_standalone_test)
+   endif()
+   add_dependencies(${target} preprocess)
+   target_include_directories(${target} PRIVATE ${NF_FFMPEG_DIR}/include)
++  if(NF_FFMPEG_STATIC_LIBS)
++    target_compile_definitions(${target} PRIVATE NIGHTFIRE_FFMPEG_STATIC=1)
++    target_link_libraries(${target} PRIVATE ${NF_FFMPEG_STATIC_LIBS})
++  endif()
+   if(WIN32)
+     target_link_libraries(${target} PRIVATE d3d9 d3dcompiler winmm ${XAUDIO2_LIB} xinput9_1_0 user32 shell32)
+     add_custom_command(TARGET ${target} POST_BUILD
+@@ -1576,6 +1589,10 @@ foreach(target driving_standalone driving_standalone_test)
+                                           -Wl,-rpath,${nf_sanitizer_dir})
+   endif()
+   target_include_directories(${target} PRIVATE ${NF_FFMPEG_DIR}/include)
++  if(NF_FFMPEG_STATIC_LIBS)
++    target_compile_definitions(${target} PRIVATE NIGHTFIRE_FFMPEG_STATIC=1)
++    target_link_libraries(${target} PRIVATE ${NF_FFMPEG_STATIC_LIBS})
++  endif()
+   target_compile_definitions(${target} PRIVATE UNICODE _UNICODE NF_ANTIALIASING NIGHTFIRE_STANDALONE)
+   if(WIN32)
+     target_link_libraries(${target} PRIVATE d3d9 winmm xinput9_1_0 ${XAUDIO2_LIB} shell32)
+diff --git a/src/common/fmv/Ffmpeg.cpp b/src/common/fmv/Ffmpeg.cpp
+index abedc6e..8cecdde 100644
+--- a/src/common/fmv/Ffmpeg.cpp
++++ b/src/common/fmv/Ffmpeg.cpp
+@@ -1,6 +1,7 @@
+ #include "Ffmpeg.h"
+ 
+ #include <stdio.h>
++#if !defined(NIGHTFIRE_FFMPEG_STATIC)
+ #ifdef _WIN32
+ #define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
+@@ -29,10 +30,34 @@ typedef void *Library;
+ #define AVFORMAT "libavformat.so.62"
+ #endif
+ #endif
++#endif
+ 
+ FfmpegApi ff;
+ 
+ static bool Load(void) {
++#if defined(NIGHTFIRE_FFMPEG_STATIC)
++    ff.open_input = &avformat_open_input;
++    ff.find_stream_info = &avformat_find_stream_info;
++    ff.close_input = &avformat_close_input;
++    ff.read_frame = &av_read_frame;
++    ff.find_decoder = &avcodec_find_decoder;
++    ff.alloc_context3 = &avcodec_alloc_context3;
++    ff.parameters_to_context = &avcodec_parameters_to_context;
++    ff.open2 = &avcodec_open2;
++    ff.send_packet = &avcodec_send_packet;
++    ff.receive_frame = &avcodec_receive_frame;
++    ff.free_context = &avcodec_free_context;
++    ff.packet_alloc = &av_packet_alloc;
++    ff.packet_free = &av_packet_free;
++    ff.packet_unref = &av_packet_unref;
++    ff.new_packet = &av_new_packet;
++    ff.frame_alloc = &av_frame_alloc;
++    ff.frame_free = &av_frame_free;
++    ff.log_set_level = &av_log_set_level;
++    ff.channel_layout_default = &av_channel_layout_default;
++    ff.log_set_level(AV_LOG_ERROR);
++    return true;
++#else
+     Library avutil = OpenLibrary(AVUTIL);
+     Library avcodec = OpenLibrary(AVCODEC);
+     Library avformat = OpenLibrary(AVFORMAT);
+@@ -64,6 +89,7 @@ static bool Load(void) {
+     if (ok)
+         ff.log_set_level(AV_LOG_ERROR);
+     return ok;
++#endif
+ }
+ 
+ void Ffmpeg_Require(void) {
+@@ -74,7 +100,11 @@ void Ffmpeg_Require(void) {
+         loaded = true;
+         return;
+     }
++#if defined(NIGHTFIRE_FFMPEG_STATIC)
++    printf("[ffmpeg] the statically linked FFmpeg API could not be initialised\n");
++#else
+     printf("[ffmpeg] the FFmpeg libraries (" AVUTIL ", " AVCODEC ", " AVFORMAT ") are missing or incomplete\n");
++#endif
+ #ifdef _WIN32
+     MessageBoxA(NULL, "The FFmpeg DLLs (avutil-60.dll, avcodec-62.dll, avformat-62.dll) are missing from the game's "
+                 "folder, or are not the version it was built with. They come with every build, from "

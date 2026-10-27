@@ -9,6 +9,7 @@ no engine source changes.
 | nightfire-cxbx | `8779cf79ff623b83b53b9acf9c0b0cd6639b75ab` | CrashReportPosix reads mappings through vm_region_64 on iOS; tracked as patches/0002-ios-crashreport-vm.patch | Both complete iPhoneOS engine targets compile and link |
 | nightfire-cxbx | `8779cf79ff623b83b53b9acf9c0b0cd6639b75ab` | Adds an opt-in launch-request callback after the page write; default child-process behavior is unchanged; tracked as patches/0003-in-process-launch-request.patch | Native bridge page/thread test and 635-frame replay smoke pass |
 | nightfire-cxbx | `8779cf79ff623b83b53b9acf9c0b0cd6639b75ab` | Uses SDL's static archive on iOS and preserves shared SDL on desktop; tracked as patches/0004-ios-static-sdl.patch | Action, driving and combined arm64 links pass with no SDL dylib dependency |
+| nightfire-cxbx | `8779cf79ff623b83b53b9acf9c0b0cd6639b75ab` | Binds FFmpeg through direct symbols on iOS while retaining dynamic loading elsewhere; tracked as patches/0005-ios-static-ffmpeg.patch | Both complete iPhoneOS engines and combined link use static FFmpeg archives |
 | extract-xiso | `3f5b62cfe68f000b0e3c8a30104973f3a297948e` | None; guarded Python wrapper | ISO listing and extraction manifest |
 | FFmpeg | `8ae0b34901ba60a802f183ee75a250a9fc3e09a5` | None; build with Xcode SDK | `macos-arm64` libraries built |
 | SDL3 | `829a65d769d935c4852f8159e964312c0957260a` | None yet | CMake configure passed |

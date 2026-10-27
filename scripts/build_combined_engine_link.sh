@@ -48,11 +48,13 @@ nmedit -s "$out/driving-exports.txt" -o "$out/driving-isolated.o" "$out/driving-
 
 spirv="$build/_deps/spirv_cross-build/Release-iphoneos"
 sdl="$build/_deps/sdl3-build/Release-iphoneos/libSDL3.a"
+ffmpeg="$repo/build/deps/ffmpeg-ios-device/lib"
 clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" \
     -c "$repo/tests/ios/NightPadEngineLinkProbe.cpp" -o "$out/link-probe-main.o"
 clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" -Wl,-no_fixup_chains \
     -o "$out/nightpad-combined-link" \
     "$out/link-probe-main.o" "$out/action-isolated.o" "$out/driving-isolated.o" "$sdl" \
+    "$ffmpeg/libavformat.a" "$ffmpeg/libavcodec.a" "$ffmpeg/libavutil.a" \
     "$spirv/libspirv-cross-msl.a" "$spirv/libspirv-cross-glsl.a" \
     "$spirv/libspirv-cross-core.a" -fobjc-link-runtime -lm \
     -framework CoreMedia -framework CoreVideo -framework CoreAudio -framework AudioToolbox \
