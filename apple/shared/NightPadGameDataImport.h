@@ -36,6 +36,9 @@ public:
     // Removes stage directories left behind by earlier runs. The active stage
     // and a retained previous tree are kept.
     bool CleanupAbandonedStages(std::string *error);
+    // Removes identity trees other than the active one. Called once at launch,
+    // when a retained previous tree is no longer reachable.
+    bool RetainOnlyIdentity(const std::string &identity, std::string *error);
 
     bool prepared() const { return prepared_; }
     bool previousDataRetained() const { return previousDataRetained_; }

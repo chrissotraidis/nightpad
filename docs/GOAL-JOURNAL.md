@@ -1642,3 +1642,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: repeated imports no longer leak disk. The rollback tree is now
   explicitly a same-session affordance, which KNOWN-ISSUES records.
 
+## 2026-10-28T23:00:00Z — old identities go too
+
+- Goal: G05. Requirement: R04 in progress.
+- Observed: the stage cleanup covered `GameData.import-*`, but importing
+  different content leaves the *old* `GameData/data-<identity>` tree beside the
+  new one, with nothing reachable after relaunch.
+- Observed: `RetainOnlyIdentity` removes identity-shaped directories other than
+  the active one, called once at launch after the state is known. A retained
+  previous tree stays for the current session, so the discard button still works.
+- Evidence: `scripts/test_data_import.sh` creates a keep and an old identity tree
+  and asserts the right one survives; the simulator still reports ready as
+  `data-a3c98ab965ac41e559ac`.
+- Verdict: both kinds of leftover tree are bounded now. The same-session
+  retention is unchanged.
+

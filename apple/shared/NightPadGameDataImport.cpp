@@ -368,6 +368,38 @@ bool GameDataImporter::CleanupAbandonedStages(std::string *error) {
     return true;
 }
 
+// Importing different content leaves the old identity tree beside the new one.
+// The shell only offers to discard the newest replacement for the rest of the
+// session, so at launch anything else is unreachable.
+bool GameDataImporter::RetainOnlyIdentity(const std::string &identity, std::string *error) {
+    if (!ValidIdentity(identity)) {
+        if (error != nullptr) *error = "No valid identity to retain.";
+        return false;
+    }
+    std::error_code ec;
+    fs::directory_iterator entry(paths_.gameData, ec);
+    if (ec) {
+        if (error != nullptr) *error = "Could not scan the game-data folder: " + ec.message();
+        return false;
+    }
+    const fs::directory_iterator end;
+    while (entry != end) {
+        const fs::path candidate = entry->path();
+        entry.increment(ec);
+        if (ec)
+            break;
+        const std::string name = candidate.filename().string();
+        if (!ValidIdentity(name) || name == identity)
+            continue;
+        fs::remove_all(candidate, ec);
+        if (ec) {
+            if (error != nullptr) *error = "An old game-data tree could not be removed: " + ec.message();
+            return false;
+        }
+    }
+    return true;
+}
+
 DataState GameDataImporter::CurrentState(std::string *identity, std::string *error) const {
     std::error_code ec;
     std::string found = PointerIdentity(paths_);

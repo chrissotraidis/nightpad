@@ -179,6 +179,10 @@ static uint64_t ShellResidentBytes(void) {
         settingsError != "The settings file is missing.")
         [self showError:[NSString stringWithFormat:@"Saved settings ignored: %s", settingsError.c_str()]];
     [self refreshDataState];
+    // Identity trees other than the active one are unreachable once a launch
+    // has happened; importing different content leaves one behind.
+    if (_state == DataState::Ready && _identity.length > 0)
+        _importer->RetainOnlyIdentity(std::string(_identity.UTF8String), nullptr);
     [self refreshMenu];
     // Deterministic shell screenshots and UI smoke tests.
     if ([NSProcessInfo.processInfo.arguments containsObject:@"--show-touch-controls"])

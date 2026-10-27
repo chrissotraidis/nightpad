@@ -138,6 +138,18 @@ int main() {
     Check(!fs::exists(staleA) && !fs::exists(staleB), "abandoned stages removed");
     Check(fs::exists(keepOther), "non-stage folders kept");
 
+    // Importing different content leaves the old identity tree behind; only the
+    // active one survives a launch.
+    const std::string keepId = "data-" + std::string(20, 'b');
+    const std::string oldId = "data-" + std::string(20, 'c');
+    Check(fs::is_directory(paths.GameDataFor(keepId)) || fs::create_directories(paths.GameDataFor(keepId), ec),
+          "keep identity tree");
+    Check(fs::is_directory(paths.GameDataFor(oldId)) || fs::create_directories(paths.GameDataFor(oldId), ec),
+          "old identity tree");
+    Check(second.RetainOnlyIdentity(keepId, &error), "identity cleanup runs");
+    Check(fs::is_directory(paths.GameDataFor(keepId)), "active identity kept");
+    Check(!fs::exists(paths.GameDataFor(oldId)), "old identity removed");
+
     fs::remove_all(home, ec);
     std::cout << (failures == 0 ? "data import: PASS" : "data import: FAIL") << "\n";
     return failures == 0 ? 0 : 1;
