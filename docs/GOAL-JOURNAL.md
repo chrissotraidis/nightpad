@@ -950,3 +950,13 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the private-data boundary is checked mechanically. Notices and
   licensing uncertainty remain documented in `docs/PROVENANCE.md`.
 
+## 2026-10-28T09:20:00Z — candidate manifest draft
+
+- Goal: G13. Requirement: R30 in progress.
+- Observed: wrote `docs/CANDIDATE.md` with identity fields to record at freeze,
+  the support matrix, verified evidence, known issues and the device next step.
+  It states plainly that it is a draft and not an acceptance claim.
+- Evidence: the document plus the linked gates and checklists.
+- Verdict: the handoff shape exists. Final hashes, device results and candidate
+  identity wait on acceptance.
+

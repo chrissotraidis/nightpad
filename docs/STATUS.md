@@ -254,6 +254,9 @@ simulator probe and remains blocked on physical-device access.
 - `scripts/check_privacy.sh` verifies the repository tracks only source: 172
   files, no ref/build/vendor/evidence trees, and no retail, movie or binary
   artefacts. It runs in the quick pass.
+- [CANDIDATE.md](CANDIDATE.md) is the draft candidate manifest: identity fields
+  to freeze, support matrix, verified evidence, known issues and the device
+  next step. It is not an acceptance claim.
 
 ## Current uncertainty and blockers
 

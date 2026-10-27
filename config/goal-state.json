@@ -274,7 +274,8 @@
       "started_at": "2026-10-28T06:40:00Z",
       "completed_at": null,
       "evidence": [
-        "scripts/verify_patches.sh"
+        "scripts/verify_patches.sh",
+        "docs/CANDIDATE.md"
       ],
       "blockers": [],
       "next_step": "Clean-checkout build and package recipe; final candidate after device acceptance."
@@ -591,10 +592,14 @@
       ]
     },
     "R30": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "docs/CANDIDATE.md"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "A draft candidate manifest covers identity fields, support matrix, evidence, known issues and the device next step. It is not acceptance; final hashes and device results remain."
+      ]
     }
   },
   "features": {
