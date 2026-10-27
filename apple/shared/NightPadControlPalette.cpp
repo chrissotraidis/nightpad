@@ -34,4 +34,23 @@ float ContrastWithWhite(const ControlColour &colour) {
     return 1.05f / (RelativeLuminance(colour) + 0.05f);
 }
 
+int AccessibilityOrderForControl(TouchControlId id) {
+    switch (id) {
+        case TouchControlId::LeftStick: return 0;
+        case TouchControlId::Dpad: return 1;
+        case TouchControlId::LeftTrigger: return 2;
+        case TouchControlId::White: return 3;
+        case TouchControlId::Back: return 4;
+        case TouchControlId::Start: return 5;
+        case TouchControlId::Black: return 6;
+        case TouchControlId::RightTrigger: return 7;
+        case TouchControlId::RightStick: return 8;
+        case TouchControlId::A: return 9;
+        case TouchControlId::B: return 10;
+        case TouchControlId::X: return 11;
+        case TouchControlId::Y: return 12;
+    }
+    return 13;
+}
+
 }  // namespace nightpad

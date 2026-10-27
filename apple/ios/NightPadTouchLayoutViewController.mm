@@ -159,6 +159,13 @@
         [_canvas addSubview:view];
         [_controlViews addObject:view];
     }
+    NSArray<NightPadLayoutControlView *> *ordered = [_controlViews sortedArrayUsingComparator:^NSComparisonResult(
+        NightPadLayoutControlView *first, NightPadLayoutControlView *second) {
+        const int left = nightpad::AccessibilityOrderForControl(first.controlId);
+        const int right = nightpad::AccessibilityOrderForControl(second.controlId);
+        return left < right ? NSOrderedAscending : (left > right ? NSOrderedDescending : NSOrderedSame);
+    }];
+    _canvas.accessibilityElements = ordered;
     [self.view setNeedsLayout];
 }
 

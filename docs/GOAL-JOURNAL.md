@@ -805,4 +805,7 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Evidence: the simulator AX tree lists exactly that order.
 - Verdict: reading order is deliberate. Physical VoiceOver use and the editor
   order still need a session.
+- Follow-up: the same shared order now applies to the layout editor's canvas;
+  its simulator AX tree lists L, D-PAD, LT, WHITE, BACK, START, BLACK, RT, R,
+  A, B, X, Y, then Reset Layout.
 

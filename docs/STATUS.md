@@ -217,6 +217,8 @@ simulator probe and remains blocked on physical-device access.
 - The touch overlay's accessibility order is explicit: movement, shoulders,
   system buttons, look, then the face buttons, with the menu last. It used to be
   reverse subview order.
+- The layout editor uses the same order, so editing with VoiceOver visits the
+  controls predictably too.
 
 ## Current uncertainty and blockers
 

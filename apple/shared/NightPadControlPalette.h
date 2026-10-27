@@ -13,6 +13,9 @@ struct ControlColour {
 // labels to meet WCAG AA (contrast at least 4.5:1).
 ControlColour ColourForControl(TouchControlId id);
 
+// VoiceOver order: movement, shoulders, system, look, then face buttons.
+int AccessibilityOrderForControl(TouchControlId id);
+
 float RelativeLuminance(const ControlColour &colour);
 // Contrast ratio against pure white text.
 float ContrastWithWhite(const ControlColour &colour);

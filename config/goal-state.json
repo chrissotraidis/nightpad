@@ -570,7 +570,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Labels, 44-point controls, Dynamic Type, 4.5:1 contrast and an explicit overlay reading order are verified in the simulator. Physical VoiceOver and editor order remain."
+        "Labels, 44-point controls, Dynamic Type, 4.5:1 contrast and explicit overlay/editor reading order are verified in the simulator. Physical VoiceOver remains."
       ]
     },
     "R30": {
