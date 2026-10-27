@@ -165,6 +165,8 @@ simulator probe and remains blocked on physical-device access.
   to the D3D9 backend this port does not compile, no Xbox texture-pack scene
   exists to consume it, and the bounded SDL/Metal port is planned but deferred
   (`docs/DECISIONS/0013-texture-overrides.md`).
+- The full engine suite passes on the current tree (`scripts/verify_engine.sh`
+  at `480ac5a`), and `scripts/verify_quick.sh` passes alongside it.
 - Controls now includes a native reference for on-foot, vehicle and menu
   mappings. Vehicle rows come from the game's own drivecfg/POV definitions
   (RT gas, LT brake, B handbrake, A/X/Y secondary actions); the game's eight

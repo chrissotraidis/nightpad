@@ -1266,3 +1266,22 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: R21 decided - inventory complete, bounded SDL/Metal prototype
   deferred with a four-step plan recorded. No texture mods are advertised.
 
+## 2026-10-28T15:45:00Z — foundation and regression records filled
+
+- Goal: G00/G04. Requirements: R01 and R28.
+- Observed: both requirement records were empty. R01's evidence already
+  existed: the reconstructed action and driving engines are the game's own code
+  from the pinned revision, patched only for the Apple port, with the supplied
+  Xbox image and both XBEs as the game itself; campaign and multiplayer systems
+  are preserved and inventoried, with runtime acceptance kept under R09/R17.
+- Observed: `scripts/verify_engine.sh` passed in full on commit `480ac5a` - all
+  nine gates including pause with audio, assists, transitions, handoff and the
+  round trip - and `scripts/verify_quick.sh` covers the host tests, both shell
+  lanes, link contract, patch provenance and privacy. Device-only scenarios and
+  the missing PAL media are listed in `docs/TEST-MATRIX.md` rather than
+  assumed.
+- Evidence: `config/goal-state.json`, `docs/TEST-MATRIX.md`,
+  `scripts/verify_engine.sh`, `scripts/verify_quick.sh`.
+- Verdict: R01 and R28 pass for their stated scopes. Device gates stay where
+  they are.
+

@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T15:20:00Z",
+  "last_updated_at": "2026-10-28T15:45:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -287,10 +287,22 @@
   },
   "requirements": {
     "R01": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "passed",
+      "evidence": [
+        "config/dependencies.lock.json",
+        "docs/PROVENANCE.md",
+        "docs/SOURCES.md",
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/MULTIPLAYER-INVENTORY.md",
+        "patches/",
+        "scripts/verify_patches.sh",
+        "docs/UPSTREAM-DELTA.md"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "The reconstructed action and driving engines are the game's own code from the pinned nightfire-cxbx revision, patched only for the Apple port; the supplied Xbox image and both XBEs are the game itself.",
+        "Campaign and multiplayer systems are preserved in source and inventoried; runtime acceptance stays under R09 and R17."
+      ]
     },
     "R02": {
       "status": "passed",
@@ -596,10 +608,19 @@
       ]
     },
     "R28": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "passed",
+      "evidence": [
+        "scripts/verify_engine.sh",
+        "scripts/verify_quick.sh",
+        "docs/TEST-MATRIX.md",
+        "docs/STATUS.md"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "scripts/verify_engine.sh passed in full on commit 480ac5a: action and driving lifecycles, action and driving pause with audio, assists, driving early stop, transition, handoff and round trip.",
+        "scripts/verify_quick.sh covers the host unit tests, both shell lanes, the link contract, patch provenance and privacy.",
+        "Device-only scenarios and the missing PAL media are listed as explicit blockers in docs/TEST-MATRIX.md rather than assumed."
+      ]
     },
     "R29": {
       "status": "in_progress",
@@ -1108,6 +1129,18 @@
       "evidence": [
         "docs/DECISIONS/0013-texture-overrides.md",
         "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T15:45:00Z",
+      "goal": "G04",
+      "summary": "Filled the empty R01 and R28 records: foundation provenance for R01, and a full current-tree engine suite (verify_engine PASS) plus explicit device/media blockers for R28.",
+      "evidence": [
+        "scripts/verify_engine.sh",
+        "scripts/verify_quick.sh",
+        "docs/TEST-MATRIX.md",
+        "config/dependencies.lock.json",
+        "docs/PROVENANCE.md"
       ]
     }
   ],
