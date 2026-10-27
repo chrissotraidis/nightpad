@@ -57,6 +57,7 @@
 | G06 | App-owned pad bridge into the engine | iPhoneOS 26.5 | passed for link | Host pad override and rumble callbacks exported; device input behavior still unverified |
 | G06 | Contextual control help from game definitions | iPhone 17 simulator / iOS 26.5 | passed visual smoke | Controls menu opens a native reference using the engine's on-foot mapping and the drivecfg.def/POV pairings (RT gas, LT brake, B handbrake, A/X/Y secondary actions); evidence `evidence/ios-shell/control-help.png` |
 | G06 | Versioned app settings and persistence | macOS arm64 / iPhone 17 simulator | passed | `scripts/test_settings.sh` covers defaults, round trip, donor-key rejection, bad versions and values; toggling rumble in the shell wrote settings.txt and the relaunched menu showed Rumble off |
+| G06 | Foreground controller reconciliation | iPhoneOS 26.5 build | implemented, unverified on hardware | On becoming active the shell re-enumerates controllers and releases stale ports; backgrounding stops rumble and neutralises every port |
 | G05 | Native shell home, menu and data panel | iPhone simulator / iOS 26.5 | passed visual smoke | `NightPadShell` builds; screenshots show persistent menu, data status/import panel, pause/about/diagnostics entries |
 | G05 | Shell device compilation | iPhoneOS 26.5 | passed | `scripts/build_ios_shell.sh device` builds arm64 app without signing |
 | G05 | Combined engine archive links into shell | iPhoneOS 26.5 | passed for link | `scripts/check_ios_shell_link.sh`: arm64, action bridge plus driving start, no loose SDL/FFmpeg/SPIRV dylibs |

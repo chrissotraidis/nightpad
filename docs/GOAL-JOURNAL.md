@@ -425,3 +425,16 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: visibility policy and persistence are wired together.
 - Next: physical controller and touch sessions remain the external gate.
 
+## 2026-10-27T17:20:00Z — controller lifecycle hooks
+
+- Goal: G06. Requirement: R14 in progress.
+- Hypothesis: re-enumerating GameController after foreground and neutralising
+  ports on background removes stale slot and rumble state without device work.
+- Observed: GameInput now reconciles on `UIApplicationDidBecomeActiveNotification`,
+  releasing ports whose controller disappeared, and clears every port plus
+  rumble when the app enters the background. Slot identity stays stable across
+  a resume with the same enumeration.
+- Evidence: both shell lanes build; slot reconciliation is covered by
+  `scripts/test_controller_slots.sh`. Hardware sleep/wake remains unverified.
+- Next: device session for connect/reconnect, held buttons and rumble.
+

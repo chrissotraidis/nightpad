@@ -47,8 +47,35 @@ static void NightPadRumbleFromEngine(int port, unsigned leftMotor, unsigned righ
             if (strongSelf.controllerConnectionChanged)
                 strongSelf.controllerConnectionChanged();
         };
+        NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+        [center addObserver:self selector:@selector(applicationBecameActive:)
+                       name:UIApplicationDidBecomeActiveNotification object:nil];
+        [center addObserver:self selector:@selector(applicationEnteredBackground:)
+                       name:UIApplicationDidEnterBackgroundNotification object:nil];
     }
     return self;
+}
+
+- (void)dealloc {
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
+- (void)applicationBecameActive:(NSNotification *)note {
+    (void)note;
+    // A controller may have connected or slept while the app was away.
+    [_controllers reconcile];
+    [self releaseControllerState];
+    if (self.controllerConnectionChanged)
+        self.controllerConnectionChanged();
+}
+
+- (void)applicationEnteredBackground:(NSNotification *)note {
+    (void)note;
+    for (int port = 0; port < InputMixer::kPorts; ++port) {
+        [_controllers stopRumbleForPort:port];
+        _mixer.ClearPort(port);
+        [_host setPad:port state:PadState{}];
+    }
 }
 
 - (NightPadControllerAuthority *)controllers {
