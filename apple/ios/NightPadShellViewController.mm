@@ -521,7 +521,22 @@ static uint64_t ShellResidentBytes(void) {
     import.imagePadding = 8;
     _importButton.configuration = import;
     _importButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [_importButton addTarget:self action:@selector(chooseImportFolder) forControlEvents:UIControlEventTouchUpInside];
+    _importButton.showsMenuAsPrimaryAction = YES;
+    __weak NightPadShellViewController *weakSelf = self;
+    _importButton.menu = [UIMenu menuWithTitle:@"Import Game Data" children:@[
+        [UIAction actionWithTitle:@"Choose a Folder…" image:[UIImage systemImageNamed:@"folder"]
+                       identifier:nil
+                          handler:^(__kindof UIAction *selected) {
+            (void)selected;
+            [weakSelf chooseImportFolder];
+        }],
+        [UIAction actionWithTitle:@"Use NightPad Folder" image:[UIImage systemImageNamed:@"folder.badge.plus"]
+                       identifier:nil
+                          handler:^(__kindof UIAction *selected) {
+            (void)selected;
+            [weakSelf importFromAppFolder];
+        }],
+    ]];
     [_dataPanel addSubview:_importButton];
 
     _discardButton = [UIButton buttonWithType:UIButtonTypeSystem];

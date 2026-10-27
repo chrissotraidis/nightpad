@@ -1306,3 +1306,20 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: R04, R25 and R27 pass; R20 is decided. The picker's manual folder
   choice and device-only scope notes stay as stated.
 
+## 2026-10-28T16:15:00Z — the data panel offers both import paths
+
+- Goal: G05. Requirement: R04.
+- Observed: the one-tap folder import existed only in the three-dot menu, while
+  the panel's prominent button still forced the system picker. GalaxyPad's
+  settings and SunPad's data page both put their own-folder path next to the
+  picker.
+- Observed: the panel's import button is now a small menu - "Choose a Folder…"
+  and "Use NightPad Folder" - so the picker and the app-folder path sit
+  together. Importing from the panel shows the same progress, cancel and
+  completion alert.
+- Evidence: iPhone 17 simulator, iOS 26.5: panel > Use NightPad Folder ran the
+  1.9 GB re-import to `data-a3c98ab965ac41e559ac` and finished with "Game data
+  imported"; Cancel Import hid again afterwards.
+- Verdict: both import paths are reachable from the panel. Choosing an
+  arbitrary external folder still uses the picker.
+
