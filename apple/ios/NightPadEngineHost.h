@@ -31,6 +31,9 @@ typedef NS_ENUM(NSInteger, NightPadEngineKind) {
 - (void)clearHandoff;
 // Frames advanced by the active engine. Zero means it is still booting.
 - (unsigned long)frameCount;
+// Optional action-only assists; the action loop re-applies them each frame.
+- (void)setImmortal:(BOOL)enabled;
+- (void)setUnlimitedAmmo:(BOOL)enabled;
 - (void)setPaused:(BOOL)paused;
 - (void)setInputSuspended:(BOOL)suspended;
 // The app is the pad authority once this is enabled: the engine reads only the states published below.

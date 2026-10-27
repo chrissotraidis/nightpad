@@ -385,6 +385,20 @@ static uint64_t ShellResidentBytes(void) {
                                     options:0
                                    children:@[ resolution, antiAliasing, aspect ]];
 
+    UIAction *immortal = [self menuAction:@"Immortality" image:@"heart.fill" disabled:NO
+                                  handler:^{ [weakSelf toggleImmortal]; }];
+    immortal.state = _settings.assistImmortal ? UIMenuElementStateOn : UIMenuElementStateOff;
+    UIAction *ammo = [self menuAction:@"Unlimited Ammo" image:@"infinity" disabled:NO
+                               handler:^{ [weakSelf toggleUnlimitedAmmo]; }];
+    ammo.state = _settings.assistUnlimitedAmmo ? UIMenuElementStateOn : UIMenuElementStateOff;
+    UIAction *assistNote = [self menuAction:@"Action missions only; excluded from acceptance runs"
+                                      image:nil disabled:YES handler:nil];
+    UIMenu *assists = [UIMenu menuWithTitle:@"Assists"
+                                      image:[UIImage systemImageNamed:@"shield.lefthalf.filled"]
+                                 identifier:nil
+                                    options:0
+                                   children:@[ immortal, ammo, assistNote ]];
+
     UIAction *data = [self menuAction:@"Game Data & Saves" image:@"internaldrive" disabled:NO
                                handler:^{ [weakSelf openDataPanel]; }];
     UIAction *importAction = [self menuAction:@"Import Prepared Game Data…" image:@"folder" disabled:_engineRunning
@@ -408,7 +422,7 @@ static uint64_t ShellResidentBytes(void) {
                                  options:0
                                 children:@[ about, diagnostics ]];
 
-    return [UIMenu menuWithTitle:@"NightPad" children:@[ game, controls, display, dataMenu, info ]];
+    return [UIMenu menuWithTitle:@"NightPad" children:@[ game, controls, display, assists, dataMenu, info ]];
 }
 
 - (void)buildDataPanel {
@@ -709,6 +723,20 @@ static uint64_t ShellResidentBytes(void) {
         [self showInfo:@"Display change queued" detail:@"Widescreen applies at the next Start."];
 }
 
+- (void)toggleImmortal {
+    _settings.assistImmortal = !_settings.assistImmortal;
+    [_engineHost setImmortal:_settings.assistImmortal];
+    [self saveSettings];
+    [self refreshMenu];
+}
+
+- (void)toggleUnlimitedAmmo {
+    _settings.assistUnlimitedAmmo = !_settings.assistUnlimitedAmmo;
+    [_engineHost setUnlimitedAmmo:_settings.assistUnlimitedAmmo];
+    [self saveSettings];
+    [self refreshMenu];
+}
+
 - (void)beginNativeUI {
     if (!_engineRunning)
         return;
@@ -762,6 +790,8 @@ static uint64_t ShellResidentBytes(void) {
         [self showError:error.length ? error : @"The engine could not start."];
         return;
     }
+    [_engineHost setImmortal:_settings.assistImmortal];
+    [_engineHost setUnlimitedAmmo:_settings.assistUnlimitedAmmo];
     [self closePanels];
     [self endNativeUI];
     _stopWhenBooted = NO;
@@ -831,6 +861,10 @@ static uint64_t ShellResidentBytes(void) {
             strongSelf->_uiPausedEngine = NO;
             strongSelf->_uiInputSuspended = NO;
             [strongSelf->_gameInput engineChanged];
+            if (strongSelf->_engineHost.activeEngine == NightPadEngineKindAction) {
+                [strongSelf->_engineHost setImmortal:strongSelf->_settings.assistImmortal];
+                [strongSelf->_engineHost setUnlimitedAmmo:strongSelf->_settings.assistUnlimitedAmmo];
+            }
             strongSelf->_switchingEngine = NO;
             strongSelf->_engineTimer = [NSTimer timerWithTimeInterval:1.0 / 60.0 target:strongSelf
                                                              selector:@selector(pollEngine)

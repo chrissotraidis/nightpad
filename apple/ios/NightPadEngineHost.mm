@@ -155,6 +155,24 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
 #endif
 }
 
+- (void)setImmortal:(BOOL)enabled {
+#if NIGHTPAD_HAS_ENGINE
+    if (_engine == NightPadEngineKindAction)
+        NightPadActionEngineSetAssistImmortal(enabled ? 1 : 0);
+#else
+    (void)enabled;
+#endif
+}
+
+- (void)setUnlimitedAmmo:(BOOL)enabled {
+#if NIGHTPAD_HAS_ENGINE
+    if (_engine == NightPadEngineKindAction)
+        NightPadActionEngineSetAssistUnlimitedAmmo(enabled ? 1 : 0);
+#else
+    (void)enabled;
+#endif
+}
+
 - (BOOL)startHandoffTarget {
     NSString *target = [_handoffImage lowercaseString];
     if (target.length == 0)

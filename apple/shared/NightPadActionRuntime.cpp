@@ -4,6 +4,7 @@
 #include "../../vendor/nightfire/src/common/engineLifecycle.h"
 #include "../../vendor/nightfire/src/common/xboxPath.h"
 #include "../../vendor/nightfire/src/action/devtools/Demo.h"
+#include "../../vendor/nightfire/src/action/game.h"
 #include "../../vendor/nightfire/src/action/engine/Fmv.h"
 #include "../../vendor/nightfire/src/action/engine/LaunchOptions.h"
 #include "../../vendor/nightfire/src/action/engine/XboxSettings.h"
@@ -76,6 +77,28 @@ extern "C" void NightPadActionEngineSetPaused(int paused) {
 
 extern "C" void NightPadActionEngineSetInputSuspended(int suspended) {
     HostInput_SetSuspended(suspended != 0);
+}
+
+// The app's optional assists. The action loop applies these every frame so a
+// codename load cannot quietly disable one.
+extern "C" unsigned NightPadActionAssistFlags;
+
+extern "C" void NightPadActionEngineSetAssistImmortal(int enabled) {
+    if (enabled)
+        NightPadActionAssistFlags |= 1u;
+    else
+        NightPadActionAssistFlags &= ~1u;
+}
+
+extern "C" void NightPadActionEngineSetAssistUnlimitedAmmo(int enabled) {
+    if (enabled)
+        NightPadActionAssistFlags |= 2u;
+    else
+        NightPadActionAssistFlags &= ~2u;
+}
+
+extern "C" unsigned NightPadActionEngineAppliedAssists(void) {
+    return (CheatInfo.Immortal != 0 ? 1u : 0u) | (CheatInfo.UnlimitedAmmo != 0 ? 2u : 0u);
 }
 
 static NightPadRumbleHandler g_rumbleHandler = nullptr;

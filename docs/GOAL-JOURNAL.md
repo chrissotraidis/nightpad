@@ -628,3 +628,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: research and a bounded plan are recorded. No assist is implemented,
   and none may enter core acceptance runs.
 
+## 2026-10-28T00:10:00Z — immortality and unlimited-ammo assists
+
+- Goal: G10. Requirement: R20 in progress.
+- Hypothesis: applying the two flags from the action loop every frame keeps them
+  alive across codename loads, so the app does not need per-level hooks.
+- Observed: the loop now enforces the app's assist bits (patch 0017); the shell
+  exposes an Assists submenu, persists both choices and re-applies them when
+  action starts or returns from driving.
+- Evidence: `scripts/test_assists.sh` boots action, sets both (engine reports
+  3), clears them (engine reports 0) and joins. Immortality persisted as
+  `assist_immortal=1` on the simulator; screenshot under ignored
+  `evidence/ios-shell/`.
+- Verdict: both flags work. The all-weapons equip is intentionally not wired,
+  and none of this enters acceptance runs.
+

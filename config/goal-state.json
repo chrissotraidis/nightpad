@@ -238,10 +238,14 @@
       "started_at": "2026-10-27T23:40:00Z",
       "completed_at": null,
       "evidence": [
-        "docs/CHEATS-RESEARCH.md"
+        "docs/CHEATS-RESEARCH.md",
+        "apple/shared/NightPadActionRuntime.cpp",
+        "patches/0017-app-assists.patch",
+        "tests/native/test_assists.cpp",
+        "scripts/test_assists.sh"
       ],
       "blockers": [],
-      "next_step": "Implement the Immortal and All Weapons assists behind the engine bridge once the campaign route exists, with off/on/off tests."
+      "next_step": "Wire all-weapons equip after a level is live, then verify assists across death, restart and load without affecting recordings."
     },
     "G11": {
       "status": "pending",
@@ -469,11 +473,13 @@
     "R20": {
       "status": "in_progress",
       "evidence": [
-        "docs/CHEATS-RESEARCH.md"
+        "docs/CHEATS-RESEARCH.md",
+        "patches/0017-app-assists.patch",
+        "scripts/test_assists.sh"
       ],
       "decision_id": null,
       "notes": [
-        "Original debug checkboxes and flags are inventoried, with a two-assist allowlist and test plan. No implementation yet."
+        "Immortality and unlimited ammo are implemented, persisted, applied by the action loop each frame and tested on/off. All-weapons equip, death/restart/load checks and recording isolation remain."
       ]
     },
     "R21": {
@@ -1024,5 +1030,5 @@
       "target": "macOS 27 arm64"
     }
   ],
-  "next_step": "Device acceptance remains the gate for G05/G06/G09; meanwhile finish per-mission details (G07), mode/map support (G08) and the two-assist implementation (G10)."
+  "next_step": "G10: all-weapons equip and assist regression across death/restart/load; device acceptance remains the gate for G05/G06/G09."
 }

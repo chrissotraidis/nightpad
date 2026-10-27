@@ -18,6 +18,9 @@ struct AppSettings {
     int renderScale = 1;
     bool antiAliasing = true;
     bool widescreen = false;
+    // Optional assists, off by default and never part of acceptance runs.
+    bool assistImmortal = false;
+    bool assistUnlimitedAmmo = false;
 
     bool Load(const std::filesystem::path &path, std::string *error);
     bool Save(const std::filesystem::path &path, std::string *error) const;

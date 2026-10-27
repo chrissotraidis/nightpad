@@ -33,6 +33,8 @@ int main() {
     settings.renderScale = 3;
     settings.antiAliasing = false;
     settings.widescreen = true;
+    settings.assistImmortal = true;
+    settings.assistUnlimitedAmmo = true;
     Check(settings.Save(path, &error), "save settings");
 
     AppSettings loaded;
@@ -40,6 +42,7 @@ int main() {
     Check(loaded.touchControlsAlwaysVisible && !loaded.rumble && loaded.hideTouchControlsWithController,
           "round trip");
     Check(loaded.renderScale == 3 && !loaded.antiAliasing && loaded.widescreen, "display round trip");
+    Check(loaded.assistImmortal && loaded.assistUnlimitedAmmo, "assist round trip");
 
     // A donor's Nintendo preferences must not leak into NightPad.
     std::ofstream(path, std::ios::trunc) << "version=1\n"

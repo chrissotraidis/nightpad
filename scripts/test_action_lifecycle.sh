@@ -30,6 +30,13 @@ _NightPadActionEngineRunWindow
 _NightPadActionEngineJoin
 _NightPadActionEngineCloseWindow
 _NightPadActionEngineTriggerDrivingAfter
+_NightPadActionEngineSetInputSuspended
+_NightPadActionEngineSetHostPadsEnabled
+_NightPadActionEngineSetHostPad
+_NightPadActionEngineSetRumbleHandler
+_NightPadActionEngineSetAssistImmortal
+_NightPadActionEngineSetAssistUnlimitedAmmo
+_NightPadActionEngineAppliedAssists
 EOF
 nmedit -s "$out/exports.txt" -o "$out/combined.o" "$out/combined-raw.o"
 linked="$out/combined.o"

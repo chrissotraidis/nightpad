@@ -174,6 +174,9 @@ simulator probe and remains blocked on physical-device access.
   action missions' intro and outro ids plus two menu loops, and driving movies
   live inside their mission VIVs. Multiplayer limits, modes, maps, weapon sets
   and Enviro-Mods are recorded in [MULTIPLAYER-INVENTORY.md](MULTIPLAYER-INVENTORY.md).
+- Two optional assists now work: immortality and unlimited ammo, applied by the
+  action loop each frame so a codename load cannot clear them. They are off by
+  default, persisted, and must stay out of acceptance runs.
 
 ## Current uncertainty and blockers
 

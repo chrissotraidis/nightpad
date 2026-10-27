@@ -1,7 +1,8 @@
 # Cheat and modification research
 
-Status: **research only**. Nothing here is implemented in the app yet, and no
-cheat may appear in core acceptance runs.
+Status: **two assists implemented**. Immortality and unlimited ammo are app
+toggles, off by default and excluded from core acceptance runs. Everything else
+in the table below remains research.
 
 ## What the game already contains
 
@@ -35,13 +36,24 @@ assist must be applied after the level loads rather than once at launch.
 ## Recommended allowlist
 
 1. **Immortal** — one flag read by the damage path; safe to turn off at any time.
-2. **Unlimited ammo and all weapons** — also one flag plus a one-time equip; the
-   equip must only run once player 0 exists.
+2. **Unlimited ammo** — one flag; the all-weapons equip is not wired yet because
+   it needs player 0 to exist.
 
-Both would be app-owned toggles, off by default, shown in an Assists submenu,
-reset on game stop, and excluded from every campaign acceptance run. Unlocking
-content stays with the original Secret Unlocks screen rather than a blanket
-switch.
+Both are app-owned toggles, off by default, shown in an Assists submenu and
+excluded from every campaign acceptance run. Unlocking content stays with the
+original Secret Unlocks screen rather than a blanket switch.
+
+## Implemented
+
+- `NightPadActionEngineSetAssistImmortal` and
+  `NightPadActionEngineSetAssistUnlimitedAmmo` set two bits the action loop
+  applies every frame (patch 0017), so a codename load cannot silently disable
+  an assist.
+- `NightPadActionEngineAppliedAssists` reports what the engine actually holds.
+- The shell persists both choices and re-applies them when action starts or is
+  re-entered after a driving session.
+- `scripts/test_assists.sh` boots action, turns both on (engine reports 3),
+  turns them off (engine reports 0) and joins.
 
 ## Integration plan
 

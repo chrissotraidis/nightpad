@@ -1,0 +1,38 @@
+--- a/src/action/main.cpp
++++ b/src/action/main.cpp
+@@ -16,6 +16,27 @@
+ static std::atomic<unsigned> g_framesSinceStart{0};
+ static std::atomic<unsigned long> g_mainloopFrames{0};
+ 
++// NightPad's two optional assists, owned by the app. Bit 0 is immortality and
++// bit 1 is unlimited ammo; the runtime sets them. Applying them here means a
++// codename load cannot silently turn an assist off.
++extern "C" unsigned NightPadActionAssistFlags = 0;
++static unsigned g_appliedAssists = 0;
++
++static void ApplyAssists(void) {
++    const unsigned wanted = NightPadActionAssistFlags;
++    if (wanted & 1u)
++        CheatInfo.Immortal = 1;
++    if (wanted & 2u)
++        CheatInfo.UnlimitedAmmo = 1;
++    if (wanted != g_appliedAssists) {
++        if ((wanted & 1u) == 0)
++            CheatInfo.Immortal = 0;
++        if ((wanted & 2u) == 0)
++            CheatInfo.UnlimitedAmmo = 0;
++        g_appliedAssists = wanted;
++    }
++}
++
+ extern "C" unsigned long NightPadActionEngineFrameCount(void) {
+     return g_mainloopFrames.load(std::memory_order_acquire);
+ }
+@@ -60,6 +81,7 @@
+             paused = false;
+         }
+         mainloop();
++        ApplyAssists();
+         g_mainloopFrames.fetch_add(1, std::memory_order_acq_rel);
+         unsigned after = g_testDrivingAfterFrames.load(std::memory_order_acquire);
+         if (after != 0 && g_framesSinceStart.fetch_add(1, std::memory_order_acq_rel) + 1 >= after) {
