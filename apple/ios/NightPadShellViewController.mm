@@ -53,6 +53,9 @@ using nightpad::Paths;
     BOOL _engineRunning;
     BOOL _enginePaused;
     BOOL _switchingEngine;
+    BOOL _stopWhenBooted;
+    BOOL _forceStopNow;
+    NSTimeInterval _stopQueuedAt;
     BOOL _uiPausedEngine;
     BOOL _uiInputSuspended;
     BOOL _pendingDiagnostics;
@@ -296,9 +299,11 @@ static uint64_t ShellResidentBytes(void) {
 - (UIMenu *)buildMenu {
     __weak NightPadShellViewController *weakSelf = self;
     const BOOL canStart = _engineRunning || ([NightPadEngineHost isLinked] && _state == DataState::Ready);
-    UIAction *start = [self menuAction:(_engineRunning ? @"Stop Game" : @"Start Game")
+    NSString *startTitle = _stopWhenBooted ? @"Stopping After Load…"
+        : (_engineRunning ? @"Stop Game" : @"Start Game");
+    UIAction *start = [self menuAction:startTitle
                                  image:(_engineRunning ? @"stop.fill" : @"play.fill")
-                              disabled:!canStart
+                              disabled:(!canStart || _stopWhenBooted)
                                handler:^{ [weakSelf startGame]; }];
     UIAction *pause = [self menuAction:@"App Pause" image:@"pause.fill" disabled:!_engineRunning
                                handler:^{ [weakSelf showPausePanel]; }];
@@ -684,6 +689,7 @@ static uint64_t ShellResidentBytes(void) {
     }
     [self closePanels];
     [self endNativeUI];
+    _stopWhenBooted = NO;
     _engineRunning = YES;
     _enginePaused = NO;
     _gameplayMode = YES;
@@ -699,6 +705,15 @@ static uint64_t ShellResidentBytes(void) {
 - (void)pollEngine {
     if (!_engineRunning || _switchingEngine)
         return;
+    if (_stopWhenBooted) {
+        const NSTimeInterval waited = CFAbsoluteTimeGetCurrent() - _stopQueuedAt;
+        if ([_engineHost frameCount] > 0 || waited > 180) {
+            _stopWhenBooted = NO;
+            _forceStopNow = waited > 180;
+            [self stopGame];
+            return;
+        }
+    }
     if ([_engineHost pollWindow])
         return;
     if ([_engineHost handoffPending]) {
@@ -755,6 +770,18 @@ static uint64_t ShellResidentBytes(void) {
 - (void)stopGame {
     if (!_engineRunning) return;
     if (_switchingEngine) return;
+    if (!_forceStopNow && [_engineHost frameCount] == 0) {
+        // Cleanup before the game reaches its loop can tear down half-built
+        // state. Hold the request until the first frame (or a long timeout).
+        if (!_stopWhenBooted) {
+            _stopWhenBooted = YES;
+            _stopQueuedAt = CFAbsoluteTimeGetCurrent();
+            [self refreshMenu];
+        }
+        return;
+    }
+    _stopWhenBooted = NO;
+    _forceStopNow = NO;
     _engineRunning = NO;
     [self endNativeUI];
     [self removeTouchControls];

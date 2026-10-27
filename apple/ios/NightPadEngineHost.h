@@ -22,6 +22,8 @@ typedef NS_ENUM(NSInteger, NightPadEngineKind) {
 @property(nonatomic, readonly) BOOL handoffPending;
 - (BOOL)startHandoffTarget;
 - (void)clearHandoff;
+// Frames advanced by the active engine. Zero means it is still booting.
+- (unsigned long)frameCount;
 - (void)setPaused:(BOOL)paused;
 - (void)setInputSuspended:(BOOL)suspended;
 // The app is the pad authority once this is enabled: the engine reads only the states published below.

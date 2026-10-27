@@ -479,3 +479,21 @@ are ignored and may contain paths, hashes, captures or device identities.
   iOS shell wiring compiles and links but cannot be exercised without hardware.
 - Next: quit-during-loading stability, then device execution of the handoff.
 
+## 2026-10-27T19:50:00Z — stop during boot is queued
+
+- Goal: G04. Requirement: R05 in progress.
+- Hypothesis: the observed crash came from running engine cleanup before the
+  game loop had advanced; deferring the stop until the first frame avoids it
+  from the app's side.
+- Observed: a stop during boot previously crashed inside the driving engine's
+  cleanup. The shell now keeps the stop request pending, shows
+  "Stopping After Load…" and issues the stop once the active engine reports a
+  frame (with a 180 s fallback).
+- Evidence: both shell lanes build; the engine-level stop after frames is
+  covered by the driving pause and lifecycle gates. The early-stop crash itself
+  was reproduced only with the 8 s stopper and is not yet fixed in the engine.
+- Verdict: the app-side crash path is guarded; the engine's partial-boot
+  cleanup still needs a proper fix and a test.
+- Next: reproduce the early-stop crash deterministically, then fix cleanup to
+  tolerate a half-initialised engine.
+

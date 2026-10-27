@@ -119,6 +119,15 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
     _handoffImage = nil;
 }
 
+- (unsigned long)frameCount {
+#if NIGHTPAD_HAS_ENGINE
+    return _engine == NightPadEngineKindDriving ? NightPadDrivingEngineFrameCount()
+                                                : NightPadActionEngineFrameCount();
+#else
+    return 0;
+#endif
+}
+
 - (BOOL)startHandoffTarget {
     NSString *target = [_handoffImage lowercaseString];
     if (target.length == 0)
