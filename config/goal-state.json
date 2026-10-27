@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T12:02:00Z",
+  "last_updated_at": "2026-10-27T12:10:00Z",
   "active_goal": "G04",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -94,7 +94,7 @@
         "patches/0006-engine-stop-lifecycle.patch"
       ],
       "blockers": [],
-      "next_step": "Identify and explicitly join the six surviving SDL/audio/engine threads after cooperative stop."
+      "next_step": "Build the driving runtime wrapper and test action-to-driving plus return transitions with stable ownership."
     },
     "G05": {
       "status": "pending",
@@ -499,6 +499,15 @@
         "docs/DECISIONS/0006-engine-stop-boundary.md",
         "scripts/test_action_lifecycle.sh"
       ]
+    },
+    {
+      "at": "2026-10-27T12:10:00Z",
+      "goal": "G04",
+      "summary": "Three isolated action start/stop cycles pass with a shared allocator; surviving threads identified as Cocoa/GCD pool and stable.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "tests/native/test_action_lifecycle.cpp"
+      ]
     }
   ],
   "completed_tests": [
@@ -570,6 +579,11 @@
     {
       "name": "shared allocator runtime for localized engines",
       "result": "GameWindow+HostPosix shared object removes ShaderMsl_Translate crash; start/join works but thread count 1->6->7",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "three repeated action lifecycle cycles",
+      "result": "PASS: all cycles join; settled thread pool stays 7 after first cycle; no engine worker visible",
       "target": "macOS 27 arm64"
     }
   ],

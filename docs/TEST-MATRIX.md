@@ -33,8 +33,9 @@
 | G04 | In-process launch request captures page without child process | macOS arm64 | passed | 3,072-byte page identical; requesting thread exits; process remains alive |
 | G04 | Engine stop, worker-thread join and resource reset | iPhoneOS/macOS | unverified | Not implemented |
 | G04 | Cooperative game-loop stop reaches existing cleanup | macOS arm64 | passed in raw-link harness | Game_Main returns and thread joins |
-| G04 | Worker/audio/SDL threads released after stop | macOS arm64 | failed | Thread count 1 -> 6 -> 7 after a settled SDL close |
+| G04 | Repeated action start/stop/join stability | macOS arm64 | passed | Three cycles; each joins; settled 7 OS threads unchanged after first |
 | G04 | Symbol-isolated start/stop heap and shader boundary | macOS arm64 | passed | Shared GameWindow/HostPosix allocator runtime; no shader crash |
+| G04 | Driven-engine lifecycle and real transitions | macOS arm64 | unverified | Driving wrapper/transition harness not yet built |
 | G04 | Action to driving and return transitions | iPhoneOS/macOS | unverified | Not run |
 
 Only rows with explicit execution evidence are marked passed. Source inspection

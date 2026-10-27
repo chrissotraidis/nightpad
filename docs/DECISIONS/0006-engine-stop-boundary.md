@@ -15,8 +15,9 @@ the window.
 - The complete native action engine, linked without symbol localization, starts
   from the runtime wrapper, runs its front end, receives an external stop,
   returns from Game_Main, and reports a joined thread.
-- That run exposed a real defect: process thread count rose from 1 to 6 while
-  running and remained 7 after join. Worker/audio/SDL shutdown is incomplete.
+- The first run left seven threads. Instrumentation identifies them as the
+  process main thread, Cocoa's NSEventThread and five cached libdispatch
+  workers; no engine/sound thread remains visible.
 - The first symbolized object crashed in ShaderMsl_Translate while freeing a
   string. Moving GameWindow and HostPosix into one shared runtime object fixed
   that allocator/interposition boundary: SPIRV-Cross, the engine and libc++ now
@@ -27,11 +28,12 @@ the window.
 Keep GameWindow and HostPosix in one shared support object linked outside both
 localized engines. Symbols that own allocator identity must not be localized
 per engine. The symbolized action start/stop path now runs without the shader
-crash, but lifecycle acceptance still fails while worker threads survive join.
+crash. Three complete start/window/stop/join/close cycles finish with the same
+seven OS-owned threads before and after cycles two and three.
 
 ## Next experiment
 
-Identify the surviving threads by owning subsystem, add an explicit shutdown
-for each audio/SDL/engine worker, and require the symbolized start/stop/join
-test to return to its starting thread count.
+Repeat the test across the driving engine and a real action-to-driving
+transition. Keep recording thread identities after every cycle so an
+engine-owned leak cannot hide inside the stable OS worker pool.
 

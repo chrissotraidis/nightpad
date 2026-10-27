@@ -46,7 +46,8 @@ simulator probe and remains blocked on physical-device access.
   archives statically. The combined engine link has no FFmpeg dylib dependency.
 - A real action start/window/stop/join harness reaches the existing cleanup
   path. Moving GameWindow and HostPosix into one shared runtime fixed the
-  localized shader allocator crash; six threads still survive shutdown.
+  localized shader allocator crash. Three cycles join and settle on the same
+  Cocoa/libdispatch thread pool; no engine worker remains visibly alive.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
   mask `0x7`, with only the `30_fps` movie bundle present.
 - The driving/POV control definitions were safely decoded from `misc.viv`:
