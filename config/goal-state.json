@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T22:00:00Z",
+  "last_updated_at": "2026-10-28T22:20:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -644,11 +644,15 @@
         "apple/ios/NightPadTouchControlsView.mm",
         "apple/shared/NightPadControlPalette.h",
         "apple/shared/NightPadControlPalette.cpp",
-        "scripts/test_contrast.sh"
+        "scripts/test_contrast.sh",
+        "apple/ios/NightPadShellViewController.mm",
+        "apple/ios/NightPadDiagnosticsViewController.mm",
+        "docs/TEST-MATRIX.md"
       ],
       "decision_id": null,
       "notes": [
-        "Labels, 44-point controls, Dynamic Type, 4.5:1 contrast and explicit overlay/editor reading order are verified in the simulator. Physical VoiceOver remains."
+        "Labels, 44-point controls, Dynamic Type, 4.5:1 contrast and explicit overlay/editor reading order are verified in the simulator. Physical VoiceOver remains.",
+        "All shell labels now opt into Dynamic Type; the data panel and About render at XXL with the card still fitting."
       ]
     },
     "R30": {
@@ -1358,6 +1362,16 @@
         "scripts/check_package.sh",
         "docs/TEST-MATRIX.md",
         "docs/CANDIDATE.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T22:20:00Z",
+      "goal": "G13",
+      "summary": "Missing Dynamic Type opt-ins were added across the shell and diagnostics; the data panel and About render at XXL.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/panel-dynamic-type.png"
       ]
     }
   ],

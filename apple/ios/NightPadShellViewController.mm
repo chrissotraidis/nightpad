@@ -548,6 +548,7 @@ static uint64_t ShellResidentBytes(void) {
     heading.text = @"Game Data & Saves";
     heading.textColor = UIColor.whiteColor;
     heading.font = [UIFont preferredFontForTextStyle:UIFontTextStyleTitle2];
+    heading.adjustsFontForContentSizeCategory = YES;
     heading.translatesAutoresizingMaskIntoConstraints = NO;
     [_dataPanel addSubview:heading];
 
@@ -555,6 +556,7 @@ static uint64_t ShellResidentBytes(void) {
     detail.text = @"Import a prepared NightPad game-data folder. Saves are stored separately and are not changed.";
     detail.textColor = [UIColor colorWithWhite:1 alpha:0.72];
     detail.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    detail.adjustsFontForContentSizeCategory = YES;
     detail.numberOfLines = 0;
     detail.translatesAutoresizingMaskIntoConstraints = NO;
     [_dataPanel addSubview:detail];
@@ -645,6 +647,7 @@ static uint64_t ShellResidentBytes(void) {
     _progressLabel = [UILabel new];
     _progressLabel.textColor = [UIColor colorWithWhite:1 alpha:0.78];
     _progressLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    _progressLabel.adjustsFontForContentSizeCategory = YES;
     _progressLabel.numberOfLines = 2;
     _progressLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [_dataPanel addSubview:_progressLabel];
@@ -698,11 +701,14 @@ static uint64_t ShellResidentBytes(void) {
     label.text = @"App Paused";
     label.textColor = UIColor.whiteColor;
     label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleTitle1];
+    label.adjustsFontForContentSizeCategory = YES;
     label.translatesAutoresizingMaskIntoConstraints = NO;
     [_pausePanel addSubview:label];
     UILabel *detail = [UILabel new];
     detail.text = @"The engine is held at a native pause boundary. Original Xbox Start pause remains separate.";
     detail.textColor = [UIColor colorWithWhite:1 alpha:0.72];
+    detail.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
+    detail.adjustsFontForContentSizeCategory = YES;
     detail.numberOfLines = 0;
     detail.translatesAutoresizingMaskIntoConstraints = NO;
     [_pausePanel addSubview:detail];

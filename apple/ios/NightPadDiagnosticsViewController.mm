@@ -31,6 +31,7 @@
                    @"Saves, game data, screenshots and input captures are not included.";
     notice.numberOfLines = 0;
     notice.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    notice.adjustsFontForContentSizeCategory = YES;
     notice.textColor = UIColor.secondaryLabelColor;
     notice.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:notice];

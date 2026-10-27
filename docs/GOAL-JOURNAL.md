@@ -1609,3 +1609,19 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: packaging has a content gate. Signing and installation remain the
   device handoff.
 
+## 2026-10-28T22:20:00Z — text scales with Dynamic Type
+
+- Goal: G13. Requirement: R29 in progress.
+- Observed: several labels used a preferred font but never opted into
+  `adjustsFontForContentSizeCategory`, so the data panel heading and detail, the
+  progress line, the pause card and the diagnostics notice stayed fixed while
+  the rest of the app grew.
+- Observed: those labels now opt in, and the pause card's secondary line had no
+  dynamic font at all; it now uses the subheadline style.
+- Evidence: iPhone 17 simulator, iOS 26.5, content size extra-extra-large: the
+  data panel's heading, detail, state and button titles all grow and the card
+  still fits; About keeps its content in a scroll view. Evidence
+  `evidence/ios-shell/panel-dynamic-type.png`.
+- Verdict: the shell follows the system text size. The pause card needs a live
+  engine to be seen at any size.
+
