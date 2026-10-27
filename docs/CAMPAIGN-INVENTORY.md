@@ -183,6 +183,11 @@ removed rather than left as unproven engine/test changes. Attribution therefore
 needs either the track parser or an interactive run that actually reaches the
 first objective.
 
+A second hook in `ESetObjective_MakeEvent_Callback`, which would print every
+objective record as the track builds its events, also produced nothing in a
+25-second boot: the track's events are not created until the mission reaches
+that stage. That hook was removed too. The remaining routes are unchanged.
+
 ### How a part starts and ends
 
 Starting a level part (`Mission_Init`) records its base map and order, then

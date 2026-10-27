@@ -1699,3 +1699,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: no fixed-size text is left in the shell. The pause card still needs a
   live engine to inspect.
 
+## 2026-10-29T00:15:00Z — the event hook reaches nothing either
+
+- Goal: G07. Requirement: campaign inventory.
+- Hypothesis: `ESetObjective_MakeEvent_Callback` runs when the track builds its
+  event objects at load, so logging the record's comment id would list the
+  objectives without playing.
+- Observed: a 25-second boot with that hook printed no objective record - the
+  track does not create those events until the mission reaches the stage that
+  uses them. The hook was reverted and `scripts/verify_patches.sh` still
+  reproduces the 53 files.
+- Evidence: the captured run log and the updated note in
+  `docs/CAMPAIGN-INVENTORY.md`.
+- Verdict: three headless routes have now been tried and ruled out. Only the
+  track parser or an interactive run remains.
+

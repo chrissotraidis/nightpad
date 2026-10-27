@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T00:00:00Z",
+  "last_updated_at": "2026-10-29T00:15:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -1469,6 +1469,15 @@
         "apple/ios/NightPadAboutViewController.mm",
         "apple/ios/NightPadDiagnosticsViewController.mm",
         "evidence/ios-shell/diagnostics-dynamic-type.png"
+      ]
+    },
+    {
+      "at": "2026-10-29T00:15:00Z",
+      "goal": "G07",
+      "summary": "A MakeEvent-time objective log also produced nothing: the track creates those events only when the mission reaches that stage. The hook was reverted; three headless routes are ruled out.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/GOAL-JOURNAL.md"
       ]
     }
   ],
