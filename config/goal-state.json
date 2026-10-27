@@ -531,11 +531,13 @@
     "R24": {
       "status": "in_progress",
       "evidence": [
-        "docs/PERFORMANCE-BUDGET.md"
+        "docs/PERFORMANCE-BUDGET.md",
+        "scripts/summarize_perf.py",
+        "scripts/test_perf_summary.sh"
       ],
       "decision_id": null,
       "notes": [
-        "Measurement routes and provisional budgets (cadence, frame-time tail, memory, thermal, latency, audio) are frozen before optimization. No device measurement has run."
+        "Measurement routes, provisional budgets and a PerfLog summarizer are in place; no device measurement has run."
       ]
     },
     "R25": {

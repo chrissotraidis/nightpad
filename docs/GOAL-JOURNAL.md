@@ -985,3 +985,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: freezing the candidate is mechanical. Final values wait on the last
   commit and device acceptance.
 
+## 2026-10-28T10:20:00Z — performance log summarizer
+
+- Goal: G12. Requirement: R24 in progress.
+- Observed: `scripts/summarize_perf.py` parses the engine's PerfLog lines into
+  JSON with mean/median/min/max fps, working and waiting milliseconds, and the
+  requested cap. `--skip` drops loading samples; a log with no samples exits
+  non-zero.
+- Evidence: `scripts/test_perf_summary.sh` checks the maths, skip behaviour and
+  empty-log failure; the tool also parses the existing host render-cost logs.
+- Verdict: device captures will produce comparable records. Real measurements
+  still need hardware.
+

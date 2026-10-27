@@ -55,6 +55,11 @@ instead of claiming the failed class.
 - Thermal state at start and end, plus any visible stutter or audio artefact.
 - For a change, the same route before and after on the same device and settings.
 
+`scripts/summarize_perf.py <log> --label <route>` turns the engine's PerfLog
+lines into JSON (mean/median/min/max fps, working and waiting milliseconds, and
+the requested cap). Use `--skip N` to discard loading samples; it fails when a
+log contains no samples, so an empty capture cannot pass as a measurement.
+
 ## What this does not cover
 
 Host measurements from `scripts/test_render_cost.sh` are not device evidence;
