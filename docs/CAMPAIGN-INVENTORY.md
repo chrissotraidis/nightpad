@@ -175,11 +175,13 @@ string to Paris, Alpine and the rest needs a track parser. The strings
 themselves stay in ignored output; only paraphrased notes belong here.
 
 A headless boot is not enough. With a temporary log in `DrawObjectiveMessage`,
-Mission 1 loaded its track and ran at 50 fps, but no objective was ever shown:
-the car never moves, so the events that post an objective do not fire. The log
-hook was removed again rather than left as an unused engine change. Attribution
-therefore needs either the track parser or a driven run that actually reaches
-the first objective.
+Mission 1 loaded its track and ran at 50 fps, but no objective was ever shown.
+Holding the right trigger through the host-pad hook for ninety seconds changed
+nothing, so the mission is still in its intro or waiting state and the events
+that post an objective never fire. Both the log hook and the throttle hold were
+removed rather than left as unproven engine/test changes. Attribution therefore
+needs either the track parser or an interactive run that actually reaches the
+first objective.
 
 ### How a part starts and ends
 

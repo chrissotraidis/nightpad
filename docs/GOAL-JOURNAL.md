@@ -1479,3 +1479,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: attribution needs the track parser or a driven run. A headless
   boot alone cannot answer it.
 
+## 2026-10-28T19:40:00Z — throttle does not reach the first objective either
+
+- Goal: G07. Requirement: campaign inventory.
+- Hypothesis: holding full throttle through the host-pad hook would start the
+  Paris route and post the first objective.
+- Observed: two runs, thirty and ninety seconds, with the right trigger held
+  and the objective log enabled, produced no `[objective]` line. The mission
+  loads and renders, but it is still in its intro or waiting state, so the
+  track events never post. Both the log hook and the throttle hold were
+  reverted; `scripts/verify_patches.sh` still reproduces the 53 files.
+- Evidence: the captured run logs and `docs/CAMPAIGN-INVENTORY.md`.
+- Verdict: a headless boot, with or without throttle, cannot attribute the
+  driving objectives. The track parser or an interactive run is required.
+
