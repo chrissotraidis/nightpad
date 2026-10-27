@@ -179,6 +179,12 @@ fail channel with their own message, and death ends the level. Every failure
 and death route opens the mission-end menu rather than the results page; a win
 raises the stored base-map progress and shows the results.
 
+No level part writes a save by itself. Leaving the results page saves the whole
+profile (`LS_OPERATION_SAVE` with `SAVE_ALL` in `ui_nightfire.cpp`), so a
+completed mission is persisted when the player continues past the results. A
+failure or death never reaches that page, which is why the run is lost rather
+than resumed at the last part.
+
 ## Driving content present in the supplied data
 
 `driving/mis*.viv` holds seven mission bundles: `mis01`, `mis3`, `mis4`,

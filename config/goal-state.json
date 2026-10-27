@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T13:50:00Z",
+  "last_updated_at": "2026-10-28T14:05:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -213,7 +213,7 @@
         "patches/0016-standalone-file-dump.patch"
       ],
       "blockers": [],
-      "next_step": "G07: find which part writes a save and locate the driving-mission objectives, then run the first-play route when device execution is available."
+      "next_step": "G07: locate the driving-mission objectives, then run the first-play route when device execution is available."
     },
     "G08": {
       "status": "in_progress",
@@ -1034,6 +1034,16 @@
       "evidence": [
         "docs/CAMPAIGN-INVENTORY.md",
         "vendor/nightfire/src/action/game/sp/Mission.cpp"
+      ]
+    },
+    {
+      "at": "2026-10-28T14:05:00Z",
+      "goal": "G07",
+      "summary": "Mission progress is saved from the results page with SAVE_ALL, not by any level part, so failure and death lose the run.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "vendor/nightfire/src/action/ui/ui_nightfire.cpp",
+        "vendor/nightfire/src/action/ui/ui_codenames.cpp"
       ]
     }
   ],

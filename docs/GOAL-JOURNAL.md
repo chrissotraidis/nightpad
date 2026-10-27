@@ -1165,3 +1165,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the part lifecycle is documented from source. Which part writes a
   save, and the driving-mission objectives, still need evidence.
 
+## 2026-10-28T14:05:00Z — mission saves happen at the results page
+
+- Goal: G07. Requirement: campaign inventory.
+- Observed: no level part saves. The results page sets `LS_OPERATION_SAVE`
+  with `SAVE_ALL` when the player continues past it, so a completed mission is
+  written then; failure and death never reach that page, so the run is lost.
+- Evidence: `vendor/nightfire/src/action/ui/ui_nightfire.cpp` (results handler),
+  `vendor/nightfire/src/action/ui/ui_codenames.cpp` (save operation),
+  `vendor/nightfire/src/action/engine/LoadSave.cpp`.
+- Verdict: the save question for action missions is answered. Driving-mission
+  objectives remain the last open inventory item.
+
