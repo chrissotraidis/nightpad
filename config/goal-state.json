@@ -6,8 +6,8 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T02:40:00Z",
-  "active_goal": "G06",
+  "last_updated_at": "2026-10-29T03:00:00Z",
+  "active_goal": "G13",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
   "actual_source_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
@@ -204,7 +204,7 @@
         "apple/ios/NightPadShellViewController.mm"
       ],
       "blockers": [],
-      "next_step": "Verify engine pad consumption and rumble on device, then map the eight original control schemes and Driving/POV layouts."
+      "next_step": "Verify engine pad consumption and rumble on device; the scheme and layout source work is complete."
     },
     "G07": {
       "status": "in_progress",
@@ -216,7 +216,7 @@
         "scripts/inspect_driving_track.py"
       ],
       "blockers": [],
-      "next_step": "G07: run the first-play route when device execution is available; the campaign and driving-mission inventories are complete."
+      "next_step": "Run the first-play route when device execution is available."
     },
     "G08": {
       "status": "in_progress",
@@ -1541,6 +1541,15 @@
         "docs/TEST-MATRIX.md",
         "evidence/ios-shell/pause-panel.png"
       ]
+    },
+    {
+      "at": "2026-10-29T03:00:00Z",
+      "goal": "G13",
+      "summary": "Moved the active goal to the candidate handoff and refreshed the next-step text: the campaign and driving inventories are complete, so only device acceptance and the multiplayer matrix remain.",
+      "evidence": [
+        "config/goal-state.json",
+        "docs/STATUS.md"
+      ]
     }
   ],
   "completed_tests": [
@@ -1662,5 +1671,5 @@
       "command": "scripts/verify_engine.sh"
     }
   ],
-  "next_step": "Run scripts/device_handoff.sh with an identity and trusted device, then work docs/DEVICE-HANDOFF.md; continue per-mission and multiplayer inventories meanwhile."
+  "next_step": "Run scripts/device_handoff.sh with an identity and trusted device, then work docs/DEVICE-HANDOFF.md; the campaign and driving-mission inventories are complete and the remaining source work is the multiplayer map/mode matrix."
 }

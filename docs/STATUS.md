@@ -333,11 +333,10 @@ a signing identity and a trusted device exist, then work the checklist in
 trip, touch and controller sessions, Secret Unlocks, display modes and the
 fifteen-minute stability runs.
 
-Independent work that can continue meanwhile: attributing the driving objective
-strings (needs a track parser or an interactive run), the difficulty and
-failure routes in the campaign inventory, and the multiplayer mode/map support
-matrix. Keep the ten-cycle lifecycle, pause, transition, handoff and
-data-import gates as regressions.
+Independent work that can continue meanwhile: the campaign inventory is
+complete, including the driving missions' goals and hints; what remains is the
+multiplayer mode/map support matrix. Keep the ten-cycle lifecycle, pause,
+transition, handoff and data-import gates as regressions.
 
 Verification entry points are `scripts/verify_quick.sh` (host logic, both
 shell builds, device link contract) and `scripts/verify_engine.sh` (lifecycle,
