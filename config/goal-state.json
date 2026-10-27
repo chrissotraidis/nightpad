@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T15:03:53Z",
+  "last_updated_at": "2026-10-27T15:05:57Z",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -390,7 +390,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Local report with redacted paths and review/share screen; share/save flow and device use remain unverified."
+        "Local redacted report, review screen and system share sheet with Save to Files/Copy are verified on simulator; deliberate save tap, device use and performance/diagnostic build separation remain."
       ]
     },
     "R26": {
@@ -742,6 +742,16 @@
         "apple/shared/NightPadDiagnostics.cpp",
         "apple/ios/NightPadDiagnosticsViewController.mm",
         "scripts/test_diagnostics.sh"
+      ]
+    },
+    {
+      "at": "2026-10-27T15:05:57Z",
+      "goal": "G05",
+      "summary": "Verified the reviewed diagnostic report reaches the system share sheet and is written privately under Logs/NightPad with redaction.",
+      "evidence": [
+        "apple/ios/NightPadDiagnosticsViewController.mm",
+        "scripts/test_diagnostics.sh",
+        "docs/TEST-MATRIX.md"
       ]
     }
   ],

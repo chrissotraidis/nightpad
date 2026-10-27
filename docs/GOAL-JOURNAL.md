@@ -252,3 +252,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: exercise Share/Save to Files, then continue G05 device composition and
   import flow once hardware access is available.
 
+## 2026-10-27T15:05:57Z — diagnostics share/export smoke
+
+- Goal: G05. Requirement: R25.
+- Hypothesis: the reviewed report can be handed to the system share sheet
+  without any automatic transmission or private container identifiers.
+- Observed: the simulator share sheet exposes Save to Files and Copy for the
+  report file. The file was found under the app's Logs/NightPad directory and
+  read back; it contains app/data/engine state and path classes, with home paths
+  and container ids removed. Evidence: `diagnostics-share.png` and
+  `diagnostics-report.txt` under ignored `evidence/ios-shell/`.
+- Verdict: the explicit export presentation passes; a deliberate Save to Files
+  tap and device use remain unverified.
+- Next: exercise the final save action and return to device shell composition /
+  Files import when hardware access is available.
+

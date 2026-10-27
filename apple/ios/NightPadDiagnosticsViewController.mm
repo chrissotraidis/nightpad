@@ -4,6 +4,7 @@
     NSString *_report;
     NSURL *_reportURL;
     UITextView *_preview;
+    BOOL _autoShared;
 }
 
 - (instancetype)initWithReport:(NSString *)report reportURL:(NSURL *)reportURL {
@@ -61,6 +62,16 @@
     [self dismissViewControllerAnimated:YES completion:^{
         if (self.onClose) self.onClose();
     }];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (!_autoShared && [NSProcessInfo.processInfo.arguments containsObject:@"--diagnostics-share"]) {
+        _autoShared = YES;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 200 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            [self share];
+        });
+    }
 }
 
 - (void)share {

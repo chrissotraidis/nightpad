@@ -111,6 +111,9 @@ simulator probe and remains blocked on physical-device access.
   app-container UUIDs are redacted, credential-looking values are removed, and
   the report is presented for review with an explicit Share action. Nothing is
   uploaded automatically. Simulator review screen and device build pass.
+- The simulator share sheet exposes Save to Files and Copy for the reviewed
+  report; a generated report was read back from `Library/Logs/NightPad` and
+  contains no home path, container UUID or game/save content.
 
 ## Current uncertainty and blockers
 
