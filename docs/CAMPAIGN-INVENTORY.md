@@ -159,6 +159,21 @@ The five driving missions (Paris Prelude, Alpine Escape, Enemies Vanquished,
 Deep Descent, Island Infiltration) have no `MissionData` rows: their goals are
 handled inside the driving engine and still need inventorying.
 
+### Where the driving objectives live
+
+The driving HUD draws an objective message from its locale table
+(`Hud::DrawObjectiveMessage` over `objectiveMsgId`), and that table ships in
+`driving/misc.viv`: `data/gfx/locale/IDL_ENG.loc` and its siblings. The file is
+a `LOCH` header, a `LOCI` index of 1530 big-endian offsets, then NUL-terminated
+strings; each offset points inside its string, so the start is the previous
+NUL. It extracts without the game, with the same BIGF and RefPack reader the
+control-definition inventory already uses.
+
+What is still missing is the attribution: the mission logic picks the text from
+the track event data (`SetObjectiveComment` takes a locale id), so mapping a
+string to Paris, Alpine and the rest needs a track parser. The strings
+themselves stay in ignored output; only paraphrased notes belong here.
+
 ### How a part starts and ends
 
 Starting a level part (`Mission_Init`) records its base map and order, then

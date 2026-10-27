@@ -1435,3 +1435,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the action schemes are mapped and described. Device passes per
   scheme, and the physical pad driving the same channels, remain.
 
+## 2026-10-28T18:30:00Z — the driving objective text is located
+
+- Goal: G07. Requirement: campaign inventory.
+- Observed: the driving HUD takes its objective line from `objectiveMsgId` in
+  the driving locale table, and the table ships inside `driving/misc.viv` as
+  `data/gfx/locale/IDL_ENG.loc`. It is a `LOCH` header plus a `LOCI` index of
+  1530 big-endian offsets into NUL-terminated strings, and it extracts with the
+  BIGF/RefPack reader the control inventory already has.
+- Observed: what remains is attribution - the mission picks the text from
+  track event data - so a per-mission list still needs a track parser.
+- Evidence: `docs/CAMPAIGN-INVENTORY.md`; the extracted locale file stays in
+  ignored output and no retail strings were added to the repository.
+- Verdict: the last G07 inventory item has a concrete path and a concrete
+  remaining step, rather than a vague gap.
+

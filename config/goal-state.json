@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T18:15:00Z",
+  "last_updated_at": "2026-10-28T18:30:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -214,7 +214,7 @@
         "patches/0016-standalone-file-dump.patch"
       ],
       "blockers": [],
-      "next_step": "G07: locate the driving-mission objectives, then run the first-play route when device execution is available."
+      "next_step": "G07: parse the track event data to attribute the driving objective strings to each mission, then run the first-play route when device execution is available."
     },
     "G08": {
       "status": "in_progress",
@@ -1242,6 +1242,14 @@
         "docs/CONTROL-SCHEMES.md",
         "apple/ios/NightPadControlsHelpViewController.mm",
         "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T18:30:00Z",
+      "goal": "G07",
+      "summary": "Located the driving objective strings in data/gfx/locale inside misc.viv and documented the table format; per-mission attribution still needs the track event parser.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md"
       ]
     }
   ],
