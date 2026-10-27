@@ -149,6 +149,9 @@ simulator probe and remains blocked on physical-device access.
   Diagnostics, Share Saves) now defer presentation until the menu has
   dismissed. Before that they silently did nothing while the game was on
   screen; alerts use the same route.
+- The three-dot menu, the settings surfaces and the touch editor are held to
+  the pinned SunPad and GalaxyPad implementations as the quality bar
+  (`docs/DECISIONS/0012-donor-ui-benchmark.md`).
 - Controls now includes a native reference for on-foot, vehicle and menu
   mappings. Vehicle rows come from the game's own drivecfg/POV definitions
   (RT gas, LT brake, B handbrake, A/X/Y secondary actions); the game's eight

@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T13:05:00Z",
+  "last_updated_at": "2026-10-28T13:20:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -198,7 +198,8 @@
         "apple/shared/NightPadSettings.h",
         "apple/shared/NightPadSettings.cpp",
         "tests/native/test_settings.cpp",
-        "scripts/test_settings.sh"
+        "scripts/test_settings.sh",
+        "docs/DECISIONS/0012-donor-ui-benchmark.md"
       ],
       "blockers": [],
       "next_step": "Verify engine pad consumption and rumble on device, then map the eight original control schemes and Driving/POV layouts."
@@ -641,6 +642,11 @@
       "id": "0011-netplay-deferral",
       "path": "docs/DECISIONS/0011-netplay-deferral.md",
       "summary": "Online netplay deferred; local multiplayer only."
+    },
+    {
+      "id": "0012-donor-ui-benchmark",
+      "path": "docs/DECISIONS/0012-donor-ui-benchmark.md",
+      "summary": "SunPad and GalaxyPad are the UI quality bar."
     }
   ],
   "blockers": [
