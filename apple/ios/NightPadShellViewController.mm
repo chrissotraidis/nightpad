@@ -128,7 +128,9 @@ static uint64_t ShellResidentBytes(void) {
     _title = [UILabel new];
     _title.text = @"NIGHTPAD";
     _title.textColor = UIColor.whiteColor;
-    _title.font = [UIFont monospacedSystemFontOfSize:30 weight:UIFontWeightBold];
+    _title.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleLargeTitle]
+        scaledFontForFont:[UIFont monospacedSystemFontOfSize:30 weight:UIFontWeightBold]];
+    _title.adjustsFontForContentSizeCategory = YES;
     _title.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_title];
 

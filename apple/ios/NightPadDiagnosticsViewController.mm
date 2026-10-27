@@ -40,7 +40,8 @@
     _preview.editable = NO;
     _preview.selectable = NO;
     _preview.text = _report;
-    _preview.font = [UIFont monospacedSystemFontOfSize:13 weight:UIFontWeightRegular];
+    _preview.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleFootnote]
+        scaledFontForFont:[UIFont monospacedSystemFontOfSize:13 weight:UIFontWeightRegular]];
     _preview.adjustsFontForContentSizeCategory = YES;
     _preview.showsVerticalScrollIndicator = NO;
     _preview.accessibilityIdentifier = @"nightpad.diagnostics.preview";

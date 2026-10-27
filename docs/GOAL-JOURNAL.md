@@ -1685,3 +1685,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Evidence: `docs/STATUS.md`.
 - Verdict: the status page describes the current tree. No code changes.
 
+## 2026-10-29T00:00:00Z — monospaced text scales too
+
+- Goal: G13. Requirement: R29 in progress.
+- Observed: the home title, the About title and the diagnostics report used
+  fixed `monospacedSystemFontOfSize:` fonts, so `adjustsFontForContentSizeCategory`
+  had nothing to scale them from and they stayed put at XXL.
+- Observed: all three now go through `UIFontMetrics` with a text style, so the
+  title and the report grow with the system size.
+- Evidence: iPhone 17 simulator, iOS 26.5 at extra-extra-large: the diagnostics
+  report and notice are large and the page scrolls; evidence
+  `evidence/ios-shell/diagnostics-dynamic-type.png`.
+- Verdict: no fixed-size text is left in the shell. The pause card still needs a
+  live engine to inspect.
+

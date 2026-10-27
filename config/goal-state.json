@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T23:55:00Z",
+  "last_updated_at": "2026-10-29T00:00:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -671,12 +671,15 @@
         "scripts/test_contrast.sh",
         "apple/ios/NightPadShellViewController.mm",
         "apple/ios/NightPadDiagnosticsViewController.mm",
-        "docs/TEST-MATRIX.md"
+        "docs/TEST-MATRIX.md",
+        "apple/ios/NightPadAboutViewController.mm",
+        "evidence/ios-shell/diagnostics-dynamic-type.png"
       ],
       "decision_id": null,
       "notes": [
         "Labels, 44-point controls, Dynamic Type, 4.5:1 contrast and explicit overlay/editor reading order are verified in the simulator. Physical VoiceOver remains.",
-        "All shell labels now opt into Dynamic Type; the data panel and About render at XXL with the card still fitting."
+        "All shell labels now opt into Dynamic Type; the data panel and About render at XXL with the card still fitting.",
+        "The monospaced titles and the diagnostics report now scale through UIFontMetrics; the report and About stay scrollable at XXL."
       ]
     },
     "R30": {
@@ -1455,6 +1458,17 @@
         "config/goal-state.json",
         "scripts/check_package.sh",
         "scripts/check_ios_shell_link.sh"
+      ]
+    },
+    {
+      "at": "2026-10-29T00:00:00Z",
+      "goal": "G13",
+      "summary": "The home and About titles and the diagnostics report now scale through UIFontMetrics; the report is readable and scrollable at XXL.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "apple/ios/NightPadAboutViewController.mm",
+        "apple/ios/NightPadDiagnosticsViewController.mm",
+        "evidence/ios-shell/diagnostics-dynamic-type.png"
       ]
     }
   ],

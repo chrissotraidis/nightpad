@@ -33,7 +33,9 @@
 
     UILabel *title = [UILabel new];
     title.text = @"NightPad";
-    title.font = [UIFont monospacedSystemFontOfSize:30 weight:UIFontWeightBold];
+    title.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleLargeTitle]
+        scaledFontForFont:[UIFont monospacedSystemFontOfSize:30 weight:UIFontWeightBold]];
+    title.adjustsFontForContentSizeCategory = YES;
     [stack addArrangedSubview:title];
     NSString *version = [NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"] ?: @"0.1.0";
     [stack addArrangedSubview:[self label:[NSString stringWithFormat:@"Version %@", version] style:UIFontTextStyleFootnote]];
