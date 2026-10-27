@@ -834,3 +834,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the map support matrix is source-complete except runtime
   confirmation that each mode family plays on at least two maps.
 
+## 2026-10-28T06:40:00Z — patch provenance gate
+
+- Goal: G13. Requirement: R26 in progress.
+- Observed: the patch series was verified by hand after each engine change.
+  `scripts/verify_patches.sh` now does it: a clean worktree at
+  `8779cf79ff623b83b53b9acf9c0b0cd6639b75ab`, every patch applied in order, then
+  a byte comparison with the vendor checkout. Linker map files are excluded
+  because every build rewrites them.
+- Evidence: 53 files reproduced; the gate is part of `verify_quick.sh`.
+- Verdict: engine provenance is reproducible. A full clean-checkout build and
+  package recipe remain.
+

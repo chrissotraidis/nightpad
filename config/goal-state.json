@@ -270,12 +270,14 @@
       "next_step": "Device stability, audio, save round trip and 15-minute performance runs; depends on G07/G08/G09 completion."
     },
     "G13": {
-      "status": "pending",
-      "started_at": null,
+      "status": "in_progress",
+      "started_at": "2026-10-28T06:40:00Z",
       "completed_at": null,
-      "evidence": [],
+      "evidence": [
+        "scripts/verify_patches.sh"
+      ],
       "blockers": [],
-      "next_step": null
+      "next_step": "Clean-checkout build and package recipe; final candidate after device acceptance."
     }
   },
   "requirements": {
@@ -543,10 +545,14 @@
       ]
     },
     "R26": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "scripts/verify_patches.sh"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Patch provenance is automated and passes (53 files from the pin). A clean-checkout build, signing/install recipe and package recipe remain."
+      ]
     },
     "R27": {
       "status": "passed",

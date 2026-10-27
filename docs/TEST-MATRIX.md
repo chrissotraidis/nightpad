@@ -5,6 +5,7 @@
 | G00 | Public source pins resolve exactly | Host | passed | `config/dependencies.lock.json` |
 | G00 | Full Xcode and both Apple SDKs resolve | Host | passed | `config/toolchain.json` |
 | G00 | Code signing and physical-device availability | Host | blocked | No identity or device visible |
+| G13 | Patch series reproduces the pinned engine | Host | passed | `scripts/verify_patches.sh` applies every patch to a clean worktree at `8779cf79` and matches 53 files byte-for-byte; linker map files are excluded as build output |
 | G01 | ISO is unique and unchanged | Host | passed | Local source manifest |
 | G01 | Listing is contained and has required Xbox trees | Host | passed | Private ISO listing and guarded script |
 | G01 | Validated extraction and activation | Host | passed | 55 files, 2,062,585,542 bytes, source hash unchanged |

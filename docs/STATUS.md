@@ -226,6 +226,9 @@ simulator probe and remains blocked on physical-device access.
 - Multiplayer map rules are mapped: Ravine disables AI bots and mini vehicles,
   every map uses standard drone tuning, and no source check ties a mode to a
   map. Runtime confirmation on two maps is still needed.
+- `scripts/verify_patches.sh` now proves the tracked patch series reproduces
+  the vendor tree: every patch applies to a clean worktree at the pinned
+  revision and 53 files match byte-for-byte. It is part of the quick pass.
 
 ## Current uncertainty and blockers
 
