@@ -1832,3 +1832,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the freeze produces one complete, readable evidence file. Packaging
   rewrites the zip each run, so the docs now say to read the hash from the log.
 
+## 2026-10-29T04:20:00Z — the handoff preflight is clean
+
+- Goal: G13. Requirement: R30 in progress.
+- Observed: `scripts/device_handoff.sh` with no arguments builds the unsigned
+  device shell, reports "Connected devices: 0", and skips installation with the
+  exact command to use once a team and device are present.
+- Evidence: the script's output on this machine; no hardware was attached and
+  none is claimed.
+- Verdict: the handoff gate behaves as documented. Every remaining item -
+  physical acceptance, the campaign and multiplayer runs, performance,
+  interrupted saves and the final freeze - needs that hardware.
+
