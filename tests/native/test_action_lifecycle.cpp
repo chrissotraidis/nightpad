@@ -121,12 +121,14 @@ static void *PauseProbe(void *) {
     unsigned long paused = NightPadActionEngineFrameCount();
     usleep(500000);
     unsigned long stillPaused = NightPadActionEngineFrameCount();
+    const bool audioPaused = NightPadActionEngineAudioPaused() != 0;
     NightPadActionEngineSetPaused(0);
     usleep(500000);
     unsigned long resumed = NightPadActionEngineFrameCount();
-    bool ok = running > first && stillPaused == paused && resumed > stillPaused;
-    printf("[lifecycle] pause frames: %lu -> %lu, paused %lu -> %lu, resumed %lu (%s)\n",
-           first, running, paused, stillPaused, resumed, ok ? "PASS" : "FAIL");
+    const bool audioResumed = NightPadActionEngineAudioPaused() == 0;
+    bool ok = running > first && stillPaused == paused && resumed > stillPaused && audioPaused && audioResumed;
+    printf("[lifecycle] pause frames: %lu -> %lu, paused %lu -> %lu, resumed %lu; audio %d/%d (%s)\n",
+           first, running, paused, stillPaused, resumed, audioPaused, audioResumed, ok ? "PASS" : "FAIL");
     fflush(stdout);
     g_pauseOk.store(ok);
     g_pauseDone.store(true);

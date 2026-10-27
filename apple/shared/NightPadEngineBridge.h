@@ -22,6 +22,7 @@ void NightPadDrivingEngineSetLaunchRequestCallback(NightPadLaunchRequestCallback
 void NightPadActionEngineRequestStop(void);
 void NightPadActionEngineSetPaused(int paused);
 void NightPadActionEngineSetInputSuspended(int suspended);
+int NightPadActionEngineAudioPaused(void);
 // Optional assists owned by the app; applied by the action loop each frame.
 void NightPadActionEngineSetAssistImmortal(int enabled);
 void NightPadActionEngineSetAssistUnlimitedAmmo(int enabled);
@@ -47,6 +48,7 @@ void NightPadDrivingEngineRunWindow(void);
 int NightPadDrivingEnginePollWindow(void);
 void NightPadDrivingEngineSetPaused(int paused);
 void NightPadDrivingEngineSetInputSuspended(int suspended);
+int NightPadDrivingEngineAudioPaused(void);
 void NightPadDrivingEngineSetHostPadsEnabled(int enabled);
 void NightPadDrivingEngineSetHostPad(int port, unsigned buttons, int leftX, int leftY, int rightX, int rightY,
                                      unsigned leftTrigger, unsigned rightTrigger, int connected);

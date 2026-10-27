@@ -232,6 +232,9 @@ simulator probe and remains blocked on physical-device access.
 - Display offers a vertical field of view of 60° (original), 70° or 80°; the
   value persists and is written to the engine, which clamps 30-120 and leaves
   scopes unchanged. Visual checks at each value remain.
+- Native pause is proven to gate audio as well as frames: action pause reports
+  SFX and streams paused then resumed, and driving pause reports the sound
+  manager paused then resumed.
 - `scripts/verify_patches.sh` now proves the tracked patch series reproduces
   the vendor tree: every patch applies to a clean worktree at the pinned
   revision and 53 files match byte-for-byte. It is part of the quick pass.

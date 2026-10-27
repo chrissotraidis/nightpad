@@ -10,6 +10,7 @@
 #include "../../vendor/nightfire/src/driving/platform/XboxStartup.h"
 #include "../../vendor/nightfire/src/driving/platform/XboxXapi.h"
 #include "../../vendor/nightfire/src/common/fmv/Ffmpeg.h"
+#include "../../vendor/nightfire/src/driving/audio/SoundManager.h"
 
 #include "NightPadEngineBridge.h"
 
@@ -55,6 +56,10 @@ extern "C" void NightPadDrivingEngineSetPaused(int paused) {
 
 extern "C" void NightPadDrivingEngineSetInputSuspended(int suspended) {
     HostInput_SetSuspended(suspended != 0);
+}
+
+extern "C" int NightPadDrivingEngineAudioPaused(void) {
+    return ASoundManager_fgIsPaused ? 1 : 0;
 }
 
 static NightPadRumbleHandler g_rumbleHandler = nullptr;

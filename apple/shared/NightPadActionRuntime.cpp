@@ -5,6 +5,7 @@
 #include "../../vendor/nightfire/src/common/xboxPath.h"
 #include "../../vendor/nightfire/src/action/devtools/Demo.h"
 #include "../../vendor/nightfire/src/action/game.h"
+#include "../../vendor/nightfire/src/action/sound/SFX.h"
 #include "../../vendor/nightfire/src/action/engine/Fmv.h"
 #include "../../vendor/nightfire/src/action/engine/LaunchOptions.h"
 #include "../../vendor/nightfire/src/action/engine/XboxSettings.h"
@@ -99,6 +100,10 @@ extern "C" void NightPadActionEngineSetAssistUnlimitedAmmo(int enabled) {
 
 extern "C" unsigned NightPadActionEngineAppliedAssists(void) {
     return (CheatInfo.Immortal != 0 ? 1u : 0u) | (CheatInfo.UnlimitedAmmo != 0 ? 2u : 0u);
+}
+
+extern "C" int NightPadActionEngineAudioPaused(void) {
+    return (SFXPaused != 0 && AllStreamsPaused != 0) ? 1 : 0;
 }
 
 static NightPadRumbleHandler g_rumbleHandler = nullptr;

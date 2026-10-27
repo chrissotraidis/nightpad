@@ -37,6 +37,7 @@ _NightPadActionEngineSetRumbleHandler
 _NightPadActionEngineSetAssistImmortal
 _NightPadActionEngineSetAssistUnlimitedAmmo
 _NightPadActionEngineAppliedAssists
+_NightPadActionEngineAudioPaused
 EOF
 nmedit -s "$out/exports.txt" -o "$out/combined.o" "$out/combined-raw.o"
 linked="$out/combined.o"

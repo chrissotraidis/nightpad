@@ -7,6 +7,8 @@
 static volatile int g_pauseHeld;
 static volatile int g_resumed;
 static volatile int g_booted;
+static volatile int g_audioPaused;
+static volatile int g_audioResumed;
 
 // Keep the stop path in-process: the driving engine asks for DEFAULT.XBE as it
 // shuts down, and without a coordinator that request exits the process.
@@ -28,11 +30,13 @@ static void *ControlDriving(void *) {
     usleep(1500000);
     const unsigned long second = NightPadDrivingEngineFrameCount();
     g_pauseHeld = second - first <= 2;
+    g_audioPaused = NightPadDrivingEngineAudioPaused() != 0;
 
     NightPadDrivingEngineSetPaused(0);
     usleep(1500000);
     const unsigned long third = NightPadDrivingEngineFrameCount();
     g_resumed = third > second;
+    g_audioResumed = NightPadDrivingEngineAudioPaused() == 0;
 
     NightPadDrivingEngineRequestStop();
     return nullptr;
@@ -54,8 +58,10 @@ int main() {
     pthread_join(control, nullptr);
     NightPadDrivingEngineCloseWindow();
     const int joined = NightPadDrivingEngineJoin(30000);
-    const int ok = g_booted && g_pauseHeld && g_resumed && joined;
-    printf("driving pause: %s; frames=%lu booted=%d held=%d resumed=%d joined=%d\n",
-           ok ? "PASS" : "FAIL", NightPadDrivingEngineFrameCount(), g_booted, g_pauseHeld, g_resumed, joined);
+    const int ok = g_booted && g_pauseHeld && g_resumed && g_audioPaused && g_audioResumed && joined;
+    printf("driving pause: %s; frames=%lu booted=%d held=%d resumed=%d audio-paused=%d audio-resumed=%d "
+           "joined=%d\n",
+           ok ? "PASS" : "FAIL", NightPadDrivingEngineFrameCount(), g_booted, g_pauseHeld, g_resumed,
+           g_audioPaused, g_audioResumed, joined);
     return ok ? 0 : 2;
 }

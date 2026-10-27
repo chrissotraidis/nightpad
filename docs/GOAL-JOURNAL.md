@@ -882,3 +882,14 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the option is wired. Aspect, HUD and scope behaviour at each value
   still need visual validation, which is device work.
 
+## 2026-10-28T07:50:00Z — pause gates audio
+
+- Goal: G05. Requirement: R15 in progress.
+- Observed: the pause tests only proved frames stopped. Both engines now expose
+  their audio pause state: action reports SFX and all streams paused then
+  resumed, driving reports the sound manager paused then resumed.
+- Evidence: `scripts/test_action_pause.sh` logs `audio 1/1`;
+  `scripts/test_driving_pause.sh` logs `audio-paused=1 audio-resumed=1`.
+- Verdict: native pause gates both gameplay and audio in the engine layer. The
+  shell's menu/editor path calls the same pause, but hearing it needs a device.
+

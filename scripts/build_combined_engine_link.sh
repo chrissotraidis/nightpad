@@ -53,7 +53,8 @@ ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/shared-runtime.o" \
 printf '_NightPadActionEngineThread\n_NightPadActionEngineSetLaunchRequestCallback\n_NightPadActionEngineRequestStop\n_NightPadActionEngineSetPaused\n_NightPadActionEngineSetInputSuspended\n_NightPadActionEngineFrameCount\n_NightPadActionEngineStart\n_NightPadActionEngineRunWindow\n_NightPadActionEnginePollWindow\n_NightPadActionEngineJoin\n_NightPadActionEngineCloseWindow\n_NightPadActionEngineTriggerDrivingAfter\n' > "$out/action-exports.txt"
 printf '_NightPadActionEngineSetHostPadsEnabled\n_NightPadActionEngineSetHostPad\n_NightPadActionEngineSetRumbleHandler\n' >> "$out/action-exports.txt"
 printf '_NightPadActionEngineSetAssistImmortal\n_NightPadActionEngineSetAssistUnlimitedAmmo\n_NightPadActionEngineAppliedAssists\n' >> "$out/action-exports.txt"
-printf '_NightPadDrivingEngineThread\n_NightPadDrivingEngineSetLaunchRequestCallback\n_NightPadDrivingEngineRequestStop\n_NightPadDrivingEngineStart\n_NightPadDrivingEngineRunWindow\n_NightPadDrivingEnginePollWindow\n_NightPadDrivingEngineSetPaused\n_NightPadDrivingEngineSetInputSuspended\n_NightPadDrivingEngineSetHostPadsEnabled\n_NightPadDrivingEngineSetHostPad\n_NightPadDrivingEngineSetRumbleHandler\n_NightPadDrivingEngineFrameCount\n_NightPadDrivingEngineJoin\n_NightPadDrivingEngineCloseWindow\n' > "$out/driving-exports.txt"
+printf '_NightPadActionEngineAudioPaused\n' >> "$out/action-exports.txt"
+printf '_NightPadDrivingEngineThread\n_NightPadDrivingEngineSetLaunchRequestCallback\n_NightPadDrivingEngineRequestStop\n_NightPadDrivingEngineStart\n_NightPadDrivingEngineRunWindow\n_NightPadDrivingEnginePollWindow\n_NightPadDrivingEngineSetPaused\n_NightPadDrivingEngineSetInputSuspended\n_NightPadDrivingEngineAudioPaused\n_NightPadDrivingEngineSetHostPadsEnabled\n_NightPadDrivingEngineSetHostPad\n_NightPadDrivingEngineSetRumbleHandler\n_NightPadDrivingEngineFrameCount\n_NightPadDrivingEngineJoin\n_NightPadDrivingEngineCloseWindow\n' > "$out/driving-exports.txt"
 nmedit -s "$out/action-exports.txt" -o "$out/action-isolated.o" "$out/action-raw.o"
 nmedit -s "$out/driving-exports.txt" -o "$out/driving-isolated.o" "$out/driving-raw.o"
 
@@ -79,8 +80,8 @@ clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" -Wl,-no_fixup_chains \
     -weak_framework CoreHaptics 2> "$out/combined-link.log"
 
 exports=$(nm -gU "$out/nightpad-combined-link" | grep -c 'NightPad.*Engine' || true)
-if [ "$exports" -ne 32 ]; then
-    echo "Expected thirty-two engine bridge exports, found $exports" >&2
+if [ "$exports" -ne 34 ]; then
+    echo "Expected thirty-four engine bridge exports, found $exports" >&2
     exit 1
 fi
 file "$out/nightpad-combined-link"

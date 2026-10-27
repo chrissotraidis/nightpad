@@ -442,11 +442,13 @@
       "status": "in_progress",
       "evidence": [
         "apple/ios/NightPadShellViewController.mm",
-        "docs/DECISIONS/0008-native-shell-surface.md"
+        "docs/DECISIONS/0008-native-shell-surface.md",
+        "scripts/test_action_pause.sh",
+        "scripts/test_driving_pause.sh"
       ],
       "decision_id": null,
       "notes": [
-        "Engine pause freezes frames and suspends SFX/streams; native menu/pause surfaces also suspend pad/keyboard and pointer input. Physical-device composition and import flow remain."
+        "The three-dot menu, editor and data panels are recoverable; native UI pauses the engine and suspends input. Both engines now prove audio pause/resume in their gates. Hearing it and the full device path remain."
       ]
     },
     "R16": {
