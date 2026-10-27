@@ -40,6 +40,7 @@ int main(int argc, char **argv) {
     pthread_join(stopper, nullptr);
     int joined = NightPadActionEngineJoin(30000);
     NightPadActionEngineCloseWindow();
+    sleep(2);   // Cocoa and SDL worker threads retire asynchronously
     mach_msg_type_number_t after = ThreadCount();
     bool ok = joined == 1 && after <= before + 1;
     printf("action lifecycle: %s; threads before=%u running=%u after=%u joined=%s\n",

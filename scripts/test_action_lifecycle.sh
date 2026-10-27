@@ -24,10 +24,14 @@ _NightPadActionEngineJoin
 _NightPadActionEngineCloseWindow
 EOF
 nmedit -s "$out/exports.txt" -o "$out/combined.o" "$out/combined-raw.o"
+linked="$out/combined.o"
+if [ "${ISOLATED:-0}" != 1 ]; then
+    linked="$out/combined-raw.o"
+fi
 clang++ -arch arm64 -isysroot "$sdk" -mmacosx-version-min=15.0 \
     -I "$repo/apple/shared" -c "$repo/tests/native/test_action_lifecycle.cpp" -o "$out/main.o"
 clang++ -arch arm64 -isysroot "$sdk" -mmacosx-version-min=15.0 -Wl,-no_fixup_chains \
-    -Wl,-rpath,@executable_path -o "$out/test_action_lifecycle" "$out/main.o" "$out/combined.o" \
+    -Wl,-rpath,@executable_path -o "$out/test_action_lifecycle" "$out/main.o" "$linked" \
     "$build/_deps/sdl3-build/libSDL3.0.dylib" \
     "$build/_deps/spirv_cross-build/libspirv-cross-msl.a" \
     "$build/_deps/spirv_cross-build/libspirv-cross-glsl.a" \
