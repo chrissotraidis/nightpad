@@ -1805,3 +1805,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: every native surface has a screenshot. The card's behaviour with a
   live engine still needs the device.
 
+## 2026-10-29T03:20:00Z — one command for the freeze
+
+- Goal: G13. Requirement: R30 in progress.
+- Observed: freezing the candidate meant remembering the right order of
+  `verify_quick`, `verify_engine`, `candidate_identity` and `package_device_app`,
+  and the package hash in the identity only matched if packaging happened first.
+- Observed: `scripts/freeze_candidate.sh` now refuses a dirty tree, runs the
+  gates, rebuilds the package and then prints the identity, with the whole run
+  written to `build/package/candidate.txt`. `--full` adds the slow engine suite.
+- Evidence: the script's dirty-tree refusal on its first run and the clean run
+  that produced the log; `docs/DEVICE-HANDOFF.md` documents both forms.
+- Verdict: the freeze has one entry point. Device acceptance remains outside it
+  by design.
+

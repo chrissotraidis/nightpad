@@ -60,6 +60,17 @@ ignored `evidence/device/<date>/`.
 `build/package/NightPadShell-unsigned.ipa` for inspection. It is not
 installable until it is signed.
 
+## Freezing the candidate
+
+```sh
+scripts/freeze_candidate.sh          # quick gates, package, identity
+scripts/freeze_candidate.sh --full   # adds the slow engine suite
+```
+
+It refuses a dirty tree, runs the gates in order, rebuilds the unsigned package
+and prints the identity, writing the whole run to
+`build/package/candidate.txt`. Device acceptance is never claimed by it.
+
 The last unsigned package built from this tree is
 `fc654387f50e80d42f57e8960ec67cec0023411b775bdefacedb3bc31f2b6f1c` (app code
 at `66af620`). Regenerate it at freeze time; do not install a stale copy.
