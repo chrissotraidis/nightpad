@@ -1,0 +1,497 @@
+{
+  "schema_version": 1,
+  "product": "NightPad",
+  "version": "1.0",
+  "prepared_on": "2026-10-27",
+  "activation": "Requires a later instruction from Chris to execute. Planning artifact only.",
+  "source_of_truth": "NIGHTPAD_PRD.md and NIGHTPAD_GOAL_LOOP.md; this JSON indexes them and does not weaken their acceptance conditions.",
+  "terminal_scope": "complete_private_candidate",
+  "goals": [
+    {
+      "id": "G00",
+      "title": "Workspace, sources and tools",
+      "dependencies": [],
+      "exit_checks": [
+        "Source pins verified",
+        "Toolchain/access inventory recorded",
+        "Provenance and data boundaries established"
+      ],
+      "requirements": [
+        "R02",
+        "R27"
+      ]
+    },
+    {
+      "id": "G01",
+      "title": "Supplied image and staged data",
+      "dependencies": [
+        "G00"
+      ],
+      "exit_checks": [
+        "Supported input identity established",
+        "Original unchanged",
+        "Validated extracted manifest and repeatable preparation"
+      ],
+      "requirements": [
+        "R03"
+      ]
+    },
+    {
+      "id": "G02",
+      "title": "Native Mac baseline",
+      "dependencies": [
+        "G00",
+        "G01"
+      ],
+      "exit_checks": [
+        "Both engines/test targets built",
+        "Address and floating-point checks meaningful",
+        "Action demos and local driving baseline recorded",
+        "Normal-speed slices/media observed"
+      ],
+      "requirements": []
+    },
+    {
+      "id": "G03",
+      "title": "Signed iOS platform feasibility",
+      "dependencies": [
+        "G00"
+      ],
+      "exit_checks": [
+        "Physical phone/tablet pointer/linker probes pass",
+        "Metal/shader/texture/media fixtures pass",
+        "No debugger or CPU JIT dependency",
+        "Platform decision recorded; R06 still awaits integrated transitions"
+      ],
+      "requirements": []
+    },
+    {
+      "id": "G04",
+      "title": "Unified engine lifecycle",
+      "dependencies": [
+        "G02",
+        "G03"
+      ],
+      "exit_checks": [
+        "Both engines run natively in one app",
+        "All transition directions preserve launch state",
+        "Integrated pointer invariants and restarts pass",
+        "Repeated cleanup releases resources"
+      ],
+      "requirements": [
+        "R05",
+        "R06",
+        "R07"
+      ]
+    },
+    {
+      "id": "G05",
+      "title": "Shell, import and three-dot menu",
+      "dependencies": [
+        "G00",
+        "G01",
+        "G04"
+      ],
+      "exit_checks": [
+        "Transactional import and rollback connected",
+        "Real-engine pause/input/audio gating",
+        "Menu stays reachable",
+        "Local diagnostics work"
+      ],
+      "requirements": [
+        "R04",
+        "R15",
+        "R25"
+      ]
+    },
+    {
+      "id": "G06",
+      "title": "Xbox touch and controllers",
+      "dependencies": [
+        "G04",
+        "G05"
+      ],
+      "exit_checks": [
+        "Original mappings/vehicle definitions verified",
+        "Usable physical phone/tablet controls",
+        "Per-port isolation and no stuck input",
+        "Editor/accessibility recovery verified"
+      ],
+      "requirements": [
+        "R12",
+        "R13",
+        "R14",
+        "R29"
+      ]
+    },
+    {
+      "id": "G07",
+      "title": "Full campaign and fidelity",
+      "dependencies": [
+        "G04",
+        "G06"
+      ],
+      "exit_checks": [
+        "Mission/mechanic inventory covered",
+        "Applicable regressions pass",
+        "Continuous campaign ending and save/reload",
+        "Both form-factor routes verified"
+      ],
+      "requirements": [
+        "R01",
+        "R08",
+        "R09"
+      ]
+    },
+    {
+      "id": "G08",
+      "title": "Local multiplayer",
+      "dependencies": [
+        "G04",
+        "G06"
+      ],
+      "exit_checks": [
+        "Every map/scenario and scoring-family coverage",
+        "Arena/objective full matches",
+        "Four logical humans plus six bots",
+        "Declared real controller configurations verified"
+      ],
+      "requirements": [
+        "R17"
+      ]
+    },
+    {
+      "id": "G09",
+      "title": "Display and retail unlocks",
+      "dependencies": [
+        "G07"
+      ],
+      "exit_checks": [
+        "Original and higher render resolution verified",
+        "4:3/16:9 FOV and Off/FXAA correct",
+        "Original timing retained",
+        "Secret Unlocks persistence/toggles verified"
+      ],
+      "requirements": [
+        "R18",
+        "R19"
+      ]
+    },
+    {
+      "id": "G10",
+      "title": "Cheats and mods",
+      "dependencies": [
+        "G07"
+      ],
+      "exit_checks": [
+        "Platform/provenance inventory complete",
+        "Positive feasibility implemented and tested",
+        "Negative feasibility has experiments and deferral"
+      ],
+      "requirements": [
+        "R20",
+        "R21"
+      ]
+    },
+    {
+      "id": "G11",
+      "title": "Online discovery and adopted prototype",
+      "dependencies": [
+        "G08"
+      ],
+      "exit_checks": [
+        "State/render/audio experiments complete",
+        "Architecture or deferral recorded",
+        "Adopted feature passes two-device duration/latency/impairment gates"
+      ],
+      "requirements": [
+        "R22",
+        "R23"
+      ]
+    },
+    {
+      "id": "G12",
+      "title": "Device reliability and performance",
+      "dependencies": [
+        "G07",
+        "G08",
+        "G09"
+      ],
+      "exit_checks": [
+        "Save recovery tests pass",
+        "Normal-speed audio and hands-on verdicts",
+        "15-minute action/driving routes on both classes",
+        "60-minute mixed soak and frozen budgets accepted",
+        "Pointer invariants rechecked"
+      ],
+      "requirements": [
+        "R10",
+        "R11",
+        "R16",
+        "R24"
+      ]
+    },
+    {
+      "id": "G13",
+      "title": "Reproduction and private candidate",
+      "dependencies": [
+        "G05",
+        "G10",
+        "G11",
+        "G12"
+      ],
+      "exit_checks": [
+        "Clean source/data/build reproduction",
+        "Exact artifact matches evidence",
+        "Every core/adopted conditional requirement passes",
+        "Independent review and handoff complete"
+      ],
+      "requirements": [
+        "R26",
+        "R28",
+        "R30"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R01",
+      "classification": "core",
+      "title": "Original Xbox foundation and fidelity",
+      "owner_goal": "G07",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R02",
+      "classification": "core",
+      "title": "Source/dependency/toolchain identity",
+      "owner_goal": "G00",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R03",
+      "classification": "core",
+      "title": "Immutable validated ref/REF ISO intake",
+      "owner_goal": "G01",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R04",
+      "classification": "core",
+      "title": "Transactional app data import",
+      "owner_goal": "G05",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R05",
+      "classification": "core",
+      "title": "Signed native ARM64 without JIT or child process",
+      "owner_goal": "G04",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R06",
+      "classification": "core",
+      "title": "Physical iOS pointer invariants through transitions",
+      "owner_goal": "G04",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R07",
+      "classification": "core",
+      "title": "Safe in-process engine lifecycle",
+      "owner_goal": "G04",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R08",
+      "classification": "core",
+      "title": "Correct Metal presentation and required effects",
+      "owner_goal": "G07",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R09",
+      "classification": "core",
+      "title": "Complete campaign through ending and reload",
+      "owner_goal": "G07",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R10",
+      "classification": "core",
+      "title": "Audible synchronized media and interruptions",
+      "owner_goal": "G12",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R11",
+      "classification": "core",
+      "title": "Durable saves and profiles",
+      "owner_goal": "G12",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R12",
+      "classification": "core",
+      "title": "Usable Xbox touch layout and editor",
+      "owner_goal": "G06",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R13",
+      "classification": "core",
+      "title": "Original and contextual mappings",
+      "owner_goal": "G06",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R14",
+      "classification": "core",
+      "title": "Physical per-port controller ownership",
+      "owner_goal": "G06",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R15",
+      "classification": "core",
+      "title": "Three-dot menu with actual pause/input gating",
+      "owner_goal": "G05",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R16",
+      "classification": "core",
+      "title": "Application lifecycle and recovery",
+      "owner_goal": "G12",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R17",
+      "classification": "core",
+      "title": "Original local multiplayer maps/modes/bots/rules",
+      "owner_goal": "G08",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R18",
+      "classification": "core",
+      "title": "Measured resolution and display options",
+      "owner_goal": "G09",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R19",
+      "classification": "core",
+      "title": "Original Secret Unlocks",
+      "owner_goal": "G09",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R20",
+      "classification": "decision",
+      "title": "Debug cheat adoption or evidenced deferral",
+      "owner_goal": "G10",
+      "required_terminal_status": "decision_complete"
+    },
+    {
+      "id": "R21",
+      "classification": "decision",
+      "title": "Xbox mods/Metal texture override adoption or deferral",
+      "owner_goal": "G10",
+      "required_terminal_status": "decision_complete"
+    },
+    {
+      "id": "R22",
+      "classification": "decision",
+      "title": "Network architecture feasibility and disposition",
+      "owner_goal": "G11",
+      "required_terminal_status": "decision_complete"
+    },
+    {
+      "id": "R23",
+      "classification": "conditional",
+      "title": "Adopted two-device netplay acceptance",
+      "owner_goal": "G11",
+      "required_terminal_status": "passed_if_adopted_else_not_applicable"
+    },
+    {
+      "id": "R24",
+      "classification": "core",
+      "title": "Sustained physical phone/tablet performance",
+      "owner_goal": "G12",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R25",
+      "classification": "core",
+      "title": "Useful local diagnostics and evidence",
+      "owner_goal": "G05",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R26",
+      "classification": "core",
+      "title": "Clean reproduction and private packaging",
+      "owner_goal": "G13",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R27",
+      "classification": "core",
+      "title": "Notices/provenance and private-data boundary",
+      "owner_goal": "G00",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R28",
+      "classification": "core",
+      "title": "Applicable upstream and NightPad verification",
+      "owner_goal": "G13",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R29",
+      "classification": "core",
+      "title": "Native UI accessibility and touch reachability",
+      "owner_goal": "G06",
+      "required_terminal_status": "passed"
+    },
+    {
+      "id": "R30",
+      "classification": "core",
+      "title": "Exact private-candidate handoff",
+      "owner_goal": "G13",
+      "required_terminal_status": "passed"
+    }
+  ],
+  "policies": {
+    "core_may_be_deferred": false,
+    "routine_milestone_permission_required": false,
+    "public_publication_authorized": false,
+    "game_data_download_authorized": false,
+    "optional_positive_feasibility_requires_implementation": true,
+    "identical_failure_retry_limit": 2,
+    "distinct_core_hypotheses_before_review": 3,
+    "optional_approaches_before_review": 2,
+    "public_cloud_spend_authorized": false,
+    "outbound_messaging_authorized": false
+  },
+  "evidence_levels": [
+    "source_inspected",
+    "build_passed",
+    "simulator_passed",
+    "device_automated",
+    "hands_on_passed"
+  ],
+  "terminal_predicate": {
+    "all_goals": "passed",
+    "all_core_requirements": "passed",
+    "all_decision_requirements": "decision_complete with adoption/test evidence or justified deferral",
+    "R23": "passed if networking adopted, otherwise not_applicable linked to R22 deferral",
+    "physical_phone_and_tablet_required": true,
+    "final_artifact_must_match_evidence": true,
+    "no_required_gate_blocked": true
+  }
+}
+

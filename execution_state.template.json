@@ -1,0 +1,338 @@
+{
+  "schema_version": 1,
+  "product": "NightPad",
+  "plan_version": "1.0",
+  "project_status": "planning_only",
+  "implementation_started": false,
+  "execution_started_at": null,
+  "execution_root": null,
+  "last_updated_at": null,
+  "active_goal": null,
+  "source_lock_file": "sources.lock.json",
+  "actual_dependency_lock": null,
+  "actual_source_revision": null,
+  "content_identity": null,
+  "current_build": null,
+  "last_known_good_build": null,
+  "goals": {
+    "G00": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": "Await execution instruction; then inspect designated workspace and tool access."
+    },
+    "G01": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G02": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G03": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G04": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G05": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G06": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G07": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G08": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G09": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G10": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G11": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G12": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    },
+    "G13": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [],
+      "blockers": [],
+      "next_step": null
+    }
+  },
+  "requirements": {
+    "R01": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R02": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R03": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R04": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R05": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R06": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R07": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R08": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R09": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R10": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R11": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R12": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R13": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R14": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R15": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R16": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R17": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R18": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R19": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R20": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R21": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R22": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R23": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R24": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R25": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R26": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R27": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R28": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R29": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    },
+    "R30": {
+      "status": "unverified",
+      "evidence": [],
+      "decision_id": null,
+      "notes": []
+    }
+  },
+  "features": {
+    "debug_cheats": {
+      "status": "uninvestigated",
+      "adopted": false,
+      "decision_id": null
+    },
+    "texture_overrides": {
+      "status": "uninvestigated",
+      "adopted": false,
+      "decision_id": null
+    },
+    "network_play": {
+      "status": "uninvestigated",
+      "adopted": false,
+      "scope": null,
+      "decision_id": null
+    }
+  },
+  "physical_targets": [],
+  "decisions": [],
+  "blockers": [],
+  "journal_entries": [],
+  "completed_tests": [],
+  "next_step": "Read START_HERE.md. Do not execute unless Chris separately instructs the implementing agent to start."
+}
+

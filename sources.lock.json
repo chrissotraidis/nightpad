@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "document_kind": "research_source_lock",
+  "product": "NightPad",
+  "audited_on": "2026-10-27",
+  "implementation_started": false,
+  "note": "Verified research inputs for the future executor. No NightPad build or full runtime dependency lock exists. Verify actual checkouts and nested dependencies/toolchains before relying on caches.",
+  "repositories": [
+    {
+      "id": "nightfire",
+      "role": "original_xbox_reconstructed_engine",
+      "url": "https://github.com/NightfireResearch/nightfire-cxbx.git",
+      "revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
+      "reference_branch": "main",
+      "future_path": "vendor/nightfire",
+      "license_observation": "No root first-party license found; retain provenance and separate distribution decision."
+    },
+    {
+      "id": "galaxypad",
+      "role": "primary_apple_ui_reference",
+      "url": "https://github.com/chrissotraidis/galaxypad.git",
+      "revision": "4db10c4c11e35958aae8da23b4d80fe6e5fe88e3",
+      "reference_branch": "main",
+      "future_path": "references/galaxypad",
+      "license_observation": "Inspected overlay SPDX GPL-3.0-or-later. Controller donor is single-player."
+    },
+    {
+      "id": "sunpad",
+      "role": "secondary_dual_stick_and_loop_reference",
+      "url": "https://github.com/chrissotraidis/sunpad.git",
+      "revision": "d40a0674afa7189c14bfd6ce6f099dd275b46397",
+      "reference_branch": "main",
+      "future_path": "references/sunpad",
+      "license_observation": "GPL-3.0 repository metadata; inspect reused files and preserve notices."
+    },
+    {
+      "id": "extract_xiso",
+      "role": "host_image_extractor",
+      "url": "https://github.com/XboxDev/extract-xiso.git",
+      "revision": "3f5b62cfe68f000b0e3c8a30104973f3a297948e",
+      "future_path": "tools/extract-xiso",
+      "allowed_modes": [
+        "list",
+        "extract"
+      ],
+      "disallowed_modes_for_original_input": [
+        "rewrite",
+        "delete"
+      ]
+    },
+    {
+      "id": "ffmpeg",
+      "role": "media_dependency",
+      "url": "https://github.com/FFmpeg/FFmpeg.git",
+      "revision": "8ae0b34901ba60a802f183ee75a250a9fc3e09a5",
+      "source_relationship": "Nightfire third_party/ffmpeg gitlink",
+      "future_path": "vendor/nightfire/third_party/ffmpeg",
+      "build_note": "Existing Mac recipe; iPhoneOS recipe is new work. Preserve minimal codecs and notices."
+    },
+    {
+      "id": "sdl3",
+      "role": "window_input_audio_gpu_dependency",
+      "url": "https://github.com/libsdl-org/SDL.git",
+      "revision": "829a65d769d935c4852f8159e964312c0957260a",
+      "upstream_requested_tag": "release-3.4.18",
+      "resolved_via": "https://api.github.com/repos/libsdl-org/SDL/git/ref/tags/release-3.4.18"
+    },
+    {
+      "id": "spirv_cross",
+      "role": "spirv_to_msl_dependency",
+      "url": "https://github.com/KhronosGroup/SPIRV-Cross.git",
+      "revision": "f11ba9f0b21ba8fc15153d50a2a1ae31ab1cf8f7",
+      "upstream_requested_tag": "vulkan-sdk-1.4.363.0",
+      "resolved_via": "https://api.github.com/repos/KhronosGroup/SPIRV-Cross/git/ref/tags/vulkan-sdk-1.4.363.0"
+    }
+  ],
+  "private_input": {
+    "search_roots": [
+      "ref",
+      "REF"
+    ],
+    "file_kind": "original Xbox Nightfire ISO or XISO",
+    "initial_supported_edition": "PAL European Xbox, subject to actual image identification",
+    "image_sha256": null,
+    "known_retail_hash_allowlist_found": false,
+    "allowed_acquisition": "owner-supplied local input only",
+    "may_download_game_data": false
+  },
+  "observations": {
+    "upstream_native_preset": "macos-arm64",
+    "misleading_preset": "macos is a Windows cross-build",
+    "upstream_ios_target_verified": false,
+    "upstream_action_demo_count": 12,
+    "upstream_action_recorded_frames": 221759,
+    "upstream_human_slots": 4,
+    "upstream_bot_slots": 6,
+    "donor_galaxypad_player_slots": 1,
+    "original_pc_crossplay_verified": false,
+    "xbox_online_layer_verified": false,
+    "project_reach_reviewed": false
+  },
+  "unresolved_before_build": [
+    "Actual image identity/compatibility",
+    "Full Xcode and signing/device availability",
+    "Nested source/dependency lock and build options",
+    "iOS pointer/linker layout",
+    "In-process action/driving reset contract",
+    "Device performance/support floor",
+    "Publication/provenance decision if later requested"
+  ]
+}
+
