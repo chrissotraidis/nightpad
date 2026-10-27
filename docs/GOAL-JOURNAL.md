@@ -1465,3 +1465,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the candidate has an explicit known-issues document. The freeze
   still needs device acceptance.
 
+## 2026-10-28T19:20:00Z — headless driving does not reach objectives
+
+- Goal: G07. Requirement: campaign inventory.
+- Hypothesis: logging `objectiveMsgId` when the HUD draws it would attribute
+  the locale strings to missions without a track parser.
+- Observed: with a temporary `NIGHTPAD_LOG_OBJECTIVES` print in
+  `DrawObjectiveMessage`, Mission 1 loaded Paris and ran at 50 fps for a long
+  cycle, but the hook never fired - the car does not move under the lifecycle
+  test, so the objective events never post. The hook was reverted and
+  `scripts/verify_patches.sh` still reproduces the 53 files.
+- Evidence: the captured run log and `docs/CAMPAIGN-INVENTORY.md`.
+- Verdict: attribution needs the track parser or a driven run. A headless
+  boot alone cannot answer it.
+

@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T18:45:00Z",
+  "last_updated_at": "2026-10-28T19:20:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -214,7 +214,7 @@
         "patches/0016-standalone-file-dump.patch"
       ],
       "blockers": [],
-      "next_step": "G07: parse the track event data to attribute the driving objective strings to each mission, then run the first-play route when device execution is available."
+      "next_step": "G07: parse the track event data, or drive a run that reaches the first objective, to attribute the driving objective strings to each mission; then run the first-play route when device execution is available."
     },
     "G08": {
       "status": "in_progress",
@@ -1261,6 +1261,15 @@
         "docs/KNOWN-ISSUES.md",
         "docs/CANDIDATE.md",
         "docs/STATUS.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T19:20:00Z",
+      "goal": "G07",
+      "summary": "Tried a headless objective log: Mission 1 loads and runs but never posts an objective without driving input, so attribution needs the track parser or a driven run. The hook was reverted.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/GOAL-JOURNAL.md"
       ]
     }
   ],

@@ -174,6 +174,13 @@ the track event data (`SetObjectiveComment` takes a locale id), so mapping a
 string to Paris, Alpine and the rest needs a track parser. The strings
 themselves stay in ignored output; only paraphrased notes belong here.
 
+A headless boot is not enough. With a temporary log in `DrawObjectiveMessage`,
+Mission 1 loaded its track and ran at 50 fps, but no objective was ever shown:
+the car never moves, so the events that post an objective do not fire. The log
+hook was removed again rather than left as an unused engine change. Attribution
+therefore needs either the track parser or a driven run that actually reaches
+the first objective.
+
 ### How a part starts and ends
 
 Starting a level part (`Mission_Init`) records its base map and order, then
