@@ -355,6 +355,7 @@ static uint64_t ShellResidentBytes(void) {
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController {
     (void)presentationController;
+    [self logSessionEvent:@"sheet dismissed"];
     // Interactive dismissal discards unsaved editor changes, as Cancel does.
     if (_touchControls != nil)
         [_touchControls setTouchLayout:[self loadTouchLayout]];
@@ -950,6 +951,7 @@ static uint64_t ShellResidentBytes(void) {
 }
 
 - (void)endNativeUI {
+    const BOOL wasActive = _uiInputSuspended || _uiPausedEngine;
     if (_uiInputSuspended) {
         [_engineHost setInputSuspended:NO];
         _uiInputSuspended = NO;
@@ -960,7 +962,8 @@ static uint64_t ShellResidentBytes(void) {
         _uiPausedEngine = NO;
     }
     [_gameInput setSuspended:NO];
-    [self logSessionEvent:@"native UI resume"];
+    if (wasActive)
+        [self logSessionEvent:@"native UI resume"];
 }
 
 - (void)startGame {

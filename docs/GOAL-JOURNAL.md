@@ -1578,3 +1578,19 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the panel's save and data rows are symmetric. Picker selection stays
   manual.
 
+## 2026-10-28T21:40:00Z — only real resumes reach the session log
+
+- Goal: G06. Requirement: R25 in progress.
+- Observed: `endNativeUI` logged "native UI resume" even when nothing had been
+  paused, so opening and closing About on the home screen looked like a resume
+  in diagnostics. The dismissal path also relied on that event as its only
+  trace.
+- Observed: the resume event is now written only when input suspension or the
+  UI pause was actually held, and interactive dismissal logs its own
+  "sheet dismissed" event.
+- Evidence: iPad Pro 13-inch simulator, iOS 26.5: dismissing the editor logged
+  "sheet dismissed" and no resume; the iPhone home screen showed only
+  "app launch" after opening and closing About.
+- Verdict: the diagnostics session history matches what happened. Engine-
+  paused resumes still need a device run to be observed.
+
