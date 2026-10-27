@@ -559,11 +559,14 @@
     "R29": {
       "status": "in_progress",
       "evidence": [
-        "apple/ios/NightPadTouchControlsView.mm"
+        "apple/ios/NightPadTouchControlsView.mm",
+        "apple/shared/NightPadControlPalette.h",
+        "apple/shared/NightPadControlPalette.cpp",
+        "scripts/test_contrast.sh"
       ],
       "decision_id": null,
       "notes": [
-        "Labels, identifiers, 44-point controls and Dynamic Type scaling are in place and checked at XXXL. Contrast measurement, focus order and physical sessions remain."
+        "Labels, identifiers, 44-point controls, Dynamic Type scaling and 4.5:1 control contrast are verified. Focus order and physical sessions remain."
       ]
     },
     "R30": {

@@ -762,3 +762,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: backup and restore now exist in the UI. A real in-game save,
   end-to-end restore and the app-update case remain.
 
+## 2026-10-28T04:15:00Z — control contrast
+
+- Goal: G06. Requirement: R29 in progress.
+- Observed: the face colours lived twice (overlay and editor) and yellow/green
+  fell below 4.5:1 against white labels. They now come from one shared palette
+  with darker shades: green, red, blue, yellow and the neutrals all clear AA.
+- Evidence: `scripts/test_contrast.sh` asserts 4.5:1 or better for every control
+  and sanity-checks the luminance maths; the simulator overlay still reads as
+  Xbox colours.
+- Verdict: contrast is measured rather than eyeballed. Focus order and physical
+  sessions remain.
+

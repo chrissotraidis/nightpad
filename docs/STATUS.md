@@ -205,6 +205,9 @@ simulator probe and remains blocked on physical-device access.
 - Game Data > Import Saves opens the document picker and copies the chosen
   files into Saves, asking before replacing a name that already exists. The
   picker selection itself is a manual step.
+- Control colours come from one shared palette whose white-label contrast is
+  checked at 4.5:1 or better for every control, so the Xbox face buttons keep
+  their identity without failing AA contrast.
 
 ## Current uncertainty and blockers
 

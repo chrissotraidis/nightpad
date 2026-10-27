@@ -1,5 +1,7 @@
 #import "NightPadTouchLayoutViewController.h"
 
+#include "../shared/NightPadControlPalette.h"
+
 @interface NightPadLayoutControlView : UIView
 @property(nonatomic, assign) nightpad::TouchControlId controlId;
 @end
@@ -95,17 +97,8 @@
 }
 
 - (UIColor *)colourFor:(nightpad::TouchControlId)id {
-    using nightpad::TouchControlId;
-    switch (id) {
-        case TouchControlId::A: return [UIColor colorWithRed:0.25 green:0.7 blue:0.35 alpha:1];
-        case TouchControlId::B: return [UIColor colorWithRed:0.85 green:0.25 blue:0.25 alpha:1];
-        case TouchControlId::X: return [UIColor colorWithRed:0.25 green:0.45 blue:0.9 alpha:1];
-        case TouchControlId::Y: return [UIColor colorWithRed:0.9 green:0.75 blue:0.2 alpha:1];
-        case TouchControlId::LeftStick:
-        case TouchControlId::RightStick: return [UIColor colorWithWhite:0.35 alpha:1];
-        case TouchControlId::Dpad: return [UIColor colorWithWhite:0.42 alpha:1];
-        default: return [UIColor colorWithWhite:0.28 alpha:1];
-    }
+    const nightpad::ControlColour colour = nightpad::ColourForControl(id);
+    return [UIColor colorWithRed:colour.red green:colour.green blue:colour.blue alpha:1];
 }
 
 - (NSString *)labelFor:(nightpad::TouchControlId)id {

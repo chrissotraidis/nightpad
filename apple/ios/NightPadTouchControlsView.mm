@@ -2,6 +2,8 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+#include "../shared/NightPadControlPalette.h"
+
 #include <algorithm>
 #include <cmath>
 #include <vector>
@@ -15,16 +17,8 @@ constexpr CGFloat kCanvasMargin = 8.0;
 constexpr float kDpadDeadZone = 0.22f;
 
 UIColor *ControlColour(TouchControlId id) {
-    switch (id) {
-        case TouchControlId::A: return [UIColor colorWithRed:0.25 green:0.7 blue:0.35 alpha:1];
-        case TouchControlId::B: return [UIColor colorWithRed:0.85 green:0.25 blue:0.25 alpha:1];
-        case TouchControlId::X: return [UIColor colorWithRed:0.25 green:0.45 blue:0.9 alpha:1];
-        case TouchControlId::Y: return [UIColor colorWithRed:0.9 green:0.75 blue:0.2 alpha:1];
-        case TouchControlId::LeftStick:
-        case TouchControlId::RightStick: return [UIColor colorWithWhite:0.30 alpha:1];
-        case TouchControlId::Dpad: return [UIColor colorWithWhite:0.36 alpha:1];
-        default: return [UIColor colorWithWhite:0.24 alpha:1];
-    }
+    const nightpad::ControlColour colour = nightpad::ColourForControl(id);
+    return [UIColor colorWithRed:colour.red green:colour.green blue:colour.blue alpha:1];
 }
 
 NSString *ControlLabel(TouchControlId id) {
