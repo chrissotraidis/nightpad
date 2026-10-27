@@ -573,3 +573,16 @@ are ignored and may contain paths, hashes, captures or device identities.
   from source. The six extra text headings, per-mission movies and objectives
   remain to be verified in a run.
 
+## 2026-10-27T22:10:00Z — early engine stop is clean again
+
+- Goal: G04. Requirement: R05 in progress.
+- Hypothesis: the crash seen when stopping during driving boot was a stale
+  build/timing artefact rather than a deterministic cleanup fault.
+- Observed: a dedicated early-stop test requests a stop two seconds into
+  driving boot (frames 0) and eight seconds in (frames 3577); both runs join and
+  exit 0. The action engine stopped after one second also joins.
+- Evidence: `scripts/test_driving_early_stop.sh`; added to the engine
+  verification pass.
+- Verdict: early stop is currently clean, but the earlier crash was not
+  explained, so the shell keeps its stop-until-first-frame guard as defence.
+

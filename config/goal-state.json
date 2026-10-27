@@ -103,7 +103,9 @@
         "docs/DECISIONS/0010-engine-handoff.md",
         "apple/ios/NightPadEngineHost.mm",
         "apple/shared/NightPadDrivingRuntime.cpp",
-        "apple/shared/NightPadEngineBridge.h"
+        "apple/shared/NightPadEngineBridge.h",
+        "tests/native/test_driving_early_stop.cpp",
+        "scripts/test_driving_early_stop.sh"
       ],
       "blockers": [
         "B01"

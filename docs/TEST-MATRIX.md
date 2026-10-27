@@ -44,6 +44,7 @@
 | G04 | In-process action-to-driving handoff boots the target | macOS arm64 | passed | `scripts/test_engine_handoff.sh`: action requests `d:\driving.xbe`, joins; driving reads the 3072-byte page, boots `paris_mis01`, requests `D:\DEFAULT.XBE` on stop and joins |
 | G04 | Driving simulation pause and resume | macOS arm64 | passed | `scripts/test_driving_pause.sh`: frames held while paused, advanced after resume, clean join |
 | G04 | Stop requested during engine boot | iPhoneOS 26.5 build | implemented, unverified on hardware | The shell holds the stop until the active engine advances a frame (180 s fallback) because cleanup from a half-built engine crashed in testing; menu shows "Stopping After Load…" |
+| G04 | Engine stop during boot joins cleanly | macOS arm64 | passed | `scripts/test_driving_early_stop.sh` at 2 s (frames 0) and 8 s (frames 3577), plus the action lifecycle at a 1 s stop: every thread joins and the process exits 0 |
 | G04 | Ten repeated action sessions | macOS arm64 | passed | File slots close per session; device-scoped buffers are reused; every cycle joins; settle 248 MB |
 | G04 | Load-time initializer ownership | macOS arm64 | passed for transition | Fmv and LaunchOptions deferred; remaining graphics initializer is compatible |
 | G04 | Action to driving and return transitions | macOS arm64 | passed, 10 cycles | `scripts/test_engine_transition.sh`; iPhoneOS execution remains device-blocked |
