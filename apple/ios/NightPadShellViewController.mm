@@ -179,10 +179,18 @@ static uint64_t ShellResidentBytes(void) {
         settingsError != "The settings file is missing.")
         [self showError:[NSString stringWithFormat:@"Saved settings ignored: %s", settingsError.c_str()]];
     [self refreshDataState];
-    // Identity trees other than the active one are unreachable once a launch
-    // has happened; importing different content leaves one behind.
-    if (_state == DataState::Ready && _identity.length > 0)
-        _importer->RetainOnlyIdentity(std::string(_identity.UTF8String), nullptr);
+    // Trees left by earlier runs are unreachable once a launch has happened.
+    // Deleting gigabytes must not block the first frame, so it runs in the
+    // background; a fresh importer has nothing active to protect.
+    if (_state == DataState::Ready && _identity.length > 0) {
+        nightpad::Paths paths = _paths;
+        std::string keep(_identity.UTF8String);
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+            nightpad::GameDataImporter importer(paths);
+            importer.CleanupAbandonedStages(nullptr);
+            importer.RetainOnlyIdentity(keep, nullptr);
+        });
+    }
     [self refreshMenu];
     // Deterministic shell screenshots and UI smoke tests.
     if ([NSProcessInfo.processInfo.arguments containsObject:@"--show-touch-controls"])
@@ -1147,9 +1155,6 @@ static uint64_t ShellResidentBytes(void) {
 - (void)refreshDataState {
     if (!_importer)
         _importer = std::make_unique<GameDataImporter>(_paths);
-    // Earlier runs can leave full copies of the game data in stage folders that
-    // nothing can reach any more; clear them before reporting the state.
-    _importer->CleanupAbandonedStages(nullptr);
     std::string identity, error;
     _state = _importer->CurrentState(&identity, &error);
     _identity = identity.empty() ? nil : [NSString stringWithUTF8String:identity.c_str()];

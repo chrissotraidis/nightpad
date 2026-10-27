@@ -1657,3 +1657,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: both kinds of leftover tree are bounded now. The same-session
   retention is unchanged.
 
+## 2026-10-28T23:15:00Z — cleanup no longer blocks the first frame
+
+- Goal: G05. Requirement: R04 in progress.
+- Observed: the cleanup ran on the main thread inside `refreshDataState`. With
+  several full trees to delete that is seconds of I/O before the first frame on
+  a phone.
+- Observed: the launch cleanup now runs on a utility queue with its own
+  importer, which has nothing active to protect; the per-refresh call is gone.
+  The retained previous tree is still kept for the current session.
+- Evidence: iPhone 17 simulator, iOS 26.5: planted stage and old-identity
+  folders were both gone within three seconds while the home screen already
+  reported ready.
+- Verdict: cleanup is invisible at launch. The device will show whether a large
+  delete still perturbs storage I/O during play.
+
