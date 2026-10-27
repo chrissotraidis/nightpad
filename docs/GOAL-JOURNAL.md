@@ -1819,3 +1819,16 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the freeze has one entry point. Device acceptance remains outside it
   by design.
 
+## 2026-10-29T04:00:00Z — the freeze log survives the package step
+
+- Goal: G13. Requirement: R30 in progress.
+- Observed: the first freeze run's log lost the gate output: it lived under
+  `build/package`, which `package_device_app.sh` empties before packaging.
+- Observed: the log now lives at `build/candidate.txt`. A `--full` run on the
+  clean tree recorded the quick gates, then `engine verification: PASS`, the
+  package check, the donor and patch identity and the package hash.
+- Evidence: `build/candidate.txt` (6687 lines, commit 3e17474) and
+  `docs/DEVICE-HANDOFF.md`.
+- Verdict: the freeze produces one complete, readable evidence file. Packaging
+  rewrites the zip each run, so the docs now say to read the hash from the log.
+
