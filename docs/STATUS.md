@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-27 14:21 UTC
+Updated: 2026-10-27 14:26 UTC
 
 ## Outcome
 
@@ -76,6 +76,14 @@ simulator probe and remains blocked on physical-device access.
 - The driving/POV control definitions were safely decoded from `misc.viv`:
   eight POV configurations, one Driving configuration and a separate front-end
   map.
+- G05 started with a portable app path service and transactional game-data
+  importer. Data, saves, launch state, caches, diagnostics and Documents are
+  separate; imports use private staging, free-space preflight, manifest
+  identity, required-tree validation, cancellation, atomic activation and
+  previous-data retention. Saves are never touched. The native test covers
+  invalid input, symlinks, cancellation, failed activation, replacement,
+  rollback data and stale-pointer recovery.
+- The G05 core compiles into the iPhoneOS probe target.
 
 ## Current uncertainty and blockers
 
@@ -92,7 +100,7 @@ simulator probe and remains blocked on physical-device access.
 
 ## Next step
 
-Begin G05's native shell and data-flow work while physical-device access for G03
-and G04 remains unavailable. Keep the ten-cycle lifecycle scripts as regression
-gates for every engine change.
+Build the native shell around the path/import core: data status and import UI,
+the three-dot menu, and engine pause/transition wiring. Keep the ten-cycle
+lifecycle and data-import tests as regression gates.
 

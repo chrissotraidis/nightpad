@@ -20,6 +20,13 @@ add_executable(NightPadProbe MACOSX_BUNDLE
   "${NIGHTFIRE}/src/driving/platform/GameWindow.cpp"
   "${NIGHTFIRE}/src/driving/platform/HostPosix.cpp")
 
+add_library(nightpad_core STATIC
+  ../shared/NightPadPaths.cpp
+  ../shared/NightPadGameDataImport.cpp)
+target_include_directories(nightpad_core PUBLIC ../shared)
+target_compile_features(nightpad_core PUBLIC cxx_std_20)
+target_compile_options(nightpad_core PRIVATE -fno-exceptions)
+
 set_source_files_properties("${NIGHTFIRE}/src/driving/devtools/GameWindowTest.cpp"
   PROPERTIES COMPILE_DEFINITIONS "main=NightfireGameWindowTestMain")
 target_compile_definitions(NightPadProbe PRIVATE
@@ -33,6 +40,7 @@ target_compile_options(NightPadProbe PRIVATE
 target_include_directories(NightPadProbe PRIVATE "${NIGHTFIRE}/src/driving")
 find_package(Threads REQUIRED)
 target_link_libraries(NightPadProbe PRIVATE Threads::Threads
+  nightpad_core
   "-framework UIKit" "-framework Foundation" "-framework Metal" "-framework QuartzCore")
 set(NIGHTPAD_FFMPEG_ROOT "" CACHE PATH "iPhoneOS FFmpeg prefix built by scripts/build_ffmpeg_ios.sh")
 if(NIGHTPAD_FFMPEG_ROOT)

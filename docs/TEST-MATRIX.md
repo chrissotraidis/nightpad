@@ -44,6 +44,9 @@
 | G04 | Ten repeated action sessions | macOS arm64 | passed | File slots close per session; device-scoped buffers are reused; every cycle joins; settle 248 MB |
 | G04 | Load-time initializer ownership | macOS arm64 | passed for transition | Fmv and LaunchOptions deferred; remaining graphics initializer is compatible |
 | G04 | Action to driving and return transitions | macOS arm64 | passed, 10 cycles | `scripts/test_engine_transition.sh`; iPhoneOS execution remains device-blocked |
+| G05 | Separate app data, save, cache, launch and diagnostic paths | macOS arm64 | passed | `NightPadPaths` unit coverage; directory creation and layout asserted |
+| G05 | Transactional prepared-data import | macOS arm64 | passed for core | `scripts/test_data_import.sh`: preflight, staging, validation, cancel, atomic activation, replacement and rollback retention |
+| G05 | Native shell, import UI and three-dot menu | iPhone/iPad | unverified | Core service compiles in the iPhoneOS probe; no shell target or menu yet |
 
 Only rows with explicit execution evidence are marked passed. Source inspection
 does not satisfy runtime acceptance.

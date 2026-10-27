@@ -119,3 +119,25 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: start G05's native shell and data flow while device access remains
   unavailable, and keep all three ten-cycle scripts as regression gates.
 
+## 2026-10-27T14:26:55Z — G05 path and import foundation
+
+- Goal: G05. Requirements: R04 in progress.
+- Hypothesis: the native shell needs one explicit path contract and one
+  transactional import boundary before any menu or Files UI is built.
+- Observed: `NightPadPaths` separates Application Support data, Saves, launch
+  state, Caches, Logs and Documents. `GameDataImporter` copies a prepared tree
+  into a private `GameData.import-*` stage, checks free space, validates the
+  manifest identity and required game tree, rejects links and unsafe paths,
+  reports progress, supports cancellation, and activates with Darwin's atomic
+  `RENAME_SWAP`/`RENAME_EXCL`. Reimport updates the active pointer and retains
+  the previous identity for explicit cleanup; saves are a separate tree and are
+  never touched. A stale pointer recovers by scanning valid `GameData/data-*`
+  directories.
+- Evidence: `scripts/test_data_import.sh` passes invalid, symlink, cancellation,
+  failed-activation, replacement, rollback and stale-pointer cases. The import
+  core compiles into the iPhoneOS probe target.
+- Verdict: R04's storage/transaction foundation is in place; the shell, import
+  picker/progress UI, menu and pause wiring remain.
+- Next: add the iOS shell target around the core and wire data status plus the
+  persistent three-dot menu before integrating the engine session.
+

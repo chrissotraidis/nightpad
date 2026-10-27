@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T14:21:36Z",
+  "last_updated_at": "2026-10-27T14:26:55Z",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -102,12 +102,21 @@
       "next_step": "Run the ten-cycle lifecycle and transition gates on a signed physical iPhone and iPad; the macOS reset contract passes."
     },
     "G05": {
-      "status": "ready",
-      "started_at": null,
+      "status": "in_progress",
+      "started_at": "2026-10-27T14:26:55Z",
       "completed_at": null,
-      "evidence": [],
+      "evidence": [
+        "apple/shared/NightPadPaths.h",
+        "apple/shared/NightPadPaths.cpp",
+        "apple/shared/NightPadGameDataImport.h",
+        "apple/shared/NightPadGameDataImport.cpp",
+        "tests/native/test_data_import.cpp",
+        "scripts/test_data_import.sh",
+        "apple/ios/CMakeLists.txt",
+        "docs/DECISIONS/0007-app-data-layout.md"
+      ],
       "blockers": [],
-      "next_step": "Implement the native shell, data path service and three-dot menu while physical-device access remains blocked."
+      "next_step": "Build the iOS shell target, data status/import UI and persistent three-dot menu around the tested path/import core."
     },
     "G06": {
       "status": "pending",
@@ -201,10 +210,20 @@
       "notes": []
     },
     "R04": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "apple/shared/NightPadPaths.h",
+        "apple/shared/NightPadPaths.cpp",
+        "apple/shared/NightPadGameDataImport.h",
+        "apple/shared/NightPadGameDataImport.cpp",
+        "tests/native/test_data_import.cpp",
+        "scripts/test_data_import.sh",
+        "apple/ios/CMakeLists.txt"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Path classes and atomic prepared-data import pass native tests; import picker/progress UI and engine integration remain."
+      ]
     },
     "R05": {
       "status": "in_progress",
@@ -621,6 +640,16 @@
         "patches/0010-engine-session-reset.patch",
         "docs/DECISIONS/0006-engine-stop-boundary.md",
         "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:26:55Z",
+      "goal": "G05",
+      "summary": "Added explicit app paths and a transactional prepared-data import core with cancellation, validation, atomic activation and save separation.",
+      "evidence": [
+        "scripts/test_data_import.sh",
+        "apple/shared/NightPadGameDataImport.cpp",
+        "apple/shared/NightPadPaths.cpp"
       ]
     }
   ],
