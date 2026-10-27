@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T18:30:00Z",
+  "last_updated_at": "2026-10-28T18:45:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -280,7 +280,8 @@
       "evidence": [
         "scripts/verify_patches.sh",
         "docs/CANDIDATE.md",
-        "scripts/package_device_app.sh"
+        "scripts/package_device_app.sh",
+        "docs/KNOWN-ISSUES.md"
       ],
       "blockers": [],
       "next_step": "Clean-checkout build and package recipe; final candidate after device acceptance."
@@ -1250,6 +1251,16 @@
       "summary": "Located the driving objective strings in data/gfx/locale inside misc.viv and documented the table format; per-mission attribution still needs the track event parser.",
       "evidence": [
         "docs/CAMPAIGN-INVENTORY.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T18:45:00Z",
+      "goal": "G13",
+      "summary": "Collected the open issues and the apparent-but-expected behaviours into docs/KNOWN-ISSUES.md for the candidate handoff.",
+      "evidence": [
+        "docs/KNOWN-ISSUES.md",
+        "docs/CANDIDATE.md",
+        "docs/STATUS.md"
       ]
     }
   ],

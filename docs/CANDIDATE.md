@@ -63,6 +63,8 @@ The fields a freeze must record:
 - `docs/DEVICE-HANDOFF.md`: the physical session checklist.
 - `docs/PERFORMANCE-BUDGET.md`: the routes and numeric budgets to measure
   during the device pass.
+ - `docs/KNOWN-ISSUES.md`: the open issues and the things that look like
+   issues but are not.
 - Simulator captures under ignored `evidence/ios-shell/`.
 
 ## Known issues and gaps

@@ -167,6 +167,8 @@ simulator probe and remains blocked on physical-device access.
   (`docs/DECISIONS/0013-texture-overrides.md`).
 - The full engine suite passes on the current tree (`scripts/verify_engine.sh`
   at `480ac5a`), and `scripts/verify_quick.sh` passes alongside it.
+ - Open issues and the non-issues that look like bugs are collected in
+   `docs/KNOWN-ISSUES.md`.
 - Controls now includes a native reference for on-foot, vehicle and menu
   mappings. Vehicle rows come from the game's own drivecfg/POV definitions
   (RT gas, LT brake, B handbrake, A/X/Y secondary actions); the game's eight

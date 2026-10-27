@@ -1450,3 +1450,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the last G07 inventory item has a concrete path and a concrete
   remaining step, rather than a vague gap.
 
+## 2026-10-28T18:45:00Z — known issues collected
+
+- Goal: G13/R30. Requirement: R30 in progress.
+- Observed: the candidate's open issues were spread across STATUS, the test
+  matrix, the decision records and requirement notes, which makes the handoff
+  read as complete when it is not.
+- Observed: `docs/KNOWN-ISSUES.md` now lists each open issue with its effect
+  and where the detail lives, and separates the things that look like bugs but
+  are expected: the black simulator preview, the submenu accessibility quirk
+  and the patch whitespace warning.
+- Evidence: `docs/KNOWN-ISSUES.md`, linked from `docs/CANDIDATE.md` and
+  `docs/STATUS.md`.
+- Verdict: the candidate has an explicit known-issues document. The freeze
+  still needs device acceptance.
+
