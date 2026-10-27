@@ -66,3 +66,8 @@ DEFAULT.XBE, closes and joins, then action starts from the page, closes and
 joins. The remaining sdlGpuBackend constructors no longer prevent the
 transition.
 
+The harness also exercises the reverse direction through the game's
+psiLaunchDriving seam. Action starts, reaches the configured frame, writes the
+page, requests DRIVING.XBE, closes and joins. Both launch callbacks are observed
+in sequence and both threads join.
+

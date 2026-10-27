@@ -14,6 +14,8 @@ static int CaptureLaunch(NightPadEngineId engine, const char *image, const void 
     if (g_launchCount == 0)
         snprintf(g_launchImage, sizeof(g_launchImage), "%s", image);
     ++g_launchCount;
+    if (strstr(image, "DRIVING.XBE") != nullptr || strstr(image, "driving.xbe") != nullptr)
+        NightPadActionEngineRequestStop();
     return 1;
 }
 
@@ -63,15 +65,13 @@ int main(int argc, char **argv) {
         fprintf(stderr, "transition: action restart failed\n");
         return 2;
     }
-    pthread_t actionStopper;
-    pthread_create(&actionStopper, nullptr, StopAction, nullptr);
+    NightPadActionEngineTriggerDrivingAfter(90);
     NightPadActionEngineRunWindow();
-    pthread_join(actionStopper, nullptr);
     NightPadActionEngineCloseWindow();
     int actionJoined = NightPadActionEngineJoin(30000);
     mach_msg_type_number_t settledAfterAction = ThreadCount();
 
-    bool ok = drivingJoined && actionJoined && g_launchCount >= 1 &&
+    bool ok = drivingJoined && actionJoined && g_launchCount >= 2 &&
               strstr(g_launchImage, "DEFAULT.XBE") != nullptr &&
               settledAfterAction <= settledBeforeAction + 1;
     printf("transition: %s; launched=%d image=%s driving-join=%d action-join=%d threads=%u->%u\n",

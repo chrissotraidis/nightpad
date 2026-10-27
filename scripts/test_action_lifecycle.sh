@@ -27,6 +27,7 @@ _NightPadActionEngineStart
 _NightPadActionEngineRunWindow
 _NightPadActionEngineJoin
 _NightPadActionEngineCloseWindow
+_NightPadActionEngineTriggerDrivingAfter
 EOF
 nmedit -s "$out/exports.txt" -o "$out/combined.o" "$out/combined-raw.o"
 linked="$out/combined.o"

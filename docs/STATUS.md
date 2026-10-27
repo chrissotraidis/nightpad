@@ -55,6 +55,8 @@ simulator probe and remains blocked on physical-device access.
 - The combined driving-to-action harness passes after deferring the action
   movie and launch-option singletons. Driving requests DEFAULT.XBE, closes and
   joins; action starts from the saved page, closes and joins.
+- The same combined harness now triggers action's existing psiLaunchDriving
+  seam and completes action-to-driving in the opposite direction.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
   mask `0x7`, with only the `30_fps` movie bundle present.
 - The driving/POV control definitions were safely decoded from `misc.viv`:
