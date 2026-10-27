@@ -18,6 +18,13 @@ for target in action_standalone driving_standalone; do
         > "$out/$target.log" 2>&1
 done
 
+for app in action_standalone driving_standalone; do
+    if find "$build/Release-iphoneos/$app.app" -maxdepth 1 -name '*.dylib' -print -quit | grep -q .; then
+        echo "$app.app contains a loose dylib; clean the bundle before accepting the static link" >&2
+        exit 1
+    fi
+done
+
 action_dir="$build/build/action_standalone.build/Release-iphoneos/Objects-normal/arm64"
 driving_dir="$build/build/driving_standalone.build/Release-iphoneos/Objects-normal/arm64"
 find "$action_dir" -name '*.o' ! -name 'StandaloneMain.o' | sort > "$out/action-objects.txt"
@@ -40,14 +47,19 @@ nmedit -s "$out/action-exports.txt" -o "$out/action-isolated.o" "$out/action-raw
 nmedit -s "$out/driving-exports.txt" -o "$out/driving-isolated.o" "$out/driving-raw.o"
 
 spirv="$build/_deps/spirv_cross-build/Release-iphoneos"
-sdl="$build/_deps/sdl3-build/Release-iphoneos/libSDL3.0.dylib"
+sdl="$build/_deps/sdl3-build/Release-iphoneos/libSDL3.a"
 clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" \
     -c "$repo/tests/ios/NightPadEngineLinkProbe.cpp" -o "$out/link-probe-main.o"
 clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" -Wl,-no_fixup_chains \
-    -Wl,-rpath,@executable_path -o "$out/nightpad-combined-link" \
+    -o "$out/nightpad-combined-link" \
     "$out/link-probe-main.o" "$out/action-isolated.o" "$out/driving-isolated.o" "$sdl" \
     "$spirv/libspirv-cross-msl.a" "$spirv/libspirv-cross-glsl.a" \
-    "$spirv/libspirv-cross-core.a" 2> "$out/combined-link.log"
+    "$spirv/libspirv-cross-core.a" -fobjc-link-runtime -lm \
+    -framework CoreMedia -framework CoreVideo -framework CoreAudio -framework AudioToolbox \
+    -framework AVFoundation -framework CoreBluetooth -framework CoreGraphics \
+    -framework CoreMotion -framework Foundation -framework GameController \
+    -framework Metal -framework OpenGLES -framework QuartzCore -framework UIKit \
+    -weak_framework CoreHaptics 2> "$out/combined-link.log"
 
 exports=$(nm -gU "$out/nightpad-combined-link" | grep -c 'NightPad.*Engine' || true)
 if [ "$exports" -ne 4 ]; then

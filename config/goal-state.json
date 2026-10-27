@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T11:22:00Z",
+  "last_updated_at": "2026-10-27T11:32:00Z",
   "active_goal": "G04",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -87,7 +87,8 @@
         "scripts/build_combined_engine_link.sh",
         "build/ios-combined/nightpad-combined-link",
         "docs/DECISIONS/0002-engine-object-isolation.md",
-        "docs/DECISIONS/0003-launch-request-bridge.md"
+        "docs/DECISIONS/0003-launch-request-bridge.md",
+        "docs/DECISIONS/0004-ios-static-sdl.md"
       ],
       "blockers": [],
       "next_step": "Implement engine stop, worker-thread join and audio/GPU reset, then exercise all transition directions."
@@ -201,7 +202,9 @@
       "status": "in_progress",
       "evidence": [],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Both engines link into a combined iOS arm64 executable without a child process entrypoint or SDL dylib; signing and device execution remain."
+      ]
     },
     "R06": {
       "status": "in_progress",
@@ -465,6 +468,15 @@
         "patches/0003-in-process-launch-request.patch",
         "docs/DECISIONS/0003-launch-request-bridge.md"
       ]
+    },
+    {
+      "at": "2026-10-27T11:32:00Z",
+      "goal": "G04",
+      "summary": "Switched iOS engine builds to static SDL; standalone and combined arm64 links pass without a loose SDL dylib dependency.",
+      "evidence": [
+        "patches/0004-ios-static-sdl.patch",
+        "docs/DECISIONS/0004-ios-static-sdl.md"
+      ]
     }
   ],
   "completed_tests": [
@@ -512,6 +524,11 @@
       "name": "launch request bridge page/thread test",
       "result": "3072-byte page identical, image DRIVING.XBE, callback once, requesting thread exits, process continues",
       "target": "macOS 27 arm64"
+    },
+    {
+      "name": "iOS static SDL engine link",
+      "result": "Both engines and combined link use libSDL3.a; no SDL dylib dependency",
+      "target": "iPhoneOS 26.5 arm64"
     }
   ],
   "next_step": "Implement engine stop, worker-thread join and audio/GPU reset, then exercise action-to-driving, driving-to-driving and driving-to-action transitions."

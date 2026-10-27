@@ -39,6 +39,9 @@ simulator probe and remains blocked on physical-device access.
 - The launch seam now hands the 3,072-byte page to an in-process coordinator
   and ends only the requesting game thread. A native pthread test confirms the
   page and image identity, no child process, and continued process execution.
+- iOS SDL is now linked statically. The combined engine executable has no
+  loose SDL dylib dependency; a clean bundle still needs to prove no stale copy
+  is emitted.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
   mask `0x7`, with only the `30_fps` movie bundle present.
 - The driving/POV control definitions were safely decoded from `misc.viv`:

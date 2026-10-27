@@ -56,9 +56,8 @@ not yet:
 - reset or release engine heaps and static caches;
 - exercise action to driving, driving to driving, driving to action, or restart.
 
-The link proof currently consumes SDL's shared iOS dylib. The product target
-must use a signed static SDL or a correctly embedded framework before device
-acceptance.
+The first link proof consumed SDL's shared iOS dylib. Decision 0004 replaces
+that with one static SDL archive for the product target.
 
 ## Next experiment
 
