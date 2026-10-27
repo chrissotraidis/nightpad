@@ -10,6 +10,7 @@
 | G13 | Device package recipe | Host | passed for unsigned artifact | `scripts/package_device_app.sh` builds Release, packages `Payload/NightPadShell.app` as a 3.6 MB unsigned IPA, checks `Info.plist` and rejects loose dylibs; signing/install remains the handoff step |
 | G13 | Clean shell build from empty trees | Host | passed | `scripts/test_clean_shell_build.sh` removes the CMake/Xcode build trees and rebuilds simulator and device lanes; the link contract still passes |
 | G13 | Candidate manifest drafted (R30) | Host | partial | `docs/CANDIDATE.md` records identity fields to freeze, the support matrix, verified evidence, known issues and the device next step; not an acceptance claim |
+| G12 | Performance routes and budgets frozen before optimization | Host | proposed | `docs/PERFORMANCE-BUDGET.md` defines device state, 15-minute action/driving, warm repeats and a 60-minute mixed route, plus cadence, frame-time, memory, thermal, latency and audio budgets |
 | G01 | ISO is unique and unchanged | Host | passed | Local source manifest |
 | G01 | Listing is contained and has required Xbox trees | Host | passed | Private ISO listing and guarded script |
 | G01 | Validated extraction and activation | Host | passed | 55 files, 2,062,585,542 bytes, source hash unchanged |

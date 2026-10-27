@@ -960,3 +960,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the handoff shape exists. Final hashes, device results and candidate
   identity wait on acceptance.
 
+## 2026-10-28T09:40:00Z — performance routes and budgets
+
+- Goal: G12. Requirement: R24 in progress.
+- Observed: wrote `docs/PERFORMANCE-BUDGET.md` before any device measurement:
+  device state, 15-minute action and driving routes, warm repeats and a
+  60-minute mixed session, with cadence (0.98-1.02), frame-time tail, memory
+  ceilings, thermal expectation, input latency and audio budgets.
+- Evidence: the document and the test-matrix row. All numbers are marked
+  proposed until the first measured session.
+- Verdict: the target is fixed enough to judge optimizations later. Nothing is
+  measured on hardware yet.
+

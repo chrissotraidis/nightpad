@@ -36,6 +36,8 @@ Record these at freeze; do not trust a value copied from an older draft:
   assists, early stop, transitions, handoff and round trip.
 - `docs/TEST-MATRIX.md`: requirement-by-requirement verdicts.
 - `docs/DEVICE-HANDOFF.md`: the physical session checklist.
+- `docs/PERFORMANCE-BUDGET.md`: the routes and numeric budgets to measure
+  during the device pass.
 - Simulator captures under ignored `evidence/ios-shell/`.
 
 ## Known issues and gaps

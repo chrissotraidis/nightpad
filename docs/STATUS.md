@@ -257,6 +257,10 @@ simulator probe and remains blocked on physical-device access.
 - [CANDIDATE.md](CANDIDATE.md) is the draft candidate manifest: identity fields
   to freeze, support matrix, verified evidence, known issues and the device
   next step. It is not an acceptance claim.
+- [PERFORMANCE-BUDGET.md](PERFORMANCE-BUDGET.md) fixes the measurement routes
+  and provisional numeric budgets before optimization: 15-minute action and
+  driving runs, warm repeats, a 60-minute mixed session, cadence, frame-time,
+  memory, thermal, latency and audio targets.
 
 ## Current uncertainty and blockers
 
