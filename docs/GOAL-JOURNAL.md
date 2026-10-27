@@ -1033,3 +1033,14 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the interruption rule is explicit and tested. Device suspension and
   audio behaviour still need a session.
 
+## 2026-10-28T11:35:00Z — all pinned checkouts verified at freeze
+
+- Goal: G13. Requirement: R30 in progress.
+- Observed: the identity script previously checked only the engine pin. It now
+  verifies every `source_graph` checkout — engine, GalaxyPad, SunPad,
+  extract-xiso and the FFmpeg submodule — and fails on drift before printing an
+  identity.
+- Evidence: a draft run reports five `donor_ok` lines and correctly refuses a
+  dirty tree.
+- Verdict: freezing checks the whole dependency graph, not one pin.
+

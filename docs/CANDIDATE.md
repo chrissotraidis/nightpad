@@ -11,6 +11,10 @@ commit, tree state, engine pin, dependency-lock hash, patch-series hash, data
 identity, content hash and package hash, and refuses a dirty tree. Do not trust
 a value copied from an older draft.
 
+It also verifies every pinned checkout in `source_graph` — engine, GalaxyPad,
+SunPad, extract-xiso and the FFmpeg submodule — and fails on drift before
+printing any identity.
+
 Draft snapshot from 2026-10-28 (illustrative; regenerate):
 
 ```

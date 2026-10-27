@@ -613,7 +613,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "A draft manifest and a machine-generated identity script exist; --require-clean refuses an uncommitted freeze. Final values and device results remain."
+        "The manifest draft and identity script cover the whole pinned graph (five checkouts), lock/patch hashes, data/content and package hashes, and refuse an uncommitted freeze. Device results remain."
       ]
     }
   },

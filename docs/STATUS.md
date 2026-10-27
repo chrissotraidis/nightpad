@@ -272,6 +272,8 @@ simulator probe and remains blocked on physical-device access.
 - `scripts/candidate_identity.sh` prints the manifest identity fields (commit,
   pin, lock and patch hashes, data/content/package hashes) and `--require-clean`
   refuses to freeze an uncommitted tree.
+- The identity script also verifies every pinned checkout — engine, GalaxyPad,
+  SunPad, extract-xiso and the FFmpeg submodule — and fails on drift.
 - `scripts/summarize_perf.py` turns engine PerfLog output into JSON
   (mean/median/min/max fps, working and waiting milliseconds) with `--skip` for
   loading samples and a hard failure when a log has none.

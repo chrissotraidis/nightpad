@@ -19,10 +19,32 @@ lock_hash=$(shasum -a 256 config/dependencies.lock.json | awk '{print $1}')
 patch_count=$(ls patches/00*.patch | wc -l | tr -d ' ')
 patch_hash=$(cat patches/00*.patch | shasum -a 256 | awk '{print $1}')
 
-if [ "$vendor_head" != "$pin" ]; then
-    echo "candidate: vendor HEAD $vendor_head does not match the pin $pin" >&2
-    exit 1
-fi
+python3 - <<'PY' || exit 1
+import json, os, subprocess, sys
+graph = json.load(open("config/dependencies.lock.json"))["source_graph"]
+bad = []
+for name, entry in graph.items():
+    path = entry.get("path")
+    revision = entry.get("revision")
+    if not path or not revision:
+        continue
+    if not os.path.isdir(path):
+        bad.append(f"{name}: checkout missing at {path}")
+        continue
+    result = subprocess.run(["git", "-C", path, "rev-parse", "HEAD"], capture_output=True, text=True)
+    if result.returncode != 0:
+        bad.append(f"{name}: not a readable checkout at {path}")
+        continue
+    head = result.stdout.strip()
+    if head != revision:
+        bad.append(f"{name}: HEAD {head} does not match pin {revision}")
+        continue
+    print(f"donor_ok={name}@{revision}")
+if bad:
+    for line in bad:
+        print("candidate: " + line, file=sys.stderr)
+    sys.exit(1)
+PY
 
 echo "commit=$head"
 echo "branch=$branch"
