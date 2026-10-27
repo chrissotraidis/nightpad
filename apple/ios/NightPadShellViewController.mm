@@ -485,12 +485,15 @@ static uint64_t ShellResidentBytes(void) {
     UIAction *restoreAction = [self menuAction:@"Import Saves…" image:@"square.and.arrow.down"
                                       disabled:_engineRunning
                                        handler:^{ [weakSelf chooseSaveFiles]; }];
+    UIAction *restoreFolderAction = [self menuAction:@"Restore Saves from NightPad Folder" image:@"folder"
+                                           disabled:_engineRunning
+                                            handler:^{ [weakSelf restoreSavesFromAppFolder]; }];
     UIMenu *dataMenu = [UIMenu menuWithTitle:@"Game Data & Saves"
                                        image:[UIImage systemImageNamed:@"internaldrive"]
                                   identifier:nil
                                      options:0
                                     children:@[ data, importAction, folderAction, shareAction, restoreAction,
-                                                removeAction ]];
+                                                restoreFolderAction, removeAction ]];
 
     UIAction *about = [self menuAction:@"About NightPad" image:@"info.circle" disabled:NO
                                 handler:^{ [weakSelf openAbout]; }];
@@ -1107,20 +1110,32 @@ static uint64_t ShellResidentBytes(void) {
 }
 
 - (void)restoreSavesFromFixture {
+    [self restoreSavesFromFolderNamed:@"SaveFixture" promptTitle:@"No save fixture"
+                                detail:@"Put save files in Documents/SaveFixture to test restore."];
+}
+
+// Saves copied into a folder in Documents can be restored with one tap, the
+// same way game data is imported without the picker.
+- (void)restoreSavesFromAppFolder {
+    [self restoreSavesFromFolderNamed:@"Save Import" promptTitle:@"No save folder"
+                                detail:@"Copy save files into NightPad's Documents/Save Import in Files, then choose this again."];
+}
+
+- (void)restoreSavesFromFolderNamed:(NSString *)name promptTitle:(NSString *)title detail:(NSString *)detail {
     // The document picker's remote UI is not scriptable, so the save-restore
-    // path takes its inputs from Documents/SaveFixture in automated runs.
+    // path can also take its inputs from a folder in Documents.
     NSString *documents = [NSString stringWithUTF8String:_paths.documents.string().c_str()];
     NSURL *folder = [[NSURL fileURLWithPath:documents isDirectory:YES]
-        URLByAppendingPathComponent:@"SaveFixture" isDirectory:YES];
+        URLByAppendingPathComponent:name isDirectory:YES];
     NSArray<NSString *> *names = [NSFileManager.defaultManager contentsOfDirectoryAtPath:folder.path error:nil];
     NSMutableArray<NSURL *> *urls = [NSMutableArray array];
-    for (NSString *name in names) {
-        if ([name hasPrefix:@"."])
+    for (NSString *file in names) {
+        if ([file hasPrefix:@"."])
             continue;
-        [urls addObject:[folder URLByAppendingPathComponent:name]];
+        [urls addObject:[folder URLByAppendingPathComponent:file]];
     }
     if (urls.count == 0) {
-        [self showInfo:@"No save fixture" detail:@"Put save files in Documents/SaveFixture to test restore."];
+        [self showInfo:title detail:detail];
         return;
     }
     [self restoreSaves:urls];

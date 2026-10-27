@@ -1371,3 +1371,19 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the handoff document describes the app that exists. Final freeze
   still waits on device acceptance.
 
+## 2026-10-28T17:20:00Z — save restore from the app folder
+
+- Goal: G05. Requirement: R11 in progress.
+- Observed: restoring saves still depended on the system picker while importing
+  game data no longer did. The same asymmetry existed on a tablet, where the
+  picker is the clumsier surface.
+- Observed: Game Data & Saves now has "Restore Saves from NightPad Folder",
+  which restores everything in `Documents/Save Import` through the same
+  `restoreSaves:` path, collision prompt included. The fixture hook now just
+  points at a different folder.
+- Evidence: iPhone 17 simulator, iOS 26.5: a 40-byte `slot1.sav` and a 6-byte
+  `extra.sav` in the folder produced the replace prompt, "2 files restored",
+  exact contents on disk and an untouched codename file.
+- Verdict: both save paths are reachable without the picker. The picker path
+  and interrupted engine writes remain as stated.
+

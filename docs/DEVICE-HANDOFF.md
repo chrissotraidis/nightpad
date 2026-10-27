@@ -30,7 +30,7 @@ ignored `evidence/device/<date>/`.
 | --- | --- | --- |
 | G03 | Install the probe app and run the pointer/Metal/media fixtures | Results match the simulator probe |
 | G05 | Import the prepared data - copy it to `Documents/NightPad Import` first, then use the panel's "Use NightPad Folder"; try the picker path once too - relaunch, play, save | Ready state survives; saves untouched by import; both paths reach the same result |
-| G05 | Share the saves, then restore them with Import Saves and answer the replace prompt | Restored files match the export; unrelated saves stay untouched |
+| G05 | Share the saves, then restore them with Import Saves (or copy them to `Documents/Save Import` and use "Restore Saves from NightPad Folder") and answer the replace prompt | Restored files match the export; unrelated saves stay untouched |
 | G06 | Touch: move/look/fire/aim, five fingers, sustained combat grip | No dropped inputs, controls reachable, menu independent |
 | G06 | Controller: connect, held buttons, sleep/wake, P2 join | Ports stay separate; touch P1 not stolen; rumble routed |
 | G06 | Edit the layout, Save, relaunch, Reset; long-press a control to hide and show it | Geometry and visibility persist; every editor action remains reachable |

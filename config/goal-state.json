@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T17:05:00Z",
+  "last_updated_at": "2026-10-28T17:20:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -1199,6 +1199,16 @@
         "docs/DEVICE-HANDOFF.md",
         "docs/CANDIDATE.md",
         "scripts/package_device_app.sh"
+      ]
+    },
+    {
+      "at": "2026-10-28T17:20:00Z",
+      "goal": "G05",
+      "summary": "Added Restore Saves from NightPad Folder so save restore no longer needs the system picker; verified contents, collision prompt and isolation from unrelated files.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "docs/DEVICE-HANDOFF.md"
       ]
     }
   ],
