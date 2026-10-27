@@ -39,7 +39,7 @@
 | G04 | Driving launch request completes established boundary | macOS arm64 | passed | Callback receives 3,072-byte page; close-before-join completes and joins |
 | G04 | Driving-to-action live restart in one process | macOS arm64 | passed | Driving page request, close/join, action start from page, close/join |
 | G04 | Action-to-driving request through psiLaunchDriving | macOS arm64 | passed | Action callback captures DRIVING.XBE; window and thread join |
-| G04 | Repeated mixed transition soak | macOS arm64 | failed | Cycle 1 passes; cycle 2 faults after entering driving main |
+| G04 | Repeated mixed transition soak | macOS arm64 | failed | Cycle 1 passes with real Boot_GetPTPData page; cycle 2 still faults after driving main |
 | G04 | Load-time initializer ownership | macOS arm64 | passed for transition | Fmv and LaunchOptions deferred; remaining graphics initializer is compatible |
 | G04 | Action to driving and return transitions | iPhoneOS/macOS | unverified | Not run |
 

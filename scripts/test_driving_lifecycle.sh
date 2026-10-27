@@ -40,6 +40,6 @@ printf '[Settings]\nDiscPath=%s\nRenderWidth=640\nRenderHeight=480\nRegion=NTSC\
 cd "$out/run"
 SDL_VIDEO_DRIVER=offscreen SDL_AUDIODRIVER=dummy \
     DYLD_LIBRARY_PATH="$build:$repo/build/deps/ffmpeg-macos-arm64/lib" \
-    NIGHTPAD_LIFECYCLE_CYCLES=1 \
+    NIGHTPAD_LIFECYCLE_CYCLES=${NIGHTPAD_LIFECYCLE_CYCLES:-1} \
     ../test_driving_lifecycle -mission 1
 

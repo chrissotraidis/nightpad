@@ -1,10 +1,12 @@
 diff --git a/src/action/main.cpp b/src/action/main.cpp
-index 4c22acf..842c3b6 100644
+index 4c22acf..31e0d70 100644
 --- a/src/action/main.cpp
 +++ b/src/action/main.cpp
-@@ -7,6 +7,15 @@
+@@ -6,7 +6,17 @@
+ #include "sound/dsndSeam.h"            // xboxInitSound is reimplemented there now
  #include "engine/XboxSystem.h"
  #include "engine/XboxError.h"
++#include "game.h"
  #include "../common/engineLifecycle.h"
 +#include <atomic>
 +
@@ -18,16 +20,23 @@ index 4c22acf..842c3b6 100644
  
  // Set to silence NF_WARN (actionhelpers.h) - for the shadow tests
  int NfWarnMuted;
-@@ -28,6 +37,13 @@ void Game_Main(int argc, char **argv) {
+@@ -28,6 +38,20 @@ void Game_Main(int argc, char **argv) {
  
      while (!EngineLifecycle_StopRequested()) {
          mainloop();
 +        unsigned after = g_testDrivingAfterFrames.load(std::memory_order_acquire);
 +        if (after != 0 && g_framesSinceStart.fetch_add(1, std::memory_order_acq_rel) + 1 >= after) {
 +            g_testDrivingAfterFrames.store(0, std::memory_order_release);
-+            static uint32_t page[0x300];
-+            memset(page, 0, sizeof(page));
-+            psiLaunchDriving(page, sizeof(page));
++            void *page = NULL;
++            uint size = 0;
++            Boot_GetPTPData(&page, &size);
++            if (page == NULL) {
++                static uint32_t emptyPage[0x300];
++                memset(emptyPage, 0, sizeof(emptyPage));
++                page = emptyPage;
++                size = sizeof(emptyPage);
++            }
++            psiLaunchDriving(page, size);
 +        }
      }
  

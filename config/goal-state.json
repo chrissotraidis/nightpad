@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-27T13:38:00Z",
+  "last_updated_at": "2026-10-27T13:50:00Z",
   "active_goal": "G04",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -94,7 +94,7 @@
         "patches/0006-engine-stop-lifecycle.patch"
       ],
       "blockers": [],
-      "next_step": "Guard process-once driving services and isolate game-global reset required for a second driving start."
+      "next_step": "Audit driving game globals and mutable singleton state required for a second start after a completed session."
     },
     "G05": {
       "status": "pending",
@@ -588,6 +588,15 @@
       "evidence": [
         "docs/DECISIONS/0006-engine-stop-boundary.md"
       ]
+    },
+    {
+      "at": "2026-10-27T13:50:00Z",
+      "goal": "G04",
+      "summary": "Reverse trigger now uses Boot_GetPTPData; repeated driving start still fails, ruling out malformed page.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "patches/0008-action-driving-test-seam.patch"
+      ]
     }
   ],
   "completed_tests": [
@@ -694,6 +703,11 @@
     {
       "name": "SDL lifetime experiment",
       "result": "rejected: action repetition improved but driving join timed out; SDL_Quit restored",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "real handover page repeated transition",
+      "result": "FAIL: cycle 1 passes using Boot_GetPTPData; cycle 2 still faults after driving main",
       "target": "macOS 27 arm64"
     }
   ],

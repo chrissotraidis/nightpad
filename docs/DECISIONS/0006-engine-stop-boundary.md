@@ -81,3 +81,7 @@ repetition but caused the driving join to time out, so that experiment was
 reverted. The accepted boundary remains: repeated action cycles pass, a single
 bidirectional cycle passes, and a second driving start is not yet safe.
 
+The reverse trigger now takes its page from the game's own Boot_GetPTPData
+handover rather than a zero-filled buffer. The second driving start still faults
+after entering main, so this is not a malformed-page problem.
+

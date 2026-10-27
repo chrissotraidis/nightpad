@@ -60,6 +60,8 @@ simulator probe and remains blocked on physical-device access.
 - A repeated bidirectional soak passes its first cycle; the second driving
   start faults after entering main. One-time engine constructors are guarded,
   leaving mutable process-global engine state as the current reset boundary.
+- Reverse transitions now use the game's real Boot_GetPTPData page; the second
+  driving start still fails, so malformed launch data is ruled out.
 - Keeping SDL initialized for the process reduced action restart failures but
   regressed driving join completion, so SDL is again fully closed per session.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
