@@ -1387,3 +1387,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: both save paths are reachable without the picker. The picker path
   and interrupted engine writes remain as stated.
 
+## 2026-10-28T17:35:00Z — clean rebuild and package at the current commit
+
+- Goal: G13. Requirements: R26, R30 in progress.
+- Observed: `scripts/test_clean_shell_build.sh` configured and built both lanes
+  from empty build trees, and the link check still finds the action and driving
+  engine symbols with no loose SDL, FFmpeg or SPIRV dylibs.
+- Observed: `scripts/package_device_app.sh` then rebuilt the unsigned IPA at
+  `5b8583a`; the previous package predated the save-restore folder work.
+- Evidence: `scripts/test_clean_shell_build.sh` PASS;
+  `build/package/NightPadShell-unsigned.ipa` sha256
+  `cecc2e029820db350a804897e7abf5f1eb1c1f87d0985f909f952483449e3a29`;
+  `docs/DEVICE-HANDOFF.md` and `docs/CANDIDATE.md` updated.
+- Verdict: the build and package recipes reproduce from a clean shell tree.
+  Signing/install and a full clean engine/dependency rebuild remain.
+

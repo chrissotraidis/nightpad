@@ -61,8 +61,8 @@ ignored `evidence/device/<date>/`.
 installable until it is signed.
 
 The current unsigned package hash is
-`4ff2f289ce0c62a4d88d25efde1a6a03fbaf9bdbb9fa95578aab65f8e9e9695e` (commit
-`f46e4e9`). Regenerate it at freeze time; do not install a stale copy.
+`cecc2e029820db350a804897e7abf5f1eb1c1f87d0985f909f952483449e3a29` (commit
+`5b8583a`). Regenerate it at freeze time; do not install a stale copy.
 
 ## Not in this candidate
 
