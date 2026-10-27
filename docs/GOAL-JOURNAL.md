@@ -160,3 +160,23 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: attach the combined engine host beneath the shell and connect menu/pause
   state to the coordinator, then run the Files import flow.
 
+## 2026-10-27T14:37:38Z — engine archive linked into the shell
+
+- Goal: G05. Requirements: R04, R15 in progress.
+- Hypothesis: the shell target can carry both isolated engines as one archive
+  without losing the symbol isolation proven by the standalone combined link.
+- Observed: `build_combined_engine_link.sh` now emits
+  `libnightpad-engines.a`; the iPhoneOS `NightPadShell` app links it with static
+  SDL, FFmpeg and SPIRV-Cross. `NightPadEngineHost` prepares a private
+  `settings.ini` from the active game-data path, sets the launch callback, and
+  exposes action start/stop/join/close. The device app binary retains the action
+  bridge and driving start; Start Game remains disabled until the SDL window and
+  event loop are attached.
+- Evidence: `scripts/build_ios_shell.sh device` passes; `nm` shows the engine
+  bridge symbols in the signed-disabled app; the simulator shell still builds
+  without the device-only archive.
+- Verdict: link/staging boundary passes; live engine window and pause wiring are
+  still incomplete.
+- Next: create the SDL window under the shell overlay, run its event loop, and
+  connect real stopped/pause/input state before enabling Start Game.
+

@@ -29,11 +29,36 @@ target_compile_options(nightpad_core PRIVATE -fno-exceptions)
 
 add_executable(NightPadShell MACOSX_BUNDLE
   main.mm
-  NightPadShellViewController.mm)
+  NightPadShellViewController.mm
+  NightPadEngineHost.mm)
 target_compile_features(NightPadShell PRIVATE cxx_std_20)
 target_compile_options(NightPadShell PRIVATE -fobjc-arc)
 target_link_libraries(NightPadShell PRIVATE nightpad_core
   "-framework UIKit" "-framework Foundation" "-framework CoreGraphics" "-framework UniformTypeIdentifiers")
+set(NIGHTPAD_ENGINE_ARCHIVE "" CACHE FILEPATH "Combined engine archive from build_combined_engine_link.sh")
+if(NIGHTPAD_ENGINE_ARCHIVE)
+  target_compile_definitions(NightPadShell PRIVATE NIGHTPAD_HAS_ENGINE=1)
+  target_include_directories(NightPadShell PRIVATE "${NIGHTFIRE}/src")
+  target_link_options(NightPadShell PRIVATE -Wl,-no_fixup_chains
+    "-Wl,-force_load,${NIGHTPAD_ENGINE_ARCHIVE}"
+    "-Wl,-u,_NightPadDrivingEngineStart")
+  target_link_libraries(NightPadShell PRIVATE
+    "${NIGHTPAD_ENGINE_ARCHIVE}"
+    "${NIGHTPAD_SDL_LIB}"
+    "${NIGHTPAD_FFMPEG_ROOT}/lib/libavformat.a"
+    "${NIGHTPAD_FFMPEG_ROOT}/lib/libavcodec.a"
+    "${NIGHTPAD_FFMPEG_ROOT}/lib/libavutil.a"
+    "${NIGHTPAD_SPIRV_ROOT}/libspirv-cross-msl.a"
+    "${NIGHTPAD_SPIRV_ROOT}/libspirv-cross-glsl.a"
+    "${NIGHTPAD_SPIRV_ROOT}/libspirv-cross-core.a"
+    -lm
+    "-framework CoreMedia" "-framework CoreVideo" "-framework CoreAudio"
+    "-framework AudioToolbox" "-framework AVFoundation" "-framework CoreBluetooth"
+    "-framework CoreMotion" "-framework GameController" "-framework Metal"
+    "-framework OpenGLES" "-framework QuartzCore" "-weak_framework CoreHaptics")
+else()
+  target_compile_definitions(NightPadShell PRIVATE NIGHTPAD_HAS_ENGINE=0)
+endif()
 set_target_properties(NightPadShell PROPERTIES
   MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/NightPadShellInfo.plist.in"
   XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"

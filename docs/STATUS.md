@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-27 14:32 UTC
+Updated: 2026-10-27 14:37 UTC
 
 ## Outcome
 
@@ -90,6 +90,10 @@ simulator probe and remains blocked on physical-device access.
   and diagnostics share entry render and are reachable.
 - Simulator screenshots verify the home, menu and data-panel states. The app
   exposes its Documents directory to Files for prepared-folder import.
+- The iPhoneOS shell now links the combined engine archive, static SDL,
+  FFmpeg and SPIRV-Cross. Its device binary contains the action engine bridge
+  and driving start, and the shell has an engine-host wrapper that prepares a
+  private settings.ini from the active game-data path.
 
 ## Current uncertainty and blockers
 
@@ -106,8 +110,9 @@ simulator probe and remains blocked on physical-device access.
 
 ## Next step
 
-Attach the combined engine host beneath the shell, pass real runtime
-stopped/pause state into the menu and import gate, clear input while native UI
-is open, and exercise the Files import flow end to end. Keep the ten-cycle
-lifecycle and data-import tests as regression gates.
+Wire the linked engine host to Start Game: create the SDL window under the
+shell overlay, run its event loop, pass real stopped/pause state into the menu
+and import gate, clear input while native UI is open, and exercise the Files
+import flow end to end. Keep the ten-cycle lifecycle and data-import tests as
+regression gates.
 

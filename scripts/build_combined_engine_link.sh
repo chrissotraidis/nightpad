@@ -55,6 +55,10 @@ printf '_NightPadDrivingEngineThread\n_NightPadDrivingEngineSetLaunchRequestCall
 nmedit -s "$out/action-exports.txt" -o "$out/action-isolated.o" "$out/action-raw.o"
 nmedit -s "$out/driving-exports.txt" -o "$out/driving-isolated.o" "$out/driving-raw.o"
 
+# The app target links the two isolated engines and their shared host runtime
+# through one archive; SDL, FFmpeg and SPIRV-Cross stay separate static inputs.
+ar rcs "$out/libnightpad-engines.a" "$out/shared-runtime.o" "$out/action-isolated.o" "$out/driving-isolated.o"
+
 spirv="$build/_deps/spirv_cross-build/Release-iphoneos"
 sdl="$build/_deps/sdl3-build/Release-iphoneos/libSDL3.a"
 ffmpeg="$repo/build/deps/ffmpeg-ios-device/lib"
