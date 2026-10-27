@@ -550,11 +550,12 @@
       "status": "in_progress",
       "evidence": [
         "scripts/verify_patches.sh",
-        "scripts/package_device_app.sh"
+        "scripts/package_device_app.sh",
+        "scripts/test_clean_shell_build.sh"
       ],
       "decision_id": null,
       "notes": [
-        "Patch provenance and an unsigned device IPA recipe pass. Signing/install and a full clean-checkout build remain."
+        "Patch provenance, a clean shell build and an unsigned device IPA recipe pass. Signing/install and a full clean-checkout rebuild of engine and dependencies remain."
       ]
     },
     "R27": {

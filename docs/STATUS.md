@@ -247,6 +247,8 @@ simulator probe and remains blocked on physical-device access.
 - `scripts/package_device_app.sh` builds the Release app and writes a 3.6 MB
   unsigned IPA with no loose dylibs; signing and installation remain the device
   handoff step.
+- `scripts/test_clean_shell_build.sh` rebuilds both shell lanes from empty
+  CMake/Xcode trees and still passes the device link check.
 
 ## Current uncertainty and blockers
 

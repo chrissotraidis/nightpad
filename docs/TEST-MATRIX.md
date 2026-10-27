@@ -7,6 +7,7 @@
 | G00 | Code signing and physical-device availability | Host | blocked | No identity or device visible |
 | G13 | Patch series reproduces the pinned engine | Host | passed | `scripts/verify_patches.sh` applies every patch to a clean worktree at `8779cf79` and matches 53 files byte-for-byte; linker map files are excluded as build output |
 | G13 | Device package recipe | Host | passed for unsigned artifact | `scripts/package_device_app.sh` builds Release, packages `Payload/NightPadShell.app` as a 3.6 MB unsigned IPA, checks `Info.plist` and rejects loose dylibs; signing/install remains the handoff step |
+| G13 | Clean shell build from empty trees | Host | passed | `scripts/test_clean_shell_build.sh` removes the CMake/Xcode build trees and rebuilds simulator and device lanes; the link contract still passes |
 | G01 | ISO is unique and unchanged | Host | passed | Local source manifest |
 | G01 | Listing is contained and has required Xbox trees | Host | passed | Private ISO listing and guarded script |
 | G01 | Validated extraction and activation | Host | passed | 55 files, 2,062,585,542 bytes, source hash unchanged |

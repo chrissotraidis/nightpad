@@ -15,12 +15,22 @@ case "$config_name" in
     release) configuration=Release ;;
     *) echo "usage: $0 [simulator|device] [debug|release]" >&2; exit 2 ;;
 esac
+clean=0
+if [ $# -gt 2 ] && [ "$3" = "--clean" ]; then
+    clean=1
+fi
 case "$lane" in
     simulator) sdk=iphonesimulator ;;
     device) sdk=iphoneos ;;
-    *) echo "usage: $0 [simulator|device] [debug|release]" >&2; exit 2 ;;
+    *) echo "usage: $0 [simulator|device] [debug|release] [--clean]" >&2; exit 2 ;;
 esac
 build="$repo/build/ios-shell-$lane"
+if [ "$clean" -eq 1 ]; then
+    python3 - "$build" <<'PY'
+import shutil, sys
+shutil.rmtree(sys.argv[1], ignore_errors=True)
+PY
+fi
 
 engine_args=""
 if [ "$lane" = device ]; then

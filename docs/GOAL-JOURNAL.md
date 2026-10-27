@@ -917,3 +917,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: missing sub-level intros are safe, and NTSC is the correct region for
   this image. PAL media remains an external content gap.
 
+## 2026-10-28T08:40:00Z — clean shell build
+
+- Goal: G13. Requirement: R26 in progress.
+- Observed: `build_ios_shell.sh` accepts `--clean`, and
+  `test_clean_shell_build.sh` removes both build trees, then configures and
+  builds simulator and device from scratch.
+- Evidence: both lanes build and the link check passes with no loose engine
+  dylibs.
+- Verdict: the shell does not depend on incremental artefacts. The engine and
+  dependency layers still come from cached builds; a full clean-checkout
+  rebuild remains.
+
