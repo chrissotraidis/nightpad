@@ -76,3 +76,8 @@ engine's main. Engine static constructors are now guarded once per process, so
 the remaining failure is mutable process-global engine state that has not been
 reset between starts.
 
+Keeping SDL initialized while recreating only the window improved action
+repetition but caused the driving join to time out, so that experiment was
+reverted. The accepted boundary remains: repeated action cycles pass, a single
+bidirectional cycle passes, and a second driving start is not yet safe.
+

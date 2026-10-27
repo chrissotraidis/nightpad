@@ -12,17 +12,21 @@
 
 static HostHandle g_gameThread = nullptr;
 static const size_t kGameStackSize = 0x10000;
+static bool g_processServicesStarted = false;
 
 extern "C" int NightPadDrivingEngineStart(int argc, char **argv) {
     if (g_gameThread != nullptr) {
         return 0;
     }
     HostSetCommandLine(argc, argv);
-    KernelStart();
     Xbox_ApplyDiscPathSetting();
-    D3dSeam_Init();
+    if (!g_processServicesStarted) {
+        KernelStart();
+        D3dSeam_Init();
+        Ffmpeg_Require();
+        g_processServicesStarted = true;
+    }
     Inject_LaunchOptions();
-    Ffmpeg_Require();
     if (!HostWindow_Open(640, 480, "NightPad")) {
         return 0;
     }
