@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T14:35:00Z",
+  "last_updated_at": "2026-10-28T14:50:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -1067,6 +1067,16 @@
         "docs/CANDIDATE.md",
         "scripts/candidate_identity.sh",
         "scripts/package_device_app.sh"
+      ]
+    },
+    {
+      "at": "2026-10-28T14:50:00Z",
+      "goal": "G06",
+      "summary": "Checked the tablet touch defaults and live overlay on an iPad simulator; iPad sheet saving and drag editing remain open.",
+      "evidence": [
+        "docs/TEST-MATRIX.md",
+        "tests/native/test_touch_layout.cpp",
+        "evidence/ios-shell/ipad-touch-overlay.png"
       ]
     }
   ],

@@ -1210,3 +1210,21 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the draft manifest now points at the tree that is actually current.
   Final freeze still waits on device acceptance.
 
+## 2026-10-28T14:50:00Z — tablet layout checked on an iPad
+
+- Goal: G06. Requirement: R12 in progress.
+- Observed: on the iPad Pro 13-inch simulator the editor opens from the
+  three-dot menu - so the deferred menu presentation works with iPad's popover
+  menu as well - and shows the tablet defaults: shoulders across the top,
+  triggers top corners, face buttons clustered on the right.
+- Observed: the live overlay renders the same tablet layout, and every control
+  keeps its identifier, so the accessibility tree is unchanged between phone and
+  tablet apart from position.
+- Evidence: `evidence/ios-shell/ipad-touch-overlay.png`;
+  `scripts/test_touch_layout.sh` now also asserts that the device name selects
+  `layout-phone.txt` or `layout-tablet.txt`.
+- Verdict: tablet layout and overlay are verified visually. Saving from the
+  iPad's form sheet could not be driven through this harness - taps in its
+  navigation bar land on the sheet's dismiss region - so tablet persistence and
+  drag editing stay open.
+

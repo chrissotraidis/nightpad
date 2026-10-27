@@ -34,6 +34,9 @@ int main() {
     TouchLayout phone = TouchLayout::Defaults(TouchDeviceClass::Phone);
     TouchLayout tablet = TouchLayout::Defaults(TouchDeviceClass::Tablet);
     Check(phone.controls.size() == 13 && tablet.controls.size() == 13, "all controls present");
+    Check(std::string(TouchDeviceName(TouchDeviceClass::Phone)) == "phone" &&
+              std::string(TouchDeviceName(TouchDeviceClass::Tablet)) == "tablet",
+          "device names pick the layout file");
     Check(Has(phone, TouchControlId::Y) && Has(phone, TouchControlId::A) && Has(phone, TouchControlId::X) &&
               Has(phone, TouchControlId::B),
           "Xbox face controls");
