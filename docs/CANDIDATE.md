@@ -6,7 +6,23 @@ refreshed at freeze time.
 
 ## Identity
 
-Record these at freeze; do not trust a value copied from an older draft:
+Run `scripts/candidate_identity.sh --require-clean` at freeze. It prints the
+commit, tree state, engine pin, dependency-lock hash, patch-series hash, data
+identity, content hash and package hash, and refuses a dirty tree. Do not trust
+a value copied from an older draft.
+
+Draft snapshot from 2026-10-28 (illustrative; regenerate):
+
+```
+engine_pin=8779cf79ff623b83b53b9acf9c0b0cd6639b75ab
+patches=17
+patch_series_sha256=5331fea387832e7e7f6072a41e5926a864a4eee6e783d9aec90e6cdf43f2356c
+dependency_lock_sha256=f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e
+data_identity=data-8a0dc0e713f44e48b000
+content_sha256=8a0dc0e713f44e48b00054ca021fb027571e6f7877b8225cc5ae275af2435ebe
+```
+
+The fields a freeze must record:
 
 - Repository commit: `git rev-parse HEAD`
 - Engine pin: `8779cf79ff623b83b53b9acf9c0b0cd6639b75ab`

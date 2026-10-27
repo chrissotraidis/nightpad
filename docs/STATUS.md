@@ -261,6 +261,9 @@ simulator probe and remains blocked on physical-device access.
   and provisional numeric budgets before optimization: 15-minute action and
   driving runs, warm repeats, a 60-minute mixed session, cadence, frame-time,
   memory, thermal, latency and audio targets.
+- `scripts/candidate_identity.sh` prints the manifest identity fields (commit,
+  pin, lock and patch hashes, data/content/package hashes) and `--require-clean`
+  refuses to freeze an uncommitted tree.
 
 ## Current uncertainty and blockers
 

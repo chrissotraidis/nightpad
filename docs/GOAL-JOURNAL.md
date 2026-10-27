@@ -972,3 +972,16 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the target is fixed enough to judge optimizations later. Nothing is
   measured on hardware yet.
 
+## 2026-10-28T10:00:00Z — machine-generated candidate identity
+
+- Goal: G13. Requirement: R30 in progress.
+- Observed: `scripts/candidate_identity.sh` prints the commit, tree state,
+  engine pin and vendor HEAD, dependency-lock hash, patch count and series hash,
+  data identity and content hash, and the package hash when present. It fails if
+  the vendor HEAD drifts from the pin, and `--require-clean` refuses an
+  uncommitted tree.
+- Evidence: a draft run produced the values now quoted in `docs/CANDIDATE.md`;
+  they are labelled illustrative and must be regenerated at freeze.
+- Verdict: freezing the candidate is mechanical. Final values wait on the last
+  commit and device acceptance.
+

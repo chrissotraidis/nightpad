@@ -600,11 +600,12 @@
     "R30": {
       "status": "in_progress",
       "evidence": [
-        "docs/CANDIDATE.md"
+        "docs/CANDIDATE.md",
+        "scripts/candidate_identity.sh"
       ],
       "decision_id": null,
       "notes": [
-        "A draft candidate manifest covers identity fields, support matrix, evidence, known issues and the device next step. It is not acceptance; final hashes and device results remain."
+        "A draft manifest and a machine-generated identity script exist; --require-clean refuses an uncommitted freeze. Final values and device results remain."
       ]
     }
   },
