@@ -557,3 +557,19 @@ are ignored and may contain paths, hashes, captures or device identities.
   Mission-to-level grouping still needs the front-end's mission table or a run
   per mission.
 
+## 2026-10-27T21:45:00Z — mission wheel and level chains
+
+- Goal: G07. Requirement: R08 in progress.
+- Observed: the front-end mission wheel names twelve selectable missions and
+  their start levels: five begin in driving levels (Paris, SnowMobile, Alps,
+  Underwater, JungleA) and seven in action levels (CastleExterior, HendersonA,
+  TowerA, PowerStationA1, Tower2A, EvilBase, SpaceStationD).
+- Observed: `Mission.cpp` gives the level chains inside each mission (Castle 4,
+  Henderson 4, Tower 3, PowerStation 2, Cut levels 2, Tower 2 four entries,
+  Caves 1, EvilBase 3, SpaceStation 1). The driving bundles now match the five
+  driving missions by name.
+- Evidence: `docs/CAMPAIGN-INVENTORY.md`; source tables cited inline.
+- Verdict: the mission-to-start-level and driving-bundle mapping is established
+  from source. The six extra text headings, per-mission movies and objectives
+  remain to be verified in a run.
+

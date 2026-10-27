@@ -38,6 +38,49 @@ the dumped files stay in ignored `build/` output.
 | 16 | Countdown | Enter the underwater base covertly and pursue Drake. | `0x03000010` |
 | 17 | Equinox | Stop the takeover of the missile-defence platform. | `0x03000011` |
 
+The front-end mission wheel (`src/action/ui/ui_nightfire.cpp`) contains twelve
+selectable missions and names the level each one starts on. The text bank lists
+eighteen campaign headings; the six extra names (Training, Hidden Agenda,
+Streets of Tokyo, Atoll Infiltration, Island Caves, River Gauntlet) are not on
+the wheel and are most likely a tutorial, sub-sections or unused strings. That
+distinction is not yet verified.
+
+| Mission | Start level | Level id | Kind |
+| --- | --- | --- | --- |
+| Paris Prelude | `HT_Level_Driving_Paris` | 0x09000001 | driving |
+| The Exchange | `HT_Level_CastleExterior` | 0x07000005 | action |
+| Alpine Escape | `HT_Level_Driving_SnowMobile` | 0x09000005 | driving |
+| Enemies Vanquished | `HT_Level_Driving_Alps` | 0x09000006 | driving |
+| Double Cross | `HT_Level_HendersonA` | 0x07000001 | action |
+| Night Shift | `HT_Level_TowerA` | 0x07000009 | action |
+| Chain Reaction | `HT_Level_PowerStationA1` | 0x0700000c | action |
+| Phoenix Fire | `HT_Level_Tower2A` | 0x07000011 | action |
+| Deep Descent | `HT_Level_Driving_Underwater` | 0x09000002 | driving |
+| Island Infiltration | `HT_Level_Driving_JungleA` | 0x09000003 | driving |
+| Countdown | `HT_Level_EvilBase` | 0x07000014 | action |
+| Equinox | `HT_Level_SpaceStationD` | 0x0700001b | action |
+
+The driving bundles now line up with the wheel: `paris_mis01` for Paris
+Prelude, `snow1a_mis3` for Alpine Escape, `snow2a_mis4` for Enemies
+Vanquished, `uw_mis11` for Deep Descent, and `junglea/b/c_mis13` for Island
+Infiltration.
+
+### Level chains
+
+`src/action/game/sp/Mission.cpp` lists the levels in order inside each mission:
+
+| Chain | Levels |
+| --- | --- |
+| Castle | CastleExterior, CastleCourtyard, CastleIndoors1, CastleIndoors2 |
+| Henderson | HendersonA, HendersonB, HendersonC, HendersonD |
+| Tower | TowerA, TowerB, TowerC |
+| Power Station | PowerStationA1, PowerStationA2 |
+| Cut levels | Cut_Level1, Cut_Level2 |
+| Tower 2 | Tower2A, Tower2B, Tower2Elevator, Tower2C |
+| Caves | Cut_Level3 |
+| Evil Base | EvilBase, EvilSilo, EvilBaseC |
+| Space Station | SpaceStationD |
+
 ## Driving content present in the supplied data
 
 `driving/mis*.viv` holds seven mission bundles: `mis01`, `mis3`, `mis4`,
