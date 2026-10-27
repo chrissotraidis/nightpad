@@ -158,6 +158,9 @@ simulator probe and remains blocked on physical-device access.
   gate proves action to driving boots `paris_mis01` from the handed page, runs,
   and joins on stop; driving also gained a nonblocking poll, pause/resume with
   sound, a frame counter and its own pad/rumble bridges.
+- The engine's relative `saves` folder is now a symlink to NightPad's durable
+  Saves directory when the host prepares a launch state, so a new import or a
+  rebuilt launch state cannot strand campaign progress.
 
 ## Current uncertainty and blockers
 

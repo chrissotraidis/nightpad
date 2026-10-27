@@ -497,3 +497,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next: reproduce the early-stop crash deterministically, then fix cleanup to
   tolerate a half-initialised engine.
 
+## 2026-10-27T20:10:00Z — saves routed to the durable Saves directory
+
+- Goal: G05. Requirement: R11 in progress.
+- Hypothesis: the engine's relative `saves` folder can be a symlink into the
+  app's Saves directory, so imports and launch-state rebuilds cannot strand a
+  campaign.
+- Observed: added `EnsureSavesLink` and call it when the engine host prepares
+  a launch state. Writes through the link land in Saves; an existing real
+  folder or a link to another target is reported instead of replaced.
+- Evidence: `scripts/test_saves_link.sh` passes; both shell lanes build.
+- Verdict: save redirection is wired and tested at the filesystem boundary; a
+  real in-game save/relaunch is still required before R11 can pass.
+- Next: run a real save and relaunch once device gameplay is available.
+

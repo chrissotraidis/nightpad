@@ -146,7 +146,9 @@
         "scripts/test_diagnostics.sh",
         "apple/ios/NightPadAboutViewController.h",
         "apple/ios/NightPadAboutViewController.mm",
-        "evidence/ios-shell/data-ready-real.png"
+        "evidence/ios-shell/data-ready-real.png",
+        "apple/shared/NightPadSaves.cpp",
+        "scripts/test_saves_link.sh"
       ],
       "blockers": [],
       "next_step": "Run the production Files picker with a prepared retail package on device, then verify SDL/overlay composition and pause/resume."
@@ -342,10 +344,17 @@
       "notes": []
     },
     "R11": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "apple/shared/NightPadSaves.h",
+        "apple/shared/NightPadSaves.cpp",
+        "tests/native/test_saves_link.cpp",
+        "scripts/test_saves_link.sh"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "The engine writes to a relative saves folder; the host now links it to the durable Saves directory. File-level write-through and protection of existing saves pass; a real in-game save and relaunch remain."
+      ]
     },
     "R12": {
       "status": "in_progress",

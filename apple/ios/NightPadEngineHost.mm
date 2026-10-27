@@ -1,6 +1,8 @@
 #import "NightPadEngineHost.h"
 
 #include "../shared/NightPadEngineBridge.h"
+#include "../shared/NightPadPaths.h"
+#include "../shared/NightPadSaves.h"
 
 #include <string>
 #include <unistd.h>
@@ -62,6 +64,15 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
     _launchState = [launchState copy];
     if (chdir(launchState.fileSystemRepresentation) != 0) {
         if (error != nullptr) *error = @"Could not enter the launch-state directory.";
+        return NO;
+    }
+    // The game writes saves to a relative "saves" folder. Point that at the
+    // app's durable Saves directory so a new import or launch-state reset can
+    // never strand a campaign.
+    const nightpad::Paths paths = nightpad::Paths::ForContainer(NSHomeDirectory().UTF8String);
+    std::string linkError;
+    if (!nightpad::EnsureSavesLink(launchState.fileSystemRepresentation, paths.saves, &linkError)) {
+        if (error != nullptr) *error = [NSString stringWithUTF8String:linkError.c_str()];
         return NO;
     }
     return YES;
