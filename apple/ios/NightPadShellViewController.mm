@@ -687,12 +687,14 @@ static uint64_t ShellResidentBytes(void) {
 - (void)closePanels {
     _dataPanel.hidden = YES;
     _pausePanel.hidden = YES;
+    _status.hidden = _gameplayMode;
 }
 
 - (void)openDataPanel {
     [self beginNativeUI];
     [self closePanels];
     _dataPanel.hidden = NO;
+    _status.hidden = YES;
     [self.view bringSubviewToFront:_dataPanel];
 }
 

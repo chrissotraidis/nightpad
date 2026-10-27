@@ -1539,3 +1539,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the panel is self-contained. The longer identity wraps to two lines,
   which the card has room for.
 
+## 2026-10-28T20:55:00Z — no duplicate status behind the panel
+
+- Goal: G05. Requirement: R04 in progress.
+- Observed: with the panel's own state line in place, the home status label
+  could still be seen through the slightly translucent card, reading "Game data
+  ready" behind the import button.
+- Observed: `openDataPanel` hides the home label and `closePanels` restores it
+  according to the gameplay mode, so only one status line is visible at a time.
+- Evidence: iPhone 17 simulator, iOS 26.5, `--open-data`; the refreshed
+  `evidence/ios-shell/panel-status.png` shows a clean card.
+- Verdict: the panel reads as one surface. Nothing else changes.
+
