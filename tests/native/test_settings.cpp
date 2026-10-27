@@ -82,6 +82,16 @@ int main() {
     Check(!AppSettings{}.Load(home / "missing.txt", &error), "missing file reported");
     Check(error == "The settings file is missing.", "missing file has a readable reason");
 
+    // A file written before the display and assist keys existed must keep its
+    // known values and take defaults for the rest.
+    std::ofstream(path, std::ios::trunc) << "version=1\nrumble=0\n";
+    AppSettings older;
+    Check(older.Load(path, &error), "older settings file loads");
+    Check(!older.rumble && !older.touchControlsAlwaysVisible, "older known values kept");
+    Check(older.renderScale == 1 && older.antiAliasing && !older.widescreen && older.fov == 60 &&
+              !older.assistImmortal && !older.assistUnlimitedAmmo,
+          "newer keys default when absent");
+
     fs::remove_all(home, ec);
     std::cout << (failures == 0 ? "settings: PASS" : "settings: FAIL") << "\n";
     return failures == 0 ? 0 : 1;

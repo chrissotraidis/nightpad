@@ -1068,3 +1068,13 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the bot option surface is source-complete. Behaviour at six bots and
   team composition still need matches.
 
+## 2026-10-28T12:30:00Z — older settings files keep working
+
+- Goal: G06. Requirement: R12 in progress.
+- Observed: the settings file gained render, FOV and assist keys over time. A
+  version-1 file containing only the older keys now has a test proving its known
+  values survive and the newer keys take their defaults.
+- Evidence: `scripts/test_settings.sh` passes with the backward-compatibility
+  case.
+- Verdict: adding settings keys does not invalidate an existing profile.
+

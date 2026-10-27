@@ -406,7 +406,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Phone/tablet defaults, clamping, editor persistence, in-game overlay, five-finger mapping and versioned app settings pass their core/simulator checks. Physical touch ergonomics remain."
+        "Touch layout, editor, overlay, simultaneous mapping, app settings (including older files without newer keys) and accessibility pass their checks. Physical ergonomics remain."
       ]
     },
     "R13": {
