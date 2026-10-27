@@ -683,3 +683,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: online play is deferred with a concrete reason; local multiplayer
   remains the supported scope.
 
+## 2026-10-28T02:00:00Z — diagnostics carry session history
+
+- Goal: G12. Requirement: R25 in progress.
+- Observed: the report now lists render size, display options, assist state and
+  the last twenty shell events: launch, import, engine start/stop, handoff,
+  native pause/resume and errors. Event text goes through the same home-path
+  and credential redaction, which was tightened to catch paths that do not
+  start the line.
+- Evidence: `scripts/test_diagnostics.sh` covers the new fields, the twenty
+  event cap and redaction; a simulator report written from the app shows
+  `render_size=1280x960`, display/assist state and a launch event.
+- Verdict: device reports will be materially more useful. Diagnostic versus
+  performance build separation and deliberate device collection remain.
+

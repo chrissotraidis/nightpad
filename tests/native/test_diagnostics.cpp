@@ -31,6 +31,12 @@ int main() {
     context.paths = paths;
     context.threadCount = 9;
     context.residentBytes = 123456789;
+    context.renderSize = "1280x960";
+    context.displayOptions = "aa=on widescreen=off";
+    context.assists = "immortality=off unlimited_ammo=off";
+    for (int i = 0; i < 25; ++i)
+        context.sessionEvents.push_back("event-" + std::to_string(i) + " token=hidden");
+    context.sessionEvents.push_back("opened /Users/alice/Documents/save.dat");
 
     const std::string report = BuildDiagnosticReport(context);
     Check(report.find("data_state=Ready") != std::string::npos, "data state");
@@ -43,6 +49,14 @@ int main() {
           "credential values redacted");
     Check(report.find("<redacted>") != std::string::npos, "redaction marker");
     Check(report.find("Nothing is uploaded") != std::string::npos, "review contract stated");
+    Check(report.find("render_size=1280x960") != std::string::npos, "render size");
+    Check(report.find("display_options=aa=on") != std::string::npos, "display options");
+    Check(report.find("assists=immortality=off") != std::string::npos, "assist state");
+    Check(report.find("session_event=event-0 ") == std::string::npos, "old events dropped");
+    Check(report.find("session_event=event-6 ") != std::string::npos, "recent events kept");
+    Check(report.find("session_event=opened ~/Documents/save.dat") != std::string::npos,
+          "event paths redacted");
+    Check(report.find("hidden") == std::string::npos, "event credentials redacted");
 
     const std::string container = RedactDiagnosticText(
         "/var/mobile/Containers/Data/Application/ABC-123/Documents/report.txt", home);

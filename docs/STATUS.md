@@ -189,6 +189,10 @@ simulator probe and remains blocked on physical-device access.
   no networking layer and the front end exposes only local multiplayer. The
   original split-screen, bots and port rules remain the supported multiplayer
   scope; R23 is not applicable.
+- Diagnostics now include the active render size, display options, assist state
+  and the last twenty shell events (launch, import, engine start/stop, handoff,
+  native pause/resume, errors). Paths and credential-shaped values are still
+  redacted, and the report stays local until shared.
 
 ## Current uncertainty and blockers
 

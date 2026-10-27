@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace nightpad {
 
@@ -16,6 +17,11 @@ struct DiagnosticContext {
     std::string dataIdentity;
     std::string engineState;
     std::string lastError;
+    // Recent host-side events, oldest first. The report keeps the last twenty.
+    std::vector<std::string> sessionEvents;
+    std::string renderSize;
+    std::string displayOptions;
+    std::string assists;
     std::filesystem::path home;
     Paths paths;
     uint32_t threadCount = 0;

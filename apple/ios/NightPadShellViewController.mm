@@ -79,6 +79,7 @@ using nightpad::Paths;
     UIButton *_discardButton;
     NightPadTouchControlsView *_touchControls;
     NightPadGameInput *_gameInput;
+    NSMutableArray<NSString *> *_sessionLog;
     NSString *_lastError;
 }
 
@@ -183,6 +184,7 @@ static uint64_t ShellResidentBytes(void) {
         _pendingGameplayPreview = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-control-help"])
         _pendingControlsHelp = YES;
+    [self logSessionEvent:@"app launch"];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -750,6 +752,7 @@ static uint64_t ShellResidentBytes(void) {
         _uiInputSuspended = YES;
     }
     [_gameInput setSuspended:YES];
+    [self logSessionEvent:@"native UI pause"];
 }
 
 - (void)endNativeUI {
@@ -763,6 +766,7 @@ static uint64_t ShellResidentBytes(void) {
         _uiPausedEngine = NO;
     }
     [_gameInput setSuspended:NO];
+    [self logSessionEvent:@"native UI resume"];
 }
 
 - (void)startGame {
@@ -796,6 +800,7 @@ static uint64_t ShellResidentBytes(void) {
     [self endNativeUI];
     _stopWhenBooted = NO;
     _engineRunning = YES;
+    [self logSessionEvent:@"engine start action"];
     _enginePaused = NO;
     _gameplayMode = YES;
     [self installTouchControls];
@@ -822,6 +827,7 @@ static uint64_t ShellResidentBytes(void) {
     if ([_engineHost pollWindow])
         return;
     if ([_engineHost handoffPending]) {
+        [self logSessionEvent:@"handoff requested"];
         [self switchEngine];
         return;
     }
@@ -861,6 +867,9 @@ static uint64_t ShellResidentBytes(void) {
             strongSelf->_uiPausedEngine = NO;
             strongSelf->_uiInputSuspended = NO;
             [strongSelf->_gameInput engineChanged];
+            [strongSelf logSessionEvent:(strongSelf->_engineHost.activeEngine == NightPadEngineKindDriving
+                                             ? @"engine switched to driving"
+                                             : @"engine switched to action")];
             if (strongSelf->_engineHost.activeEngine == NightPadEngineKindAction) {
                 [strongSelf->_engineHost setImmortal:strongSelf->_settings.assistImmortal];
                 [strongSelf->_engineHost setUnlimitedAmmo:strongSelf->_settings.assistUnlimitedAmmo];
@@ -891,6 +900,7 @@ static uint64_t ShellResidentBytes(void) {
     }
     _stopWhenBooted = NO;
     _forceStopNow = NO;
+    [self logSessionEvent:@"engine stop requested"];
     _engineRunning = NO;
     [self endNativeUI];
     [self removeTouchControls];
@@ -906,6 +916,7 @@ static uint64_t ShellResidentBytes(void) {
             NightPadShellViewController *strongSelf = weakSelf;
             if (strongSelf == nil) return;
             [strongSelf->_engineHost closeWindow];
+            [strongSelf logSessionEvent:(joined ? @"engine stopped" : @"engine stop timed out")];
             strongSelf->_gameplayMode = NO;
             [strongSelf updateGameplaySurface];
             [strongSelf refreshDataState];
@@ -1011,6 +1022,7 @@ static uint64_t ShellResidentBytes(void) {
             [strongSelf refreshDataState];
             strongSelf->_discardButton.enabled = strongSelf->_importer->previousDataRetained();
             [strongSelf showInfo:@"Game data imported" detail:@"The previous saves remain untouched."];
+            [strongSelf logSessionEvent:@"game data imported"];
         });
     });
 }
@@ -1059,6 +1071,16 @@ static uint64_t ShellResidentBytes(void) {
         : (_enginePaused ? "paused"
         : (_engineHost.activeEngine == NightPadEngineKindDriving ? "running (driving)" : "running (action)"));
     context.lastError = _lastError.UTF8String ?: "";
+    for (NSString *event in _sessionLog)
+        context.sessionEvents.push_back(event.UTF8String ?: "");
+    context.renderSize = [[NSString stringWithFormat:@"%dx%d", 640 * _settings.renderScale,
+                                    480 * _settings.renderScale] UTF8String];
+    context.displayOptions = [[NSString stringWithFormat:@"aa=%@ widescreen=%@",
+                                        _settings.antiAliasing ? @"on" : @"off",
+                                        _settings.widescreen ? @"on" : @"off"] UTF8String];
+    context.assists = [[NSString stringWithFormat:@"immortality=%@ unlimited_ammo=%@",
+                                                 _settings.assistImmortal ? @"on" : @"off",
+                                                 _settings.assistUnlimitedAmmo ? @"on" : @"off"] UTF8String];
     context.home = NSHomeDirectory().UTF8String ?: "";
     context.paths = _paths;
     context.threadCount = ShellThreadCount();
@@ -1088,12 +1110,23 @@ static uint64_t ShellResidentBytes(void) {
 
 - (void)showError:(NSString *)message {
     _lastError = [message copy];
+    [self logSessionEvent:@"error shown"];
     dispatch_async(dispatch_get_main_queue(), ^{
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"NightPad"
             message:message preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
     });
+}
+
+- (void)logSessionEvent:(NSString *)event {
+    if (_sessionLog == nil)
+        _sessionLog = [NSMutableArray array];
+    NSDateFormatter *formatter = [NSDateFormatter new];
+    formatter.dateFormat = @"HH:mm:ss";
+    [_sessionLog addObject:[NSString stringWithFormat:@"%@ %@", [formatter stringFromDate:NSDate.date], event]];
+    while (_sessionLog.count > 40)
+        [_sessionLog removeObjectAtIndex:0];
 }
 
 - (void)showInfo:(NSString *)title detail:(NSString *)detail {

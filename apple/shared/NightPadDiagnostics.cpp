@@ -11,11 +11,10 @@ namespace {
 
 std::string RedactLine(std::string line, const std::string &home) {
     if (!home.empty()) {
-        const std::string withSlash = home + "/";
-        if (line.compare(0, withSlash.size(), withSlash) == 0)
-            line = "~/" + line.substr(withSlash.size());
-        else if (line == home)
-            line = "~";
+        // The home path can appear after a key or inside an event line, not
+        // only at the start.
+        for (size_t at = line.find(home); at != std::string::npos; at = line.find(home, at + 1))
+            line.replace(at, home.size(), "~");
     }
     const std::string container = "/var/mobile/Containers/Data/Application/";
     const size_t containerAt = line.find(container);
@@ -77,6 +76,12 @@ std::string BuildDiagnosticReport(const DiagnosticContext &context) {
     out << "data_state=" << context.dataState << "\n";
     out << "data_identity=" << context.dataIdentity << "\n";
     out << "engine_state=" << context.engineState << "\n";
+    if (!context.renderSize.empty())
+        out << "render_size=" << context.renderSize << "\n";
+    if (!context.displayOptions.empty())
+        out << "display_options=" << context.displayOptions << "\n";
+    if (!context.assists.empty())
+        out << "assists=" << context.assists << "\n";
     out << "thread_count=" << context.threadCount << "\n";
     out << "resident_bytes=" << context.residentBytes << "\n";
     out << "application_support=" << SafePath(context.paths.appSupport, context.home) << "\n";
@@ -88,6 +93,9 @@ std::string BuildDiagnosticReport(const DiagnosticContext &context) {
     out << "documents=" << SafePath(context.paths.documents, context.home) << "\n";
     if (!context.lastError.empty())
         out << "last_error=" << context.lastError << "\n";
+    const size_t firstEvent = context.sessionEvents.size() > 20 ? context.sessionEvents.size() - 20 : 0;
+    for (size_t i = firstEvent; i < context.sessionEvents.size(); ++i)
+        out << "session_event=" << context.sessionEvents[i] << "\n";
     out << "\nThis draft contains app paths and runtime state only. Saves, game data, screenshots, input captures and\n"
            "credentials are not included automatically. Review before sharing. Nothing is uploaded by NightPad.\n";
     return RedactDiagnosticText(out.str(), context.home);
