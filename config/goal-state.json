@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T23:30:00Z",
+  "last_updated_at": "2026-10-28T23:45:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -384,16 +384,32 @@
       ]
     },
     "R09": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/TEST-MATRIX.md",
+        "scripts/verify_engine.sh",
+        "docs/DRIVING-CONTROLS.md"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Campaign order, level parts, objectives and media are inventoried; the action and driving engines both boot missions on the host and the action-driving-action transition passes.",
+        "A full first-play route from a fresh codename through the ending, with saves and relaunch, needs a device."
+      ]
     },
     "R10": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "scripts/test_action_pause.sh",
+        "scripts/test_driving_pause.sh",
+        "scripts/verify_engine.sh",
+        "docs/TEST-MATRIX.md"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Host gates show action SFX and streams paused and resumed with frames held, and the driving sound manager paused and resumed; movies play in the handoff gate.",
+        "Device interruptions (calls, route changes, audio focus) and sustained synchronization under load are unverified."
+      ]
     },
     "R11": {
       "status": "in_progress",
@@ -1411,6 +1427,17 @@
       "summary": "Refreshed STATUS: current outcome, timestamp and next-step list, including the driving-objective attribution as the open source item.",
       "evidence": [
         "docs/STATUS.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T23:45:00Z",
+      "goal": "G07",
+      "summary": "Filled the empty R09 and R10 records with the existing campaign inventory and host audio-pause evidence; both remain in progress pending device runs.",
+      "evidence": [
+        "config/goal-state.json",
+        "docs/TEST-MATRIX.md",
+        "scripts/test_action_pause.sh",
+        "scripts/test_driving_pause.sh"
       ]
     }
   ],
