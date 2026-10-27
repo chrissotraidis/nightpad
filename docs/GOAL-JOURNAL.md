@@ -39,3 +39,16 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next step: compare the repeated driving run; audit both engines' entry-point,
   global and cleanup ownership for G04.
 
+## 2026-10-27T11:40:00Z — launch seam and static iOS dependencies
+
+- Goal: G04.
+- Requirements: R05, R07 in progress.
+- Hypothesis: each engine can retain its globals in one isolated object, accept
+  the original launch page in-process, and eliminate loose iOS dependencies.
+- Observed: the 3,072-byte bridge test passes on a real pthread; both complete
+  iPhoneOS engines build; static SDL and static FFmpeg link into the combined
+  arm64 executable; only the four intended bridge symbols are exported.
+- Verdict: component passed; lifecycle coordinator and transition runs remain.
+- Next step: add start/stop ownership, join the game thread and quiesce audio,
+  GPU and worker threads before starting the target engine.
+

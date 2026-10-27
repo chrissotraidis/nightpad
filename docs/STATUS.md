@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-27 11:05 UTC
+Updated: 2026-10-27 11:40 UTC
 
 ## Outcome
 
@@ -64,7 +64,7 @@ simulator probe and remains blocked on physical-device access.
 
 ## Next step
 
-Compare the second driving baseline, freeze its identity, then audit the
-action/driving global and entry-point ownership boundaries for G04 while the
-physical-device blocker stays visible.
+Implement the engine start/stop coordinator and prove game-thread join plus
+audio/GPU teardown before exercising recorded transition routes. The physical
+device blocker remains separate and visible.
 
