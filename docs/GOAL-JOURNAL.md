@@ -63,3 +63,36 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Next experiment: one shared allocator/support runtime for both engines, SDL
   and SPIRV-Cross, then repeat start/stop/join with thread and heap checks.
 
+## 2026-10-27T13:49:54Z — repeated launches and mixed transitions
+
+- Goal: G04. Requirements: R05, R06, R07.
+- Hypothesis: the second driving boot failed because the process-static heap and
+  containers outlived their session; a narrow per-session reset plus in-window
+  thread stacks should make repeated engine starts safe.
+- Observed: the heap guard was re-arming only the first time, while
+  `Bond_CleanUp` shut the allocator down. Re-arming the heap exposed stale file
+  workers, file lists, EAGL pools, C++ locale facets, input lookups, Simulation
+  maps, reference-counter trees, audio/voice/grid/targeting/AI/action-queue
+  state, `PVehicle`'s name cache and the physics extension id. Each is now
+  explicitly rebuilt after the new heap exists. Re-running the whole constructor
+  table was rejected after it faulted in `AIVehicle::Construct` /
+  `UMemory::FastAlloc`.
+- Thread stacks were also exhausted in the general window by the third launch.
+  They now come from the image's in-window arena, with a fallback to smaller
+  reservations.
+- Evidence: `scripts/test_driving_lifecycle.sh` passes three cycles; every join
+  completes and the settled OS thread count is nine. `scripts/test_engine_transition.sh`
+  passes three mixed cycles, six launch requests, both directions, every join,
+  and a settled count of eight to nine. `scripts/test_action_lifecycle.sh`
+  passes three cycles.
+- Ten action-only cycles still fail after cycle six. Resident memory grows about
+  105 MB per session, dominated by `IOAccelerator (graphics)` and owned graphics
+  mappings. Destroying the device at the next start, before the window closes,
+  reusing the device, waiting for GPU idle, and reusing the window were tried;
+  none removed the growth. The persistent-window variant also leaked threads.
+- Verdict: game-state/thread reset boundary passes; G04 remains in progress on
+  the Metal/SDL session-resource leak and on physical-device evidence.
+- Next experiment: profile the action engine's per-session GPU allocations
+  (window claim, swapchain, textures, pipelines) and find the resource that the
+  driver retains. Keep the ten-cycle soak as the gate.
+

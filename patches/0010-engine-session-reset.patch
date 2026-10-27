@@ -1,0 +1,628 @@
+--- a/src/driving/audio/Mix.cpp
++++ b/src/driving/audio/Mix.cpp
+@@ -274,6 +274,14 @@
+     head = MissionList::BuyHead();
+     size = 0;
+     return this;
++}
++
++void Audio_ResetSession() {
++    Mixes.Construct();
++    for (int i = 0; i < AFX::kModeCount; i++)
++        FxMixes[i] = NULL;
++    FxReady = false;
++    FxBus = -1;
+ }
+ 
+ // FUNC_AT(0x0011cc80)
+--- a/src/driving/audio/Mix.h
++++ b/src/driving/audio/Mix.h
+@@ -190,5 +190,7 @@
+ static_assert(sizeof(AListener) == 0x78, "AListener is 0x78 bytes");
+ 
+ extern MixList Mixes;   // Mix.cpp
++// Host-only: rebuilds the mix list's head after the game heap has been replaced for a relaunch in this process.
++void Audio_ResetSession();
+ 
+ #endif // DRIVING_AUDIO_MIX_H_
+--- a/src/driving/audio/Voice.cpp
++++ b/src/driving/audio/Voice.cpp
+@@ -5,6 +5,7 @@
+ #include "Sound.h"                      // kSoundViewShared
+ #include "SoundManager.h"               // fgActiveViews
+ #include "Stream.h"                     // AVoiceMapMax
++#include "../game/MissionManager.h"     // MissionList::BuyHead
+ 
+ #include <bit>
+ 
+@@ -34,6 +35,13 @@
+ AVoiceMap VoiceInfoMap;
+ // XBE_GLOBAL(0x00243aa8, 0xc)
+ AVoiceViewList ActiveViews;
++
++void Voice_ResetSession() {
++    VoiceInfoMap.Construct();
++    ActiveViews.head = reinterpret_cast<MissionList *>(&ActiveViews)->BuyHead();
++    ActiveViews.size = 0;
++    LastPlayTick = 0;
++}
+ 
+ namespace {
+ 
+--- a/src/driving/audio/Voice.h
++++ b/src/driving/audio/Voice.h
+@@ -166,5 +166,7 @@
+ // Voice.cpp
+ extern AVoiceMap VoiceInfoMap;
+ extern AVoiceViewList ActiveViews;
++// Host-only: rebuilds the active-view list and debug map after the game heap has been replaced.
++void Voice_ResetSession();
+ 
+ #endif // DRIVING_AUDIO_VOICE_H_
+--- a/src/driving/data/Carp.cpp
++++ b/src/driving/data/Carp.cpp
+@@ -464,6 +464,12 @@
+         Resolvers.InsertUnique(&result, &pair);
+     }
+     ResolversReady = true;
++}
++
++void CARP_ResetSession() {
++    CARP::Resolvers.Construct();
++    ResolversReady = false;
++    CarpVerbose = false;
+ }
+ 
+ // FUNC_AT(0x00118f90)
+--- a/src/driving/data/Carp.h
++++ b/src/driving/data/Carp.h
+@@ -365,5 +365,7 @@
+ extern bool CarpVerbose;    // report references the symbol table cannot resolve
+ extern bool ResolversReady;                 // InitResolvers has run
+ extern char CountedStringBuffer[0x100];     // CountedString::CString's buffer
++// Host-only: rebuilds the tag-to-resolver map after the game heap has been replaced for a relaunch.
++void CARP_ResetSession();
+ 
+ #endif // DRIVING_DATA_CARP_H_
+--- a/src/driving/data/StdStreams.cpp
++++ b/src/driving/data/StdStreams.cpp
+@@ -60,6 +60,14 @@
+ static const uint32_t ZeroStreamPos[2] = { 0, 0 };
+ // XBE_GLOBAL(0x001e22c8, 4)
+ static const int32_t InitialMbState = 0;
++
++void ResetStreamSession() {
++    CtypeCache = NULL;
++    NumGetCache = NULL;
++    NumPutCache = NULL;
++    NumpunctCache = NULL;
++    GameStd::ResetLibrarySession();
++}
+ 
+ // istrstream's vbtable: the basic_ios at +0x5c (on 32-bit)
+ // XBE_GLOBAL(0x0018bdfc, 8) readonly
+--- a/src/driving/data/StdStreams.h
++++ b/src/driving/data/StdStreams.h
+@@ -561,4 +561,7 @@
+ 
+ extern const int IStrStreamVbtable[2];   // istrstream's vbtable (StdStreams.cpp)
+ 
++// Host-only: clears the facet caches and the library's session state after the game heap has been replaced.
++void ResetStreamSession();
++
+ #endif // DRIVING_DATA_STDSTREAMS_H_
+--- a/src/driving/eagl/Loader.cpp
++++ b/src/driving/eagl/Loader.cpp
+@@ -290,6 +290,13 @@
+     DynamicLoader::RegisterVar("EAGL::ViewPort::gpModelViewProjectionMatrix", ModelViewProjectionMatrix);
+ }
+ 
++void EAGL_ResetSession() {
++    LoadedTables = NULL;
++    GlobalPool.Construct();
++    TheConstructorPool.Construct();
++    reinterpret_cast<ConstructorPool *>(&TheRuntimeAllocPool)->Construct();
++}
++
+ // ---- a loaded object's symbol table
+ 
+ namespace {
+--- a/src/driving/eagl/Loader.h
++++ b/src/driving/eagl/Loader.h
+@@ -125,5 +125,8 @@
+ extern uint32_t DefaultPoolSize;     // a new SymbolPool's table size
+ extern HashTable *LoadedTables;      // the loaded objects' symbol tables, a list
+ void EAGL_SymbolInit();
++// Host-only: forgets the previous session's loaded objects and rebuilds the pools the static initialisers made,
++// after the game heap has been brought back up for a relaunch in this process.
++void EAGL_ResetSession();
+ 
+ #endif // DRIVING_EAGL_LOADER_H_
+--- a/src/driving/engine/ActionQueue.cpp
++++ b/src/driving/engine/ActionQueue.cpp
+@@ -161,6 +161,14 @@
+     return &gActionQueueManager;
+ }
+ 
++void ActionQueueManager_ResetSession() {
++    gActionQueueManager.queuesAllocator = 0;
++    gActionQueueManager.queuesFirst = nullptr;
++    gActionQueueManager.queuesLast = nullptr;
++    gActionQueueManager.queuesEnd = nullptr;
++    gActionQueueManagerMade = 0;
++}
++
+ // FUNC_AT(0x0004f830)
+ void ActionQueueManager::PushBack(ActionQueue *const *queue) {
+     uint32_t size = queuesFirst != nullptr ? uint32_t(queuesLast - queuesFirst) : 0;
+--- a/src/driving/engine/ActionQueue.hpp
++++ b/src/driving/engine/ActionQueue.hpp
+@@ -203,4 +203,6 @@
+ 
+ // GetActionQueueManager's static (ActionQueue.cpp).
+ extern ActionQueueManager gActionQueueManager;
++// Host-only: empties the manager after the game heap has been replaced for a relaunch in this process.
++void ActionQueueManager_ResetSession();
+ extern uint32_t gActionQueueManagerMade;   // its construction guard (bit 0)
+--- a/src/driving/engine/GameLoop.cpp
++++ b/src/driving/engine/GameLoop.cpp
+@@ -17,6 +17,8 @@
+ #include "../game/AIPedestrian.h"
+ #include "../game/AIRoadSpawn.h"
+ #include "../game/AIVehicleController.h"
++#include "../world/Targeting.h"
++#include "ActionQueue.hpp"
+ #include "../game/MissionManager.h"
+ #include "PlayMPC.hpp"
+ #include "SimRandom.h"
+@@ -37,6 +39,7 @@
+ #include "../data/AttributeSet.h"
+ #include "../data/RCARPFile.h"
+ #include "../data/StdStreams.h"
++#include "URefCounter.h"
+ #include "../data/Tuning.h"
+ #include "../eagl/EaglFont.h"             // EaglFontDriver
+ #include "../eagl/Realgraph.h"
+@@ -59,10 +62,19 @@
+ #include "../world/RoadNetwork.h"
+ #include "../world/TriggerManager.h"
+ #include "../world/World.h"
++#include "../eagl/Loader.h"
++#include "../physics/PhysicsNamespace.h"
++#include "../data/Carp.h"
++#include "../game/DebugAudio.h"
++#include "../world/Grid.h"
++#include "../game/AIVehicleController.h"
++#include "../data/StdStreams.h"
+ #include "../audio/Bank.h"
+ #include "../audio/Fader.h"
+ #include "../audio/SoundManager.h"
+ #include "../audio/Stream.h"
++#include "../audio/Mix.h"
++#include "../audio/Voice.h"
+ #include "../../common/launchInfo.h"
+ #include "../../common/engineLifecycle.h"
+ #include "../../helpers.h"
+@@ -341,6 +353,26 @@
+         UMemory::AddFastBlocks(0x10);
+         HeapConfigured = true;
+     }
++    // Bond_CleanUp takes the heap down. A launch in this host process is a fresh game boot, so the allocator has to
++    // come back up even though the device and video-mode setup above is still valid.
++    if (ClassMemory[0] == NULL) {
++        UMemory::Init(0x2400000, 0, NULL);
++        UMemory::AddFastBlocks(0x10);
++        EAGL_ResetSession();
++        ResetStreamSession();
++        InputConfig_ResetSession();
++        fgSimulation.Construct();
++        RefCounters_ResetSession();
++        Audio_ResetSession();
++        PhysicsNamespace_ResetSession();
++        CARP_ResetSession();
++        DebugAudio_ResetSession();
++        Grid_ResetSession();
++        AIVehicleController_ResetSession();
++        ActionQueueManager_ResetSession();
++        Voice_ResetSession();
++        Targeting_ResetSession();
++    }
+     NullFunction();
+     return true;
+ }
+@@ -491,6 +523,7 @@
+     DiscError_Shutdown();
+     FreeEAGLMaterialsThunk();
+     RRenderer::Shutdown();
++    FILESYS_shutdown();
+     UMemory::Shutdown();
+     dbg_wprintf("Bond_CleanupDone");
+ }
+--- a/src/driving/engine/InputConfig.cpp
++++ b/src/driving/engine/InputConfig.cpp
+@@ -198,6 +198,11 @@
+     return id;
+ }
+ 
++void InputConfig_ResetSession() {
++    gActionNames.Construct(ActionNameTable);
++    gUpdateMethodNames.Construct(UpdateMethodNameTable);
++}
++
+ // FUNC_AT(0x00051e90)
+ char* __fastcall BuildFileName(char *buffer, int, const char *directory, const char *name, const char *extension) {
+     strcpy(buffer, directory);
+--- a/src/driving/engine/InputConfig.h
++++ b/src/driving/engine/InputConfig.h
+@@ -158,6 +158,8 @@
+ constexpr int kActionNameEntries = 118;         // every action and the null string
+ constexpr int kUpdateMethodNameEntries = 11;
+ extern StringToNumberEntry ActionNameTable[kActionNameEntries];
++// Host-only: rebuilds the action and update-method lookup tables after the game heap has been replaced.
++void InputConfig_ResetSession();
+ extern StringToNumberEntry UpdateMethodNameTable[kUpdateMethodNameEntries];
+ 
+ // The configurations and the guard of their construction (bit 0)
+--- a/src/driving/engine/UFileLoader.cpp
++++ b/src/driving/engine/UFileLoader.cpp
+@@ -170,11 +170,17 @@
+ 
+ // FUNC_AT(0x001173a0)
+ void UFileLoader::Startup() {
+-    FileNameNode *ignored;
+-    RequestedFiles.Erase(&ignored, RequestedFiles.head != NULL ? RequestedFiles.head->next : NULL, RequestedFiles.head);
+-    FilesInBigFile.Erase(&ignored, FilesInBigFile.head != NULL ? FilesInBigFile.head->next : NULL, FilesInBigFile.head);
+-    FilesNotInBigFile.Erase(&ignored, FilesNotInBigFile.head != NULL ? FilesNotInBigFile.head->next : NULL,
+-                            FilesNotInBigFile.head);
++    // A launch in this host process starts with a fresh heap, so nodes from the previous session went with it. Start
++    // the lists empty as a new process does; freeing them here would hand the new pools blocks they never issued.
++    RequestedFiles.allocator = 0;
++    RequestedFiles.head = NULL;
++    RequestedFiles.size = 0;
++    FilesInBigFile.allocator = 0;
++    FilesInBigFile.head = NULL;
++    FilesInBigFile.size = 0;
++    FilesNotInBigFile.allocator = 0;
++    FilesNotInBigFile.head = NULL;
++    FilesNotInBigFile.size = 0;
+ }
+ 
+ // FUNC_AT(0x001175a0)
+--- a/src/driving/engine/URefCounter.cpp
++++ b/src/driving/engine/URefCounter.cpp
+@@ -165,6 +165,27 @@
+     Crt::atexit(destroy);
+ }
+ 
++static void ForgetCounter(URefCounterMap &map, uint32_t &guard) {
++    if ((guard & 1) == 0)
++        return;
++    map.head = NULL;
++    map.size = 0;
++    guard &= ~1u;
++}
++
++void RefCounters_ResetSession() {
++    ForgetCounter(ModelInfoRefs, ModelInfoRefsGuard);
++    ForgetCounter(TextureInfoRefs, TextureInfoRefsGuard);
++    ForgetCounter(WeaponInfoRefs, WeaponInfoRefsGuard);
++    ForgetCounter(CarpFileRefs, CarpFileRefsGuard);
++    ForgetCounter(TextureContextRefs, TextureContextRefsGuard);
++    ForgetCounter(MixRefs, MixRefsGuard);
++    ForgetCounter(StreamRefs, StreamRefsGuard);
++    ForgetCounter(FaderRefs, FaderRefsGuard);
++    ForgetCounter(BankRefs, BankRefsGuard);
++    ForgetCounter(EngineRefs, EngineRefsGuard);
++}
++
+ // ---- ActModelDatabase::ModelInfo
+ 
+ // The instantiation's tree code (anim/Model.h), in the shapes URefCounter's helpers take; likewise for TextureInfo
+--- a/src/driving/engine/URefCounter.h
++++ b/src/driving/engine/URefCounter.h
+@@ -248,4 +248,8 @@
+ extern uint32_t BankRefsGuard;
+ extern uint32_t EngineRefsGuard;
+ 
++// Host-only: forgets every reference counter's tree and clears its construction guard, after the game heap has
++// been replaced for a relaunch in this process.
++void RefCounters_ResetSession();
++
+ #endif // DRIVING_ENGINE_UREFCOUNTER_H_
+--- a/src/driving/game/AIVehicleController.cpp
++++ b/src/driving/game/AIVehicleController.cpp
+@@ -56,6 +56,13 @@
+ alignas(16) AIGroundVehicle PlayerGroundVehicles[kPlayerGroundVehicles];
+ // XBE_GLOBAL(0x001dee20, 0x30c0)
+ alignas(16) AIGroundVehicle TrafficGroundVehicles[kTrafficVehicles];
++
++void AIVehicleController_ResetSession() {
++    for (int i = 0; i < kPlayerGroundVehicles; i++)
++        PlayerGroundVehicles[i].Construct();
++    for (int i = 0; i < kTrafficVehicles; i++)
++        TrafficGroundVehicles[i].Construct();
++}
+ // XBE_GLOBAL(0x001e1ee0, 4)
+ int32_t AgentUpdateTurn;
+ 
+--- a/src/driving/game/AIVehicleController.h
++++ b/src/driving/game/AIVehicleController.h
+@@ -81,6 +81,8 @@
+ // Constructed by the static initialisers
+ alignas(16) extern AIGroundVehicle PlayerGroundVehicles[kPlayerGroundVehicles];
+ alignas(16) extern AIGroundVehicle TrafficGroundVehicles[kTrafficVehicles];
++// Host-only: reconstructs the static player and traffic vehicles after the game heap has been replaced.
++void AIVehicleController_ResetSession();
+ 
+ // The traffic: the cars allowed (the launch page's, then EChangeMaxTraffic's) and the cars spawned (ESpawnTraffic's
+ // count; AIGroundVehicle::UnSpawn takes one off, reaching it through Get()). The names are ours.
+--- a/src/driving/game/DebugAudio.cpp
++++ b/src/driving/game/DebugAudio.cpp
+@@ -47,6 +47,10 @@
+ // Constructed by the static initialisers (name ours)
+ // XBE_GLOBAL(0x001e2278, 0xc)
+ DAudioTargetList DAudioTargets;
++
++void DebugAudio_ResetSession() {
++    DAudioTargets.Construct();
++}
+ 
+ // The mixer page (names ours)
+ // XBE_GLOBAL(0x001e2268, 0x4)
+--- a/src/driving/game/DebugAudio.h
++++ b/src/driving/game/DebugAudio.h
+@@ -75,6 +75,8 @@
+ 
+ // The sounds on screen, UpdateTargets' list
+ extern DAudioTargetList DAudioTargets;
++// Host-only: rebuilds the debug-audio target list's head after the game heap has been replaced.
++void DebugAudio_ResetSession();
+ 
+ // The mixer page's state (names ours)
+ extern int32_t DAudioMixerSelected;     // the selected row
+--- a/src/driving/game/Vehicle.cpp
++++ b/src/driving/game/Vehicle.cpp
+@@ -346,13 +346,17 @@
+     return fgCarNames;
+ }
+ 
+-// The list and the map are freed; their pointers are left as they were.
++// The list and the map are freed. The pointers are cleared so a relaunch in this host process rebuilds them (the
++// original could leave them set: its process ended here).
+ // FUNC_AT(0x00071900)
+ void PVehicle::Shutdown() {
+     OperatorDelete(fgCarNames);
++    fgCarNames = NULL;
+     CarNameMap *map = fgCarNameMap;
+     if (map != NULL) {
+         map->Destroy();
+         OperatorDelete(map);
+     }
++    fgCarNameMap = NULL;
++    fgCarNameCount = 0;
+ }
+--- a/src/driving/physics/PhysicsNamespace.cpp
++++ b/src/driving/physics/PhysicsNamespace.cpp
+@@ -135,6 +135,10 @@
+     return this;
+ }
+ 
++void PhysicsNamespace_ResetSession() {
++    PhysicsDataType = -1;
++}
++
+ // FUNC_AT(0x0006f050)
+ PhysicsNamespace* PhysicsNamespace::Delete(unsigned flags) {
+     vtable = PhysicsNamespaceVtable;
+--- a/src/driving/physics/PhysicsNamespace.h
++++ b/src/driving/physics/PhysicsNamespace.h
+@@ -50,5 +50,7 @@
+ LAYOUT_32(sizeof(PhysicsNamespace) == 4, "a physics namespace is a vtable");
+ 
+ extern int32_t PhysicsDataType;         // the extension type's id; -1 until the first constructor
++// Host-only: lets a relaunch register the extension type again with its new attribute system.
++void PhysicsNamespace_ResetSession();
+ 
+ #endif // DRIVING_PHYSICS_PHYSICSNAMESPACE_H_
+--- a/src/driving/platform/CRuntimeStd.cpp
++++ b/src/driving/platform/CRuntimeStd.cpp
+@@ -91,6 +91,17 @@
+ AtExitFn AtExitFunctions[10];              // _Atfuns, filled from the end
+ } // namespace GameStd
+ 
++void GameStd::ResetLibrarySession() {
++    FacetList = NULL;
++    GlobalLocale = NULL;
++    ClassicImpl = NULL;
++    ClassicLocale.impl = NULL;
++    GlobalTidyRegistered = false;
++    memset(&StandardStreams, 0, sizeof(StandardStreams));
++    AtExitCount = 10;
++    memset(AtExitFunctions, 0, sizeof(AtExitFunctions));
++}
++
+ // ---- the C runtime's locale state (__lc_handle, __lc_codepage): the C locale's, which nothing changes
+ 
+ // XBE_GLOBAL(0x00244ac0, 0x18)
+--- a/src/driving/platform/CRuntimeStd.h
++++ b/src/driving/platform/CRuntimeStd.h
+@@ -133,6 +133,10 @@
+ extern uint32_t AtExitCount;
+ extern AtExitFn AtExitFunctions[10];
+ 
++// Host-only: forgets the locale, facets and standard streams allocated by the previous session, after the game
++// heap has been replaced for a relaunch in this process.
++void ResetLibrarySession();
++
+ // The C locale's ctype table (a copy from the C runtime's heap) and code page.
+ CtypeVec Getctype();                                                       // 0x00130c3c _Getctype
+ CvtVec Getcvt();                                                           // 0x00131c31 _Getcvt
+--- a/src/driving/platform/FileSys.cpp
++++ b/src/driving/platform/FileSys.cpp
+@@ -650,6 +650,44 @@
+     int files = numFiles != 0 ? numFiles : 0x10, ops = numOps != 0 ? numOps : 0x20;
+     void *block = pFILE_malloc("File Sys", BlockBytes(files, ops), 0x100);
+     return FILESYS_initadr(numFiles, cdBuffer, numOps, block);
++}
++
++// Host-only: the original process exited with its workers and slots. A launch in this process has to stop them
++// while their block is still mapped, because the game heap that holds it is freed next.
++void FILESYS_shutdown() {
++    if (FsWorkers != NULL) {
++        WorkerExit = 1;
++        for (int i = 0; i < 2; i++) {
++            FsWorker *w = &FsWorkers[i];
++            if (!w->alive)
++                continue;
++            SIGNAL_post(&w->signal);
++            Xbox_WaitForSingleObject(w->thread.handle, INFINITE);
++            THREAD_destroy(&w->thread);
++            SIGNAL_destroy(&w->signal);
++            Xbox_CloseHandle(w->doneEvent);
++            REALMUTEX_destroy(&w->atomicMutex);
++            w->alive = 0;
++        }
++    }
++    if (Slots != NULL) {
++        for (int i = 0; i < SlotCount; i++) {
++            HANDLE handle = Slots[i].handle;
++            if (handle == NULL || handle == (HANDLE)1)
++                continue;
++            bool shared = false;   // an archive and its subfiles hold the same handle
++            for (int earlier = 0; earlier < i && !shared; earlier++)
++                shared = Slots[earlier].handle == handle;
++            if (!shared)
++                Xbox_CloseHandle(handle);
++        }
++        Slots = NULL;
++        SlotCount = 0;
++    }
++    FsWorkers = NULL;
++    OpRecords = NULL;
++    NextBigId = -1;
++    WorkerExit = 0;
+ }
+ 
+ // The block: the slot table, two worker records, then the op records, all on the free list.
+--- a/src/driving/platform/FileSys.h
++++ b/src/driving/platform/FileSys.h
+@@ -20,6 +20,9 @@
+ void FILESYS_setmemcallbacks(FileMallocFn allocate, FileFreeFn release);
+ bool FILESYS_init(int numFiles, int cdBuffer, int numOps);
+ bool FILESYS_initadr(int numFiles, int cdBuffer, int numOps, void *block);
++// Host-only: stops the worker and forgets this session's tables before the game heap goes away, so a relaunch in
++// this process can initialise the layer from scratch.
++void FILESYS_shutdown();
+ void FILEDEV_setreaderror(FsReadErrorFn handler);
+ 
+ unsigned FILESYS_open(const char *name, int mode, int priority, intptr_t userData);
+--- a/src/driving/platform/HostPosix.cpp
++++ b/src/driving/platform/HostPosix.cpp
+@@ -328,16 +328,38 @@
+     // 1 MB in an MSVC build, and the game's threads ask for less than they use (64 KB for the main one)
+     const size_t kDefaultStackReserve = 0x100000;
+     size_t stackReserve = stackSize > kDefaultStackReserve ? stackSize : kDefaultStackReserve;
++    // Stacks live in the game window and are not returned by the OS while the process lives. A relaunch can find
++    // the window's free ranges fragmented, so try smaller reservations before failing the thread.
++    const size_t kStackFallbacks[] = { 0x100000, 0x80000, 0x40000, 0x20000, 0x10000 };
+ #if UINTPTR_MAX > 0xffffffffu
+-    int error = SetWindowStack(&attributes, stackReserve) ? 0 : ENOMEM;
+-    if (error == 0)
++    bool stackSet = false;
++    for (size_t candidate : kStackFallbacks) {
++        if (candidate > stackReserve)
++            continue;
++        if (SetWindowStack(&attributes, candidate)) {
++            stackReserve = candidate;
++            stackSet = true;
++            break;
++        }
++    }
++    if (!stackSet) {
++        printf("[host] thread stack could not be mapped: %zu bytes\n", stackReserve);
++        fflush(stdout);
++    }
++    int error = stackSet ? 0 : ENOMEM;
++    if (error == 0) {
+         error = pthread_create(&thread->thread, &attributes, ThreadMain, thread);
++        if (error != 0)
++            printf("[host] pthread_create failed: %d\n", error);
++    }
+ #else
+     pthread_attr_setstacksize(&attributes, stackReserve);
+     int error = pthread_create(&thread->thread, &attributes, ThreadMain, thread);
+ #endif
+     pthread_attr_destroy(&attributes);
+     if (error != 0) {
++        printf("[host] thread create failed: error %d, stack reserve %zu\n", error, stackReserve);
++        fflush(stdout);
+         thread->references = 1;
+         Release(thread);
+         LastError = kErrorNotEnoughMemory;
+@@ -849,12 +871,13 @@
+ }
+ 
+ // The game's data may hold addresses on its threads' stacks (a draw's vertex arrays), so the threads it runs on have
+-// their stacks in the window, above where contiguous memory goes first. Never unmapped: the game starts its few
+-// threads once.
++// their stacks in the window, above where contiguous memory goes first. They come from the image's in-window arena:
++// a relaunch in this process starts more threads than the original's one-shot process did, and the general window is
++// too fragmented for another low mapping by the third launch.
+ static bool SetWindowStack(pthread_attr_t *attributes, size_t size) {
+     const uintptr_t kStacksLowest = 0x10000000;
+-    void *stack = MapLow(size, kStacksLowest, PROT_READ | PROT_WRITE, MAP_STACK);
+-    return stack != MAP_FAILED && pthread_attr_setstack(attributes, stack, size) == 0;
++    void *stack = HostReserveLow(size, kStacksLowest);
++    return stack != NULL && HostCommit(stack, size) && pthread_attr_setstack(attributes, stack, size) == 0;
+ }
+ #endif
+ 
+--- a/src/driving/world/Grid.cpp
++++ b/src/driving/world/Grid.cpp
+@@ -19,6 +19,11 @@
+ // XBE_GLOBAL(0x0023b3ac, 0xc)
+ WGridMoverList GridMovers;
+ 
++void Grid_ResetSession() {
++    GridMovers.head = GridMovers.BuyHead();
++    GridMovers.size = 0;
++}
++
+ // ---------------------------------------------------------------------------------------------------------------
+ // WGrid, its cells' lists and the dynamic elements (0x000c5710..0x000c7230), ported from the listings.
+ //
+--- a/src/driving/world/Grid.h
++++ b/src/driving/world/Grid.h
+@@ -94,6 +94,8 @@
+ 
+ extern WGrid *TheGrid;
+ extern WGridMoverList GridMovers;
++// Host-only: rebuilds the grid's mover list head after the game heap has been replaced.
++void Grid_ResetSession();
+ 
+ extern UGroup *GridData;                // the CARP group the grid came from (for Restart)
+ extern int32_t GridMaxSteps;            // the most cells a segment search walks
+--- a/src/driving/world/Targeting.cpp
++++ b/src/driving/world/Targeting.cpp
+@@ -409,6 +409,10 @@
+     ATargeting *sound = static_cast<ATargeting *>(OperatorNew(sizeof(ATargeting)));
+     targeting = sound != NULL ? sound->Construct() : NULL;
+     return this;
++}
++
++void Targeting_ResetSession() {
++    TargetPicker.Construct();
+ }
+ 
+ // FUNC_AT(0x000ced50)
+--- a/src/driving/world/Targeting.h
++++ b/src/driving/world/Targeting.h
+@@ -201,6 +201,8 @@
+ LAYOUT_32(sizeof(WTargetPicker) == 0xb0, "WTargetPicker is 176 bytes");
+ 
+ alignas(16) extern WTargetPicker TargetPicker;   // the one picker (name ours)
++// Host-only: reconstructs the target picker after the game heap has been replaced for a relaunch.
++void Targeting_ResetSession();
+ 
+ extern int32_t TargetableCount;         // the targets in existence (name ours)
+ extern int32_t TargetableStagger;       // staggers new targets' first refresh (name ours)

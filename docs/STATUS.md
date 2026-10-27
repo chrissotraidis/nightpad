@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-27 11:40 UTC
+Updated: 2026-10-27 13:52 UTC
 
 ## Outcome
 
@@ -57,13 +57,20 @@ simulator probe and remains blocked on physical-device access.
   joins; action starts from the saved page, closes and joins.
 - The same combined harness now triggers action's existing psiLaunchDriving
   seam and completes action-to-driving in the opposite direction.
-- A repeated bidirectional soak passes its first cycle; the second driving
-  start faults after entering main. One-time engine constructors are guarded,
-  leaving mutable process-global engine state as the current reset boundary.
-- Reverse transitions now use the game's real Boot_GetPTPData page; the second
-  driving start still fails, so malformed launch data is ruled out.
-- Keeping SDL initialized for the process reduced action restart failures but
-  regressed driving join completion, so SDL is again fully closed per session.
+- Repeated driving launches now work. The second boot re-arms the game heap,
+  stops and rebuilds the file-system workers, and explicitly reconstructs the
+  session-scoped static containers (EAGL pools, stream locale, input lookups,
+  Simulation, reference counters, audio, physics, CARP, grid, targeting, AI
+  vehicles and action queues) after the old heap is gone.
+- Thread stacks are reserved from the image's in-window arena rather than the
+  fragmented general window, so repeated launches no longer fail with
+  `ENOMEM` on the third start.
+- Three driving start/stop cycles join and settle at nine OS threads. Three
+  combined driving/action cycles pass in both directions with the real launch
+  page, every thread joined, and the same settled thread count.
+- The action-only soak still grows about 105 MB of `IOAccelerator (graphics)`
+  resident memory per session and fails to start the seventh cycle. Device
+  teardown and window-reuse experiments did not remove the growth.
 - The image is Xbox title `0x45410026`, "007: Nightfire", version 1, region
   mask `0x7`, with only the `30_fps` movie bundle present.
 - The driving/POV control definitions were safely decoded from `misc.viv`:
@@ -79,12 +86,13 @@ simulator probe and remains blocked on physical-device access.
   `073f0048.xmv` movie required by one recording. The alias is an explicitly
   labeled compatibility experiment, not a verified PAL replacement.
 - Physical pointer, Metal, SDL and lifecycle behavior is unverified.
-- G04's worker-thread shutdown, audio/GPU ownership transfer, reset contract and
-  repeated in-process transitions remain to be implemented.
+- G04's game-state reset contract and mixed transitions now pass for three
+  cycles on macOS. The remaining issue is Metal/SDL per-session graphics memory
+  growth in the action engine; physical-device evidence also remains blocked.
 
 ## Next step
 
-Implement the engine start/stop coordinator and prove game-thread join plus
-audio/GPU teardown before exercising recorded transition routes. The physical
-device blocker remains separate and visible.
+Profile the action engine's per-session Metal allocations and find a reset that
+returns the window/device resources. Keep the ten-cycle action soak as the gate;
+do not relax it. The physical-device blocker remains separate and visible.
 

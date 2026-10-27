@@ -1,6 +1,7 @@
 #include "../../apple/shared/NightPadEngineBridge.h"
 
 #include <mach/mach.h>
+#include <mach/task_info.h>
 #include <mach/thread_info.h>
 #include <dlfcn.h>
 #include <pthread.h>
@@ -37,6 +38,14 @@ static mach_msg_type_number_t ThreadCount() {
     vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(threads),
                   count * sizeof(thread_t));
     return count;
+}
+
+static unsigned long long ResidentBytes() {
+    task_vm_info_data_t info = {};
+    mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
+    if (task_info(mach_task_self(), TASK_VM_INFO, reinterpret_cast<task_info_t>(&info), &count) != KERN_SUCCESS)
+        return 0;
+    return static_cast<unsigned long long>(info.phys_footprint);
 }
 
 static void DumpThreads(const char *label) {
@@ -94,27 +103,36 @@ int main(int argc, char **argv) {
     int cycles = cycleText != nullptr ? atoi(cycleText) : 3;
     if (cycles < 1)
         cycles = 1;
+    const char *joinText = getenv("NIGHTPAD_JOIN_MS");
+    unsigned joinTimeout = joinText != nullptr ? static_cast<unsigned>(atoi(joinText)) : 30000;
     ENGINE_SET_LAUNCH_CALLBACK(CaptureLaunch);
     for (int cycle = 0; cycle < cycles; ++cycle) {
         if (!ENGINE_START(argc, argv)) {
             fprintf(stderr, "action lifecycle: start failed on cycle %d\n", cycle + 1);
             return 1;
         }
+        const char *startPauseText = getenv("NIGHTPAD_START_PAUSE_MS");
+        if (startPauseText != nullptr)
+            usleep(static_cast<useconds_t>(atoi(startPauseText)) * 1000);
         mach_msg_type_number_t running = ThreadCount();
         pthread_t stopper;
         pthread_create(&stopper, nullptr, StopLater, nullptr);
         ENGINE_RUN_WINDOW();
         pthread_join(stopper, nullptr);
         ENGINE_CLOSE_WINDOW();
-        int joined = ENGINE_JOIN(30000);
+        int joined = ENGINE_JOIN(joinTimeout);
         sleep(2);
         mach_msg_type_number_t after = ThreadCount();
         if (cycle == 0)
             firstAfter = after;
         DumpThreads("after close");
-        printf("action lifecycle cycle %d: threads before=%u running=%u after=%u joined=%s\n",
-               cycle + 1, cycle == 0 ? before : firstAfter, running, after, joined ? "yes" : "no");
+        printf("action lifecycle cycle %d: threads before=%u running=%u after=%u joined=%s rss=%llu\n",
+               cycle + 1, cycle == 0 ? before : firstAfter, running, after, joined ? "yes" : "no",
+               ResidentBytes());
         ok = ok && joined == 1 && after <= firstAfter + 1;
+        const char *pauseText = getenv("NIGHTPAD_CYCLE_PAUSE_MS");
+        if (pauseText != nullptr)
+            usleep(static_cast<useconds_t>(atoi(pauseText)) * 1000);
     }
     printf("action lifecycle: %s; baseline=%u settled=%u\n",
            ok ? "PASS" : "FAIL", before, firstAfter);

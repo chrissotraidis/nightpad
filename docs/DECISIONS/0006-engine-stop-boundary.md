@@ -85,3 +85,51 @@ The reverse trigger now takes its page from the game's own Boot_GetPTPData
 handover rather than a zero-filled buffer. The second driving start still faults
 after entering main, so this is not a malformed-page problem.
 
+## Repeated-launch reset contract
+
+The second-start fault was not one global. The driving session's `Bond_CleanUp`
+calls `UMemory::Shutdown`, but `ApplicationMemoryHeapConfig` was guarded by a
+process-lifetime flag, so the next boot re-entered the game with the allocator
+switched to its dead function table. The heap now comes back up for every
+session. That exposed a chain of other process-static state whose nodes had been
+freed with the old heap:
+
+- file-system workers and slots (`FILESYS_shutdown`, before the heap goes away);
+- file-name request lists and EAGL's loaded-object chain and symbol pools;
+- the C++ stream locale, facets and standard-stream table;
+- input action/update lookups, the Simulation's object maps, and every
+  `URefCounter` tree;
+- mix, voice, debug-audio, grid, target-picker, AI-vehicle and action-queue
+  state;
+- `PVehicle`'s car-name cache and the physics extension-type id.
+
+Each reset is explicit and runs only after the new heap exists. Re-running the
+whole constructor table is not a reset contract: `AIVehicle::Construct` and
+similar constructors allocate, and repeating the table faults in
+`UMemory::FastAlloc`. The resurrection call for AIVehicleController is narrowly
+scoped to the static vehicle arrays.
+
+Thread stacks were the other repeated-launch limit. They must stay in the 4 GB
+game window because game data can hold stack addresses, but mapping each new
+1 MB stack in the general window fragmented it enough for the third launch to
+fail with `ENOMEM`. Stacks now come from the image's in-window arena, with a
+smaller-reservation fallback. This is not a leak allowance: it gives each
+session a valid in-window stack while the general window remains available for
+game memory.
+
+## Evidence and remaining gap
+
+Three complete driving start/stop cycles pass, with each thread joined and the
+OS thread count settling at nine. Three combined driving/action cycles pass,
+including both directions through the real launch page, with joins and a stable
+thread count. The three-cycle action-only soak also passes.
+
+A ten-cycle action-only soak still fails after cycle six: resident memory grows
+by about 105 MB per action session, mostly `IOAccelerator (graphics)` and
+owned graphics mappings. Destroying the GPU device at the next start, destroying
+it before the window goes away, reusing one device, waiting for GPU idle, and
+reusing one window were each tried; none removed the growth, and the persistent
+window also leaked threads. This is a Metal/SDL session-resource problem, not
+the heap or game-static reset fixed here. It remains open for G04; the mixed
+three-cycle transition is the current verified boundary.
+

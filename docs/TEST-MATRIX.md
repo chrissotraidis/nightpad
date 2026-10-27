@@ -31,7 +31,7 @@
 | G04 | iOS SDL linkage has no loose dylib | iPhoneOS 26.5 | passed for combined link | Static libSDL3.a; no dylib dependency |
 | G04 | iOS FFmpeg linkage is static | iPhoneOS 26.5 | passed for link | Three pinned archives; no FFmpeg dylib dependency |
 | G04 | In-process launch request captures page without child process | macOS arm64 | passed | 3,072-byte page identical; requesting thread exits; process remains alive |
-| G04 | Engine stop, worker-thread join and resource reset | iPhoneOS/macOS | unverified | Not implemented |
+| G04 | Engine stop, worker-thread join and resource reset | macOS arm64 | passed for game state | Heap re-arm; FILESYS worker shutdown; explicit session-static reconstruction; three driving and three mixed cycles join |
 | G04 | Cooperative game-loop stop reaches existing cleanup | macOS arm64 | passed in raw-link harness | Game_Main returns and thread joins |
 | G04 | Repeated action start/stop/join stability | macOS arm64 | passed | Three cycles; each joins; settled 7 OS threads unchanged after first |
 | G04 | Symbol-isolated start/stop heap and shader boundary | macOS arm64 | passed | Shared GameWindow/HostPosix allocator runtime; no shader crash |
@@ -39,9 +39,10 @@
 | G04 | Driving launch request completes established boundary | macOS arm64 | passed | Callback receives 3,072-byte page; close-before-join completes and joins |
 | G04 | Driving-to-action live restart in one process | macOS arm64 | passed | Driving page request, close/join, action start from page, close/join |
 | G04 | Action-to-driving request through psiLaunchDriving | macOS arm64 | passed | Action callback captures DRIVING.XBE; window and thread join |
-| G04 | Repeated mixed transition soak | macOS arm64 | failed | Cycle 1 passes with real Boot_GetPTPData page; cycle 2 still faults after driving main |
+| G04 | Repeated mixed transition soak | macOS arm64 | passed, 3 cycles | Both directions each cycle; real Boot_GetPTPData page; all joins; settled 8-9 OS threads |
+| G04 | Ten repeated action sessions | macOS arm64 | failed | Cycle 7 start fails; `IOAccelerator (graphics)` grows about 105 MB per session. Device/window teardown experiments did not reclaim it. |
 | G04 | Load-time initializer ownership | macOS arm64 | passed for transition | Fmv and LaunchOptions deferred; remaining graphics initializer is compatible |
-| G04 | Action to driving and return transitions | iPhoneOS/macOS | unverified | Not run |
+| G04 | Action to driving and return transitions | macOS arm64 | passed, 3 cycles | `scripts/test_engine_transition.sh`; iPhoneOS execution remains device-blocked |
 
 Only rows with explicit execution evidence are marked passed. Source inspection
 does not satisfy runtime acceptance.
