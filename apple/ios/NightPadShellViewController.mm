@@ -81,6 +81,7 @@ using nightpad::Paths;
     UIView *_pausePanel;
     UIProgressView *_progress;
     UILabel *_progressLabel;
+    UILabel *_dataStatus;
     UIButton *_importButton;
     UIButton *_cancelImportButton;
     UIButton *_discardButton;
@@ -557,6 +558,16 @@ static uint64_t ShellResidentBytes(void) {
     detail.translatesAutoresizingMaskIntoConstraints = NO;
     [_dataPanel addSubview:detail];
 
+    // The home status label sits behind the panel, so the panel keeps its own
+    // copy of the data state.
+    _dataStatus = [UILabel new];
+    _dataStatus.textColor = [UIColor colorWithWhite:1 alpha:0.86];
+    _dataStatus.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
+    _dataStatus.adjustsFontForContentSizeCategory = YES;
+    _dataStatus.numberOfLines = 0;
+    _dataStatus.translatesAutoresizingMaskIntoConstraints = NO;
+    [_dataPanel addSubview:_dataStatus];
+
     _importButton = [UIButton buttonWithType:UIButtonTypeSystem];
     UIButtonConfiguration *import = [UIButtonConfiguration filledButtonConfiguration];
     import.title = @"Import Prepared Game Data…";
@@ -619,8 +630,11 @@ static uint64_t ShellResidentBytes(void) {
         [detail.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
         [detail.trailingAnchor constraintEqualToAnchor:_dataPanel.trailingAnchor constant:-20],
         [detail.topAnchor constraintEqualToAnchor:heading.bottomAnchor constant:6],
+        [_dataStatus.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
+        [_dataStatus.trailingAnchor constraintEqualToAnchor:detail.trailingAnchor],
+        [_dataStatus.topAnchor constraintEqualToAnchor:detail.bottomAnchor constant:10],
         [_importButton.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
-        [_importButton.topAnchor constraintEqualToAnchor:detail.bottomAnchor constant:16],
+        [_importButton.topAnchor constraintEqualToAnchor:_dataStatus.bottomAnchor constant:14],
         [_discardButton.leadingAnchor constraintEqualToAnchor:_importButton.trailingAnchor constant:12],
         [_discardButton.centerYAnchor constraintEqualToAnchor:_importButton.centerYAnchor],
         [_progress.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
@@ -1090,6 +1104,12 @@ static uint64_t ShellResidentBytes(void) {
         _status.text = [NSString stringWithFormat:@"Game data needs attention: %s", error.c_str()];
     else
         _status.text = @"Game data missing\nOpen the three-dot menu to import a prepared game-data folder.";
+    if (_state == DataState::Ready)
+        _dataStatus.text = [NSString stringWithFormat:@"Ready · %@", _identity];
+    else if (_state == DataState::RecoverableError)
+        _dataStatus.text = @"Needs attention";
+    else
+        _dataStatus.text = @"No game data imported";
     _discardButton.enabled = _importer->previousDataRetained();
     _progress.hidden = !_importing;
     _progressLabel.hidden = !_importing;

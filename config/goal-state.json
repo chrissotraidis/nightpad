@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T20:30:00Z",
+  "last_updated_at": "2026-10-28T20:45:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -1299,6 +1299,16 @@
       "evidence": [
         "apple/ios/NightPadShellViewController.mm",
         "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T20:45:00Z",
+      "goal": "G05",
+      "summary": "The data panel now shows the data state and identity itself, since the home status label is hidden behind it.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/panel-status.png"
       ]
     }
   ],

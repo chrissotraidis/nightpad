@@ -1525,3 +1525,17 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: an interactively dismissed sheet leaves the shell in its normal
   state. The paused-engine case still needs a device run with the game live.
 
+## 2026-10-28T20:45:00Z — the data panel shows its state
+
+- Goal: G05. Requirement: R04 in progress.
+- Observed: the home screen's "Game data ready" or "missing" label sits
+  centred behind the data panel, so the panel that manages data hid the only
+  status line the player could use.
+- Observed: the panel now carries its own status - Ready with the identity,
+  Needs attention, or No game data imported - directly above the import button.
+- Evidence: iPhone 17 simulator, iOS 26.5, `--open-data`: the panel shows
+  "Ready · data-a3c98ab965ac41e559ac". Evidence
+  `evidence/ios-shell/panel-status.png`.
+- Verdict: the panel is self-contained. The longer identity wraps to two lines,
+  which the card has room for.
+
