@@ -51,6 +51,21 @@ SpaceStation, Facility, Atlantis, SkyRail, SubPen, StealthShip, FortKnox,
 MissileSilo, SnowBlind and Ravine. Two maps are marked incompatible with bots or
 miniature vehicles in the front-end text.
 
+### Map-specific rules
+
+- Ravine disables the AI Bots option in the setup wheel and the bot list is
+  emptied for that map.
+- `Car_Create` refuses to spawn a mini vehicle on Ravine, so the mini-vehicle
+  setting has no effect there.
+- Every multiplayer map applies standard drone tuning with the multiplayer
+  body-part damage modifiers; no map changes the mode rules in source.
+
+### Mode availability
+
+No source check ties a game mode to a map. The setup wheel offers every mode on
+every map, and the only map-level exception is bots/vehicles on Ravine. That
+should still be confirmed by playing each mode family on at least two maps.
+
 ## Still missing
 
 - Which modes each map supports, and the win-condition details per mode.

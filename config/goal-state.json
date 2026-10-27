@@ -460,7 +460,7 @@
       ],
       "decision_id": null,
       "notes": [
-        "Limits, modes, maps, weapon sets and Enviro-Mods are inventoried from source. Match execution, support matrix and unlocks remain."
+        "Limits, modes, maps, weapon sets, Enviro-Mods and map rules are inventoried; Ravine disables bots and mini vehicles and no mode-to-map gate exists in source. Match execution and unlocks remain."
       ]
     },
     "R18": {

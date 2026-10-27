@@ -223,6 +223,9 @@ simulator probe and remains blocked on physical-device access.
   mission toggle, reward sets, single rewards, upgrades) applied to the codename
   being edited. The device test plan is in the campaign inventory; the codes
   themselves stay out of the repository docs.
+- Multiplayer map rules are mapped: Ravine disables AI bots and mini vehicles,
+  every map uses standard drone tuning, and no source check ties a mode to a
+  map. Runtime confirmation on two maps is still needed.
 
 ## Current uncertainty and blockers
 

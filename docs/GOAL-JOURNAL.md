@@ -823,3 +823,14 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the mechanism and a concrete device test plan are recorded. Physical
   entry and persistence remain.
 
+## 2026-10-28T06:20:00Z — multiplayer map rules
+
+- Goal: G08. Requirement: R17 in progress.
+- Observed: Ravine disables AI bots in the setup wheel and empties the bot list;
+  `Car_Create` refuses mini vehicles there; every map uses standard drone
+  tuning. No source check ties a game mode to a map.
+- Evidence: `docs/MULTIPLAYER-INVENTORY.md`, citing the setup wheel and object
+  creation.
+- Verdict: the map support matrix is source-complete except runtime
+  confirmation that each mode family plays on at least two maps.
+
