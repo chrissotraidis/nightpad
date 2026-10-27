@@ -13,6 +13,7 @@
 | G13 | Candidate identity is machine-generated (R30) | Host | passed | `scripts/candidate_identity.sh` prints commit, tree state, engine pin, lock hash, patch-series hash, data/content hashes and package hash, and `--require-clean` refuses an uncommitted tree |
 | G12 | Performance routes and budgets frozen before optimization | Host | proposed | `docs/PERFORMANCE-BUDGET.md` defines device state, 15-minute action/driving, warm repeats and a 60-minute mixed route, plus cadence, frame-time, memory, thermal, latency and audio budgets |
 | G12 | Performance log summarizer | Host | passed | `scripts/test_perf_summary.sh` checks mean/min/max fps, working/waiting times, the requested cap and `--skip` trimming; a log with no samples fails |
+| G12 | Background pause and foreground resume rule (R16) | macOS arm64 / iPhoneOS build | passed for policy | `scripts/test_background_policy.sh` proves only a playing, not-already-held engine pauses on background, only that pause resumes, and a manual pause is preserved; device behaviour remains |
 | G01 | ISO is unique and unchanged | Host | passed | Local source manifest |
 | G01 | Listing is contained and has required Xbox trees | Host | passed | Private ISO listing and guarded script |
 | G01 | Validated extraction and activation | Host | passed | 55 files, 2,062,585,542 bytes, source hash unchanged |

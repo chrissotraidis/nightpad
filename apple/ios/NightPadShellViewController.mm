@@ -8,6 +8,7 @@
 #import "NightPadTouchControlsView.h"
 
 #include "../shared/NightPadGameDataImport.h"
+#include "../shared/NightPadBackgroundPolicy.h"
 #include "../shared/NightPadDiagnostics.h"
 #include "../shared/NightPadSettings.h"
 #include "../shared/NightPadTouchPolicy.h"
@@ -56,6 +57,7 @@ using nightpad::Paths;
     BOOL _switchingEngine;
     BOOL _stopWhenBooted;
     BOOL _forceStopNow;
+    BOOL _backgroundPausedEngine;
     NSTimeInterval _stopQueuedAt;
     BOOL _uiPausedEngine;
     BOOL _uiInputSuspended;
@@ -114,6 +116,10 @@ static uint64_t ShellResidentBytes(void) {
     _engineHost = [NightPadEngineHost new];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowBecameKey:)
         name:UIWindowDidBecomeKeyNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidEnterBackground:)
+        name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterForeground:)
+        name:UIApplicationWillEnterForegroundNotification object:nil];
 
     _title = [UILabel new];
     _title.text = @"NIGHTPAD";
@@ -252,6 +258,31 @@ static uint64_t ShellResidentBytes(void) {
     if (!_gameplayMode || self.view.window == nil) return;
     self.view.window.windowLevel = UIWindowLevelNormal + 2;
     [self.view.window makeKeyAndVisible];
+}
+
+- (void)appDidEnterBackground:(NSNotification *)note {
+    (void)note;
+    // Native UI already pauses; a user pause must stay a pause. Otherwise hold
+    // the game as soon as the app leaves the foreground.
+    if (!nightpad::ShouldPauseForBackground(_engineRunning, _uiPausedEngine, _enginePaused))
+        return;
+    [_engineHost setPaused:YES];
+    _enginePaused = YES;
+    _backgroundPausedEngine = YES;
+    [self logSessionEvent:@"app background pause"];
+}
+
+- (void)appWillEnterForeground:(NSNotification *)note {
+    (void)note;
+    if (!_backgroundPausedEngine)
+        return;
+    const bool resume = nightpad::ShouldResumeAfterBackground(_backgroundPausedEngine, _engineRunning, _enginePaused);
+    _backgroundPausedEngine = NO;
+    if (resume) {
+        [_engineHost setPaused:NO];
+        _enginePaused = NO;
+        [self logSessionEvent:@"app foreground resume"];
+    }
 }
 
 - (UIButton *)panelButton:(NSString *)title action:(SEL)action {

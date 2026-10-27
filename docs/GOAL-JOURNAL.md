@@ -1021,3 +1021,15 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the help no longer implies one vehicle layout. In-game verification
   of each mount remains device work.
 
+## 2026-10-28T11:20:00Z — background pause policy
+
+- Goal: G12. Requirement: R16 in progress.
+- Observed: the shell now pauses the engine on
+  `UIApplicationDidEnterBackgroundNotification` and resumes on foreground, but
+  only the pause it created. Native UI or the player's own pause is left alone,
+  and the session log records both transitions.
+- Evidence: `scripts/test_background_policy.sh` covers playing, stopped,
+  already-held and manual-pause states; both shell lanes build.
+- Verdict: the interruption rule is explicit and tested. Device suspension and
+  audio behaviour still need a session.
+

@@ -456,10 +456,15 @@
       ]
     },
     "R16": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "apple/shared/NightPadBackgroundPolicy.h",
+        "scripts/test_background_policy.sh"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Background pause/foreground resume follows a tested rule that preserves native-UI and player pauses. Memory-warning, surface recreation and device suspension remain."
+      ]
     },
     "R17": {
       "status": "in_progress",

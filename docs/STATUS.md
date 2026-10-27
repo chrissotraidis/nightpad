@@ -259,6 +259,9 @@ simulator probe and remains blocked on physical-device access.
 - Control Help no longer conflates driving with mounted views. Driving keeps its
   gas/brake/handbrake card; mounted views have a separate card that names the
   POV variations across the eight configurations.
+- The shell pauses the engine when the app leaves the foreground and resumes
+  only the pause it created; a player pause or an open native panel is left
+  alone. The rule is unit-tested; hearing it needs a device.
 - [CANDIDATE.md](CANDIDATE.md) is the draft candidate manifest: identity fields
   to freeze, support matrix, verified evidence, known issues and the device
   next step. It is not an acceptance claim.
