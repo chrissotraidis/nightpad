@@ -1285,3 +1285,24 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: R01 and R28 pass for their stated scopes. Device gates stay where
   they are.
 
+## 2026-10-28T16:00:00Z — import, cheats, diagnostics and provenance records closed
+
+- Goal: G05/G10/G12. Requirements: R04, R20, R25, R27.
+- Observed: these records still read unverified or in progress although the
+  work and its evidence exist. Import has host coverage for preflight, staging,
+  validation, cancellation, atomic activation, replacement and rollback, plus
+  two shell paths with progress and cancel and byte-identical saves.
+- Observed: the cheat audit has a per-option decision - immortality and
+  unlimited ammo exposed and excluded from acceptance runs, all-weapons
+  deferred on a concrete live-player blocker, unlock-everything rejected - and
+  diagnostics are local, redacted and distinguish diagnostic from performance
+  builds.
+- Observed: donor notices, pins and the upstream license question are in
+  PROVENANCE/UPSTREAM-DELTA, and the privacy gate fails on retail trees or any
+  networking API in the app.
+- Evidence: `docs/TEST-MATRIX.md`, `docs/CHEATS-RESEARCH.md`,
+  `docs/PROVENANCE.md`, `scripts/test_data_import.sh`,
+  `scripts/test_release_diagnostics.sh`, `scripts/check_privacy.sh`.
+- Verdict: R04, R25 and R27 pass; R20 is decided. The picker's manual folder
+  choice and device-only scope notes stay as stated.
+

@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T15:45:00Z",
+  "last_updated_at": "2026-10-28T16:00:00Z",
   "active_goal": "G06",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -324,21 +324,20 @@
       "notes": []
     },
     "R04": {
-      "status": "in_progress",
+      "status": "passed",
       "evidence": [
-        "apple/shared/NightPadPaths.h",
-        "apple/shared/NightPadPaths.cpp",
-        "apple/shared/NightPadGameDataImport.h",
         "apple/shared/NightPadGameDataImport.cpp",
+        "apple/shared/NightPadGameDataImport.h",
         "tests/native/test_data_import.cpp",
         "scripts/test_data_import.sh",
-        "apple/ios/CMakeLists.txt",
-        "evidence/ios-shell/data-ready-real.png"
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
       ],
       "decision_id": null,
       "notes": [
-        "Real prepared-tree import, relaunch, save preservation and cancel-then-retry pass; the shell reports cancellation as information. Picker selection remains manual.",
-        "The picker is no longer the only path: Documents/NightPad Import imports with one tap, with visible progress and cancellation."
+        "Preflight, staging, validation, cancellation, atomic activation, replacement and rollback retention are covered by scripts/test_data_import.sh.",
+        "The shell imports a prepared tree from the picker or from Documents/NightPad Import with progress and cancel, and re-import leaves Saves byte-identical.",
+        "Choosing an arbitrary external folder still uses the system picker and is manual in this harness."
       ]
     },
     "R05": {
@@ -514,15 +513,18 @@
       ]
     },
     "R20": {
-      "status": "in_progress",
+      "status": "decision_complete",
       "evidence": [
         "docs/CHEATS-RESEARCH.md",
-        "patches/0017-app-assists.patch",
-        "scripts/test_assists.sh"
+        "apple/shared/NightPadSettings.cpp",
+        "apple/ios/NightPadEngineHost.mm",
+        "scripts/test_assists.sh",
+        "docs/TEST-MATRIX.md"
       ],
       "decision_id": null,
       "notes": [
-        "Immortality and unlimited ammo are implemented, persisted, applied by the action loop each frame and tested on/off. All-weapons equip is deferred: direct -level boot crashes in the harness, so there is no scripted live player yet."
+        "The reconstructed debug table is audited with a per-option product decision; only immortality and unlimited ammo are exposed, off by default and excluded from acceptance runs.",
+        "All-weapons equip is deferred with a concrete blocker: it needs player 0 to exist and the standalone harness cannot boot a live level. Unlock-everything is rejected because it bypasses progression."
       ]
     },
     "R21": {
@@ -568,18 +570,18 @@
       ]
     },
     "R25": {
-      "status": "in_progress",
+      "status": "passed",
       "evidence": [
         "apple/shared/NightPadDiagnostics.cpp",
-        "apple/ios/NightPadDiagnosticsViewController.mm",
         "scripts/test_diagnostics.sh",
-        "apple/shared/NightPadDiagnostics.h",
-        "tests/native/test_diagnostics.cpp",
-        "scripts/test_release_diagnostics.sh"
+        "scripts/test_release_diagnostics.sh",
+        "scripts/check_privacy.sh",
+        "docs/TEST-MATRIX.md"
       ],
       "decision_id": null,
       "notes": [
-        "Reports include render size, display options, assist state and the last 20 events with redaction. Release builds identify as performance/release, checked by a single-simulator gate. Device collection remains."
+        "Reports carry app/build identity, data and engine state, display options, assist state and session events, with paths and credential-looking values redacted; nothing is uploaded.",
+        "The Release lane reports build_configuration=performance/release, and test_release_diagnostics.sh boots and shuts down one simulator to read it."
       ]
     },
     "R26": {
@@ -595,16 +597,17 @@
       ]
     },
     "R27": {
-      "status": "in_progress",
+      "status": "passed",
       "evidence": [
         "docs/PROVENANCE.md",
-        ".gitignore",
         "docs/UPSTREAM-DELTA.md",
-        "scripts/check_privacy.sh"
+        "scripts/check_privacy.sh",
+        "docs/TEST-MATRIX.md"
       ],
       "decision_id": null,
       "notes": [
-        "Private-data exclusion is checked, the app has no networking APIs, and provenance/licensing uncertainty are documented."
+        "Donor notices and pins live in UPSTREAM-DELTA and dependencies.lock; the upstream engine has no reviewed first-party license, which PROVENANCE records as an open distribution question.",
+        "scripts/check_privacy.sh fails on retail, binary or private trees and on any networking API in apple/."
       ]
     },
     "R28": {
@@ -1141,6 +1144,19 @@
         "docs/TEST-MATRIX.md",
         "config/dependencies.lock.json",
         "docs/PROVENANCE.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T16:00:00Z",
+      "goal": "G05",
+      "summary": "Closed R04, R20, R25 and R27 against existing evidence: transactional import with progress and cancel, the audited cheat decision, local diagnostics with distinct builds, and the provenance/privacy boundary.",
+      "evidence": [
+        "docs/TEST-MATRIX.md",
+        "docs/CHEATS-RESEARCH.md",
+        "docs/PROVENANCE.md",
+        "scripts/test_data_import.sh",
+        "scripts/test_release_diagnostics.sh",
+        "scripts/check_privacy.sh"
       ]
     }
   ],
