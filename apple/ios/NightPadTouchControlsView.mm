@@ -123,7 +123,10 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
         _label.text = ControlLabel(control.id);
         _label.textColor = UIColor.whiteColor;
         _label.textAlignment = NSTextAlignmentCenter;
-        _label.font = [UIFont monospacedSystemFontOfSize:13 weight:UIFontWeightBold];
+        UIFont *baseFont = [UIFont monospacedSystemFontOfSize:13 weight:UIFontWeightBold];
+        _label.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleHeadline]
+            scaledFontForFont:baseFont maximumPointSize:20];
+        _label.adjustsFontForContentSizeCategory = YES;
         _label.adjustsFontSizeToFitWidth = YES;
         _label.minimumScaleFactor = 0.5;
         _label.userInteractionEnabled = NO;

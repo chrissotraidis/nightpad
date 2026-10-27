@@ -37,6 +37,7 @@
     hint.text = @"Drag to move, pinch to resize. Controls stay inside the safe area and at least 44 points.";
     hint.textColor = [UIColor colorWithWhite:1 alpha:0.72];
     hint.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    hint.adjustsFontForContentSizeCategory = YES;
     hint.numberOfLines = 0;
     hint.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:hint];
@@ -144,7 +145,10 @@
         label.text = [self labelFor:control.id];
         label.textColor = UIColor.whiteColor;
         label.textAlignment = NSTextAlignmentCenter;
-        label.font = [UIFont monospacedSystemFontOfSize:14 weight:UIFontWeightBold];
+        UIFont *baseFont = [UIFont monospacedSystemFontOfSize:14 weight:UIFontWeightBold];
+        label.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleHeadline]
+            scaledFontForFont:baseFont maximumPointSize:22];
+        label.adjustsFontForContentSizeCategory = YES;
         label.adjustsFontSizeToFitWidth = YES;
         label.translatesAutoresizingMaskIntoConstraints = NO;
         [view addSubview:label];

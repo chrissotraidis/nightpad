@@ -723,3 +723,14 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: the failure/restart and difficulty paths are mapped for testing.
   They still need to be exercised in a run.
 
+## 2026-10-28T03:00:00Z — larger text in the touch overlay
+
+- Goal: G06. Requirement: R29 in progress.
+- Observed: overlay and editor labels now use `UIFontMetrics` for the headline
+  style, capped at 20 and 22 points, and the shell status, editor hint and help
+  text scale with content size. Controls keep their 44-point floor.
+- Evidence: at the simulator's XXXL content size the overlay still fits every
+  label; screenshot in ignored `evidence/ios-shell/`.
+- Verdict: text sizing is exercised on the simulator. Contrast measurement,
+  focus order and physical ergonomics remain.
+

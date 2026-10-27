@@ -197,6 +197,8 @@ simulator probe and remains blocked on physical-device access.
   `build_configuration=performance/release`, checked by
   `scripts/test_release_diagnostics.sh`, which boots and shuts down a single
   simulator itself.
+- Overlay, editor and help text now scale with Dynamic Type using font metrics
+  capped so labels still fit their controls; verified at XXXL on the simulator.
 
 ## Current uncertainty and blockers
 

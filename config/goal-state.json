@@ -556,10 +556,14 @@
       "notes": []
     },
     "R29": {
-      "status": "unverified",
-      "evidence": [],
+      "status": "in_progress",
+      "evidence": [
+        "apple/ios/NightPadTouchControlsView.mm"
+      ],
       "decision_id": null,
-      "notes": []
+      "notes": [
+        "Labels, identifiers, 44-point controls and Dynamic Type scaling are in place and checked at XXXL. Contrast measurement, focus order and physical sessions remain."
+      ]
     },
     "R30": {
       "status": "unverified",

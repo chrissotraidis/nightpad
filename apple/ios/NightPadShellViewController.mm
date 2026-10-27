@@ -123,6 +123,7 @@ static uint64_t ShellResidentBytes(void) {
     _status = [UILabel new];
     _status.textColor = [UIColor colorWithWhite:1 alpha:0.78];
     _status.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    _status.adjustsFontForContentSizeCategory = YES;
     _status.numberOfLines = 0;
     _status.textAlignment = NSTextAlignmentCenter;
     _status.translatesAutoresizingMaskIntoConstraints = NO;
