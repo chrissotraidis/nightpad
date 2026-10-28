@@ -14,6 +14,7 @@
 
 #include "NightPadEngineBridge.h"
 
+extern "C" void NightPadDrivingResetFrameCounter(void);
 static HostHandle g_gameThread = nullptr;
 static const size_t kGameStackSize = 0x10000;
 static bool g_processServicesStarted = false;
@@ -36,6 +37,8 @@ extern "C" int NightPadDrivingEngineStart(int argc, char **argv) {
         return 0;
     }
     EngineLifecycle_ResetStop();
+    EngineLifecycle_ReleasePause();
+    NightPadDrivingResetFrameCounter();
     g_gameThread = HostCreateThread(kGameStackSize, mainXapiStartup, nullptr, 0, nullptr);
     return g_gameThread != nullptr;
 }

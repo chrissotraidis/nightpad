@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T18:54:50Z",
+  "last_updated_at": "2026-10-28T19:36:02Z",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -25,27 +25,27 @@
   },
   "current_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "da2145b",
+    "nightpad_base_commit": "c4fe204",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "98a9de5026b5c83ce6a1269f339ec92e9a5c82479a279a737add23db6c2248fd",
+    "simulator_binary_sha256": "c10a15a51fec171cc16f5f315bc01bcc062c071dfbf30ad2146184300198784f",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "e1b7b392fcbdd8238e2eb339b9cbf4a9c4b243119a3bb012ef590a4fa8d1b035",
-    "evidence": "evidence/native-ui-pause/build-identity.json",
-    "verified_at": "2026-10-28T18:54:50Z",
-    "acceptance_scope": "host/build and simulator native menu/simulation subset; movie pause fails; campaign and physical acceptance remain"
+    "unsigned_device_package_sha256": "725a1abb64981682d7c79b40f1fbda75e3407185bead41d4588319d29ec982f3",
+    "evidence": "evidence/fmv-pause/build-identity.json",
+    "verified_at": "2026-10-28T19:36:02Z",
+    "acceptance_scope": "host/build and simulator movie pause/stop subset; fresh-boot Results anomaly open; campaign and physical acceptance remain"
   },
   "last_known_good_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "da2145b",
+    "nightpad_base_commit": "c4fe204",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "98a9de5026b5c83ce6a1269f339ec92e9a5c82479a279a737add23db6c2248fd",
+    "simulator_binary_sha256": "c10a15a51fec171cc16f5f315bc01bcc062c071dfbf30ad2146184300198784f",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "e1b7b392fcbdd8238e2eb339b9cbf4a9c4b243119a3bb012ef590a4fa8d1b035",
-    "evidence": "evidence/native-ui-pause/build-identity.json",
-    "verified_at": "2026-10-28T18:54:50Z",
-    "acceptance_scope": "host/build and simulator native menu/simulation subset; movie pause fails; campaign and physical acceptance remain"
+    "unsigned_device_package_sha256": "725a1abb64981682d7c79b40f1fbda75e3407185bead41d4588319d29ec982f3",
+    "evidence": "evidence/fmv-pause/build-identity.json",
+    "verified_at": "2026-10-28T19:36:02Z",
+    "acceptance_scope": "host/build and simulator movie pause/stop subset; fresh-boot Results anomaly open; campaign and physical acceptance remain"
   },
   "goals": {
     "G00": {
@@ -603,7 +603,7 @@
       ]
     },
     "R15": {
-      "status": "failed",
+      "status": "in_progress",
       "evidence": [
         "apple/ios/NightPadShellViewController.mm",
         "docs/DECISIONS/0008-native-shell-surface.md",
@@ -613,13 +613,18 @@
         "apple/shared/NightPadBackgroundPolicy.cpp",
         "scripts/test_background_policy.sh",
         "scripts/test_input.sh",
-        "evidence/native-ui-pause"
+        "evidence/native-ui-pause",
+        "docs/DECISIONS/0019-native-movie-pause.md",
+        "scripts/test_fmv_audio.sh",
+        "scripts/test_driving_movie_pause.sh",
+        "patches/0033-native-movie-pause.patch",
+        "evidence/fmv-pause"
       ],
       "decision_id": null,
       "notes": [
         "Corrected the prior blanket claim: root UIMenu did not invoke native pause. It now uses documented visibility callbacks and independent menu/surface/alert/activity ownership; menu rebuilding is deferred while visible.",
         "Simulator traces prove action/menu/sheet, nested App Pause, background/foreground and driving-simulation holds. Host tests prevent held buttons/triggers/sticks from resurfacing before neutral. Physical ergonomics and interruptions remain unverified.",
-        "Still failing during blocking driving movie playback: PlayMPC::Play does not poll lifecycle pause/stop, so the intro can finish under a native UI hold while simulation frame count remains zero. Repair movie voice/clock pause and test both engines before R15 can pass."
+        "Patch 0033 repairs blocking movie voice/clock pause and cooperative stop. Actual SDL clock/voice regression and two native intro cycles pass; simulator action timestamp and driving presented frames hold, resume and stop while paused. Physical interruptions/audio acceptance remain unverified."
       ]
     },
     "R16": {
@@ -889,6 +894,11 @@
       "id": "0018-native-ui-pause-owners",
       "path": "docs/DECISIONS/0018-native-ui-pause-owners.md",
       "summary": "Wire native menu visibility and independent pause owners, require neutral input after interruption, and leave the blocking movie pause gap explicit."
+    },
+    {
+      "id": "0019",
+      "path": "docs/DECISIONS/0019-native-movie-pause.md",
+      "summary": "Pause movie voices and clocks and observe stop during blocking playback; validate actual presented frames separately from simulation."
     }
   ],
   "blockers": [
@@ -1812,6 +1822,16 @@
         "evidence/native-ui-pause",
         "docs/DECISIONS/0018-native-ui-pause-owners.md"
       ]
+    },
+    {
+      "at": "2026-10-28T19:36:02Z",
+      "goal": "G04/G05",
+      "summary": "Repaired native movie voice/clock pause and blocking driving stop; actual SDL/native/simulator evidence passes. Restart after stopping an action movie shows a stale zero-score Results page and remains next investigation. No earned progression.",
+      "evidence": [
+        "docs/DECISIONS/0019-native-movie-pause.md",
+        "evidence/fmv-pause",
+        "build/tests/fmv-pause"
+      ]
     }
   ],
   "completed_tests": [
@@ -2046,7 +2066,22 @@
       "name": "fresh NPRUN on-foot failure/replay save protection",
       "result": "PASS for movement, look, jump, damage/death/replay and byte-identical profile after failed attempts; no completed mission or earned results save. Both assists off.",
       "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "native movie voice/clock and two actual driving intro cycles",
+      "result": "PASS: silent/virtual/queued/drained/independent SDL voices; actual intro freezes, resumes, stops while paused and joins twice",
+      "target": "macOS arm64, SDL dummy audio"
+    },
+    {
+      "name": "simulator action/driving movie pause and paused Stop",
+      "result": "PASS for subset: action clock 11.357621 -> 11.357622 s; driving holds 77 and 624 presented frames; Stop 1.825 s; NPRUN unchanged",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "post-0033 focused unchanged action replay",
+      "result": "PASS: CastleIndoors1 all 635 frames; full eleven-recording run remains patch 0032 evidence",
+      "target": "macOS arm64 action test"
     }
   ],
-  "next_step": "Repair native movie pause before further campaign acceptance: inspect PlayMPC::Play and common/fmv/FmvAudio{,Sdl}.cpp; pause voice and clock (including silent/drained/virtual cases), honor stop while paused, integrate both movie players and test an actual intro. Native root/menu/modal/background simulation holds now have simulator traces; R15 still fails during driving intro. Then resume NPRUN earned mission/results save and remaining campaign/multiplayer/display/device gates. All eleven complete replays passed; no replay process remains live. Only the phone simulator is booted and its app is stopped."
+  "next_step": "Investigate retained launch/front-end state: same-process Stop/Start during an action movie displayed a zero-score Results page instead of the title, with NPRUN unchanged. Verify fresh boot and real handover data separately, then resume actual earned mission/results save and relaunch, plus remaining campaign/multiplayer/display/device gates. Movie pause/stop now passes native and simulator subset (decision 0019). No build/replay job live; only phone simulator booted, app cleanly stopped."
 }

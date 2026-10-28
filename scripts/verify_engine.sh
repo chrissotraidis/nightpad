@@ -10,6 +10,7 @@ repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 "$repo/scripts/test_action_pause.sh"
 "$repo/scripts/test_assists.sh"
 "$repo/scripts/test_driving_pause.sh"
+"$repo/scripts/test_driving_movie_pause.sh"
 "$repo/scripts/test_driving_early_stop.sh"
 "$repo/scripts/test_engine_transition.sh"
 "$repo/scripts/test_engine_handoff.sh"

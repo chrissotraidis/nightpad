@@ -1,0 +1,346 @@
+diff --git a/src/action/engine/Fmv.cpp b/src/action/engine/Fmv.cpp
+index 46c7fa7..63ad20e 100644
+--- a/src/action/engine/Fmv.cpp
++++ b/src/action/engine/Fmv.cpp
+@@ -200,6 +200,14 @@ static bool OpenDecoder(int stream, AVCodecContext **out) {
+     return true;
+ }
+
++void BackgroundMovieSetNativePaused(bool paused) {
++    M.audio_.SetPaused(paused);
++    if (M.isPlaying) {
++        printf("[fmv] action native %s at %.6f seconds\n", paused ? "pause" : "resume", M.audio_.Clock());
++        fflush(stdout);
++    }
++}
++
+ // FUNC_AT(0x000e8a00)
+ void BackgroundMovieCleanup(void) {
+     M.audio_.Close();
+diff --git a/src/action/engine/Fmv.h b/src/action/engine/Fmv.h
+index d535087..b81ddff 100644
+--- a/src/action/engine/Fmv.h
++++ b/src/action/engine/Fmv.h
+@@ -12,5 +12,6 @@ bool __stdcall BackgroundMovieUpdate(void);     // every frame: the next frame i
+ bool __stdcall BackgroundMovieIsPlaying(void);
+ void BackgroundMovieSetVolume(int volume);      // 0..100, through the game's volume table
+ void BackgroundMovieCleanup(void);              // stops and frees everything; fine with nothing playing
++void BackgroundMovieSetNativePaused(bool paused); // host UI pause, including silent movie clock
+
+ #endif // FMV_H_
+diff --git a/src/action/main.cpp b/src/action/main.cpp
+index af5902b..63e928a 100644
+--- a/src/action/main.cpp
++++ b/src/action/main.cpp
+@@ -7,6 +7,7 @@
+ #include "sound/SFX.h"                  // SFXPause/SFXUnPause and the stream pause pair
+ #include "engine/XboxSystem.h"
+ #include "engine/XboxError.h"
++#include "engine/Fmv.h"
+ #include "game.h"
+ #include "ui/Menu.h"   // Menu_ResetNoInputCount: the front end's idle count starts afresh each session
+ #include "../common/engineLifecycle.h"
+@@ -42,6 +43,10 @@ extern "C" unsigned long NightPadActionEngineFrameCount(void) {
+     return g_mainloopFrames.load(std::memory_order_acquire);
+ }
+
++extern "C" void NightPadActionResetFrameCounter(void) {
++    g_mainloopFrames.store(0, std::memory_order_release);
++}
++
+ extern "C" void NightPadActionEngineTriggerDrivingAfter(unsigned frames) {
+     g_framesSinceStart.store(0, std::memory_order_release);
+     g_testDrivingAfterFrames.store(frames, std::memory_order_release);
+@@ -77,6 +82,7 @@ void Game_Main(int argc, char **argv) {
+     while (!EngineLifecycle_StopRequested()) {
+         if (EngineLifecycle_PauseRequested()) {
+             if (!paused) {
++                BackgroundMovieSetNativePaused(true);
+                 SFXPause();
+                 SFXPauseAllStreams();
+                 paused = true;
+@@ -87,6 +93,7 @@ void Game_Main(int argc, char **argv) {
+         if (paused) {
+             SFXUnPause();
+             SFXUnPauseAllStreams();
++            BackgroundMovieSetNativePaused(false);
+             paused = false;
+         }
+         mainloop();
+diff --git a/src/common/fmv/FmvAudio.cpp b/src/common/fmv/FmvAudio.cpp
+index be3117a..3589546 100644
+--- a/src/common/fmv/FmvAudio.cpp
++++ b/src/common/fmv/FmvAudio.cpp
+@@ -73,7 +73,7 @@ void FmvAudio::Close() {
+     free(pending_);
+     pending_ = nullptr;
+     pendingFrames_ = channels_ = sampleRate_ = 0;
+-    started_ = finished_ = drained_ = counting_ = false;
++    started_ = finished_ = drained_ = counting_ = paused_ = false;
+     framesTotal_ = 0;
+ }
+
+@@ -161,14 +161,42 @@ void FmvAudio::SetVolume(float amplitude) {
+ }
+
+ void FmvAudio::Start() {
+-    if (voice_ != nullptr)
++    if (voice_ != nullptr && !paused_)
+         voice_->Start();
+     started_ = true;
+     startWall_ = Now();
+     startVirtual_ = virtualClock_ != nullptr ? virtualClock_() : 0.0;
++    if (paused_) {
++        pauseClock_ = 0.0;
++        pauseWall_ = startWall_;
++        pauseVirtual_ = startVirtual_;
++    }
++}
++
++void FmvAudio::SetPaused(bool paused) {
++    if (paused_ == paused)
++        return;
++    if (paused) {
++        if (voice_ != nullptr && started_) voice_->Stop();
++        pauseClock_ = Clock();
++        pauseWall_ = Now();
++        pauseVirtual_ = virtualClock_ != nullptr ? virtualClock_() : 0.0;
++        paused_ = true;
++    } else {
++        if (started_) {
++            int64_t now = Now();
++            startWall_ += now - pauseWall_;
++            if (drained_) drainedWall_ += now - pauseWall_;
++            if (virtualClock_ != nullptr) startVirtual_ += virtualClock_() - pauseVirtual_;
++        }
++        paused_ = false;
++        if (voice_ != nullptr && started_) voice_->Start();
++    }
+ }
+
+ double FmvAudio::Clock() {
++    if (paused_)
++        return pauseClock_;
+     if (virtualClock_ != nullptr)
+         return started_ ? virtualClock_() - startVirtual_ : 0.0;
+     if (voice_ == nullptr || !started_)
+diff --git a/src/common/fmv/FmvAudio.h b/src/common/fmv/FmvAudio.h
+index 8b099c3..7144832 100644
+--- a/src/common/fmv/FmvAudio.h
++++ b/src/common/fmv/FmvAudio.h
+@@ -47,6 +47,9 @@ public:
+
+     // Starts the voice and the clock. Call once the first frame is ready.
+     void Start();
++    // Native UI pause: retain queued samples and freeze every clock mode.
++    // Resume excludes the paused interval; it does not restart the movie.
++    void SetPaused(bool paused);
+     // The movie's time in seconds
+     double Clock();
+
+@@ -77,6 +80,9 @@ private:
+     int pendingFrames_ = 0;
+     int channels_ = 0, sampleRate_ = 0;
+     bool started_ = false, finished_ = false;
++    bool paused_ = false;
++    double pauseClock_ = 0.0, pauseVirtual_ = 0.0;
++    int64_t pauseWall_ = 0;
+     bool drained_ = false;              // played out: the clock carries on from the wall clock
+     double drainedAt_ = 0.0;
+     int64_t drainedWall_ = 0, startWall_ = 0;
+diff --git a/src/common/fmv/FmvAudioSdl.cpp b/src/common/fmv/FmvAudioSdl.cpp
+index 489ca58..d427ddd 100644
+--- a/src/common/fmv/FmvAudioSdl.cpp
++++ b/src/common/fmv/FmvAudioSdl.cpp
+@@ -62,7 +62,7 @@ void FmvAudio::Close() {
+     pending_ = nullptr;
+     pendingFrames_ = channels_ = sampleRate_ = outputChannels_ = 0;
+     device_ = 0;
+-    started_ = finished_ = drained_ = counting_ = false;
++    started_ = finished_ = drained_ = counting_ = paused_ = false;
+ }
+
+ // Nothing is held back here: SDL keeps what is queued
+@@ -138,7 +138,7 @@ void FmvAudio::SetVolume(float amplitude) {
+
+ void FmvAudio::Start() {
+     // Should it not bind, the movie plays silently on the wall clock rather than wait for a clock that never moves
+-    if (voice_ != nullptr && !SDL_BindAudioStream(device_, voice_)) {
++    if (voice_ != nullptr && !paused_ && !SDL_BindAudioStream(device_, voice_)) {
+         SDL_DestroyAudioStream(voice_);
+         voice_ = nullptr;
+         counting_ = virtualClock_ != nullptr;
+@@ -146,9 +146,46 @@ void FmvAudio::Start() {
+     started_ = true;
+     startWall_ = (int64_t)SDL_GetPerformanceCounter();
+     startVirtual_ = virtualClock_ != nullptr ? virtualClock_() : 0.0;
++    if (paused_) {
++        pauseClock_ = 0.0;
++        pauseWall_ = startWall_;
++        pauseVirtual_ = startVirtual_;
++    }
++}
++
++void FmvAudio::SetPaused(bool paused) {
++    if (paused_ == paused)
++        return;
++    if (paused) {
++        // Unbind this voice only: pausing the shared logical device would
++        // interfere with the game's independent SFX/stream pause owner.
++        if (voice_ != nullptr && started_)
++            SDL_UnbindAudioStream(voice_);
++        pauseClock_ = Clock();
++        pauseWall_ = (int64_t)SDL_GetPerformanceCounter();
++        pauseVirtual_ = virtualClock_ != nullptr ? virtualClock_() : 0.0;
++        paused_ = true;
++    } else {
++        if (started_) {
++            int64_t now = (int64_t)SDL_GetPerformanceCounter();
++            startWall_ += now - pauseWall_;
++            if (drained_) drainedWall_ += now - pauseWall_;
++            if (virtualClock_ != nullptr) startVirtual_ += virtualClock_() - pauseVirtual_;
++        }
++        paused_ = false;
++        if (voice_ != nullptr && started_ && !SDL_BindAudioStream(device_, voice_)) {
++            SDL_DestroyAudioStream(voice_);
++            voice_ = nullptr;
++            counting_ = virtualClock_ != nullptr;
++            startWall_ = (int64_t)SDL_GetPerformanceCounter() -
++                         (int64_t)(pauseClock_ * (double)SDL_GetPerformanceFrequency());
++        }
++    }
+ }
+
+ double FmvAudio::Clock() {
++    if (paused_)
++        return pauseClock_;
+     if (virtualClock_ != nullptr)
+         return started_ ? virtualClock_() - startVirtual_ : 0.0;
+     if (voice_ == nullptr || !started_)
+diff --git a/src/driving/engine/GameLoop.cpp b/src/driving/engine/GameLoop.cpp
+index 66922bf..b5a36e6 100644
+--- a/src/driving/engine/GameLoop.cpp
++++ b/src/driving/engine/GameLoop.cpp
+@@ -89,6 +89,10 @@ extern "C" unsigned long NightPadDrivingEngineFrameCount(void) {
+     return g_drivingFrames.load(std::memory_order_acquire);
+ }
+
++extern "C" void NightPadDrivingResetFrameCounter(void) {
++    g_drivingFrames.store(0, std::memory_order_release);
++}
++
+ #include "../platform/Sse.h"
+ #include <stdlib.h>
+ #include <string.h>
+@@ -674,7 +678,8 @@ void GameLoop_PlayMovie(const char *movie, const char *subtitles) {
+     IOModule::GetIOModule()->resyncDevices = true;
+     IOModule::GetIOModule()->EnableUpdating(true);
+     ActionQueueManager::GetActionQueueManager()->FlushAllQueues();
+-    ASoundManager::Resume();
++    if (!EngineLifecycle_StopRequested() && !EngineLifecycle_PauseRequested())
++        ASoundManager::Resume();
+ #if defined(_M_IX86) || defined(__i386__)   // EMMS; MSVC has no MMX intrinsics on x86-64, where nothing uses MMX
+     _mm_empty();
+ #endif
+diff --git a/src/driving/engine/PlayMPC.cpp b/src/driving/engine/PlayMPC.cpp
+index b5eb0cd..a80530c 100644
+--- a/src/driving/engine/PlayMPC.cpp
++++ b/src/driving/engine/PlayMPC.cpp
+@@ -13,11 +13,21 @@
+ #include "../../common/fmv/FmvAudio.h"
+ #include "../../common/gfx/d3d9Backend.h"
+ #include "../../common/xboxPath.h"
++#include "../../common/engineLifecycle.h"
+ #include "../eagl/RenderContext.h"
+ #include "../eagl/View.h"
+ #include "../platform/Pad.hpp"
+ #include "../sound/DrivingAudio.h"
+
++// Separate from the simulation counter: intros run before that loop starts.
++static std::atomic<unsigned long> g_movieFrames{0};
++static std::atomic<bool> g_movieActive{false}, g_moviePaused{false};
++extern "C" int NightPadDrivingEngineMovieState(unsigned long *frames, int *paused) {
++    if (frames != NULL) *frames = g_movieFrames.load(std::memory_order_acquire);
++    if (paused != NULL) *paused = g_moviePaused.load(std::memory_order_acquire) ? 1 : 0;
++    return g_movieActive.load(std::memory_order_acquire) ? 1 : 0;
++}
++
+ // ---------------------------------------------------------------------------------------------------------------
+ // The driving engine's movies, on FFmpeg - the counterpart of the action engine's engine/Fmv.cpp.
+ //
+@@ -154,6 +164,8 @@ static FILE *OpenMovieFile(const char *path, long *base, long *size) {
+ // ---------------------------------------------------------------------------------------------------------------
+
+ static void CloseMovie(void) {
++    g_movieActive.store(false, std::memory_order_release);
++    g_moviePaused.store(false, std::memory_order_release);
+     M.sound.Close();
+     for (AVPacket *p : M.videoPackets)
+         ff.packet_free(&p);
+@@ -424,10 +436,32 @@ void PlayMPC::Init(const char *path, uint32_t volume, bool mode) {
+     printf("[fmv] %s\n", path);
+ }
+
++static bool WaitForMovieResume(void) {
++    if (EngineLifecycle_PauseRequested() && !EngineLifecycle_StopRequested()) {
++        M.sound.SetPaused(true);
++        g_moviePaused.store(true, std::memory_order_release);
++        printf("[fmv] native pause at presented frame %lu\n", g_movieFrames.load());
++        fflush(stdout);
++        while (EngineLifecycle_PauseRequested() && !EngineLifecycle_StopRequested())
++            HostSleep(10);
++        if (EngineLifecycle_StopRequested())
++            return false;
++        M.sound.SetPaused(false);
++        g_moviePaused.store(false, std::memory_order_release);
++        printf("[fmv] native resume at presented frame %lu\n", g_movieFrames.load());
++        fflush(stdout);
++    }
++    return !EngineLifecycle_StopRequested();
++}
++
+ // AUTOINJECT
+ void PlayMPC::Play(EAGL::ViewPort *viewport, bool widescreen, SubtitleCallback subtitles) {
+     if (M.owner != this || M.file == NULL)
+         return;                         // as the original, with no player: nothing to play
++    if (EngineLifecycle_StopRequested()) {
++        CloseMovie();
++        return;
++    }
+
+     // The first frame, and the audio from there. The audio header comes after the first video chunk, so read on
+     // until it has been seen (or a few frames have been buffered without one) before the clock starts.
+@@ -452,9 +486,14 @@ void PlayMPC::Play(EAGL::ViewPort *viewport, bool widescreen, SubtitleCallback s
+     float top = widescreen ? height * -0.16666669f : 0.0f;
+     float bottom = top + (widescreen ? height * 1.3333334f : height);
+
++    g_movieFrames.store(0, std::memory_order_release);
++    M.sound.SetPaused(EngineLifecycle_PauseRequested());
+     M.sound.Start();
+     M.started = true;
++    g_movieActive.store(true, std::memory_order_release);
+     for (;;) {
++        if (!WaitForMovieResume())
++            break;
+         this->context->BeginFrame();
+         viewport->BeginView();
+         viewport->ClearViewPort(7);
+@@ -465,13 +504,18 @@ void PlayMPC::Play(EAGL::ViewPort *viewport, bool widescreen, SubtitleCallback s
+             subtitles(this->frameShown);
+         viewport->EndView();
+         this->context->EndFrame();
++        g_movieFrames.fetch_add(1, std::memory_order_acq_rel);
+
+         // Until the next frame is due, keeping EA's tasks and the audio going
+         while (M.sound.Clock() < M.nextFrameTime) {
++            if (!WaitForMovieResume())
++                break;
+             KeepAudioFed();
+             SYNCTASK_run(0);
+             THREAD_yield(0);
+         }
++        if (!WaitForMovieResume())
++            break;
+
+         PAD_update();
+         PadData *pad = PAD_getdataptr(this->padPort);

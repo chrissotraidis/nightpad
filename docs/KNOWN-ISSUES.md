@@ -7,7 +7,7 @@ tester would see, what is blocked, and where the detail lives.
 
 | Issue | Effect | Detail |
 | --- | --- | --- |
-| Blocking driving movies ignore native pause | The root-menu and simulation gates are now wired, but the driving intro can continue before the simulation frame counter starts. Movie voice/clock pause and cooperative stop still need repair | `docs/DECISIONS/0018-native-ui-pause-owners.md`, `PlayMPC::Play`, R15 |
+| Restart after action movie can show stale Results | A Stop/Start during an action movie produced a zero-score Results page instead of a fresh title. The profile is unchanged; investigate retained launch/front-end state before campaign acceptance | `docs/DECISIONS/0019-native-movie-pause.md`, G04/G05 |
 | Display acceptance is incomplete | Safe-area aspect fitting and driving widescreen flag encoding are fixed. Phone/tablet titles, driving HUD and the tablet widescreen scope have simulator evidence; action scope/FOV combinations, the remaining matrix and device performance remain unverified | `docs/DECISIONS/0017-display-fit-and-flow-timing.md`, R18 |
 | Campaign completion/results save is not verified | Fresh codename, Paris and on-foot Exchange failure/replay work, but no mission/results save has been earned; failed attempts leave NPRUN byte-identical | `docs/TEST-MATRIX.md`, R09/R11 |
 | Six-bot run reports the sound-buffer tracking limit | The log warns that more buffers exist than the backend tracks; the audible effect has not been measured | `evidence/campaign-first-play/nprun/stdout.log`, R10 |

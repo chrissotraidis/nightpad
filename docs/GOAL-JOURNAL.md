@@ -2506,3 +2506,33 @@ are ignored and may contain paths, hashes, captures or device identities.
   no earned progress. Repair the blocking movie native pause next, then resume
   a real mission-results save/relaunch and the outstanding campaign, objective
   multiplayer, display and physical gates. Goal remains active, not blocked.
+
+## 2026-10-28: pause real movies and stop before simulation starts
+
+- Previous goal turn: progress. Patch 0033 adds movie voice/clock pause to both
+  players and pause/stop polling to the blocking driving loop. Paused time is
+  excluded for silent, queued, drained and virtual clocks; other voices on the
+  shared SDL device keep running. Windows code mirrors this but is untested.
+- Per-session starts clear old pause and frame counters. The shell's frame-zero
+  Stop guard now accepts an active blocking movie and requests stop before
+  releasing UI ownership. Movie counters report presented frames separately.
+- Actual SDL audio tests pass. The real native driving intro freezes 3 -> 3,
+  resumes, stops while paused within five seconds and joins, twice in process.
+  Initial tests correctly failed on the default PAL fixture. The corrected,
+  test-owned launch seed selects supplied NTSC media; no app save was changed.
+- Simulator action movie clock holds 11.357621 -> 11.357622 seconds across a
+  native menu. Paris holds at movie frame 77, resumes, then holds at 624 with
+  simulation zero. Stop while paused returns to the shell in 1.825 seconds.
+  The NPRUN profile remains exactly byte-identical to its before-mission copy.
+- Native action pause, rebuilt native targets, both iOS lanes, quick gates,
+  35-export link, 33-patch/80-file reproduction and unsigned Release package
+  pass. A fresh unchanged CastleIndoors1 replay matches all 635 frames. The
+  full eleven-recording evidence remains the patch-0032 run, not a new 0033 run.
+- Newly observed: Stop/Start during an action movie opens a zero-score Results
+  page instead of the title. No progress is credited. Investigate retained
+  launch/front-end state next, then resume the earned campaign/results save.
+- Evidence: `evidence/fmv-pause/`, `build/tests/fmv-pause/`, decision 0019,
+  `evidence/action-demos/20261028T193202Z/results.json`. The one booted phone
+  simulator is cleanly stopped at the data-ready shell. No build/replay job
+  remains live. Goal stays active; physical signing/device and PAL media remain
+  external dependencies, with useful independent work still available.

@@ -54,6 +54,8 @@ void NightPadDrivingEngineSetHostPad(int port, unsigned buttons, int leftX, int 
                                      unsigned leftTrigger, unsigned rightTrigger, int connected);
 void NightPadDrivingEngineSetRumbleHandler(NightPadRumbleHandler handler);
 unsigned long NightPadDrivingEngineFrameCount(void);
+// Diagnostic snapshot of blocking movie playback, independent of simulation.
+int NightPadDrivingEngineMovieState(unsigned long *frames, int *paused);
 int NightPadDrivingEngineJoin(unsigned timeoutMilliseconds);
 void NightPadDrivingEngineCloseWindow(void);
 

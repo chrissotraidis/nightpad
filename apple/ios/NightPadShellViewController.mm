@@ -1101,7 +1101,11 @@ static uint64_t ShellResidentBytes(void) {
 - (void)pollEngine {
     if (_traceNativeUI && _uiPausedEngine && CFAbsoluteTimeGetCurrent() - _lastUiTrace >= 2.0) {
         _lastUiTrace = CFAbsoluteTimeGetCurrent();
-        NSLog(@"[NightPad UI] held frames=%lu", [_engineHost frameCount]);
+        unsigned long movieFrames = 0;
+        int moviePaused = 0;
+        BOOL movie = [_engineHost blockingMovieFrames:&movieFrames paused:&moviePaused];
+        NSLog(@"[NightPad UI] held frames=%lu movie=%d movie-frames=%lu movie-paused=%d",
+              [_engineHost frameCount], movie, movieFrames, moviePaused);
     }
     // A stopping engine can still need the window's main thread to pump SDL
     // events and finish a present callback. Keep that path alive until join.
@@ -1113,7 +1117,7 @@ static uint64_t ShellResidentBytes(void) {
         return;
     if (_stopWhenBooted) {
         const NSTimeInterval waited = CFAbsoluteTimeGetCurrent() - _stopQueuedAt;
-        if ([_engineHost frameCount] > 0 || waited > 180) {
+        if ([_engineHost frameCount] > 0 || [_engineHost blockingMovieFrames:nullptr paused:nullptr] || waited > 180) {
             _stopWhenBooted = NO;
             _forceStopNow = waited > 180;
             [self stopGame];
@@ -1202,7 +1206,8 @@ static uint64_t ShellResidentBytes(void) {
 - (void)stopGame {
     if (!_engineRunning) return;
     if (_switchingEngine) return;
-    if (!_forceStopNow && [_engineHost frameCount] == 0) {
+    if (!_forceStopNow && [_engineHost frameCount] == 0 &&
+        ![_engineHost blockingMovieFrames:nullptr paused:nullptr]) {
         // Cleanup before the game reaches its loop can tear down half-built
         // state. Hold the request until the first frame (or a long timeout).
         if (!_stopWhenBooted) {
@@ -1217,9 +1222,9 @@ static uint64_t ShellResidentBytes(void) {
     [self logSessionEvent:@"engine stop requested"];
     _engineRunning = NO;
     _engineTeardown = YES;
+    [_engineHost requestStop];
     [self endNativeUI];
     [self removeTouchControls];
-    [_engineHost requestStop];
     __weak NightPadShellViewController *weakSelf = self;
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         NightPadShellViewController *strongSelf = weakSelf;

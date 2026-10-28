@@ -32,6 +32,7 @@ typedef NS_ENUM(NSInteger, NightPadEngineKind) {
 - (void)clearHandoff;
 // Frames advanced by the active engine. Zero means it is still booting.
 - (unsigned long)frameCount;
+- (BOOL)blockingMovieFrames:(unsigned long *)frames paused:(int *)paused;
 // Optional action-only assists; the action loop re-applies them each frame.
 - (void)setImmortal:(BOOL)enabled;
 - (void)setUnlimitedAmmo:(BOOL)enabled;

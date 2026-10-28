@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 
+extern "C" void NightPadActionResetFrameCounter(void);
 static HostHandle g_gameThread = nullptr;
 
 extern "C" int NightPadActionEngineStart(int argc, char **argv) {
@@ -40,6 +41,8 @@ extern "C" int NightPadActionEngineStart(int argc, char **argv) {
         return 0;
     }
     EngineLifecycle_ResetStop();
+    EngineLifecycle_ReleasePause();
+    NightPadActionResetFrameCounter();
     g_gameThread = HostCreateThread(0x10000, mainXapiStartup, nullptr, 0, nullptr);
     return g_gameThread != nullptr;
 }

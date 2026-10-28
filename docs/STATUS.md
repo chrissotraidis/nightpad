@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-28 17:36 UTC
+Updated: 2026-10-28 19:36 UTC
 
 ## Outcome
 
@@ -380,9 +380,8 @@ simulator execution is no longer a platform blocker.
 
 ## Current uncertainty and blockers
 
-- R18 presentation is failing: the SDL GPU presentation blit fills the whole
-  swapchain. A 4:3 frame stretches across the phone. Numeric widescreen and
-  settings reload now work, but aspect fitting and device acceptance remain.
+- R18 aspect fitting is repaired on simulator; the remaining display matrix
+  and physical acceptance are still unverified.
 
 - The simulator now stops both engines cleanly: Stop Game from the Paris
   driving session joins in 1.7-3.7 s. The former 60-second hang came from the
@@ -448,12 +447,16 @@ these changes and the narrowed missing-attract-movie fix, which restores the
 The fresh post-fix eleven-recording replay recheck passed all 208,364 frames.
 No replay runner remains live. SpaceStationD still needs the missing movie data.
 
-Next: repair native pause/stop during blocking movie playback. Root menu,
-modal and background ownership now hold the action and driving simulation
-loops in simulator traces, but `PlayMPC::Play` can finish its intro under a
-native hold while the simulation frame counter stays zero. See decision 0018.
-Then continue the fresh NPRUN route through a completed mission/results save
-and relaunch, plus objective-mode and remaining multiplayer map coverage.
+Native movie pause/stop is repaired in patch 0033. Actual SDL voice/clock
+regressions and two native intro cycles pass. Simulator action holds its clock;
+driving holds presented frames 77 and 624, resumes, and stops while paused in
+1.825 seconds. The quick gates, both iOS build lanes and unsigned Release
+package pass; the unchanged 635-frame replay still matches. See decision 0019.
+
+Next: investigate the zero-score Results page seen on same-process restart
+after stopping an action movie. Keep NPRUN protected and verify fresh boot and
+real handover data separately. Then continue earned mission/results save and
+relaunch, plus objective-mode and remaining multiplayer map coverage.
 Individual campaign objectives do not write a profile save. Keep the fifteen-cycle
 action gate, ten-cycle driving gate, mixed round trip, pause, transition, handoff
 and data-import checks as regressions.

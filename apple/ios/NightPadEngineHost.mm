@@ -157,6 +157,16 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
     _handoffImage = nil;
 }
 
+- (BOOL)blockingMovieFrames:(unsigned long *)frames paused:(int *)paused {
+    if (frames != nullptr) *frames = 0;
+    if (paused != nullptr) *paused = 0;
+#if NIGHTPAD_HAS_ENGINE
+    if (_engine == NightPadEngineKindDriving)
+        return NightPadDrivingEngineMovieState(frames, paused) != 0;
+#endif
+    return NO;
+}
+
 - (unsigned long)frameCount {
 #if NIGHTPAD_HAS_ENGINE
     return _engine == NightPadEngineKindDriving ? NightPadDrivingEngineFrameCount()
