@@ -2131,3 +2131,16 @@ are ignored and may contain paths, hashes, captures or device identities.
   844x340, 800x320 and 1024x700 with the 44-point floor) and
   `scripts/verify_quick.sh` PASS.
 
+## 2026-10-28T09:00:00Z — overlay legibility and the tablet layout
+
+- Goal: G06. Requirement: R14.
+- Changed: each control gets a soft dark shadow (35% black, 3-point radius) so
+  the white borders stay readable over bright scenes; the translucent fill is
+  unchanged.
+- Verified: the overlay renders over the title and the Paris mission on the
+  iPhone 17 Pro, and after shutting the phone down and booting the iPad Pro
+  13-inch (M5) in landscape, the tablet defaults render the same arrangement
+  with round sticks, the face diamond and the capsule Start/Back.
+- One simulator was used at a time; the iPad was shut down before the phone was
+  booted again.
+

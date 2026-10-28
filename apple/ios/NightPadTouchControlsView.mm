@@ -111,7 +111,13 @@ BOOL IsRoundControl(TouchControlId id) {
         self.layer.cornerRadius = 12;
         self.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.42].CGColor;
         self.layer.borderWidth = 2;
-        self.clipsToBounds = YES;
+        // A soft dark edge keeps the white borders readable over bright scenes
+        // (daylight Paris, white menus) without changing the translucent fill.
+        self.layer.shadowColor = UIColor.blackColor.CGColor;
+        self.layer.shadowOpacity = 0.35;
+        self.layer.shadowRadius = 3;
+        self.layer.shadowOffset = CGSizeMake(0, 1);
+        self.clipsToBounds = NO;
         self.userInteractionEnabled = NO;
         self.isAccessibilityElement = YES;
         self.accessibilityLabel = ControlAccessibilityLabel(control.id);
