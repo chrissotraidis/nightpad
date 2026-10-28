@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T17:36:21Z",
+  "last_updated_at": "2026-10-28T18:10:59Z",
   "active_goal": "G09",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -25,29 +25,27 @@
   },
   "current_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "1afa631",
+    "nightpad_base_commit": "56236fc",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
-    "session_settings_patch_sha256": "6758410f14f5642ed12c295760a27d1d0c8f4fa4b8e623ce6e5d7aad00941ab6",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "335e432fd7134cb7b385bedcccbe8a1068375253eada65df22653e475c125432",
+    "simulator_binary_sha256": "1e2d9f40542b2c5048a1a66154760450560d8deb927608e32443ad0fdb17aa75",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "1e161fb35c66d178f383c6cbe7579a250270985d077ef2d32e92ad5fc26b6991",
-    "evidence": "evidence/display-settings/build-identity.json",
-    "verified_at": "2026-10-28T17:36:21Z",
-    "acceptance_scope": "host/parser/build gates and simulator state/menus only; presentation defect and physical acceptance remain"
+    "unsigned_device_package_sha256": "8d41d3ec660775add3e9b0eeb7aab99bb29b4bd96fbc1195c78852cc02cffd51",
+    "evidence": "evidence/presentation-fit/build-identity.json",
+    "verified_at": "2026-10-28T18:10:59Z",
+    "acceptance_scope": "host settings/geometry/build/lifecycle gates and simulator display subset only; full replay recheck running; campaign and physical acceptance remain"
   },
   "last_known_good_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "1afa631",
+    "nightpad_base_commit": "56236fc",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
-    "session_settings_patch_sha256": "6758410f14f5642ed12c295760a27d1d0c8f4fa4b8e623ce6e5d7aad00941ab6",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "335e432fd7134cb7b385bedcccbe8a1068375253eada65df22653e475c125432",
+    "simulator_binary_sha256": "1e2d9f40542b2c5048a1a66154760450560d8deb927608e32443ad0fdb17aa75",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "1e161fb35c66d178f383c6cbe7579a250270985d077ef2d32e92ad5fc26b6991",
-    "evidence": "evidence/display-settings/build-identity.json",
-    "verified_at": "2026-10-28T17:36:21Z",
-    "acceptance_scope": "host/parser/build gates and simulator state/menus only; presentation defect and physical acceptance remain"
+    "unsigned_device_package_sha256": "8d41d3ec660775add3e9b0eeb7aab99bb29b4bd96fbc1195c78852cc02cffd51",
+    "evidence": "evidence/presentation-fit/build-identity.json",
+    "verified_at": "2026-10-28T18:10:59Z",
+    "acceptance_scope": "host settings/geometry/build/lifecycle gates and simulator display subset only; full replay recheck running; campaign and physical acceptance remain"
   },
   "goals": {
     "G00": {
@@ -86,7 +84,7 @@
       "blockers": [
         "B02"
       ],
-      "next_step": "Provide matching PAL movie data or explicitly waive the SpaceStationD route; native baseline otherwise reproduced."
+      "next_step": "Finish the current post-fix eleven-recording replay recheck. Matching PAL movie data is still required for SpaceStationD; that core route has not been waived."
     },
     "G03": {
       "status": "blocked_external",
@@ -318,10 +316,16 @@
         "docs/DECISIONS/0016-display-settings-contract.md",
         "patches/0029-session-settings-reload.patch",
         "evidence/display-settings/numeric-widescreen.json",
-        "evidence/display-settings/stretched-4x3-before.png"
+        "evidence/display-settings/stretched-4x3-before.png",
+        "patches/0030-fit-display-presentation.patch",
+        "patches/0031-driving-video-flags.patch",
+        "scripts/test_presentation.sh",
+        "tests/native/test_presentation.cpp",
+        "docs/DECISIONS/0017-display-fit-and-flow-timing.md",
+        "evidence/presentation-fit"
       ],
       "blockers": [],
-      "next_step": "Repair R18 presentation: fit the selected 4:3/16:9 frame inside the drawable instead of stretching across the swapchain; verify both engines and phone/tablet. Then continue earned campaign-results save and remaining objective-mode/map coverage. Physical acceptance remains external."
+      "next_step": "Poll the existing eleven-recording replay process (exec session 57557; runner PID 51735; build/tests/presentation/replay-corpus.log), never start a duplicate while live. Record its terminal results; SpaceStationD remains blocked by missing media. Then resume fresh NPRUN earned mission/results save and relaunch, remaining campaign/multiplayer coverage, and action scope/FOV/device display acceptance. Only the tablet simulator is currently booted; stop/shut it down before switching to the phone."
     },
     "G10": {
       "status": "in_progress",
@@ -637,7 +641,7 @@
       ]
     },
     "R18": {
-      "status": "failed",
+      "status": "in_progress",
       "evidence": [
         "apple/shared/NightPadEngineSettings.cpp",
         "scripts/test_engine_settings.sh",
@@ -645,14 +649,21 @@
         "docs/DECISIONS/0016-display-settings-contract.md",
         "patches/0029-session-settings-reload.patch",
         "evidence/display-settings/numeric-widescreen.json",
-        "evidence/display-settings/stretched-4x3-before.png"
+        "evidence/display-settings/stretched-4x3-before.png",
+        "patches/0030-fit-display-presentation.patch",
+        "patches/0031-driving-video-flags.patch",
+        "scripts/test_presentation.sh",
+        "tests/native/test_presentation.cpp",
+        "docs/DECISIONS/0017-display-fit-and-flow-timing.md",
+        "evidence/presentation-fit"
       ],
       "decision_id": null,
       "notes": [
         "Render scale, FXAA and vertical FOV are exposed and persisted; native 1x-3x runs reach the same cap. Device performance remains unverified.",
         "Fixed the configuration contract: the app now writes numeric Widescreen=1/0. The real action engine parser fails 16:9 with the former on value and passes after the change. Tests also reload aspect, FOV and disc root in one process.",
         "Patch 0029 reloads action settings before every session. A real simulator Stop/change/Start in the same app PID logs widescreen=1 then widescreen=0, matching the generated files.",
-        "R18 is still failing presentation: sdlGpuBackend PresentOnWindowThread blits across the entire phone swapchain, stretching a 4:3 frame. Aspect fitting/letterboxing, both-engine HUD/scope checks and physical performance remain."
+        "Patches 0030/0031 fit the selected aspect inside the SDL window safe area and encode driving XC_VIDEO widescreen in bit 16 for its actual XAPI consumer. Real action/kernel/XAPI/POSIX settings tests cover both modes and reload. Geometry tests cover safe-area scaling, resize and integer boundaries.",
+        "Simulator-only evidence: phone/tablet action titles in both aspects, phone 16:9 and tablet 4:3 driving HUD, and a circular tablet 16:9 scope after the dashboard bit fix. Action scope/FOV combinations, remaining display matrix and physical performance remain unverified."
       ]
     },
     "R19": {
@@ -859,6 +870,11 @@
       "id": "0016-display-settings-contract",
       "path": "docs/DECISIONS/0016-display-settings-contract.md",
       "summary": "Write numeric widescreen values and reload cached action settings at each new session; presentation aspect fitting remains a required repair."
+    },
+    {
+      "id": "0017-display-fit-and-flow-timing",
+      "path": "docs/DECISIONS/0017-display-fit-and-flow-timing.md",
+      "summary": "Fit selected display aspect within safe-area pixels, correct driving dashboard widescreen encoding, and scope missing-movie recovery to the attract page to preserve recorded input timing."
     }
   ],
   "blockers": [
@@ -1761,6 +1777,16 @@
         "docs/DECISIONS/0016-display-settings-contract.md",
         "build/tests/engine-settings"
       ]
+    },
+    {
+      "at": "2026-10-28T18:10:59Z",
+      "goal": "G02/G04/G09",
+      "summary": "Implemented safe-area aspect fitting, fixed driving dashboard flag encoding, and narrowed the earlier missing-movie recovery after reproducing a frame-2 replay regression. Simulator display and native/build gates pass; fresh full replay recheck remains live. No campaign progression or physical acceptance credit.",
+      "evidence": [
+        "docs/DECISIONS/0017-display-fit-and-flow-timing.md",
+        "evidence/presentation-fit",
+        "build/tests/presentation"
+      ]
     }
   ],
   "completed_tests": [
@@ -1960,7 +1986,27 @@
       "name": "real engine display-settings parse and reload",
       "result": "PASS: numeric 4:3/16:9 values, FOV/FPS/disc root, same-process reload; simulator session log changes widescreen=1 to 0 across Stop/change/Start. Presentation still stretches.",
       "target": "macOS arm64 / iPhone 17 Pro simulator"
+    },
+    {
+      "name": "safe-area presentation geometry and actual driving widescreen contract",
+      "result": "PASS: fit/rounding/resize/overflow geometry; actual action parser, kernel, XAPI and POSIX INI reader see both numeric modes and same-process changes; final quick gates pass",
+      "target": "macOS arm64 / simulator and iPhoneOS build lanes"
+    },
+    {
+      "name": "phone/tablet Metal aspect fitting and corrected driving scope",
+      "result": "PASS for captured simulator subset: titles in both aspects, driving HUDs and circular tablet 16:9 scope; remaining display/gameplay/device acceptance is unverified",
+      "target": "iPhone 17 Pro and iPad Pro 13-inch (M5) / iOS 26.5 simulator, one booted at a time"
+    },
+    {
+      "name": "missing-movie replay timing repair",
+      "result": "PASS for CastleIndoors1: unchanged recording matches all 635 frames after generic early completion is removed. Old and new presentation backends both failed at frame 2 before that repair. Full eleven-recording recheck is running, not yet passed.",
+      "target": "macOS arm64 native action test engine"
+    },
+    {
+      "name": "final display build lifecycle and package",
+      "result": "PASS: three joined native action cycles, one joined driving cycle, both iOS lanes, unsigned Release package and patch reconstruction; no device acceptance",
+      "target": "macOS arm64 host"
     }
   ],
-  "next_step": "Repair R18 presentation: fit the selected 4:3/16:9 frame inside the drawable instead of stretching across the swapchain; verify both engines and phone/tablet. Then continue earned campaign-results save and remaining objective-mode/map coverage. Physical acceptance remains external."
+  "next_step": "Poll the existing eleven-recording replay process (exec session 57557; runner PID 51735; build/tests/presentation/replay-corpus.log), never start a duplicate while live. Record its terminal results; SpaceStationD remains blocked by missing media. Then resume fresh NPRUN earned mission/results save and relaunch, remaining campaign/multiplayer coverage, and action scope/FOV/device display acceptance. Only the tablet simulator is currently booted; stop/shut it down before switching to the phone."
 }

@@ -1,0 +1,17 @@
+diff --git a/src/driving/platform/KernelImports.cpp b/src/driving/platform/KernelImports.cpp
+index 18bf15d..b0a6626 100644
+--- a/src/driving/platform/KernelImports.cpp
++++ b/src/driving/platform/KernelImports.cpp
+@@ -156,10 +156,10 @@ HostLong __stdcall KernelExQueryNonVolatileSetting(HostDword index, HostDword *t
+     HostDword setting = 0;
+     switch (index) {
+     case 0x07: setting = 1; break;                          // XC_LANGUAGE: English
+-    case 0x08: {                                            // XC_VIDEO: bit 0 widescreen
++    case 0x08: {                                            // XC_VIDEO: flags are stored in bits 16..22
+         char text[16];
+         HostGetProfileString("Settings", "Widescreen", "0", text, sizeof(text), ".\\settings.ini");
+-        setting = strtol(text, NULL, 10) != 0 ? 1 : 0;
++        setting = strtol(text, NULL, 10) != 0 ? 0x10000 : 0;
+         break;
+     }
+     case 0x09: setting = 0; break;                          // XC_AUDIO: stereo

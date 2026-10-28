@@ -438,9 +438,15 @@ a signing identity and a trusted device exist, then work the checklist in
 trip, touch and controller sessions, Secret Unlocks, display modes and the
 fifteen-minute stability runs.
 
-Next independent repair: preserve the selected 4:3/16:9 aspect inside the
-phone drawable instead of stretching the back buffer across the whole window;
-verify both engines, menus/HUD/scope and phone/tablet. See decision 0016.
+Aspect fitting now preserves the selected 4:3/16:9 frame inside the window's
+safe area with black bars. Phone/tablet action titles, driving HUDs and the
+corrected tablet widescreen scope have simulator evidence. The real driving
+XAPI test also fixes the dashboard flag's bit encoding. Decision 0017 records
+these changes and the narrowed missing-attract-movie fix, which restores the
+635-frame replay that the earlier generic skip had broken.
+
+Next: finish the live eleven-recording replay recheck before launching another
+runner; see the latest journal checkpoint for its process and tool handle.
 Then continue the fresh NPRUN route through a completed mission/results save
 and relaunch, plus objective-mode and remaining multiplayer map coverage.
 Individual campaign objectives do not write a profile save. Keep the fifteen-cycle

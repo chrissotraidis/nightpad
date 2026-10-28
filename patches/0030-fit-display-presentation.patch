@@ -1,0 +1,104 @@
+diff --git a/src/common/gfx/presentationRect.h b/src/common/gfx/presentationRect.h
+new file mode 100644
+index 0000000..c6f3b0c
+--- /dev/null
++++ b/src/common/gfx/presentationRect.h
+@@ -0,0 +1,37 @@
++#pragma once
++
++#include <stdint.h>
++
++// Presentation is independent of the render target: Xbox widescreen can be
++// anamorphic, and RenderWidth/RenderHeight only control rendering resolution.
++struct PresentationRect { uint32_t x, y, w, h; };
++
++static inline PresentationRect PresentationSafeArea(uint32_t pixelWidth, uint32_t pixelHeight,
++                                                     int windowWidth, int windowHeight,
++                                                     int x, int y, int w, int h) {
++    PresentationRect full = { 0, 0, pixelWidth, pixelHeight };
++    if (windowWidth <= 0 || windowHeight <= 0 || x < 0 || y < 0 || w <= 0 || h <= 0 ||
++        (int64_t)x + w > windowWidth || (int64_t)y + h > windowHeight)
++        return full;
++    // Round inward so no important pixels land under the cutout/home indicator.
++    uint32_t left = ((uint64_t)x * pixelWidth + windowWidth - 1) / windowWidth;
++    uint32_t top = ((uint64_t)y * pixelHeight + windowHeight - 1) / windowHeight;
++    uint32_t right = (uint64_t)(x + w) * pixelWidth / windowWidth;
++    uint32_t bottom = (uint64_t)(y + h) * pixelHeight / windowHeight;
++    return { left, top, right > left ? right - left : 0, bottom > top ? bottom - top : 0 };
++}
++
++static inline PresentationRect PresentationFit(PresentationRect area, bool widescreen) {
++    if (area.w == 0 || area.h == 0)
++        return { area.x, area.y, 0, 0 };
++    uint32_t numerator = widescreen ? 16 : 4, denominator = widescreen ? 9 : 3;
++    uint32_t width = area.w, height = area.h;
++    if ((uint64_t)width * denominator > (uint64_t)height * numerator)
++        width = (uint64_t)height * numerator / denominator;
++    else
++        height = (uint64_t)width * denominator / numerator;
++    // Tiny/minimized drawables cannot contain even one pixel of this aspect.
++    if (width == 0 || height == 0)
++        return { area.x, area.y, 0, 0 };
++    return { area.x + (area.w - width) / 2, area.y + (area.h - height) / 2, width, height };
++}
+diff --git a/src/common/gfx/sdlGpuBackend.cpp b/src/common/gfx/sdlGpuBackend.cpp
+index 8246438..81a76cb 100644
+--- a/src/common/gfx/sdlGpuBackend.cpp
++++ b/src/common/gfx/sdlGpuBackend.cpp
+@@ -1,6 +1,7 @@
+ #include "d3d9Backend.h"
+
+ #include "backendHost.h"
++#include "presentationRect.h"
+ #include "fixedFunction.h"
+ #include "nv2aPixelShader.h"
+ #include "nv2aVertexShader.h"
+@@ -879,6 +880,7 @@ static Target g_backBuffer, g_currentTarget;
+ static SDL_GPUTextureFormat g_depthFormat = SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
+ static bool g_reversedDepth = false;
+ static uint32_t g_gameWidth = 640, g_gameHeight = 480;
++static bool g_presentWidescreen = false;
+ static float g_renderScaleX = 1.0f, g_renderScaleY = 1.0f;
+ static bool g_renderScaled = false;
+ static bool g_targetIsBackBuffer = true;
+@@ -944,15 +946,29 @@ static void SDLCALL PresentOnWindowThread(void *data) {
+     SDL_GPUTexture *swapchain = NULL;
+     Uint32 width = 0, height = 0;
+     if (SDL_WaitAndAcquireGPUSwapchainTexture(cb, g_window, &swapchain, &width, &height) && swapchain != NULL) {
++        PresentationRect area = { 0, 0, width, height };
++        int windowWidth = 0, windowHeight = 0;
++        SDL_Rect safe;
++        if (SDL_GetWindowSize(g_window, &windowWidth, &windowHeight) && SDL_GetWindowSafeArea(g_window, &safe))
++            area = PresentationSafeArea(width, height, windowWidth, windowHeight, safe.x, safe.y, safe.w, safe.h);
++        PresentationRect destination = PresentationFit(area, g_presentWidescreen);
++        if (destination.w == 0 || destination.h == 0) {
++            SDL_SubmitGPUCommandBuffer(cb);
++            return;
++        }
+         SDL_GPUBlitInfo blit;
+         memset(&blit, 0, sizeof(blit));
+         blit.source.texture = g_backBuffer.colour;
+         blit.source.w = g_backBuffer.width;
+         blit.source.h = g_backBuffer.height;
+         blit.destination.texture = swapchain;
+-        blit.destination.w = width;
+-        blit.destination.h = height;
+-        blit.load_op = SDL_GPU_LOADOP_DONT_CARE;
++        blit.destination.x = destination.x;
++        blit.destination.y = destination.y;
++        blit.destination.w = destination.w;
++        blit.destination.h = destination.h;
++        // SDL clears the destination attachment before drawing its blit viewport.
++        blit.load_op = SDL_GPU_LOADOP_CLEAR;
++        blit.clear_color.a = 1.0f;
+         blit.filter = SDL_GPU_FILTER_LINEAR;
+         SDL_BlitGPUTexture(cb, &blit);
+     }
+@@ -981,6 +997,7 @@ uint32_t D3D9_CreateDevice(uint32_t adapter, uint32_t deviceType, void *hFocusWi
+     (void)adapter; (void)deviceType; (void)hFocusWindow; (void)behaviorFlags;
+     const uint32_t *xboxParams = (const uint32_t*)pPresentationParameters;
+     uint32_t width = xboxParams[0], height = xboxParams[1];
++    g_presentWidescreen = SettingInt("Widescreen", 0) != 0;
+
+     g_gameWidth = width; g_gameHeight = height;
+     g_renderScaled = false; g_renderScaleX = g_renderScaleY = 1.0f; g_targetIsBackBuffer = true;

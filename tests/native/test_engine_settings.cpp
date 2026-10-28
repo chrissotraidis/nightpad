@@ -1,5 +1,7 @@
 #include "../../apple/shared/NightPadEngineSettings.h"
 #include "action/engine/XboxSettings.h"
+#include "driving/platform/KernelImports.h"
+#include "driving/platform/XboxXapi.h"
 
 #include <cstdlib>
 #include <filesystem>
@@ -15,6 +17,16 @@ static void Check(bool value, const char *what) {
         std::cerr << "FAIL: " << what << "\n";
         ++failures;
     }
+}
+
+static void CheckDrivingVideo(bool widescreen) {
+    HostDword raw = 0, type = 0, length = 0;
+    Check(KernelExQueryNonVolatileSetting(8, &type, &raw, sizeof(raw), &length) == 0,
+          "driving kernel reads video setting");
+    Check(raw == (widescreen ? 0x10000u : 0u) && length == 4 && type == 4,
+          "kernel returns the encoded Xbox dashboard video flags");
+    Check(Xbox_XGetVideoFlags() == (widescreen ? 1u : 0u),
+          "actual driving XAPI resolves selected widescreen flag");
 }
 
 static std::string ValueOf(const std::string &text, const std::string &key) {
@@ -44,6 +56,7 @@ static int CheckEngineParser(bool widescreen) {
     // Call the real engine parser in a fresh process: its settings cache is
     // process-scoped. Checking only our own generated string missed on -> 0.
     Check(GetVideoMode() == (widescreen ? 1u : 0u), "engine sees the requested aspect mode");
+    CheckDrivingVideo(widescreen);
     Check(XboxGetAVRegion() == 1, "engine selects NTSC media");
     Check(Settings_GetFPSOverride() == 60, "engine sees the frame cap");
     Check(Settings_GetFovDegrees() == 70.0f, "engine sees vertical FOV");
@@ -56,6 +69,7 @@ static int CheckEngineParser(bool widescreen) {
         Check(file.good(), "write settings for the next session");
     }
     Settings_Reload();
+    CheckDrivingVideo(!widescreen);
     Check(GetVideoMode() == (widescreen ? 0u : 1u), "next session reloads the opposite aspect mode");
     Check(Settings_GetFovDegrees() == 80.0f, "next session reloads FOV");
     Check(std::string(Settings_GetDiscPath()) == "/replacement disc", "next session reloads the disc root");

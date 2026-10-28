@@ -2405,3 +2405,53 @@ are ignored and may contain paths, hashes, captures or device identities.
   fresh NPRUN profile and before/after snapshots remain available. Start with
   decision 0016 and `sdlGpuBackend.cpp:PresentOnWindowThread`; preserve the
   offscreen back buffer and rendering goldens while fixing only presentation.
+
+## 2026-10-28: fit presentation, encode driving widescreen, preserve replay timing
+
+- Previous goal turn: progress. Continued from clean commit `56236fc` with
+  the active goal intact. No goal completion or blocker threshold is claimed.
+- Hypothesis: the whole-swapchain blit causes stretched phone output. Patch
+  0030 fits the selected aspect in the current window safe area, rounds its
+  logical coordinates inward to drawable pixels, centers and clears bars.
+  Render targets, readbacks and offscreen rendering are unchanged. Geometry
+  tests cover both aspects, safe areas, rotation/resize shapes, odd/zero and
+  large sizes. SDL's pinned Metal implementation clears the attachment before
+  applying the blit viewport, verified from its source.
+- Simulator evidence: phone action titles in 4:3/16:9 and a 16:9 driving HUD;
+  tablet action titles in both aspects and a 4:3 driving HUD. Touch controls
+  remain usable on their saved safe-area canvas. Only one simulator was
+  booted at a time. The tablet received prepared local data through the app's
+  validated Import from NightPad Folder flow.
+- The tablet scope found a second contract defect: driving XC_VIDEO returned
+  bit 0, while its actual XAPI getter reads bits 16..22. Patch 0031 returns
+  0x10000 for widescreen. The expanded settings test links the real kernel,
+  XAPI and POSIX profile reader along with the action parser. It fails before
+  the change and passes both modes/reloads afterward. The rebuilt tablet
+  scope changes from an oval to a circle in 16:9. Broader scope/FOV/cinematic
+  combinations and physical display/performance remain unverified.
+- Regression: CastleIndoors1 stopped at frame 2, including with the old
+  presentation backend rebuilt. Patch 0023's generic missing-movie completion
+  changed its recorded input timing. Patch 0032 removes that generic behavior
+  and retains the dedicated missing-attract-page recovery. The unchanged
+  recording then matches all 635 frames. No recording, checksum, assertion or
+  golden was changed. A fresh full pass over the eleven complete recordings
+  is live; do not claim its historical 11/12 result as a new post-fix pass.
+- Verification completed: final quick gate, simulator/Debug device and Release
+  device builds, unsigned package check, 32-patch reconstruction of 75 files,
+  three final native action cycles and one driving cycle. Logs and private
+  captures are in `build/tests/presentation/` and `evidence/presentation-fit/`.
+  Final source/artifact hashes are in that evidence's build-identity JSON.
+- Save protection: NPRUN is still byte-identical to its before-mission copy.
+  No earned progression is credited. Both assists remain off. The tablet app
+  is cleanly stopped at its shell with 16:9/FOV60/1x/FXAA; the phone is shut
+  down and retains 16:9/FOV70 from the comparison. New container paths are in
+  the private checkpoint files; reinstalling moved the earlier recorded path.
+- Exact resume: poll exec session `57557` using `write_stdin`, then inspect
+  `build/tests/presentation/replay-corpus.log` and its timestamped result JSON.
+  The runner was confirmed live as PID 51735 with an action test child, and
+  had passed the first four recordings. Never duplicate a live runner. Record
+  the terminal corpus verdict, then resume earned NPRUN mission/results save
+  and remaining campaign/multiplayer/display coverage. Shut down the tablet
+  before booting the phone. SpaceStationD media and physical signing/hardware
+  remain external; no core route has been waived. Decision 0017 explains the
+  changes and limits.

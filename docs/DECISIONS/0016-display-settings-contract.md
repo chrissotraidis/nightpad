@@ -34,3 +34,7 @@ presentation. The next renderer change must fit the selected presentation
 aspect inside the drawable, clear the surrounding bars, and keep touch
 controls usable. Verify both engines, the menus/HUD/scope, a phone and tablet,
 and repeated aspect changes without changing game/render-test goldens.
+
+Follow-up: decision 0017 implements this fit and fixes the driving dashboard
+flag encoding discovered by the scope check. R18 remains in progress for
+the remaining gameplay and physical-device validation.

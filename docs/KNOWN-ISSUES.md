@@ -7,7 +7,7 @@ tester would see, what is blocked, and where the detail lives.
 
 | Issue | Effect | Detail |
 | --- | --- | --- |
-| Game presentation stretches across the phone window | Original 4:3 content has incorrect proportions; numeric widescreen selection and next-Start settings reload are fixed, but drawable aspect fitting remains | `docs/DECISIONS/0016-display-settings-contract.md`, R18 |
+| Display acceptance is incomplete | Safe-area aspect fitting and driving widescreen flag encoding are fixed. Phone/tablet titles, driving HUD and the tablet widescreen scope have simulator evidence; action scope/FOV combinations, the remaining matrix and device performance remain unverified | `docs/DECISIONS/0017-display-fit-and-flow-timing.md`, R18 |
 | Campaign completion/results save is not verified | A fresh codename and Paris failure/replay/return work, but timed sniper attempts have not completed the mission; no earned progress is credited | `docs/TEST-MATRIX.md`, R09/R11 |
 | Six-bot run reports the sound-buffer tracking limit | The log warns that more buffers exist than the backend tracks; the audible effect has not been measured | `evidence/campaign-first-play/nprun/stdout.log`, R10 |
 | No signing identity or device on this machine | Nothing physical has been installed; touch feel, controller rumble, campaign progression, performance and the final freeze are unverified | `docs/DEVICE-HANDOFF.md`, `docs/TEST-MATRIX.md` |
