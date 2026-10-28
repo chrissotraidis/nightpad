@@ -470,11 +470,15 @@ static uint64_t ShellResidentBytes(void) {
                                                  : [NSString stringWithFormat:@"%d controller%@ connected",
                                                           controllers, controllers == 1 ? @"" : @"s"];
     UIAction *controllerStatus = [self menuAction:controllerTitle image:@"gamecontroller" disabled:YES handler:nil];
+    NSMutableArray<UIAction *> *controlActions =
+        [NSMutableArray arrayWithObjects:layout, help, show, autoHide, rumble, nil];
+    if (controllers > 0)
+        [controlActions addObject:controllerStatus];
     UIMenu *controls = [UIMenu menuWithTitle:@"Controls"
                                        image:[UIImage systemImageNamed:@"hand.draw"]
                                   identifier:nil
                                      options:0
-                                    children:@[ layout, help, show, autoHide, rumble, controllerStatus ]];
+                                    children:controlActions];
 
     NSArray<NSString *> *scaleTitles = @[
         @"Original (640×480)", @"2× (1280×960)", @"3× (1920×1440)", @"4× (2560×1920)"
@@ -540,15 +544,13 @@ static uint64_t ShellResidentBytes(void) {
     UIAction *ammo = [self menuAction:@"Unlimited Ammo" image:@"infinity" disabled:NO
                                handler:^{ [weakSelf toggleUnlimitedAmmo]; }];
     ammo.state = _settings.assistUnlimitedAmmo ? UIMenuElementStateOn : UIMenuElementStateOff;
-    UIAction *assistNote = [self menuAction:@"Action missions only; excluded from acceptance runs"
-                                      image:nil disabled:YES handler:nil];
     UIMenu *assists = [UIMenu menuWithTitle:@"Assists"
                                       image:[UIImage systemImageNamed:@"shield.lefthalf.filled"]
                                  identifier:nil
                                     options:0
-                                   children:@[ immortal, ammo, assistNote ]];
+                                   children:@[ immortal, ammo ]];
 
-    UIAction *data = [self menuAction:@"Game Data & Saves" image:@"internaldrive" disabled:NO
+    UIAction *data = [self menuAction:@"Manage Game Data…" image:@"internaldrive" disabled:NO
                                handler:^{ [weakSelf openDataPanel]; }];
     UIAction *importAction = [self menuAction:@"Import Prepared Game Data…" image:@"folder" disabled:_engineRunning
                                       handler:^{ [weakSelf chooseImportFolder]; }];
@@ -566,7 +568,7 @@ static uint64_t ShellResidentBytes(void) {
     UIAction *restoreFolderAction = [self menuAction:@"Restore Saves from NightPad Folder" image:@"folder"
                                            disabled:_engineRunning
                                             handler:^{ [weakSelf restoreSavesFromAppFolder]; }];
-    UIMenu *dataMenu = [UIMenu menuWithTitle:@"Game Data & Saves"
+    UIMenu *dataMenu = [UIMenu menuWithTitle:@"Data"
                                        image:[UIImage systemImageNamed:@"internaldrive"]
                                   identifier:nil
                                      options:0

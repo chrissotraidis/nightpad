@@ -2144,3 +2144,14 @@ are ignored and may contain paths, hashes, captures or device identities.
 - One simulator was used at a time; the iPad was shut down before the phone was
   booted again.
 
+## 2026-10-28T09:40:00Z — the three-dot menu reads as one clean list
+
+- Goal: G06. Requirement: R14.
+- Changed: the top-level menu is now Game / Controls / Display / Assists / Data /
+  Info, each on one line. "Game Data & Saves" became "Data" with a "Manage Game
+  Data…" entry (the old title wrapped to two lines). The always-disabled
+  "No controller connected" row now appears only when a controller is connected,
+  and the disabled assist note is gone.
+- Verified: the menu and the Data submenu render cleanly over the shell and over
+  gameplay, and the accessibility tree lists the shortened titles.
+
