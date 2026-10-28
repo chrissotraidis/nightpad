@@ -1091,6 +1091,11 @@ static uint64_t ShellResidentBytes(void) {
             }
             [strongSelf->_engineTimer invalidate];
             strongSelf->_engineTimer = nil;
+            // While a game runs the shell window sits above it at UIWindowLevelNormal + 2. A new SDL window
+            // opened under that window never becomes key or loads its view, which is the black surface a
+            // handoff could show. Drop to the normal level while the next engine opens its window;
+            // updateGameplaySurface raises the shell above it again once the target is running.
+            strongSelf.view.window.windowLevel = UIWindowLevelNormal;
             [strongSelf->_engineHost closeWindow];
             if (![strongSelf->_engineHost startHandoffTarget]) {
                 strongSelf->_switchingEngine = NO;

@@ -358,6 +358,11 @@ simulator execution is no longer a platform blocker.
   consecutive cycles and the Paris handoff pass on the simulator. The attract
   trailer `073a0048.xmv` is absent from the supplied 30 fps bundle and shows a
   black page that A skips.
+- Engine handoffs no longer open their window under the shell: `switchEngine`
+  lowers the shell window to the normal level while the target engine opens its
+  window and raises it again afterwards. The Paris tutorial renders, the right
+  trigger fires, Mission Failed and REPLAY TUTORIAL work, and Stop returns in
+  1.7 s.
 - No valid Apple code-signing identity and no connected physical device were
   visible at inventory time. This blocks signed physical-device acceptance in
   G03, G06 and G12; independent build/UI work continues.

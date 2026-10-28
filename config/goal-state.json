@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T05:40:00Z",
+  "last_updated_at": "2026-10-28T06:20:00Z",
   "active_goal": "G13",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -185,7 +185,7 @@
         "patches/0024-session-boot-reset.patch"
       ],
       "blockers": [],
-      "next_step": "Simulator Start/Stop cycles are stable; continue the simulator acceptance sweep (campaign pages, saves, audio) while physical acceptance stays external."
+      "next_step": "Continue the simulator acceptance sweep (saves round trip, campaign slices, audio) while physical acceptance stays external."
     },
     "G06": {
       "status": "in_progress",
@@ -1745,7 +1745,12 @@
       "name": "iOS simulator repeated Start/Stop with game-flow reset",
       "result": "PASS: three cycles reach Press START; Paris handoff and stop pass",
       "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator Paris tutorial input and mission flow",
+      "result": "PASS: handoff renders, right trigger fires, Mission Failed and Replay Tutorial work; stop 1.7 s",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
     }
   ],
-  "next_step": "Continue simulator acceptance (front-end pages, saves, audio, campaign slices); physical acceptance remains external. The multiplayer map/mode matrix is the remaining source inventory."
+  "next_step": "Continue simulator acceptance (saves, audio, campaign slices); physical acceptance remains external. The multiplayer map/mode matrix is the remaining source inventory."
 }

@@ -2037,3 +2037,25 @@ are ignored and may contain paths, hashes, captures or device identities.
   `ResetMap_Load` call. Host gates still pass: action lifecycle (3 cycles) and
   `scripts/test_engine_handoff.sh`; `scripts/verify_patches.sh` PASS (62 files).
 
+## 2026-10-28T06:20:00Z — handoffs open their window below the shell, and the Paris tutorial is playable
+
+- Goal: G05/G06. Requirement: R06/R15.
+- Observed: after a handoff, the driving engine reported 335 draws at 57 fps
+  while the screen stayed black. The new SDL window's root view controller had
+  `view == nil`: it never presented, so no Metal view existed and the GPU
+  presented off-screen. Six `Unbalanced calls to begin/end appearance
+  transitions` warnings appeared, one per window creation.
+- Cause: `switchEngine` created the target engine's window while the shell
+  window was still at `UIWindowLevelNormal + 2` (gameplay). The plain Start path
+  creates its window at the normal level, which is why restarts worked.
+- Fixed: `switchEngine` drops the shell window to the normal level before
+  closing the old engine window and starting the target; `updateGameplaySurface`
+  raises it again afterwards. Handoffs now render on the first try.
+- Observed on the simulator: from Press START the action engine handed off,
+  the Paris intro rendered, the sniper tutorial appeared, the right trigger
+  fired and the game showed Mission Failed, and REPLAY TUTORIAL reloaded the
+  mission; Stop returned to the shell in 1.7 s. A fresh app launch still shows
+  the title and repeated Start/Stop cycles still reach it.
+- Evidence: simulator screenshots of the handoff, the sniper tutorial and the
+  Mission Failed screen; `/tmp/np-handoff2.txt`.
+
