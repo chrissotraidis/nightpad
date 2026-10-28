@@ -2455,3 +2455,54 @@ are ignored and may contain paths, hashes, captures or device identities.
   before booting the phone. SpaceStationD media and physical signing/hardware
   remain external; no core route has been waived. Decision 0017 explains the
   changes and limits.
+
+## 2026-10-28: finish replay recheck and repair native menu ownership
+
+- Previous goal turn: progress. Reused the confirmed live replay process from
+  session 57557; it terminated successfully. All eleven complete recordings
+  matched all 208,364 frames after patch 0032. SpaceStationD remains blocked by
+  missing media. The native engine did not change during this turn; this is
+  fresh regression evidence, not a replay of the old result.
+- Fresh NPRUN selected The Exchange from its original initial unlock, on
+  Operative with both assists off. Restored 640x480/4:3/FOV60/FXAA through the
+  native menu. The briefing plays, and move/look/jump, fall damage, guard fire,
+  death and Replay work. Smaller stick deflections can fall below the retail
+  engine's wide deadzone. Larger deflections move and turn; the initial low
+  wall requires jumping before moving onto the road. No input-curve change
+  was made. Two failed runs still leave the profile exactly unchanged.
+- The second attempt exposed a UI boundary defect: root UIMenu had no pause
+  callback. Earlier tests only covered the engine pause boundary and modal
+  panels; the blanket claim that the three-dot menu already paused was wrong.
+  Added UIControl's documented menu visibility hooks following the pinned
+  GalaxyPad donor, with dismissal reconciliation at animation start and menu
+  rebuilding deferred while visible.
+- Menu, surfaces/inline panels, alerts and application activity independently
+  own the pause. WillResignActive/DidBecomeActive replace early foreground
+  resumption. Starting/handoff reapplies the hold and binds controller input
+  even under UI. The mixer now drops stale edges and requires neutral buttons,
+  triggers and sticks per source before accepting input again. New host tests
+  exercise ownership handoffs, inactive dismissal, alerts and source release.
+- Live simulator evidence: action frame 927 settles and remains held through
+  menu-to-layout-sheet transfer; Cancel releases it. Menu plus Home/return
+  retains frame 3685. The driving simulation settles at 1277 while its menu is
+  open. The final build holds App Pause and a nested menu at 1188 until Back to
+  Game, then advances to 3383 before Stop. Both final quick gates and unsigned
+  Release packaging pass; the 32 patches reproduce 75 vendor files.
+- New required repair: driving `PlayMPC::Play` ignores lifecycle pause/stop in
+  its blocking movie loop. The intro finishes under native hold at simulation
+  frame zero, which is not a movie-pause pass. R15 is explicitly failed for
+  this phase. Inspect `common/fmv/FmvAudio.h`, `FmvAudioSdl.cpp`, `FmvAudio.cpp`
+  and the action/driving movie players. Add voice/clock pause with correct
+  silent/drained/virtual-clock resume and stop while paused, then test an
+  actual intro. Do not just wait for the simulation counter to advance.
+- Evidence: `evidence/action-demos/20261028T180115Z/results.json`,
+  `evidence/presentation-fit/replay-corpus-result.json`,
+  `evidence/campaign-first-play/exchange/`, `evidence/native-ui-pause/`,
+  `build/tests/native-ui/`; decision 0018. Source/binary/package hashes are
+  in the private build identity. No personal save or retail capture is tracked.
+- Exact resume: no replay/build job remains live. The latest simulator app is
+  installed and cleanly stopped at the data-ready shell. Only the iPhone is
+  booted. It retains Original 4:3, FOV60, 1x, FXAA, both assists off; NPRUN has
+  no earned progress. Repair the blocking movie native pause next, then resume
+  a real mission-results save/relaunch and the outstanding campaign, objective
+  multiplayer, display and physical gates. Goal remains active, not blocked.

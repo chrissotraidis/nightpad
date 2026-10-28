@@ -7,8 +7,9 @@ tester would see, what is blocked, and where the detail lives.
 
 | Issue | Effect | Detail |
 | --- | --- | --- |
+| Blocking driving movies ignore native pause | The root-menu and simulation gates are now wired, but the driving intro can continue before the simulation frame counter starts. Movie voice/clock pause and cooperative stop still need repair | `docs/DECISIONS/0018-native-ui-pause-owners.md`, `PlayMPC::Play`, R15 |
 | Display acceptance is incomplete | Safe-area aspect fitting and driving widescreen flag encoding are fixed. Phone/tablet titles, driving HUD and the tablet widescreen scope have simulator evidence; action scope/FOV combinations, the remaining matrix and device performance remain unverified | `docs/DECISIONS/0017-display-fit-and-flow-timing.md`, R18 |
-| Campaign completion/results save is not verified | A fresh codename and Paris failure/replay/return work, but timed sniper attempts have not completed the mission; no earned progress is credited | `docs/TEST-MATRIX.md`, R09/R11 |
+| Campaign completion/results save is not verified | Fresh codename, Paris and on-foot Exchange failure/replay work, but no mission/results save has been earned; failed attempts leave NPRUN byte-identical | `docs/TEST-MATRIX.md`, R09/R11 |
 | Six-bot run reports the sound-buffer tracking limit | The log warns that more buffers exist than the backend tracks; the audible effect has not been measured | `evidence/campaign-first-play/nprun/stdout.log`, R10 |
 | No signing identity or device on this machine | Nothing physical has been installed; touch feel, controller rumble, campaign progression, performance and the final freeze are unverified | `docs/DEVICE-HANDOFF.md`, `docs/TEST-MATRIX.md` |
 | The supplied image has only the 30 fps movie bundle | One action recording stops early on a movie the image lacks; NightPad writes `Region=NTSC` | `docs/STATUS.md`, G02 blocker |

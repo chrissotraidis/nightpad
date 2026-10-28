@@ -25,7 +25,7 @@
 | G02 | Native Mac targets build | macOS arm64 | passed | Both engines and test targets link arm64 |
 | G02 | Game-window pointer workload | macOS arm64 | passed | 200,029 checks, 0 differ |
 | G02 | Floating-point audit | macOS arm64 | passed | 12 expected fused operations, 0 unexpected |
-| G02 | Action replay corpus | macOS arm64 | partial | 11 of 12, 208,364 frames every frame matched |
+| G02 | Action replay corpus | macOS arm64 | partial: 11/12 available | Fresh post-patch-0032 pass: all eleven complete recordings, 208,364 frames matched; `evidence/action-demos/20261028T180115Z/results.json`. SpaceStationD remains blocked |
 | G02 | SpaceStationD replay | macOS arm64 | blocked | Missing 073f0048.xmv in supplied media |
 | G02 | Driving baseline run | macOS arm64 | passed | Mission 1, 9,000 ticks, 16 frames, sound trace |
 | G02 | Driving baseline repeat comparison | macOS arm64 | passed with known GPU variance | 16 frames each; 5 pixels differ; 381,193-line sound traces byte-identical |
@@ -131,7 +131,7 @@
 | G09 | Safe-area aspect-fit geometry | macOS arm64 | passed | `scripts/test_presentation.sh`: 4:3/16:9, safe-area pixel conversion, resize/portrait/odd/zero/large dimensions; presentation only, no offscreen golden changes |
 | G09 | Driving widescreen kernel/XAPI integration | macOS arm64 | passed | Real app-generated INI -> POSIX profile reader -> kernel XC_VIDEO -> actual XAPI getter, both initial modes and rewritten settings; old raw bit 0 fails, bit 16 passes |
 | G09 | Metal aspect presentation and scope | iPhone 17 Pro / iPad Pro 13-inch (M5), iOS 26.5 simulator | passed for captured subset | Action titles in both aspects on both devices, phone 16:9/tablet 4:3 driving HUD, corrected circular tablet 16:9 scope. `evidence/presentation-fit/`; action scopes/FOV/device matrix remain unverified |
-| G02 | Missing-movie input timing regression | macOS arm64 | repaired for one recording; corpus running | CastleIndoors1 fails at frame 2 with old/new presentation; narrowing patch 0023 to attract-page recovery restores all 635 frames. Fresh eleven-recording pass remains live; do not substitute historical results |
+| G02 | Missing-movie input timing regression | macOS arm64 | repaired; complete available corpus rechecked | CastleIndoors1 fails at frame 2 with old/new presentation; narrowing patch 0023 to attract-page recovery restores all 635 frames. Fresh eleven-recording pass then matches all 208,364 frames; `evidence/action-demos/20261028T180115Z/results.json` |
 | G09 | Display settings menu and persistence | iPhone 17 simulator / iOS 26.5 | passed | Display submenu with Original/2×/3×/4×, AA off/FXAA and 4:3/16:9; choosing 2× wrote `render_scale=2`; evidence `evidence/ios-shell/display-menu.png` |
 | G09 | Actual engine settings parse and session reload | macOS arm64 / iPhone 17 Pro simulator | passed for settings only | `scripts/test_engine_settings.sh` compiles real `XboxSettings.cpp`, checks numeric aspect mode/FOV/FPS/disc root and replaces/reloads the file in the same process. The former on value failed 16:9; 1 now passes. Patch 0029 reloads at each action start; one simulator PID logs widescreen=1 then 0 after Stop/change/Start. Presentation fitting remains failed |
 | G09 | Engine honors the render target | macOS arm64 | passed for one size | A run with RenderWidth/Height 1280x960 logs `rendering the game's 640x480 at 1280x960`; AA off is accepted silently. Sustained device performance still unverified |
@@ -153,11 +153,12 @@
 | G05 | Fresh Start discards a stale handoff page | iPhone 17 Pro simulator / iOS 26.5 | passed | After leaving a driving session, relaunching and pressing Start now clears `LaunchState/psiLaunch.bin` and reaches the title or saved-profile resume state instead of the previous driving Results page. In-process handoffs still read their launch page |
 | G05 | Native pause/input/audio gating | iPhone/iPad | partial | Engine pause/audio and shell App Pause are wired; device run remains |
 | G05 | Cooperative engine pause boundary | macOS arm64 | passed | `scripts/test_action_pause.sh`: frames 0→2, hold 3→3, resume→33; audio pause path exercised; normal cycles/transition still pass |
-| G05 | Native-UI input suspension | iPhoneOS/macOS | passed for build/boundary | Pad/keyboard reads answer neutral and pointer deltas drop while suspended; shell menu/pause uses it; device behavior pending |
+| G05 | Native-UI input suspension | iPhoneOS/macOS | passed host/simulator subset | Root menu was previously unwired. Documented UIKit callbacks now hold it; independent menu/panel/alert/activity owners prevent premature resume. Input mixer waits for all buttons/triggers/sticks to become neutral. Device behavior remains pending |
 | G05 | Local diagnostic report review | iPhone simulator / iPhoneOS build | passed for core/review | `scripts/test_diagnostics.sh`; redacts home/container paths and credentials; simulator shows review/share screen; no automatic upload |
 | G05 | Diagnostic report share/export | iPhone simulator | passed for presentation | Share sheet shows Save to Files and Copy; generated file read back from Logs/NightPad; deliberate save click and device use remain |
 | G05 | About and source notices | iPhone simulator / iPhoneOS build | passed for surface | Version, source/donor links, independence and game-data notices render; link opening and device use remain |
+| G05 | Native menu / sheet / App Pause / background ownership | iPhone 17 Pro, iOS 26.5 simulator | passed for simulation subset | Action frame 927 held through menu-to-sheet, background/menu at 3685, driving simulation at 1277, final App Pause/nested-menu at 1188. Dismissal resumes only after the last owner closes; `evidence/native-ui-pause/` |
+| G05 | Blocking driving movie native pause | iPhone simulator / source | failed | `PlayMPC::Play` never polls lifecycle pause/stop. Intro finishes under native hold while simulation frame count stays zero. Movie voice/clock hold and stop remain required; decision 0018 |
 
 Only rows with explicit execution evidence are marked passed. Source inspection
 does not satisfy runtime acceptance.
-

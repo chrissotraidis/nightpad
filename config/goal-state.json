@@ -6,8 +6,8 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T18:10:59Z",
-  "active_goal": "G09",
+  "last_updated_at": "2026-10-28T18:54:50Z",
+  "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
   "actual_source_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
@@ -25,27 +25,27 @@
   },
   "current_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "56236fc",
+    "nightpad_base_commit": "da2145b",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "1e2d9f40542b2c5048a1a66154760450560d8deb927608e32443ad0fdb17aa75",
+    "simulator_binary_sha256": "98a9de5026b5c83ce6a1269f339ec92e9a5c82479a279a737add23db6c2248fd",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "8d41d3ec660775add3e9b0eeb7aab99bb29b4bd96fbc1195c78852cc02cffd51",
-    "evidence": "evidence/presentation-fit/build-identity.json",
-    "verified_at": "2026-10-28T18:10:59Z",
-    "acceptance_scope": "host settings/geometry/build/lifecycle gates and simulator display subset only; full replay recheck running; campaign and physical acceptance remain"
+    "unsigned_device_package_sha256": "e1b7b392fcbdd8238e2eb339b9cbf4a9c4b243119a3bb012ef590a4fa8d1b035",
+    "evidence": "evidence/native-ui-pause/build-identity.json",
+    "verified_at": "2026-10-28T18:54:50Z",
+    "acceptance_scope": "host/build and simulator native menu/simulation subset; movie pause fails; campaign and physical acceptance remain"
   },
   "last_known_good_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "56236fc",
+    "nightpad_base_commit": "da2145b",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "1e2d9f40542b2c5048a1a66154760450560d8deb927608e32443ad0fdb17aa75",
+    "simulator_binary_sha256": "98a9de5026b5c83ce6a1269f339ec92e9a5c82479a279a737add23db6c2248fd",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "8d41d3ec660775add3e9b0eeb7aab99bb29b4bd96fbc1195c78852cc02cffd51",
-    "evidence": "evidence/presentation-fit/build-identity.json",
-    "verified_at": "2026-10-28T18:10:59Z",
-    "acceptance_scope": "host settings/geometry/build/lifecycle gates and simulator display subset only; full replay recheck running; campaign and physical acceptance remain"
+    "unsigned_device_package_sha256": "e1b7b392fcbdd8238e2eb339b9cbf4a9c4b243119a3bb012ef590a4fa8d1b035",
+    "evidence": "evidence/native-ui-pause/build-identity.json",
+    "verified_at": "2026-10-28T18:54:50Z",
+    "acceptance_scope": "host/build and simulator native menu/simulation subset; movie pause fails; campaign and physical acceptance remain"
   },
   "goals": {
     "G00": {
@@ -84,7 +84,7 @@
       "blockers": [
         "B02"
       ],
-      "next_step": "Finish the current post-fix eleven-recording replay recheck. Matching PAL movie data is still required for SpaceStationD; that core route has not been waived."
+      "next_step": "The post-fix eleven-recording replay recheck passed all 208364 frames. Matching PAL movie data is still required for SpaceStationD; no core route is waived."
     },
     "G03": {
       "status": "blocked_external",
@@ -220,7 +220,7 @@
         "evidence/campaign-first-play/nprun/paris-attempts.json"
       ],
       "blockers": [],
-      "next_step": "Complete a mission through its results and reload earned progress on the fresh NPRUN profile; failure/replay/quit have been exercised without altering the profile."
+      "next_step": "Repair native movie pause before further campaign acceptance: inspect PlayMPC::Play and common/fmv/FmvAudio{,Sdl}.cpp; pause voice and clock (including silent/drained/virtual cases), honor stop while paused, integrate both movie players and test an actual intro. Native root/menu/modal/background simulation holds now have simulator traces; R15 still fails during driving intro. Then resume NPRUN earned mission/results save and remaining campaign/multiplayer/display/device gates. All eleven complete replays passed; no replay process remains live. Only the phone simulator is booted and its app is stopped."
     },
     "G06": {
       "status": "in_progress",
@@ -325,7 +325,7 @@
         "evidence/presentation-fit"
       ],
       "blockers": [],
-      "next_step": "Poll the existing eleven-recording replay process (exec session 57557; runner PID 51735; build/tests/presentation/replay-corpus.log), never start a duplicate while live. Record its terminal results; SpaceStationD remains blocked by missing media. Then resume fresh NPRUN earned mission/results save and relaunch, remaining campaign/multiplayer coverage, and action scope/FOV/device display acceptance. Only the tablet simulator is currently booted; stop/shut it down before switching to the phone."
+      "next_step": "Presentation repairs and full available replay recheck are recorded. Complete the R15 movie pause repair, then continue campaign/results saves, multiplayer and remaining display/device matrix."
     },
     "G10": {
       "status": "in_progress",
@@ -598,20 +598,28 @@
       ],
       "decision_id": null,
       "notes": [
-        "Four-port mixer, touch mapping, GameController authority, slot reconciliation, per-port rumble, host-pad override and touch auto-hide owned by port 0 are implemented. Physical connect/reconnect and a real second controller remain."
+        "Four-port mixer, touch mapping, GameController authority, slot reconciliation, per-port rumble, host-pad override and touch auto-hide owned by port 0 are implemented. Physical connect/reconnect and a real second controller remain.",
+        "Native interruption now withholds each source until buttons, triggers and sticks are all neutral; actual mixer regression tests cover independent source/port release. No physical-controller claim is added."
       ]
     },
     "R15": {
-      "status": "in_progress",
+      "status": "failed",
       "evidence": [
         "apple/ios/NightPadShellViewController.mm",
         "docs/DECISIONS/0008-native-shell-surface.md",
         "scripts/test_action_pause.sh",
-        "scripts/test_driving_pause.sh"
+        "scripts/test_driving_pause.sh",
+        "docs/DECISIONS/0018-native-ui-pause-owners.md",
+        "apple/shared/NightPadBackgroundPolicy.cpp",
+        "scripts/test_background_policy.sh",
+        "scripts/test_input.sh",
+        "evidence/native-ui-pause"
       ],
       "decision_id": null,
       "notes": [
-        "The three-dot menu, editor and data panels are recoverable; native UI pauses the engine and suspends input. Both engines now prove audio pause/resume in their gates. Hearing it and the full device path remain."
+        "Corrected the prior blanket claim: root UIMenu did not invoke native pause. It now uses documented visibility callbacks and independent menu/surface/alert/activity ownership; menu rebuilding is deferred while visible.",
+        "Simulator traces prove action/menu/sheet, nested App Pause, background/foreground and driving-simulation holds. Host tests prevent held buttons/triggers/sticks from resurfacing before neutral. Physical ergonomics and interruptions remain unverified.",
+        "Still failing during blocking driving movie playback: PlayMPC::Play does not poll lifecycle pause/stop, so the intro can finish under a native UI hold while simulation frame count remains zero. Repair movie voice/clock pause and test both engines before R15 can pass."
       ]
     },
     "R16": {
@@ -622,7 +630,8 @@
       ],
       "decision_id": null,
       "notes": [
-        "Background pause/foreground resume follows a tested rule that preserves native-UI and player pauses. Memory-warning, surface recreation and device suspension remain."
+        "Background pause/foreground resume follows a tested rule that preserves native-UI and player pauses. Memory-warning, surface recreation and device suspension remain.",
+        "Foreground ownership now follows WillResignActive/DidBecomeActive and cannot release a visible native owner. A real simulator Home/return while menu open retains frame 3685; physical interruption/suspension acceptance remains."
       ]
     },
     "R17": {
@@ -875,6 +884,11 @@
       "id": "0017-display-fit-and-flow-timing",
       "path": "docs/DECISIONS/0017-display-fit-and-flow-timing.md",
       "summary": "Fit selected display aspect within safe-area pixels, correct driving dashboard widescreen encoding, and scope missing-movie recovery to the attract page to preserve recorded input timing."
+    },
+    {
+      "id": "0018-native-ui-pause-owners",
+      "path": "docs/DECISIONS/0018-native-ui-pause-owners.md",
+      "summary": "Wire native menu visibility and independent pause owners, require neutral input after interruption, and leave the blocking movie pause gap explicit."
     }
   ],
   "blockers": [
@@ -1787,6 +1801,17 @@
         "evidence/presentation-fit",
         "build/tests/presentation"
       ]
+    },
+    {
+      "at": "2026-10-28T18:54:50Z",
+      "goal": "G02/G05/G07",
+      "summary": "Verified all eleven complete replays. Fresh NPRUN Exchange attempts confirmed on-foot controls/failure without earned progress. Found and wired the missing root-menu pause, added independent native owners and neutral-before-resume input. Simulator menu/simulation holds pass; blocking driving intro movie pause remains a known R15 failure and next repair.",
+      "evidence": [
+        "evidence/action-demos/20261028T180115Z/results.json",
+        "evidence/campaign-first-play/exchange",
+        "evidence/native-ui-pause",
+        "docs/DECISIONS/0018-native-ui-pause-owners.md"
+      ]
     }
   ],
   "completed_tests": [
@@ -2006,7 +2031,22 @@
       "name": "final display build lifecycle and package",
       "result": "PASS: three joined native action cycles, one joined driving cycle, both iOS lanes, unsigned Release package and patch reconstruction; no device acceptance",
       "target": "macOS arm64 host"
+    },
+    {
+      "name": "post-fix full available action replay corpus",
+      "result": "PASS: all eleven complete recordings, 208364 frames matched; no recording/checksum/golden edits. SpaceStationD still blocked by missing media.",
+      "target": "macOS arm64 native action test engine"
+    },
+    {
+      "name": "native UIKit menu and surface pause ownership",
+      "result": "PASS simulator subset: action 927 fixed through menu-to-sheet, background/menu 3685, driving simulation 1277, final App Pause/nested-menu 1188. Blocking driving movie pause FAILS and remains required.",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "fresh NPRUN on-foot failure/replay save protection",
+      "result": "PASS for movement, look, jump, damage/death/replay and byte-identical profile after failed attempts; no completed mission or earned results save. Both assists off.",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
     }
   ],
-  "next_step": "Poll the existing eleven-recording replay process (exec session 57557; runner PID 51735; build/tests/presentation/replay-corpus.log), never start a duplicate while live. Record its terminal results; SpaceStationD remains blocked by missing media. Then resume fresh NPRUN earned mission/results save and relaunch, remaining campaign/multiplayer coverage, and action scope/FOV/device display acceptance. Only the tablet simulator is currently booted; stop/shut it down before switching to the phone."
+  "next_step": "Repair native movie pause before further campaign acceptance: inspect PlayMPC::Play and common/fmv/FmvAudio{,Sdl}.cpp; pause voice and clock (including silent/drained/virtual cases), honor stop while paused, integrate both movie players and test an actual intro. Native root/menu/modal/background simulation holds now have simulator traces; R15 still fails during driving intro. Then resume NPRUN earned mission/results save and remaining campaign/multiplayer/display/device gates. All eleven complete replays passed; no replay process remains live. Only the phone simulator is booted and its app is stopped."
 }

@@ -2,6 +2,11 @@
 
 namespace nightpad {
 
+bool ShouldHoldForNativeUI(const NativeUiPauseState &state) {
+    return state.engineRunning && (state.menuVisible || state.surfaceVisible ||
+                                   !state.applicationActive || state.alerts != 0);
+}
+
 bool ShouldPauseForBackground(bool engineRunning, bool nativeUiPaused, bool alreadyPaused) {
     return engineRunning && !nativeUiPaused && !alreadyPaused;
 }

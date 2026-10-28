@@ -46,6 +46,9 @@ public:
     void Clear(int port, InputSource source);
     void ClearPort(int port);
     void ClearAll();
+    // Native UI/background interruption: no buttons, triggers or sticks may
+    // resurrect until that source has returned completely to neutral.
+    void NeutralizeUntilRelease();
 
     // A controller joins or leaves. The port keeps its owner but both sources
     // release held/latched state until the source's buttons are all up.
@@ -66,6 +69,7 @@ private:
     PadState states_[kPorts][2]{};
     uint16_t latched_[kPorts][2]{};
     bool requireRelease_[kPorts][2]{};
+    bool requireNeutral_[kPorts][2]{};
     bool controllerPresent_[kPorts]{};
 };
 

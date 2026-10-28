@@ -73,6 +73,38 @@ int main() {
     Check(mixer.Consume(0).buttons == 0 && mixer.Consume(0).leftX == 0, "port clear");
     Check(mixer.ControllerPresent(0) == false, "controller presence cleared");
 
+    // An interruption clears latched edges and waits for complete release,
+    // including analog controls. Each source/port releases independently.
+    mixer.ClearAll();
+    PadState held;
+    held.connected = true;
+    held.buttons = nightpad::kA;
+    held.leftY = 24000;
+    held.rightTrigger = 255;
+    mixer.Set(0, InputSource::Controller, held);
+    mixer.NeutralizeUntilRelease();
+    Check(mixer.Consume(0).buttons == 0, "pause clears an unconsumed edge");
+    mixer.Set(0, InputSource::Controller, held);
+    auto blocked = mixer.Consume(0);
+    Check(blocked.connected && blocked.buttons == 0 && blocked.leftY == 0 && blocked.rightTrigger == 0,
+          "resume cannot resurrect held buttons, sticks or triggers");
+    held.buttons = 0;
+    mixer.Set(0, InputSource::Controller, held);
+    blocked = mixer.Consume(0);
+    Check(blocked.leftY == 0 && blocked.rightTrigger == 0, "button release alone cannot release held analog input");
+    PadState idle;
+    idle.connected = true;
+    mixer.Set(1, InputSource::Touch, idle);
+    PadState fresh = idle;
+    fresh.buttons = nightpad::kY;
+    mixer.Set(1, InputSource::Touch, fresh);
+    Check(mixer.Consume(1).buttons == nightpad::kY, "another neutralized port can independently accept a new press");
+    mixer.Set(0, InputSource::Controller, idle);
+    mixer.Set(0, InputSource::Controller, held);
+    blocked = mixer.Consume(0);
+    Check(blocked.leftY == held.leftY && blocked.rightTrigger == 255,
+          "fresh analog input works after complete release");
+
     std::cout << (failures == 0 ? "input: PASS" : "input: FAIL") << "\n";
     return failures == 0 ? 0 : 1;
 }

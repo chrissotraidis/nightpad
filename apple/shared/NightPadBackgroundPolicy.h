@@ -3,6 +3,18 @@
 
 namespace nightpad {
 
+struct NativeUiPauseState {
+    bool engineRunning;
+    bool menuVisible;
+    bool surfaceVisible;
+    bool applicationActive;
+    unsigned alerts;
+};
+
+// Independent owners: dismissing a menu must not resume a sheet or an
+// inactive app. This host pause is separate from the original Xbox Start menu.
+bool ShouldHoldForNativeUI(const NativeUiPauseState &state);
+
 // Pause when the app leaves the foreground only if it is actually playing and
 // was not already held by native UI or by the player's own pause.
 bool ShouldPauseForBackground(bool engineRunning, bool nativeUiPaused, bool alreadyPaused);

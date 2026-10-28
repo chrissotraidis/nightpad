@@ -24,6 +24,7 @@ using nightpad::GameDataImporter;
 using nightpad::Paths;
 
 @interface NightPadMenuButton : UIButton
+@property(nonatomic, copy) void (^visibilityChanged)(BOOL visible);
 @end
 
 @interface NightPadPassThroughView : UIView
@@ -37,6 +38,20 @@ using nightpad::Paths;
 @end
 
 @implementation NightPadMenuButton
+- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction
+    willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration
+    animator:(id<UIContextMenuInteractionAnimating>)animator {
+    if (self.visibilityChanged) self.visibilityChanged(YES);
+    [super contextMenuInteraction:interaction willDisplayMenuForConfiguration:configuration animator:animator];
+}
+- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction
+    willEndForConfiguration:(UIContextMenuConfiguration *)configuration
+    animator:(id<UIContextMenuInteractionAnimating>)animator {
+    [super contextMenuInteraction:interaction willEndForConfiguration:configuration animator:animator];
+    // GalaxyPad's pinned fix: reconcile as dismissal starts, since the iPad
+    // animator completion is not guaranteed for primary-action menus.
+    if (self.visibilityChanged) self.visibilityChanged(NO);
+}
 - (CGRect)imageRectForContentRect:(CGRect)contentRect {
     return CGRectInset(contentRect, 12, 12);
 }
@@ -59,7 +74,13 @@ using nightpad::Paths;
     BOOL _engineTeardown;
     BOOL _stopWhenBooted;
     BOOL _forceStopNow;
-    BOOL _backgroundPausedEngine;
+    BOOL _applicationActive;
+    BOOL _nativeMenuVisible;
+    BOOL _menuNeedsRefresh;
+    BOOL _nativeSurfaceVisible;
+    unsigned _alertPauseCount;
+    BOOL _traceNativeUI;
+    NSTimeInterval _lastUiTrace;
     NSTimeInterval _stopQueuedAt;
     BOOL _uiPausedEngine;
     BOOL _uiInputSuspended;
@@ -120,12 +141,14 @@ static uint64_t ShellResidentBytes(void) {
     [super viewDidLoad];
     self.view.backgroundColor = UIColor.blackColor;
     _engineHost = [NightPadEngineHost new];
+    _applicationActive = UIApplication.sharedApplication.applicationState == UIApplicationStateActive;
+    _traceNativeUI = [NSProcessInfo.processInfo.arguments containsObject:@"--log-native-ui"];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowBecameKey:)
         name:UIWindowDidBecomeKeyNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidEnterBackground:)
-        name:UIApplicationDidEnterBackgroundNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterForeground:)
-        name:UIApplicationWillEnterForegroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillResignActive:)
+        name:UIApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBecomeActive:)
+        name:UIApplicationDidBecomeActiveNotification object:nil];
 
     _title = [UILabel new];
     _title.text = @"NIGHTPAD";
@@ -157,6 +180,17 @@ static uint64_t ShellResidentBytes(void) {
     _menuButton.accessibilityLabel = @"Menu";
     _menuButton.accessibilityIdentifier = @"nightpad.menu";
     _menuButton.showsMenuAsPrimaryAction = YES;
+    __weak NightPadShellViewController *weakMenuSelf = self;
+    _menuButton.visibilityChanged = ^(BOOL visible) {
+        NightPadShellViewController *owner = weakMenuSelf;
+        if (owner == nil) return;
+        owner->_nativeMenuVisible = visible;
+        [owner reconcileNativeUI];
+        if (!visible && owner->_menuNeedsRefresh) {
+            owner->_menuNeedsRefresh = NO;
+            [owner refreshMenu];
+        }
+    };
     if (@available(iOS 15.0, *))
         _menuButton.changesSelectionAsPrimaryAction = NO;
 
@@ -317,29 +351,16 @@ static uint64_t ShellResidentBytes(void) {
     [self.view.window makeKeyAndVisible];
 }
 
-- (void)appDidEnterBackground:(NSNotification *)note {
+- (void)appWillResignActive:(NSNotification *)note {
     (void)note;
-    // Native UI already pauses; a user pause must stay a pause. Otherwise hold
-    // the game as soon as the app leaves the foreground.
-    if (!nightpad::ShouldPauseForBackground(_engineRunning, _uiPausedEngine, _enginePaused))
-        return;
-    [_engineHost setPaused:YES];
-    _enginePaused = YES;
-    _backgroundPausedEngine = YES;
-    [self logSessionEvent:@"app background pause"];
+    _applicationActive = NO;
+    [self reconcileNativeUI];
 }
 
-- (void)appWillEnterForeground:(NSNotification *)note {
+- (void)appDidBecomeActive:(NSNotification *)note {
     (void)note;
-    if (!_backgroundPausedEngine)
-        return;
-    const bool resume = nightpad::ShouldResumeAfterBackground(_backgroundPausedEngine, _engineRunning, _enginePaused);
-    _backgroundPausedEngine = NO;
-    if (resume) {
-        [_engineHost setPaused:NO];
-        _enginePaused = NO;
-        [self logSessionEvent:@"app foreground resume"];
-    }
+    _applicationActive = YES;
+    [self reconcileNativeUI];
 }
 
 - (UIButton *)panelButton:(NSString *)title action:(SEL)action {
@@ -411,6 +432,10 @@ static uint64_t ShellResidentBytes(void) {
 - (void)refreshMenu {
     if (_menuButton == nil)
         return;
+    if (_nativeMenuVisible) {
+        _menuNeedsRefresh = YES;
+        return;
+    }
     _menuButton.menu = [self buildMenu];
 }
 
@@ -803,8 +828,8 @@ static uint64_t ShellResidentBytes(void) {
 }
 
 - (void)resumeFromPause {
-    [self endNativeUI];
     [self closePanels];
+    [self endNativeUI];
 }
 
 - (void)openAbout {
@@ -993,35 +1018,38 @@ static uint64_t ShellResidentBytes(void) {
 }
 
 - (void)beginNativeUI {
-    if (!_engineRunning)
-        return;
-    if (!_uiPausedEngine) {
-        [_engineHost setPaused:YES];
-        _enginePaused = YES;
-        _uiPausedEngine = YES;
-    }
-    if (!_uiInputSuspended) {
-        [_engineHost setInputSuspended:YES];
-        _uiInputSuspended = YES;
-    }
-    [_gameInput setSuspended:YES];
-    [self logSessionEvent:@"native UI pause"];
+    _nativeSurfaceVisible = YES;
+    [self reconcileNativeUI];
 }
 
 - (void)endNativeUI {
-    const BOOL wasActive = _uiInputSuspended || _uiPausedEngine;
-    if (_uiInputSuspended) {
-        [_engineHost setInputSuspended:NO];
-        _uiInputSuspended = NO;
+    _nativeSurfaceVisible = NO;
+    [self reconcileNativeUI];
+}
+
+- (void)reconcileNativeUI {
+    const BOOL surface = _nativeSurfaceVisible || (_dataPanel != nil && !_dataPanel.hidden) ||
+                         (_pausePanel != nil && !_pausePanel.hidden);
+    const BOOL hold = nightpad::ShouldHoldForNativeUI(
+        {_engineRunning != NO, _nativeMenuVisible != NO, surface != NO,
+         _applicationActive != NO, _alertPauseCount});
+    // Neutralize first, before either pausing or releasing the game thread.
+    [_gameInput setSuspended:hold];
+    if (_uiInputSuspended != hold) {
+        if (hold) [_touchControls releaseAllTouches];
+        [_engineHost setInputSuspended:hold];
+        _uiInputSuspended = hold;
     }
-    if (_uiPausedEngine) {
-        [_engineHost setPaused:NO];
-        _enginePaused = NO;
-        _uiPausedEngine = NO;
+    if (_uiPausedEngine != hold) {
+        [_engineHost setPaused:hold];
+        _enginePaused = hold;
+        _uiPausedEngine = hold;
+        [self logSessionEvent:hold ? @"native UI pause" : @"native UI resume"];
     }
-    [_gameInput setSuspended:NO];
-    if (wasActive)
-        [self logSessionEvent:@"native UI resume"];
+    if (_traceNativeUI)
+        NSLog(@"[NightPad UI] hold=%d menu=%d surface=%d alerts=%u active=%d frames=%lu",
+              hold, _nativeMenuVisible, surface, _alertPauseCount,
+              _applicationActive, [_engineHost frameCount]);
 }
 
 - (void)startGame {
@@ -1058,8 +1086,10 @@ static uint64_t ShellResidentBytes(void) {
     _engineRunning = YES;
     [self logSessionEvent:@"engine start action"];
     _enginePaused = NO;
+    [self reconcileNativeUI];
     _gameplayMode = YES;
     [self installTouchControls];
+    [self reconcileNativeUI];
     [self updateGameplaySurface];
     [self refreshMenu];
     _engineTimer = [NSTimer timerWithTimeInterval:1.0 / 60.0 target:self selector:@selector(pollEngine) userInfo:nil repeats:YES];
@@ -1069,6 +1099,10 @@ static uint64_t ShellResidentBytes(void) {
 }
 
 - (void)pollEngine {
+    if (_traceNativeUI && _uiPausedEngine && CFAbsoluteTimeGetCurrent() - _lastUiTrace >= 2.0) {
+        _lastUiTrace = CFAbsoluteTimeGetCurrent();
+        NSLog(@"[NightPad UI] held frames=%lu", [_engineHost frameCount]);
+    }
     // A stopping engine can still need the window's main thread to pump SDL
     // events and finish a present callback. Keep that path alive until join.
     if (_engineTeardown) {
@@ -1142,6 +1176,7 @@ static uint64_t ShellResidentBytes(void) {
                 startSelf->_uiPausedEngine = NO;
                 startSelf->_uiInputSuspended = NO;
                 [startSelf->_gameInput engineChanged];
+                [startSelf reconcileNativeUI];
                 [startSelf logSessionEvent:(startSelf->_engineHost.activeEngine == NightPadEngineKindDriving
                                                ? @"engine switched to driving"
                                                : @"engine switched to action")];
@@ -1587,10 +1622,7 @@ static uint64_t ShellResidentBytes(void) {
         NightPadShellViewController *strongSelf = weakSelf;
         if (strongSelf == nil)
             return;
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"NightPad"
-            message:message preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-        [strongSelf presentAfterMenu:alert];
+        [strongSelf showInfo:@"NightPad" detail:message];
     });
 }
 
@@ -1605,9 +1637,18 @@ static uint64_t ShellResidentBytes(void) {
 }
 
 - (void)showInfo:(NSString *)title detail:(NSString *)detail {
+    ++_alertPauseCount;
+    [self reconcileNativeUI];
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
         message:detail preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+    __weak NightPadShellViewController *weakSelf = self;
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(__kindof UIAlertAction *action) {
+        (void)action;
+        NightPadShellViewController *owner = weakSelf;
+        if (owner == nil) return;
+        if (owner->_alertPauseCount != 0) --owner->_alertPauseCount;
+        [owner reconcileNativeUI];
+    }]];
     [self presentAfterMenu:alert];
 }
 

@@ -28,6 +28,14 @@ void InputMixer::Set(int port, InputSource source, const PadState &raw) {
     state.rightY = Axis(raw.rightY);
     state.leftTrigger = Trigger(raw.leftTrigger);
     state.rightTrigger = Trigger(raw.rightTrigger);
+    if (requireNeutral_[port][which]) {
+        const bool neutral = state.buttons == 0 && state.leftX == 0 && state.leftY == 0 &&
+            state.rightX == 0 && state.rightY == 0 && state.leftTrigger == 0 && state.rightTrigger == 0;
+        if (neutral) requireNeutral_[port][which] = false;
+        const bool connected = state.connected;
+        state = {};
+        state.connected = connected;
+    }
     if (requireRelease_[port][which]) {
         if (state.buttons == 0)
             requireRelease_[port][which] = false;
@@ -44,6 +52,7 @@ void InputMixer::Clear(int port, InputSource source) {
     states_[port][which] = {};
     latched_[port][which] = 0;
     requireRelease_[port][which] = false;
+    requireNeutral_[port][which] = false;
 }
 
 void InputMixer::ClearPort(int port) {
@@ -57,6 +66,16 @@ void InputMixer::ClearPort(int port) {
 void InputMixer::ClearAll() {
     for (int port = 0; port < kPorts; ++port)
         ClearPort(port);
+}
+
+void InputMixer::NeutralizeUntilRelease() {
+    for (int port = 0; port < kPorts; ++port) {
+        for (int source = 0; source < 2; ++source) {
+            states_[port][source] = {};
+            latched_[port][source] = 0;
+            requireNeutral_[port][source] = true;
+        }
+    }
 }
 
 void InputMixer::SetControllerPresent(int port, bool present) {

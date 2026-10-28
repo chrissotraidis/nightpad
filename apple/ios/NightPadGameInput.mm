@@ -76,13 +76,16 @@ static void NightPadRumbleFromEngine(int port, unsigned leftMotor, unsigned righ
         _mixer.ClearPort(port);
         [_host setPad:port state:PadState{}];
     }
+    _mixer.NeutralizeUntilRelease();
 }
 
 - (void)engineChanged {
-    if (!_running || _suspended)
+    if (!_running)
         return;
     [_host setHostPadsEnabled:YES];
     [_host setRumbleHandler:NightPadRumbleFromEngine];
+    // A handoff may finish under native UI. Bind the new engine now; tick
+    // remains neutral until the shared UI hold is released.
     [self tick];
 }
 
@@ -143,7 +146,7 @@ static void NightPadRumbleFromEngine(int port, unsigned leftMotor, unsigned righ
     _suspended = suspended;
     if (suspended) {
         [_touchView releaseAllTouches];
-        _mixer.ClearAll();
+        _mixer.NeutralizeUntilRelease();
         for (int port = 0; port < InputMixer::kPorts; ++port) {
             [_controllers stopRumbleForPort:port];
             [_host setPad:port state:PadState{}];

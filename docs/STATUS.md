@@ -445,8 +445,13 @@ XAPI test also fixes the dashboard flag's bit encoding. Decision 0017 records
 these changes and the narrowed missing-attract-movie fix, which restores the
 635-frame replay that the earlier generic skip had broken.
 
-Next: finish the live eleven-recording replay recheck before launching another
-runner; see the latest journal checkpoint for its process and tool handle.
+The fresh post-fix eleven-recording replay recheck passed all 208,364 frames.
+No replay runner remains live. SpaceStationD still needs the missing movie data.
+
+Next: repair native pause/stop during blocking movie playback. Root menu,
+modal and background ownership now hold the action and driving simulation
+loops in simulator traces, but `PlayMPC::Play` can finish its intro under a
+native hold while the simulation frame counter stays zero. See decision 0018.
 Then continue the fresh NPRUN route through a completed mission/results save
 and relaunch, plus objective-mode and remaining multiplayer map coverage.
 Individual campaign objectives do not write a profile save. Keep the fifteen-cycle
