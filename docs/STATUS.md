@@ -110,6 +110,10 @@ simulator execution is no longer a platform blocker.
   shell keeps pumping SDL during teardown, so the engine can finish its current
   present callback instead of stalling for 30 seconds and reporting a timeout.
   A late join also reaps a thread that exits just after the timed wait.
+- A second Start in the same process now reaches the title again. The action
+  renderer was retaining its bound-index pointer across sessions and crashed in
+  the first sky draw; it now invalidates that cache at graphics init and treats
+  a missing index buffer as a reported draw miss instead of a null dereference.
 - The simulator renderer uses SDL's Metal backend through a narrow patch to the
   pinned SDL source. SDL 3.4.18 assumes the iOS device-family query on the
   simulator, where Metal exposes the host GPU instead. The build applies

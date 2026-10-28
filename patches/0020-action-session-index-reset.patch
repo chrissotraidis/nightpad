@@ -1,0 +1,32 @@
+diff --git a/src/action/engine/Direct3D/d3dSeam.cpp b/src/action/engine/Direct3D/d3dSeam.cpp
+index 343067d..c2e9267 100644
+--- a/src/action/engine/Direct3D/d3dSeam.cpp
++++ b/src/action/engine/Direct3D/d3dSeam.cpp
+@@ -3113,6 +3113,11 @@ void xboxInitGraphics(void) {
+     g_overlayTableEnd = g_overlayTableBase + sizeof(Gfx.overlayQuads);
+ 
+     memset(&Gfx, 0, sizeof(Gfx));
++    // The seam's bound-index pointer belongs to the heap being replaced. Force
++    // the first draw of every session through d3dBindBuffers.
++    g_d3dBoundIndexData = NULL;
++    Gfx.currentStreamBuffer = 0xFFFFFFFFu;
++    Gfx.currentIndexBuffer = 0xFFFFFFFFu;
+ 
+     for (int i = 0; i < 256; i++)
+         Gfx.u8ToFloat01[i] = (float)i * (1.0f / 255.0f);
+diff --git a/src/common/gfx/sdlGpuBackend.cpp b/src/common/gfx/sdlGpuBackend.cpp
+index 81993b5..8c088bd 100644
+--- a/src/common/gfx/sdlGpuBackend.cpp
++++ b/src/common/gfx/sdlGpuBackend.cpp
+@@ -2171,6 +2171,11 @@ static void ShaderDraw(uint32_t xboxType, uint32_t first, uint32_t limit, bool i
+ void D3D9_DrawIndexedVertices(uint32_t primitiveType, uint32_t vertexCount, const void *pIndexData) {
+     if (g_device == NULL)
+         return;
++    if (pIndexData == NULL) {
++        GpuLog("[sdlgpu] indexed draw with no index data: primitive %u, %u vertices\n",
++               primitiveType, vertexCount);
++        return;
++    }
+     SDL_GPUPrimitiveType type;
+     bool needsIndices;
+     if (!XboxPrimitive(primitiveType, &type, &needsIndices) || vertexCount == 0)

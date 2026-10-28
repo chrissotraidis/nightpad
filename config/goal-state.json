@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T01:40:00Z",
+  "last_updated_at": "2026-10-28T01:55:00Z",
   "active_goal": "G13",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -120,7 +120,8 @@
         "scripts/patch_ios_sdl.sh",
         "evidence/ios-shell/simulator-gameplay.png",
         "evidence/ios-shell/simulator-exchange-gameplay.png",
-        "patches/0019-action-stop-observability.patch"
+        "patches/0019-action-stop-observability.patch",
+        "patches/0020-action-session-index-reset.patch"
       ],
       "blockers": [
         "B01"
@@ -169,7 +170,9 @@
         "docs/DECISIONS/0014-simulator-metal.md",
         "evidence/ios-shell/simulator-gameplay.png",
         "evidence/ios-shell/simulator-exchange-gameplay.png",
-        "patches/0019-action-stop-observability.patch"
+        "patches/0019-action-stop-observability.patch",
+        "patches/0020-action-session-index-reset.patch",
+        "evidence/ios-shell/simulator-second-session-title.png"
       ],
       "blockers": [],
       "next_step": "Run the production Files picker with a prepared retail package on device, then verify SDL/overlay composition and pause/resume."

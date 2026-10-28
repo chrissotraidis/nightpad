@@ -1894,3 +1894,19 @@ are ignored and may contain paths, hashes, captures or device identities.
   The action-to-driving switch uses the same pumping rule and remains covered by
   the host transition suite; device behavior still belongs to G03.
 
+## 2026-10-28T01:55:00Z — a second Start survives the new session
+
+- Goal: G05. Requirement: R15 in progress.
+- Observed: after a clean Stop, the next Start crashed at the first sky draw.
+  The crash report showed `D3D9_DrawIndexedVertices` called with a null index
+  pointer, from `View_DrawSky`.
+- Cause: the action seam kept its bound-index pointer and cache handles across
+  sessions even though the game heap underneath them had been replaced.
+- Observed: graphics init now clears the bound-index pointer and both binding
+  cache keys. The SDL GPU draw path reports a missing index buffer instead of
+  dereferencing it. On the simulator, Stop then Start reached the title in the
+  same process with no crash and no missing-index log.
+- Evidence: the second-session title capture and `patches/0020-action-session-index-reset.patch`.
+- Verdict: one Stop/Start cycle passes after live gameplay. Longer repeated
+  sessions, driving handoff and physical-device stability remain.
+
