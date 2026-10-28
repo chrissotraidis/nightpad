@@ -16,39 +16,43 @@ struct DefaultControl {
     float x, y, w, h;
 };
 
-// Landscape phone geometry: sticks in the lower corners, face cluster on the
-// right, D-pad and triggers reachable by the left thumb, system buttons apart.
+// Landscape phone geometry, following SunPad's controller arrangement: a round
+// move stick in the lower-left corner with the D-pad beside it, a camera stick
+// in the lower-right corner, a diamond face cluster above it, shoulders at the
+// top corners, White/Black down the right edge, and Start/Back at the top left.
+// Sizes are the SunPad point sizes against an 850x360 safe area.
 constexpr DefaultControl kPhone[] = {
-    { TouchControlId::LeftStick, 0.035f, 0.54f, 0.17f, 0.34f },
-    { TouchControlId::RightStick, 0.640f, 0.56f, 0.150f, 0.32f },
-    { TouchControlId::Dpad, 0.235f, 0.58f, 0.14f, 0.28f },
-    { TouchControlId::A, 0.868f, 0.70f, 0.055f, 0.135f },
-    { TouchControlId::B, 0.935f, 0.60f, 0.055f, 0.135f },
-    { TouchControlId::X, 0.805f, 0.60f, 0.055f, 0.135f },
-    { TouchControlId::Y, 0.868f, 0.50f, 0.055f, 0.135f },
-    { TouchControlId::LeftTrigger, 0.045f, 0.10f, 0.10f, 0.16f },
-    { TouchControlId::RightTrigger, 0.855f, 0.10f, 0.10f, 0.16f },
-    { TouchControlId::White, 0.075f, 0.30f, 0.075f, 0.14f },
-    { TouchControlId::Black, 0.805f, 0.30f, 0.075f, 0.14f },
-    { TouchControlId::Start, 0.545f, 0.06f, 0.055f, 0.11f },
-    { TouchControlId::Back, 0.475f, 0.06f, 0.055f, 0.11f },
+    { TouchControlId::LeftStick, 0.0594f, 0.5533f, 0.1412f, 0.3333f },
+    { TouchControlId::RightStick, 0.8286f, 0.6100f, 0.1129f, 0.2667f },
+    { TouchControlId::Dpad, 0.2612f, 0.5611f, 0.1176f, 0.2778f },
+    { TouchControlId::Y, 0.7730f, 0.1500f, 0.0541f, 0.1375f },
+    { TouchControlId::X, 0.6979f, 0.2950f, 0.0541f, 0.1375f },
+    { TouchControlId::B, 0.8432f, 0.3100f, 0.0635f, 0.1375f },
+    { TouchControlId::A, 0.7624f, 0.4550f, 0.0753f, 0.1375f },
+    { TouchControlId::LeftTrigger, 0.0359f, 0.1650f, 0.1082f, 0.1375f },
+    { TouchControlId::RightTrigger, 0.8559f, 0.1650f, 0.1082f, 0.1375f },
+    { TouchControlId::White, 0.9391f, 0.3150f, 0.0518f, 0.1375f },
+    { TouchControlId::Black, 0.9391f, 0.4600f, 0.0518f, 0.1375f },
+    { TouchControlId::Start, 0.0429f, 0.0200f, 0.0941f, 0.1375f },
+    { TouchControlId::Back, 0.1473f, 0.0200f, 0.0753f, 0.1375f },
 };
 
-// Tablet geometry: more centre-to-edge space, still two hands.
+// Tablet geometry: the same arrangement; the safe area is larger, so the
+// normalized controls stay proportional.
 constexpr DefaultControl kTablet[] = {
-    { TouchControlId::LeftStick, 0.045f, 0.55f, 0.15f, 0.32f },
-    { TouchControlId::RightStick, 0.690f, 0.56f, 0.110f, 0.30f },
-    { TouchControlId::Dpad, 0.225f, 0.60f, 0.13f, 0.26f },
-    { TouchControlId::A, 0.885f, 0.70f, 0.055f, 0.11f },
-    { TouchControlId::B, 0.945f, 0.61f, 0.055f, 0.11f },
-    { TouchControlId::X, 0.815f, 0.61f, 0.055f, 0.11f },
-    { TouchControlId::Y, 0.885f, 0.52f, 0.055f, 0.11f },
-    { TouchControlId::LeftTrigger, 0.055f, 0.10f, 0.085f, 0.14f },
-    { TouchControlId::RightTrigger, 0.865f, 0.10f, 0.085f, 0.14f },
-    { TouchControlId::White, 0.080f, 0.31f, 0.065f, 0.12f },
-    { TouchControlId::Black, 0.825f, 0.31f, 0.065f, 0.12f },
-    { TouchControlId::Start, 0.545f, 0.055f, 0.045f, 0.09f },
-    { TouchControlId::Back, 0.485f, 0.055f, 0.045f, 0.09f },
+    { TouchControlId::LeftStick, 0.0650f, 0.5666f, 0.1299f, 0.3066f },
+    { TouchControlId::RightStick, 0.8331f, 0.6207f, 0.1039f, 0.2454f },
+    { TouchControlId::Dpad, 0.2659f, 0.5722f, 0.1082f, 0.2556f },
+    { TouchControlId::Y, 0.7752f, 0.1555f, 0.0498f, 0.1265f },
+    { TouchControlId::X, 0.7001f, 0.3005f, 0.0498f, 0.1265f },
+    { TouchControlId::B, 0.8458f, 0.3155f, 0.0584f, 0.1265f },
+    { TouchControlId::A, 0.7654f, 0.4605f, 0.0693f, 0.1265f },
+    { TouchControlId::LeftTrigger, 0.0402f, 0.1705f, 0.0995f, 0.1265f },
+    { TouchControlId::RightTrigger, 0.8602f, 0.1705f, 0.0995f, 0.1265f },
+    { TouchControlId::White, 0.9412f, 0.3205f, 0.0477f, 0.1265f },
+    { TouchControlId::Black, 0.9412f, 0.4655f, 0.0477f, 0.1265f },
+    { TouchControlId::Start, 0.0467f, 0.0255f, 0.0866f, 0.1265f },
+    { TouchControlId::Back, 0.1503f, 0.0255f, 0.0693f, 0.1265f },
 };
 
 TouchControlId ParseId(const std::string &name) {

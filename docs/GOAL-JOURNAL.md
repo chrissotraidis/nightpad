@@ -2104,3 +2104,30 @@ are ignored and may contain paths, hashes, captures or device identities.
   `/tmp/np-final2.txt`, `/tmp/np-noquit.txt`; `scripts/verify_patches.sh` PASS
   (65 files).
 
+## 2026-10-28T08:30:00Z — touch controls and the three-dot menu take SunPad's layout and style
+
+- Goal: G06. Requirement: R14/R15.
+- Observed: the previous overlay was a scatter of coloured rounded rectangles:
+  tall triggers at the top corners, White on the left, Black on the right, and
+  Start/Back in the middle top; the sticks were rounded squares. The user asked
+  for SunPad's layout and interface as the starting point.
+- Studied `references/sunpad/apple/ios/SunPadGameOverlay.mm`: round translucent
+  sticks in the lower corners, a face-button diamond on the right with a large A,
+  wide shoulders at the top corners, Start/Back at the top left, a D-pad beside
+  the move stick, and a 40-point capsule ellipsis menu using a plain button
+  configuration over a dark translucent plate.
+- Changed: the phone and tablet defaults now follow that arrangement (large A,
+  medium B, small X/Y; White/Black down the right edge; Start/Back capsules;
+  round sticks). Round controls are forced square about their centre so they
+  stay circular at any canvas aspect. Sticks and shoulders use SunPad's neutral
+  translucent fills with 2-point white borders; face buttons keep a subtle Xbox
+  colour tint. The menu button uses SunPad's capsule configuration and 12-point
+  top/trailing inset. The layout file version moved to 2 so old saved layouts
+  fall back to the new defaults without an error alert.
+- Verified on the simulator with `--preview-gameplay --show-touch-controls`:
+  the overlay renders as a controller, the touch START enters the Paris mission,
+  the look-stick drag registers, and the three-dot menu opens over gameplay.
+  `scripts/test_touch_layout.sh` PASS (including the no-overlap check at
+  844x340, 800x320 and 1024x700 with the 44-point floor) and
+  `scripts/verify_quick.sh` PASS.
+

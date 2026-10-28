@@ -146,15 +146,36 @@ static uint64_t ShellResidentBytes(void) {
     [self.view addSubview:_status];
 
     _menuButton = [NightPadMenuButton buttonWithType:UIButtonTypeCustom];
-    [_menuButton setImage:[UIImage systemImageNamed:@"ellipsis"] forState:UIControlStateNormal];
-    _menuButton.tintColor = UIColor.whiteColor;
-    _menuButton.backgroundColor = [UIColor colorWithWhite:0.06 alpha:0.76];
-    _menuButton.layer.cornerRadius = 22;
-    _menuButton.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.32].CGColor;
-    _menuButton.layer.borderWidth = 1;
+    // SunPad's three-dot button: a 40-point capsule with a plain ellipsis on a
+    // dark translucent plate, built through a button configuration so the menu
+    // presentation keeps the same circular shape instead of gaining the system
+    // button chrome.
+    UIImageSymbolConfiguration *symbol =
+        [UIImageSymbolConfiguration configurationWithPointSize:19.0 weight:UIImageSymbolWeightBold];
+    UIImage *ellipsis = [UIImage systemImageNamed:@"ellipsis" withConfiguration:symbol];
+    [_menuButton setImage:ellipsis forState:UIControlStateNormal];
     _menuButton.accessibilityLabel = @"Menu";
     _menuButton.accessibilityIdentifier = @"nightpad.menu";
     _menuButton.showsMenuAsPrimaryAction = YES;
+    if (@available(iOS 15.0, *))
+        _menuButton.changesSelectionAsPrimaryAction = NO;
+
+    UIButtonConfiguration *configuration = [UIButtonConfiguration plainButtonConfiguration];
+    configuration.image = ellipsis;
+    configuration.baseForegroundColor = UIColor.whiteColor;
+    configuration.contentInsets = NSDirectionalEdgeInsetsZero;
+    configuration.cornerStyle = UIButtonConfigurationCornerStyleCapsule;
+    UIBackgroundConfiguration *background = [UIBackgroundConfiguration clearConfiguration];
+    background.backgroundColor = [UIColor colorWithWhite:0.06 alpha:0.72];
+    background.cornerRadius = 20.0;
+    background.strokeColor = [UIColor colorWithWhite:1.0 alpha:0.30];
+    background.strokeWidth = 1.0;
+    configuration.background = background;
+    _menuButton.automaticallyUpdatesConfiguration = NO;
+    _menuButton.configuration = configuration;
+    _menuButton.tintColor = UIColor.whiteColor;
+    _menuButton.backgroundColor = UIColor.clearColor;
+    _menuButton.layer.borderWidth = 0.0;
     _menuButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_menuButton];
 
@@ -168,10 +189,10 @@ static uint64_t ShellResidentBytes(void) {
         [_status.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor],
         [_status.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.view.safeAreaLayoutGuide.leadingAnchor constant:30],
         [_status.trailingAnchor constraintLessThanOrEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor constant:-30],
-        [_menuButton.widthAnchor constraintEqualToConstant:44],
-        [_menuButton.heightAnchor constraintEqualToConstant:44],
-        [_menuButton.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor constant:-18],
-        [_menuButton.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:18],
+        [_menuButton.widthAnchor constraintEqualToConstant:40],
+        [_menuButton.heightAnchor constraintEqualToConstant:40],
+        [_menuButton.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor constant:-12],
+        [_menuButton.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:12],
     ]];
 
     std::string pathError;
@@ -813,7 +834,8 @@ static uint64_t ShellResidentBytes(void) {
     nightpad::TouchLayout layout = nightpad::TouchLayout::Defaults([self touchDeviceClass]);
     std::string loadError;
     if (!layout.Load([self touchLayoutURL].fileSystemRepresentation, &loadError) &&
-        loadError != "The layout file is missing.")
+        loadError != "The layout file is missing." &&
+        loadError != "Unsupported touch-layout version.")
         [self showError:[NSString stringWithFormat:@"Saved touch layout ignored: %s", loadError.c_str()]];
     return layout;
 }

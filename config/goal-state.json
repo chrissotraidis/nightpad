@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T07:30:00Z",
+  "last_updated_at": "2026-10-28T08:30:00Z",
   "active_goal": "G13",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -233,7 +233,7 @@
         "apple/ios/NightPadShellViewController.mm"
       ],
       "blockers": [],
-      "next_step": "Verify engine pad consumption and rumble on device; the scheme and layout source work is complete."
+      "next_step": "The SunPad-derived overlay is in place; verify it in live gameplay on the simulator and keep the tablet layout in step."
     },
     "G07": {
       "status": "in_progress",
@@ -1765,6 +1765,11 @@
     {
       "name": "iOS simulator repeated handoff",
       "result": "OPEN: second handoff can create a window without the Metal view (black, ~360 draws); fresh launch works",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator SunPad-derived touch layout and menu",
+      "result": "PASS: overlay renders, touch START enters Paris, look stick registers, menu opens over gameplay; layout test no-overlap PASS",
       "target": "iPhone 17 Pro / iOS 26.5 simulator"
     }
   ],

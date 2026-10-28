@@ -54,6 +54,38 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
     }
 }
 
+// SunPad's shapes: round sticks and face buttons, capsules for Start/Back, and
+// rounded plates for the shoulders and the D-pad.
+CGFloat ControlCornerRadius(TouchControlId id, CGSize size) {
+    const CGFloat side = std::min(size.width, size.height);
+    switch (id) {
+        case TouchControlId::LeftStick:
+        case TouchControlId::RightStick:
+        case TouchControlId::A:
+        case TouchControlId::B:
+        case TouchControlId::X:
+        case TouchControlId::Y:
+        case TouchControlId::White:
+        case TouchControlId::Black:
+            return side * 0.5;
+        case TouchControlId::Start:
+        case TouchControlId::Back:
+            return size.height * 0.5;
+        default:
+            return 12.0;
+    }
+}
+
+BOOL IsFaceButton(TouchControlId id) {
+    return id == TouchControlId::A || id == TouchControlId::B || id == TouchControlId::X ||
+           id == TouchControlId::Y;
+}
+
+BOOL IsRoundControl(TouchControlId id) {
+    return id == TouchControlId::LeftStick || id == TouchControlId::RightStick || IsFaceButton(id) ||
+           id == TouchControlId::White || id == TouchControlId::Black;
+}
+
 }  // namespace
 
 @interface NightPadOverlayControlView : UIView
@@ -73,10 +105,12 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
     if ((self = [super initWithFrame:CGRectZero])) {
         _controlId = control.id;
         _baseColour = ControlColour(control.id);
-        self.backgroundColor = [_baseColour colorWithAlphaComponent:control.opacity];
+        self.backgroundColor = IsFaceButton(control.id)
+            ? [_baseColour colorWithAlphaComponent:0.26f]
+            : [UIColor colorWithWhite:1 alpha:0.11];
         self.layer.cornerRadius = 12;
-        self.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.34].CGColor;
-        self.layer.borderWidth = 1;
+        self.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.42].CGColor;
+        self.layer.borderWidth = 2;
         self.clipsToBounds = YES;
         self.userInteractionEnabled = NO;
         self.isAccessibilityElement = YES;
@@ -87,9 +121,9 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
 
         if (control.id == TouchControlId::LeftStick || control.id == TouchControlId::RightStick) {
             _thumb = [[UIView alloc] initWithFrame:CGRectZero];
-            _thumb.backgroundColor = [UIColor colorWithWhite:1 alpha:0.26];
+            _thumb.backgroundColor = [UIColor colorWithWhite:1 alpha:0.32];
             _thumb.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.5].CGColor;
-            _thumb.layer.borderWidth = 1;
+            _thumb.layer.borderWidth = 0;
             _thumb.userInteractionEnabled = NO;
             [self addSubview:_thumb];
         }
@@ -118,6 +152,13 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
         _label.textColor = UIColor.whiteColor;
         _label.textAlignment = NSTextAlignmentCenter;
         UIFont *baseFont = [UIFont monospacedSystemFontOfSize:13 weight:UIFontWeightBold];
+        if (IsFaceButton(control.id))
+            baseFont = [UIFont systemFontOfSize:17 weight:UIFontWeightBold];
+        else if (control.id == TouchControlId::White || control.id == TouchControlId::Black)
+            baseFont = [UIFont monospacedSystemFontOfSize:9 weight:UIFontWeightBold];
+        else if (control.id == TouchControlId::Start || control.id == TouchControlId::Back ||
+                 control.id == TouchControlId::LeftTrigger || control.id == TouchControlId::RightTrigger)
+            baseFont = [UIFont monospacedSystemFontOfSize:12 weight:UIFontWeightBold];
         _label.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleHeadline]
             scaledFontForFont:baseFont maximumPointSize:20];
         _label.adjustsFontForContentSizeCategory = YES;
@@ -127,7 +168,8 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
         _label.isAccessibilityElement = NO;
         // The D-pad's chevrons already say what it is; a centred caption
         // would sit underneath them.
-        _label.hidden = (control.id == TouchControlId::Dpad);
+        _label.hidden = control.id == TouchControlId::Dpad || control.id == TouchControlId::LeftStick ||
+                        control.id == TouchControlId::RightStick;
         [self addSubview:_label];
     }
     return self;
@@ -182,7 +224,7 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
             }
             _thumb.center = CGPointMake(CGRectGetMidX(self.bounds) + dx * travel,
                                         CGRectGetMidY(self.bounds) + dy * travel);
-            self.backgroundColor = [_baseColour colorWithAlphaComponent:active ? 0.85 : 0.7];
+            self.backgroundColor = [UIColor colorWithWhite:1 alpha:active ? 0.22 : 0.11];
             self.accessibilityValue = active
                 ? [NSString stringWithFormat:@"%.0f%% right, %.0f%% down", dx * 100, dy * 100]
                 : @"Centred";
@@ -202,7 +244,7 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
             for (NSUInteger i = 0; i < _arrows.count; ++i) {
                 _arrows[i].tintColor = [UIColor colorWithWhite:1 alpha:states[i].boolValue ? 1.0 : 0.45];
             }
-            self.backgroundColor = [_baseColour colorWithAlphaComponent:active ? 0.9 : 0.7];
+            self.backgroundColor = [UIColor colorWithWhite:1 alpha:active ? 0.20 : 0.11];
             break;
         }
         case TouchControlId::LeftTrigger:
@@ -217,7 +259,9 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
             break;
         }
         default:
-            self.backgroundColor = [_baseColour colorWithAlphaComponent:active ? 1.0 : 0.7];
+            self.backgroundColor = IsFaceButton(_controlId)
+                ? [_baseColour colorWithAlphaComponent:active ? 0.55f : 0.26f]
+                : [UIColor colorWithWhite:1 alpha:active ? 0.22 : 0.11];
             self.transform = active ? CGAffineTransformMakeScale(0.96, 0.96) : CGAffineTransformIdentity;
             break;
     }
@@ -320,10 +364,19 @@ NSString *ControlAccessibilityLabel(TouchControlId id) {
         if (index >= _controlViews.count)
             break;
         NightPadOverlayControlView *view = _controlViews[index++];
-        view.frame = CGRectMake(CGRectGetMinX(canvas) + control.x * canvas.size.width,
-                                CGRectGetMinY(canvas) + control.y * canvas.size.height,
-                                control.width * canvas.size.width, control.height * canvas.size.height);
-        view.layer.cornerRadius = std::min(14.0, std::min(view.bounds.size.width, view.bounds.size.height) * 0.5);
+        CGRect frame = CGRectMake(CGRectGetMinX(canvas) + control.x * canvas.size.width,
+                                  CGRectGetMinY(canvas) + control.y * canvas.size.height,
+                                  control.width * canvas.size.width, control.height * canvas.size.height);
+        if (IsRoundControl(control.id)) {
+            // A normalized rectangle is not square on every canvas aspect; keep
+            // the round controls round by using the smaller side about the same
+            // centre (SunPad places round controls by point size).
+            const CGFloat side = std::min(frame.size.width, frame.size.height);
+            frame = CGRectMake(CGRectGetMidX(frame) - side * 0.5,
+                               CGRectGetMidY(frame) - side * 0.5, side, side);
+        }
+        view.frame = frame;
+        view.layer.cornerRadius = ControlCornerRadius(control.id, view.bounds.size);
     }
     [self refreshVisuals];
 }

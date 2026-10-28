@@ -100,8 +100,12 @@ int main() {
     std::ofstream(bad) << "NightPadTouchLayout 99\ndevice phone\n";
     TouchLayout invalid = TouchLayout::Defaults(TouchDeviceClass::Phone);
     Check(!invalid.Load(bad, &error), "unknown version rejected");
+    const fs::path legacy = home / "legacy.txt";
+    std::ofstream(legacy) << "NightPadTouchLayout 1\ndevice phone\n";
+    Check(!invalid.Load(legacy, &error), "version-1 layout rejected");
     std::ofstream(path, std::ios::trunc)
-        << "NightPadTouchLayout 1\ndevice phone\nunknown_control 0 0 0.1 0.1 0.7 1\n"
+        << "NightPadTouchLayout " << TouchLayout{}.version
+        << "\ndevice phone\nunknown_control 0 0 0.1 0.1 0.7 1\n"
            "a 0.8 0.6 0.05 0.1 0.7 1\na 2 -1 0 0 2 1\n";
     Check(invalid.Load(path, &error), "loaded known rows");
     Check(invalid.controls.size() == 2, "unknown rows ignored");

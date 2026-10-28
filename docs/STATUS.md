@@ -372,6 +372,12 @@ simulator execution is no longer a platform blocker.
   pointed into had been replaced. `SFXShutdown` unloads them at session cleanup
   (patch 0025); a Paris mission, Stop and a fresh Start reach the title with no
   crash report.
+- The touch controls now follow SunPad's layout: round sticks in the lower
+  corners, a face diamond with a large A, wide shoulders, White/Black down the
+  right edge, Start/Back capsules at the top left, and a D-pad beside the move
+  stick. The three-dot button is a 40-point capsule with SunPad's plain button
+  configuration. The layout version moved to 2, so older saved layouts fall
+  back to the new defaults.
 - No valid Apple code-signing identity and no connected physical device were
   visible at inventory time. This blocks signed physical-device acceptance in
   G03, G06 and G12; independent build/UI work continues.
