@@ -56,6 +56,7 @@ using nightpad::Paths;
     BOOL _engineRunning;
     BOOL _enginePaused;
     BOOL _switchingEngine;
+    BOOL _engineTeardown;
     BOOL _stopWhenBooted;
     BOOL _forceStopNow;
     BOOL _backgroundPausedEngine;
@@ -1041,6 +1042,12 @@ static uint64_t ShellResidentBytes(void) {
 }
 
 - (void)pollEngine {
+    // A stopping engine can still need the window's main thread to pump SDL
+    // events and finish a present callback. Keep that path alive until join.
+    if (_engineTeardown) {
+        (void)[_engineHost pollWindow];
+        return;
+    }
     if (!_engineRunning || _switchingEngine)
         return;
     if (_stopWhenBooted) {
@@ -1066,27 +1073,28 @@ static uint64_t ShellResidentBytes(void) {
     if (_switchingEngine)
         return;
     _switchingEngine = YES;
-    [_engineTimer invalidate];
-    _engineTimer = nil;
+    _engineTeardown = YES;
     __weak NightPadShellViewController *weakSelf = self;
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         NightPadShellViewController *strongSelf = weakSelf;
         if (strongSelf == nil)
             return;
-        const int joined = [strongSelf->_engineHost joinWithTimeout:30000];
+        const int joined = [strongSelf->_engineHost joinWithTimeout:60000];
         dispatch_async(dispatch_get_main_queue(), ^{
             NightPadShellViewController *strongSelf = weakSelf;
             if (strongSelf == nil)
                 return;
-            [strongSelf->_engineHost closeWindow];
             if (!joined) {
                 strongSelf->_switchingEngine = NO;
                 [strongSelf showError:@"The game did not stop for the next session."];
-                [strongSelf stopGame];
                 return;
             }
+            [strongSelf->_engineTimer invalidate];
+            strongSelf->_engineTimer = nil;
+            [strongSelf->_engineHost closeWindow];
             if (![strongSelf->_engineHost startHandoffTarget]) {
                 strongSelf->_switchingEngine = NO;
+                strongSelf->_engineTeardown = NO;
                 [strongSelf showError:@"The next game session could not start."];
                 [strongSelf stopGame];
                 return;
@@ -1103,6 +1111,7 @@ static uint64_t ShellResidentBytes(void) {
                 [strongSelf->_engineHost setUnlimitedAmmo:strongSelf->_settings.assistUnlimitedAmmo];
             }
             strongSelf->_switchingEngine = NO;
+            strongSelf->_engineTeardown = NO;
             strongSelf->_engineTimer = [NSTimer timerWithTimeInterval:1.0 / 60.0 target:strongSelf
                                                              selector:@selector(pollEngine)
                                                            userInfo:nil repeats:YES];
@@ -1130,26 +1139,31 @@ static uint64_t ShellResidentBytes(void) {
     _forceStopNow = NO;
     [self logSessionEvent:@"engine stop requested"];
     _engineRunning = NO;
+    _engineTeardown = YES;
     [self endNativeUI];
     [self removeTouchControls];
-    [_engineTimer invalidate];
-    _engineTimer = nil;
     [_engineHost requestStop];
     __weak NightPadShellViewController *weakSelf = self;
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         NightPadShellViewController *strongSelf = weakSelf;
         if (strongSelf == nil) return;
-        int joined = [strongSelf->_engineHost joinWithTimeout:30000];
+        int joined = [strongSelf->_engineHost joinWithTimeout:60000];
         dispatch_async(dispatch_get_main_queue(), ^{
             NightPadShellViewController *strongSelf = weakSelf;
             if (strongSelf == nil) return;
+            if (!joined) {
+                [strongSelf logSessionEvent:@"engine stop timed out"];
+                [strongSelf showError:@"The engine is taking longer than expected to stop."];
+                return;
+            }
+            [strongSelf->_engineTimer invalidate];
+            strongSelf->_engineTimer = nil;
+            strongSelf->_engineTeardown = NO;
             [strongSelf->_engineHost closeWindow];
-            [strongSelf logSessionEvent:(joined ? @"engine stopped" : @"engine stop timed out")];
+            [strongSelf logSessionEvent:@"engine stopped"];
             strongSelf->_gameplayMode = NO;
             [strongSelf updateGameplaySurface];
             [strongSelf refreshDataState];
-            if (!joined)
-                [strongSelf showError:@"The engine did not stop within thirty seconds."];
         });
     });
 }

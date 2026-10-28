@@ -25,16 +25,19 @@ teaching the engine a second renderer.
 
 On the iPhone 17 Pro simulator (iOS 26.5), the shell imported the real prepared
 data, loaded all eleven `filesys` archives, started the action engine, handed off
-to `d:\driving.xbe`, and entered the Paris tutorial with the touch overlay. The
+to `d:\driving.xbe`, entered the Paris driving tutorial, and separately loaded
+the campaign's Exchange mission into first-person gameplay. Holding the touch
+left stick moved Bond and holding the right stick turned the camera. The
 renderer reported SDL's Metal driver, MSL shaders and a 1280x960 back buffer.
-See `evidence/ios-shell/simulator-title.png` and
-`evidence/ios-shell/simulator-gameplay.png`.
+See `evidence/ios-shell/simulator-title.png`,
+`evidence/ios-shell/simulator-gameplay.png`, and
+`evidence/ios-shell/simulator-exchange-gameplay.png`.
 
 ## Limits
 
 - This is simulator evidence, not physical-device acceptance. Metal feature
   differences and performance still need a signed device run.
-- A cold simulator launch compiles hundreds of pipelines. The observed first
-  driving load took several minutes; the running game then paced near 30 fps in
-  this simulator session.
+- A cold simulator launch compiles hundreds of pipelines. The game's own frame
+  timestamps are not wall-clock time, so startup and mission-load budgets still
+  need a separate measurement; the running driving session paced near 30 fps.
 - The patch is pinned to SDL 3.4.18. Re-check it before changing the SDL pin.

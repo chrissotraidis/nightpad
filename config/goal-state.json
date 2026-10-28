@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T00:55:00Z",
+  "last_updated_at": "2026-10-28T01:40:00Z",
   "active_goal": "G13",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -78,7 +78,8 @@
         "docs/DECISIONS/0014-simulator-metal.md",
         "patches/sdl3-ios-simulator-metal.patch",
         "evidence/ios-shell/simulator-title.png",
-        "evidence/ios-shell/simulator-gameplay.png"
+        "evidence/ios-shell/simulator-gameplay.png",
+        "evidence/ios-shell/simulator-exchange-gameplay.png"
       ],
       "blockers": [
         "B01"
@@ -117,7 +118,9 @@
         "patches/0018-ios-long-paths.patch",
         "patches/sdl3-ios-simulator-metal.patch",
         "scripts/patch_ios_sdl.sh",
-        "evidence/ios-shell/simulator-gameplay.png"
+        "evidence/ios-shell/simulator-gameplay.png",
+        "evidence/ios-shell/simulator-exchange-gameplay.png",
+        "patches/0019-action-stop-observability.patch"
       ],
       "blockers": [
         "B01"
@@ -164,7 +167,9 @@
         "apple/shared/NightPadSaves.cpp",
         "scripts/test_saves_link.sh",
         "docs/DECISIONS/0014-simulator-metal.md",
-        "evidence/ios-shell/simulator-gameplay.png"
+        "evidence/ios-shell/simulator-gameplay.png",
+        "evidence/ios-shell/simulator-exchange-gameplay.png",
+        "patches/0019-action-stop-observability.patch"
       ],
       "blockers": [],
       "next_step": "Run the production Files picker with a prepared retail package on device, then verify SDL/overlay composition and pause/resume."

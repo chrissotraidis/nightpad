@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-28 00:55 UTC
+Updated: 2026-10-28 01:40 UTC
 
 ## Outcome
 
@@ -103,6 +103,13 @@ simulator execution is no longer a platform blocker.
   stop/join/close from the menu. On the iPhone 17 Pro simulator it loads the
   real `filesys` archives, plays the title and intro, hands the launch page to
   `d:\driving.xbe`, and enters the Paris tutorial with the touch overlay visible.
+  The final simulator build also reached the single-player mission list and
+  loaded The Exchange into first-person gameplay; holding the left touch stick
+  moved Bond and the right stick turned the camera.
+- Stop Game now returns to the shell promptly in a live campaign mission. The
+  shell keeps pumping SDL during teardown, so the engine can finish its current
+  present callback instead of stalling for 30 seconds and reporting a timeout.
+  A late join also reaps a thread that exits just after the timed wait.
 - The simulator renderer uses SDL's Metal backend through a narrow patch to the
   pinned SDL source. SDL 3.4.18 assumes the iOS device-family query on the
   simulator, where Metal exposes the host GPU instead. The build applies

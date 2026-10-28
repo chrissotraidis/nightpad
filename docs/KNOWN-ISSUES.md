@@ -14,7 +14,7 @@ tester would see, what is blocked, and where the detail lives.
 | Driving objectives are not attributed per mission | The strings are located but not mapped to Paris, Alpine and the rest; headless runs do not reach the trigger | `docs/CAMPAIGN-INVENTORY.md`, G07 |
 | Secret Unlocks have no automated path here | Only a device run through the original front end can confirm persistence | `docs/SOURCES.md`, R19 |
 | Interrupted engine writes are untested | A crash during a save write has no evidence either way | R11 notes |
-| Simulator shader compilation is slow on a cold launch | The first driving session can spend several minutes compiling pipelines before the mission starts; later sessions reuse the compiled cache | `docs/DECISIONS/0014-simulator-metal.md` |
+| Simulator shader compilation has no wall-clock budget | A cold session compiles hundreds of pipelines; startup timing must be measured from host/process clocks, not the game's in-session timestamps | `docs/DECISIONS/0014-simulator-metal.md` |
 | Tablet sheet editing is not scriptable in this harness | Saving from the iPad form sheet and drag editing stay manual | `docs/TEST-MATRIX.md` |
 
 ## Not issues

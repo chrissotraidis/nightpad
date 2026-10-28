@@ -1864,7 +1864,33 @@ are ignored and may contain paths, hashes, captures or device identities.
   tutorial spawned, and the touch overlay drove the title into that handoff.
   Captures are `evidence/ios-shell/simulator-title.png` and
   `evidence/ios-shell/simulator-gameplay.png`.
-- Verdict: simulator action-to-driving gameplay passes. The cold shader build
-  took several minutes and the running game paced near 30 fps; physical device
-  acceptance, performance and feel remain separate work.
+- Observed: the committed build then continued through Select Codename,
+  Operative difficulty and the single-player mission list, loaded The Exchange,
+  and entered first-person gameplay. Holding the left touch stick moved Bond
+  and holding the right stick turned the camera. Evidence
+  `evidence/ios-shell/simulator-final-codename.png` and
+  `evidence/ios-shell/simulator-exchange-gameplay.png`.
+- Verdict: simulator action gameplay and the action-to-driving transition pass.
+  The earlier "several minutes" note came from the game's internal timestamps,
+  not wall-clock time; startup and mission-load timing remain to be measured.
+  Physical acceptance, performance and feel remain separate work.
+
+## 2026-10-28T01:40:00Z — Stop Game no longer strands a live mission
+
+- Goal: G05. Requirement: R15 in progress.
+- Observed: Stop Game in The Exchange hit the shell's 30-second timeout. A
+  process sample later showed no game thread, and the backend reported one
+  frame lasting 30,022 ms.
+- Cause: the shell invalidated its SDL timer before joining. The game thread
+  then waited for a main-thread present callback that had no event pump until
+  its own 30-second timeout expired.
+- Observed: the shell now keeps polling SDL while an engine is tearing down or
+  switching. The Game thread's join rechecks its exit code after a timed wait.
+  On the simulator, Stop returned to the shell immediately; the log shows
+  `action stop observed`, `action cleanup complete`, and `action join complete`
+  with no long frame.
+- Evidence: simulator console log and `patches/0019-action-stop-observability.patch`.
+- Verdict: Start, live gameplay, pause/resume and Stop pass on the simulator.
+  The action-to-driving switch uses the same pumping rule and remains covered by
+  the host transition suite; device behavior still belongs to G03.
 

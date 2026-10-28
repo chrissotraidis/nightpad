@@ -1,0 +1,23 @@
+diff --git a/src/action/main.cpp b/src/action/main.cpp
+index 364ef85..dfe3189 100644
+--- a/src/action/main.cpp
++++ b/src/action/main.cpp
+@@ -99,6 +99,10 @@ void Game_Main(int argc, char **argv) {
+         }
+     }
+ 
++    printf("[lifecycle] action stop observed after %lu frames\n",
++           (unsigned long)g_mainloopFrames.load(std::memory_order_acquire));
++    fflush(stdout);
++
+     if (paused) {
+         SFXUnPause();
+         SFXUnPauseAllStreams();
+@@ -106,4 +110,7 @@ void Game_Main(int argc, char **argv) {
+ 
+     cleanupSystem();
+ 
++    printf("[lifecycle] action cleanup complete\n");
++    fflush(stdout);
++
+ }

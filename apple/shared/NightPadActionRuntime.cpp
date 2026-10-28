@@ -17,6 +17,7 @@
 
 #include "NightPadEngineBridge.h"
 
+#include <stdio.h>
 #include <string.h>
 
 static HostHandle g_gameThread = nullptr;
@@ -51,12 +52,28 @@ extern "C" int NightPadActionEngineJoin(unsigned timeoutMilliseconds) {
     if (g_gameThread == nullptr) {
         return 1;
     }
+    printf("[lifecycle] action join begin handle=%p timeout=%u ms\n", (void *)g_gameThread, timeoutMilliseconds);
+    fflush(stdout);
     HostDword result = HostWaitForObject(g_gameThread, timeoutMilliseconds);
     if (result == 0) {
+        printf("[lifecycle] action join complete\n");
+        fflush(stdout);
         HostCloseHandle(g_gameThread);
         g_gameThread = nullptr;
         return 1;
     }
+    // A long simulator frame can finish just after the timed wait returns.
+    // The game thread is safe to reap once its exit code is available.
+    HostDword exitCode = HOST_STILL_ACTIVE;
+    if (HostGetExitCodeThread(g_gameThread, &exitCode) && exitCode != HOST_STILL_ACTIVE) {
+        printf("[lifecycle] action join completed late with exit code %lu\n", (unsigned long)exitCode);
+        fflush(stdout);
+        HostCloseHandle(g_gameThread);
+        g_gameThread = nullptr;
+        return 1;
+    }
+    printf("[lifecycle] action join timed out; thread still active\n");
+    fflush(stdout);
     return 0;
 }
 
@@ -65,6 +82,8 @@ extern "C" void NightPadActionEngineCloseWindow(void) {
 }
 
 extern "C" void NightPadActionEngineRequestStop(void) {
+    printf("[lifecycle] action stop requested\n");
+    fflush(stdout);
     EngineLifecycle_RequestStop();
     HostWindow_RequestQuit();
 }
