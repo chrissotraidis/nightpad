@@ -40,11 +40,20 @@ int main() {
     Check(!nightpad::EnsureSavesLink(other, saves, &blockedError), "existing real folder is refused");
     Check(fs::exists(other / "saves" / "old.dat"), "existing saves are preserved");
 
-    // A link to a different target is refused until someone decides.
+    // A stale link left by an old app container is repaired.
+    const fs::path stale = root / "Stale";
+    fs::create_directories(stale);
+    fs::create_directory_symlink(root / "DeletedContainer" / "Saves", stale / "saves");
+    Check(nightpad::EnsureSavesLink(stale, saves, &error), "stale link is repaired");
+    Check(fs::equivalent(stale / "saves", saves), "repaired link points at current saves");
+
+    // A link to a different live target is refused until someone decides.
     const fs::path third = root / "Third";
     fs::create_directory(third);
+    fs::create_directories(root / "Elsewhere");
     fs::create_directory_symlink(root / "Elsewhere", third / "saves");
     Check(!nightpad::EnsureSavesLink(third, saves, &error), "misdirected link is reported");
+    Check(fs::equivalent(third / "saves", root / "Elsewhere"), "live link target is left alone");
 
     fs::remove_all(root, ec);
     std::cout << (failures == 0 ? "saves link: PASS" : "saves link: FAIL") << "\n";

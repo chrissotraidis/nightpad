@@ -57,9 +57,13 @@ target_link_libraries(NightPadShell PRIVATE nightpad_core
   "-framework UIKit" "-framework Foundation" "-framework CoreGraphics" "-framework UniformTypeIdentifiers"
   "-framework GameController" "-framework CoreHaptics")
 set(NIGHTPAD_ENGINE_ARCHIVE "" CACHE FILEPATH "Combined engine archive from build_combined_engine_link.sh")
+set(NIGHTPAD_SDL_INCLUDE_DIR "" CACHE PATH "SDL3 headers matching NIGHTPAD_SDL_LIB")
 if(NIGHTPAD_ENGINE_ARCHIVE)
+  if(NOT EXISTS "${NIGHTPAD_SDL_INCLUDE_DIR}/SDL3/SDL_main.h")
+    message(FATAL_ERROR "NIGHTPAD_SDL_INCLUDE_DIR has no SDL3 headers")
+  endif()
   target_compile_definitions(NightPadShell PRIVATE NIGHTPAD_HAS_ENGINE=1)
-  target_include_directories(NightPadShell PRIVATE "${NIGHTFIRE}/src")
+  target_include_directories(NightPadShell PRIVATE "${NIGHTFIRE}/src" "${NIGHTPAD_SDL_INCLUDE_DIR}")
   target_link_options(NightPadShell PRIVATE -Wl,-no_fixup_chains
     "-Wl,-force_load,${NIGHTPAD_ENGINE_ARCHIVE}"
     "-Wl,-u,_NightPadDrivingEngineStart")

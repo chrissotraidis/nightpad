@@ -1,0 +1,33 @@
+diff --git a/src/action/engine/XboxSettings.cpp b/src/action/engine/XboxSettings.cpp
+index 561748d..60084cc 100644
+--- a/src/action/engine/XboxSettings.cpp
++++ b/src/action/engine/XboxSettings.cpp
+@@ -48,7 +48,9 @@ struct Settings {
+     bool mouseInvertY;
+     bool mouseZoomToggle;
+     float fovDegrees;
+-    char discPath[240];  // where the game's disc data lives; see common/xboxPath.cpp
++    // iPhone application containers put the imported data well past Windows' old 240-character
++    // settings limit. Keep the full sandbox path that NightPad writes.
++    char discPath[1024];  // where the game's disc data lives; see common/xboxPath.cpp
+ };
+ 
+ static Settings g_settings;
+diff --git a/src/driving/platform/Host.h b/src/driving/platform/Host.h
+index 9dfc112..69e92e9 100644
+--- a/src/driving/platform/Host.h
++++ b/src/driving/platform/Host.h
+@@ -50,7 +50,13 @@ typedef unsigned long HostUlongPtr;
+ #define HOST_CREATE_SUSPENDED 4u
+ #define HOST_TLS_OUT_OF_INDEXES 0xffffffffu
+ #define HOST_HEAP_ZERO_MEMORY 8u
++#ifdef _WIN32
+ #define HOST_MAX_PATH        260
++#else
++// iOS application containers and their imported game-data paths routinely
++// exceed Windows' MAX_PATH once the disc root is included.
++#define HOST_MAX_PATH        4096
++#endif
+ 
+ typedef HostDword (__stdcall *HostThreadStart)(void *parameter);
+ typedef void (__stdcall *HostTimerCallback)(unsigned id, unsigned message, HostUlongPtr user,

@@ -33,18 +33,21 @@ PY
 fi
 
 engine_args=""
-if [ "$lane" = device ]; then
-    "$repo/scripts/build_combined_engine_link.sh" >/dev/null
-    engine_archive="$repo/build/ios-combined/libnightpad-engines.a"
-    sdl="$repo/build/nightfire-ios-device/_deps/sdl3-build/Release-iphoneos/libSDL3.a"
-    ffmpeg="$repo/build/deps/ffmpeg-ios-device"
-    spirv="$repo/build/nightfire-ios-device/_deps/spirv_cross-build/Release-iphoneos"
-    if [ ! -f "$engine_archive" ] || [ ! -f "$sdl" ] || [ ! -d "$ffmpeg" ] || [ ! -d "$spirv" ]; then
-        echo "Missing combined engine inputs; build the device engines first." >&2
-        exit 1
-    fi
-    engine_args="-DNIGHTPAD_ENGINE_ARCHIVE=$engine_archive -DNIGHTPAD_SDL_LIB=$sdl -DNIGHTPAD_FFMPEG_ROOT=$ffmpeg -DNIGHTPAD_SPIRV_ROOT=$spirv"
+case "$lane" in
+    device) combined="$repo/build/ios-combined" ;;
+    simulator) combined="$repo/build/ios-combined-simulator" ;;
+esac
+"$repo/scripts/build_combined_engine_link.sh" "$lane" >/dev/null
+engine_archive="$combined/libnightpad-engines.a"
+sdl="$repo/build/nightfire-ios-$lane/_deps/sdl3-build/Release-$sdk/libSDL3.a"
+sdl_include="$repo/build/nightfire-ios-$lane/_deps/sdl3-src/include"
+ffmpeg="$repo/build/deps/ffmpeg-ios-$lane"
+spirv="$repo/build/nightfire-ios-$lane/_deps/spirv_cross-build/Release-$sdk"
+if [ ! -f "$engine_archive" ] || [ ! -f "$sdl" ] || [ ! -f "$sdl_include/SDL3/SDL_main.h" ] || [ ! -d "$ffmpeg" ] || [ ! -d "$spirv" ]; then
+    echo "Missing combined engine inputs for $lane; build the engines first." >&2
+    exit 1
 fi
+engine_args="-DNIGHTPAD_ENGINE_ARCHIVE=$engine_archive -DNIGHTPAD_SDL_LIB=$sdl -DNIGHTPAD_SDL_INCLUDE_DIR=$sdl_include -DNIGHTPAD_FFMPEG_ROOT=$ffmpeg -DNIGHTPAD_SPIRV_ROOT=$spirv"
 
 SDKROOT=$(xcrun --sdk "$sdk" --show-sdk-path) cmake -S "$repo/apple/ios" -B "$build" -G Xcode \
     -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_SYSROOT="$sdk" -DCMAKE_OSX_ARCHITECTURES=arm64 \

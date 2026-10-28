@@ -25,6 +25,8 @@ SDKROOT=$(xcrun --sdk "$sdk" --show-sdk-path) cmake -S "$repo/vendor/nightfire" 
     -DNIGHTFIRE_SDL=ON -DNIGHTFIRE_GFX=sdlgpu -DNIGHTFIRE_WINDOW_BASE=0x100000000 \
     -DNF_FFMPEG_LIB_DIR= -DNF_FFMPEG_STATIC_LIB_DIR="$ffmpeg/lib"
 
+"$repo/scripts/patch_ios_sdl.sh" "$lane"
+
 for target in action_standalone driving_standalone; do
     xcodebuild -project "$build/nightfiRE.xcodeproj" -target "$target" -configuration Release \
         -sdk "$sdk" -arch arm64 CODE_SIGNING_ALLOWED=NO build

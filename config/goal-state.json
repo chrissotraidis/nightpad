@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T04:20:00Z",
+  "last_updated_at": "2026-10-28T00:55:00Z",
   "active_goal": "G13",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -74,12 +74,16 @@
         "docs/DECISIONS/0001-ios-platform-probe.md",
         "build/ios-device/Debug-iphoneos/NightPadProbe.app",
         "scripts/device_handoff.sh",
-        "docs/DEVICE-HANDOFF.md"
+        "docs/DEVICE-HANDOFF.md",
+        "docs/DECISIONS/0014-simulator-metal.md",
+        "patches/sdl3-ios-simulator-metal.patch",
+        "evidence/ios-shell/simulator-title.png",
+        "evidence/ios-shell/simulator-gameplay.png"
       ],
       "blockers": [
         "B01"
       ],
-      "next_step": "Install and run the signed probe on a trusted iPhone and iPad; simulator prerequisites already pass."
+      "next_step": "Install the signed build on a trusted iPhone and iPad for physical acceptance; the simulator now runs the real SDL/Metal engine path."
     },
     "G04": {
       "status": "blocked_external",
@@ -109,12 +113,16 @@
         "tests/native/test_driving_early_stop.cpp",
         "scripts/test_driving_early_stop.sh",
         "tests/native/test_engine_roundtrip.cpp",
-        "scripts/test_engine_roundtrip.sh"
+        "scripts/test_engine_roundtrip.sh",
+        "patches/0018-ios-long-paths.patch",
+        "patches/sdl3-ios-simulator-metal.patch",
+        "scripts/patch_ios_sdl.sh",
+        "evidence/ios-shell/simulator-gameplay.png"
       ],
       "blockers": [
         "B01"
       ],
-      "next_step": "Device execution of the handoff; quit during the loading screen needs a stability fix."
+      "next_step": "Physical-device execution and loading-screen quit stability; the simulator now completes action-to-driving into the Paris tutorial."
     },
     "G05": {
       "status": "in_progress",
@@ -154,7 +162,9 @@
         "apple/ios/NightPadAboutViewController.mm",
         "evidence/ios-shell/data-ready-real.png",
         "apple/shared/NightPadSaves.cpp",
-        "scripts/test_saves_link.sh"
+        "scripts/test_saves_link.sh",
+        "docs/DECISIONS/0014-simulator-metal.md",
+        "evidence/ios-shell/simulator-gameplay.png"
       ],
       "blockers": [],
       "next_step": "Run the production Files picker with a prepared retail package on device, then verify SDL/overlay composition and pause/resume."
@@ -285,7 +295,10 @@
         "scripts/package_device_app.sh",
         "docs/KNOWN-ISSUES.md",
         "scripts/check_package.sh",
-        "scripts/freeze_candidate.sh"
+        "scripts/freeze_candidate.sh",
+        "patches/0018-ios-long-paths.patch",
+        "patches/sdl3-ios-simulator-metal.patch",
+        "docs/DECISIONS/0014-simulator-metal.md"
       ],
       "blockers": [],
       "next_step": "Clean-checkout build and package recipe; final candidate after device acceptance."

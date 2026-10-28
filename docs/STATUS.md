@@ -1,16 +1,15 @@
 # NightPad status
 
-Updated: 2026-10-27 20:33 UTC
+Updated: 2026-10-28 00:55 UTC
 
 ## Outcome
 
 The goal loop is active. G00 and G01 are complete on their documented source
 and data scopes. G02 has a working native baseline and is blocked on the
-missing PAL movie set; G03 has passed the data-free simulator probe and remains
-blocked on physical-device access. The combined engines pass their full host
-suite, and the shell's data, save, touch, diagnostics and handoff surfaces are
-implemented and exercised on the simulator; physical acceptance is the
-remaining gate.
+missing PAL movie set. The iPhone Simulator now runs the real game: imported
+data loads, the action engine hands off to driving, and the Paris tutorial
+renders with touch input. G03 still needs signed physical-device acceptance;
+simulator execution is no longer a platform blocker.
 
 ## Verified
 
@@ -101,8 +100,19 @@ remaining gate.
 - The shell now has a live Start/Stop path: it prepares the active data root,
   starts the action engine, pumps SDL events from a 60 Hz host timer, keeps a
   transparent touch-through overlay above the game window, and requests
-  stop/join/close from the menu. This path is device-build verified; running it
-  still requires a signed physical device because the simulator has no SDL GPU.
+  stop/join/close from the menu. On the iPhone 17 Pro simulator it loads the
+  real `filesys` archives, plays the title and intro, hands the launch page to
+  `d:\driving.xbe`, and enters the Paris tutorial with the touch overlay visible.
+- The simulator renderer uses SDL's Metal backend through a narrow patch to the
+  pinned SDL source. SDL 3.4.18 assumes the iOS device-family query on the
+  simulator, where Metal exposes the host GPU instead. The build applies
+  `patches/sdl3-ios-simulator-metal.patch` automatically; the device lane is
+  unchanged. See `docs/DECISIONS/0014-simulator-metal.md`.
+- Simulator paths are long enough to exceed two old Windows limits. The
+  disc-path setting now keeps up to 1024 bytes, POSIX host paths use 4096 bytes,
+  and a stale launch `saves` symlink is repaired only when its target is gone.
+  The saves-link regression passes. `scripts/verify_patches.sh` reproduces 55
+  files from the pin after `patches/0018-ios-long-paths.patch`.
 - Native pause now lives at the engine frame boundary: action SFX and streams are
   suspended, frames stop advancing, and resume restores them. The shell's App
   Pause enters this state and Back to Game resumes it; the action pause frame

@@ -1844,3 +1844,27 @@ are ignored and may contain paths, hashes, captures or device identities.
   physical acceptance, the campaign and multiplayer runs, performance,
   interrupted saves and the final freeze - needs that hardware.
 
+## 2026-10-28T00:55:00Z — the simulator runs the game
+
+- Goal: G04. Requirement: R06 and R15 in progress.
+- Hypothesis: the simulator can run the real SDL/Metal path if the shell owns
+  SDL's main-thread flag and the engine sees complete sandbox paths.
+- Observed: the installed app had a dangling saves link from an old container,
+  so startup stopped before the engine. The link now self-heals only when its
+  target is gone; a link to another live saves directory is still refused.
+- Observed: iPhone containers exceeded the settings disc-path buffer and the
+  POSIX host-path buffer. A 241-byte discarded path and a 260-byte resolved file
+  path were the two failures. `patches/0018-ios-long-paths.patch` raises those
+  limits; `scripts/verify_patches.sh` now reproduces 55 files.
+- Observed: SDL 3.4.18 refuses the simulator's Metal device because its family
+  query describes the host GPU. `patches/sdl3-ios-simulator-metal.patch` relaxes
+  that check only under `TARGET_OS_SIMULATOR`; the device lane is unchanged.
+- Evidence: on iPhone 17 Pro / iOS 26.5, all eleven `filesys` archives opened,
+  the action title rendered, Start handed off `d:\driving.xbe`, the Paris
+  tutorial spawned, and the touch overlay drove the title into that handoff.
+  Captures are `evidence/ios-shell/simulator-title.png` and
+  `evidence/ios-shell/simulator-gameplay.png`.
+- Verdict: simulator action-to-driving gameplay passes. The cold shader build
+  took several minutes and the running game paced near 30 fps; physical device
+  acceptance, performance and feel remain separate work.
+

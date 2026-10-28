@@ -2,39 +2,59 @@
 set -eu
 
 repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-build="$repo/build/nightfire-ios-device"
+lane=device
+if [ $# -gt 0 ]; then
+    lane=$1
+fi
+case "$lane" in
+    simulator)
+        sdk=iphonesimulator
+        triple=arm64-apple-ios16.0-simulator
+        out="$repo/build/ios-combined-simulator"
+        ;;
+    device)
+        sdk=iphoneos
+        triple=arm64-apple-ios16.0
+        out="$repo/build/ios-combined"
+        ;;
+    *)
+        echo "usage: $0 [device|simulator]" >&2
+        exit 2
+        ;;
+esac
+platform="$( [ "$lane" = simulator ] && printf 'ios-simulator' || printf 'ios' ) 16.0 $(xcrun --sdk "$sdk" --show-sdk-version)"
+build="$repo/build/nightfire-ios-$lane"
 project="$build/nightfiRE.xcodeproj"
-out="$repo/build/ios-combined"
 mkdir -p "$out"
 
 if [ ! -d "$project" ]; then
-    echo "Configure the pinned engine for iPhoneOS first." >&2
+    echo "Configure the pinned engine for $lane first." >&2
     exit 1
 fi
 
 for target in action_standalone driving_standalone; do
     xcodebuild -project "$project" -target "$target" -configuration Release \
-        -sdk iphoneos -arch arm64 CODE_SIGNING_ALLOWED=NO build \
+        -sdk "$sdk" -arch arm64 CODE_SIGNING_ALLOWED=NO build \
         > "$out/$target.log" 2>&1
 done
 
 for app in action_standalone driving_standalone; do
-    if find "$build/Release-iphoneos/$app.app" -maxdepth 1 -name '*.dylib' -print -quit | grep -q .; then
+    if find "$build/Release-$sdk/$app.app" -maxdepth 1 -name '*.dylib' -print -quit | grep -q .; then
         echo "$app.app contains a loose dylib; clean the bundle before accepting the static link" >&2
         exit 1
     fi
 done
 
-action_dir="$build/build/action_standalone.build/Release-iphoneos/Objects-normal/arm64"
-driving_dir="$build/build/driving_standalone.build/Release-iphoneos/Objects-normal/arm64"
+action_dir="$build/build/action_standalone.build/Release-$sdk/Objects-normal/arm64"
+driving_dir="$build/build/driving_standalone.build/Release-$sdk/Objects-normal/arm64"
 find "$action_dir" -name '*.o' ! -name 'StandaloneMain.o' \
     ! -name 'GameWindow.o' ! -name 'HostPosix.o' | sort > "$out/action-objects.txt"
 find "$driving_dir" -name '*.o' ! -name 'StandaloneMain.o' \
     ! -name 'GameWindow.o' ! -name 'HostPosix.o' | sort > "$out/driving-objects.txt"
 printf '%s\n%s\n' "$action_dir/GameWindow.o" "$action_dir/HostPosix.o" > "$out/shared-objects.txt"
 
-sdk=$(xcrun --sdk iphoneos --show-sdk-path)
-common="-target arm64-apple-ios16.0 -isysroot $sdk -std=gnu++20 -ffp-contract=off -fms-extensions -fno-exceptions -Wno-ignored-attributes -DNIGHTFIRE_STANDALONE=1 -DNIGHTFIRE_SDL=1 -DNIGHTFIRE_WINDOW_BASE=0x100000000 -I $repo/vendor/nightfire/src -I $repo/vendor/nightfire/third_party/ffmpeg-prebuilt/include"
+sysroot=$(xcrun --sdk "$sdk" --show-sdk-path)
+common="-target $triple -isysroot $sysroot -std=gnu++20 -ffp-contract=off -fms-extensions -fno-exceptions -Wno-ignored-attributes -DNIGHTFIRE_STANDALONE=1 -DNIGHTFIRE_SDL=1 -DNIGHTFIRE_WINDOW_BASE=0x100000000 -I $repo/vendor/nightfire/src -I $repo/vendor/nightfire/third_party/ffmpeg-prebuilt/include"
 # shellcheck disable=SC2086
 clang++ $common -c "$repo/apple/shared/NightPadActionEngineEntry.cpp" -o "$out/action-entry.o"
 # shellcheck disable=SC2086
@@ -44,11 +64,11 @@ clang++ $common -c "$repo/apple/shared/NightPadDrivingEngineEntry.cpp" -o "$out/
 # shellcheck disable=SC2086
 clang++ $common -c "$repo/apple/shared/NightPadDrivingRuntime.cpp" -o "$out/driving-runtime.o"
 
-ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/action-raw.o" \
+ld -r -arch arm64 -platform_version $platform -o "$out/action-raw.o" \
     -filelist "$out/action-objects.txt" "$out/action-entry.o" "$out/action-runtime.o"
-ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/driving-raw.o" \
+ld -r -arch arm64 -platform_version $platform -o "$out/driving-raw.o" \
     -filelist "$out/driving-objects.txt" "$out/driving-entry.o" "$out/driving-runtime.o"
-ld -r -arch arm64 -platform_version ios 16.0 26.5 -o "$out/shared-runtime.o" \
+ld -r -arch arm64 -platform_version $platform -o "$out/shared-runtime.o" \
     -filelist "$out/shared-objects.txt"
 printf '_NightPadActionEngineThread\n_NightPadActionEngineSetLaunchRequestCallback\n_NightPadActionEngineRequestStop\n_NightPadActionEngineSetPaused\n_NightPadActionEngineSetInputSuspended\n_NightPadActionEngineFrameCount\n_NightPadActionEngineStart\n_NightPadActionEngineRunWindow\n_NightPadActionEnginePollWindow\n_NightPadActionEngineJoin\n_NightPadActionEngineCloseWindow\n_NightPadActionEngineTriggerDrivingAfter\n' > "$out/action-exports.txt"
 printf '_NightPadActionEngineSetHostPadsEnabled\n_NightPadActionEngineSetHostPad\n_NightPadActionEngineSetRumbleHandler\n' >> "$out/action-exports.txt"
@@ -62,12 +82,12 @@ nmedit -s "$out/driving-exports.txt" -o "$out/driving-isolated.o" "$out/driving-
 # through one archive; SDL, FFmpeg and SPIRV-Cross stay separate static inputs.
 ar rcs "$out/libnightpad-engines.a" "$out/shared-runtime.o" "$out/action-isolated.o" "$out/driving-isolated.o"
 
-spirv="$build/_deps/spirv_cross-build/Release-iphoneos"
-sdl="$build/_deps/sdl3-build/Release-iphoneos/libSDL3.a"
-ffmpeg="$repo/build/deps/ffmpeg-ios-device/lib"
-clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" \
+spirv="$build/_deps/spirv_cross-build/Release-$sdk"
+sdl="$build/_deps/sdl3-build/Release-$sdk/libSDL3.a"
+ffmpeg="$repo/build/deps/ffmpeg-ios-$lane/lib"
+clang++ -target $triple -isysroot "$sysroot" \
     -c "$repo/tests/ios/NightPadEngineLinkProbe.cpp" -o "$out/link-probe-main.o"
-clang++ -target arm64-apple-ios16.0 -isysroot "$sdk" -Wl,-no_fixup_chains \
+clang++ -target $triple -isysroot "$sysroot" -Wl,-no_fixup_chains \
     -o "$out/nightpad-combined-link" \
     "$out/link-probe-main.o" "$out/shared-runtime.o" "$out/action-isolated.o" "$out/driving-isolated.o" "$sdl" \
     "$ffmpeg/libavformat.a" "$ffmpeg/libavcodec.a" "$ffmpeg/libavutil.a" \
