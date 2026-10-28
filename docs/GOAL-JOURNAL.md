@@ -2012,3 +2012,28 @@ are ignored and may contain paths, hashes, captures or device identities.
   simulator Stop timings, `scripts/verify_patches.sh` PASS (61 files),
   `scripts/verify_quick.sh` PASS.
 
+## 2026-10-28T05:40:00Z — a second boot now starts at GAMEFLOW_BOOT again
+
+- Goal: G05. Requirement: R11/R15.
+- Observed: with the path and stream fixes in, a second Start in one app process
+  still showed a black game surface with the touch overlay, while the engine
+  advanced ~60 frames/s. A temporary `ResetMap_Load` trace never ran in the
+  second session, and a sample put the game thread in `GameFlow_Main` ->
+  `Game_Draw`, not in a load.
+- Root cause: `StackIndex` and `GameStateStack` are process statics that begin
+  as `{GAMEFLOW_BOOT}`. The first session ends with `GAMEFLOW_GAME` on top;
+  a second launch in the same process inherited that stack, skipped
+  `GAMEFLOW_BOOT`, never ran `bootup_bootup` or the level load that creates the
+  front-end menu, and drew an empty screen.
+- Fixed: `GameFlow_ResetForBoot()` puts `GAMEFLOW_BOOT` back on the stack, and
+  `Game_Main` calls it (with the front end's idle-count reset) at the start of
+  every session (patch 0024).
+- Observed on the simulator: three consecutive Start/Stop cycles each render the
+  title; Stop returns in 1.8-1.9 s; pressing START from the third title still
+  hands off to `d:\driving.xbe` and renders the Paris mission; Stop from that
+  session returns in 1.7 s.
+- Evidence: simulator screenshots of sessions 2 and 3 at Press START,
+  `/tmp/np-bootfix.txt`, and the `[load]` trace run that showed the missing
+  `ResetMap_Load` call. Host gates still pass: action lifecycle (3 cycles) and
+  `scripts/test_engine_handoff.sh`; `scripts/verify_patches.sh` PASS (62 files).
+

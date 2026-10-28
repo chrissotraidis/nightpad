@@ -15,7 +15,7 @@ tester would see, what is blocked, and where the detail lives.
 | Secret Unlocks have no automated path here | Only a device run through the original front end can confirm persistence | `docs/SOURCES.md`, R19 |
 | Interrupted engine writes are untested | A crash during a save write has no evidence either way | R11 notes |
 | Simulator shader compilation has no wall-clock budget | A cold session compiles hundreds of pipelines; startup timing must be measured from host/process clocks, not the game's in-session timestamps | `docs/DECISIONS/0014-simulator-metal.md` |
-| A second engine boot in one app process can show a black loading surface | After Stop then Start in the same process, the second boot can stay in `GAMEFLOW_LOAD_LEVEL` with the touch overlay on a black surface; frame counts still advance. A fresh app launch reaches the title reliably. The missing 30 fps attract trailer (`073a0048.xmv`) also shows a black attract page that A skips | `docs/GOAL-JOURNAL.md`, G05 repeated-session row |
+| The attract trailer is absent from the 30 fps bundle | For a boot that opens the attract page, `073a0048.xmv` cannot play, so that page is black until A skips it; the front end then loads normally | `docs/GOAL-JOURNAL.md`, G05 repeated-session row |
 | Tablet sheet editing is not scriptable in this harness | Saving from the iPad form sheet and drag editing stay manual | `docs/TEST-MATRIX.md` |
 
 ## Not issues
@@ -25,6 +25,12 @@ tester would see, what is blocked, and where the detail lives.
   stream waiting on a read that could not be issued. The path fix plus the
   stream-recovery and teardown guards make Stop return in 1.7-3.7 seconds on the
   simulator. See the 2026-10-28T05:00Z journal entry.
+
+- A second Start in one app process no longer blacks the screen. The game-flow
+  stack is a process static that ended the first session in `GAMEFLOW_GAME`, so
+  the next boot skipped `GAMEFLOW_BOOT`; `GameFlow_ResetForBoot()` runs at each
+  session start. Three consecutive Start/Stop cycles each reach the title, and
+  the handoff to Paris still works. See the 2026-10-28T05:40Z journal entry.
 
 - The pitch-black preview behind the touch overlay in the simulator is the
   shell preview without an engine, not a render failure.

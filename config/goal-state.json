@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T05:00:00Z",
+  "last_updated_at": "2026-10-28T05:40:00Z",
   "active_goal": "G13",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -181,10 +181,11 @@
         "evidence/ios-shell/simulator-paris-driving.png",
         "patches/0024-session-idle-reset.patch",
         "patches/0018-ios-long-paths.patch",
-        "patches/0023-missing-movie-finished.patch"
+        "patches/0023-missing-movie-finished.patch",
+        "patches/0024-session-boot-reset.patch"
       ],
       "blockers": [],
-      "next_step": "Investigate the in-process second-boot stall in GAMEFLOW_LOAD_LEVEL (black surface, frames advance); a fresh app launch reaches the title."
+      "next_step": "Simulator Start/Stop cycles are stable; continue the simulator acceptance sweep (campaign pages, saves, audio) while physical acceptance stays external."
     },
     "G06": {
       "status": "in_progress",
@@ -1739,7 +1740,12 @@
       "name": "iOS simulator repeated action start/stop",
       "result": "First session title renders; second in-process boot can stall in GAMEFLOW_LOAD_LEVEL (open)",
       "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator repeated Start/Stop with game-flow reset",
+      "result": "PASS: three cycles reach Press START; Paris handoff and stop pass",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
     }
   ],
-  "next_step": "Fix the in-process second-boot load stall on the simulator, then finish the multiplayer map/mode matrix; physical acceptance remains external."
+  "next_step": "Continue simulator acceptance (front-end pages, saves, audio, campaign slices); physical acceptance remains external. The multiplayer map/mode matrix is the remaining source inventory."
 }
