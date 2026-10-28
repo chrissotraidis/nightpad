@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-28 11:55 UTC
+Updated: 2026-10-28 12:00 UTC
 
 ## Outcome
 
@@ -270,9 +270,13 @@ simulator execution is no longer a platform blocker.
 - Game Data > Import Saves opens the document picker and copies the chosen
   files into Saves, asking before replacing a name that already exists. The
   picker selection itself is a manual step.
-- Control colours come from one shared palette whose white-label contrast is
-  checked at 4.5:1 or better for every control, so the Xbox face buttons keep
-  their identity without failing AA contrast.
+- A real 166-byte PLRS profile written by the engine (`BOND.dat`) survived an
+  app relaunch. Select Codename listed it again and its mission list opened on
+  The Exchange, which loaded into gameplay. A checkpoint written after an
+  objective and an interrupted write still need evidence.
+- Control colours come from one shared palette; the test checks each control's
+  actual lettering, dark on the face keys and white on the graphite keys, at
+  4.5:1 or better.
 - A host render-cost pass plays Mission 1 at 1x, 2x and 3x and finds the same
   ~50 fps cap at all three (339-348 draws), so higher targets run but the
   Mac is not resolution-bound. Device performance still decides the default.
@@ -405,11 +409,11 @@ a signing identity and a trusted device exist, then work the checklist in
 trip, touch and controller sessions, Secret Unlocks, display modes and the
 fifteen-minute stability runs.
 
-Independent work that can continue meanwhile: produce a real in-game save and
-walk the first-play campaign route on the simulator, then run the multiplayer
-mode/map matrix. Keep the fifteen-cycle action gate, ten-cycle driving gate,
-mixed round trip, pause, transition, handoff and data-import checks as
-regressions.
+Independent work that can continue meanwhile: exercise a checkpoint save after
+an objective and keep walking the first-play campaign route on the simulator,
+then run the multiplayer mode/map matrix. Keep the fifteen-cycle action gate,
+ten-cycle driving gate, mixed round trip, pause, transition, handoff and
+data-import checks as regressions.
 
 Verification entry points are `scripts/verify_quick.sh` (host logic, both
 shell builds, device link contract) and `scripts/verify_engine.sh` (lifecycle,

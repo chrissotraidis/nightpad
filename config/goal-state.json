@@ -479,13 +479,16 @@
         "apple/ios/NightPadShellViewController.mm",
         "docs/TEST-MATRIX.md",
         "apple/shared/NightPadPaths.cpp",
-        "evidence/ios-shell/save-restore.png"
+        "evidence/ios-shell/save-restore.png",
+        "evidence/ios-shell/codename-profile-persisted.png",
+        "evidence/ios-shell/bond-profile-progress.png",
+        "evidence/ios-shell/the-exchange-loaded.png"
       ],
       "decision_id": null,
       "notes": [
-        "The engine writes through a durable Saves link; Share Saves exports via the system sheet and Import Saves copies chosen files back with a replace confirmation. Picker selection, a real in-game save and the app-update case remain.",
+        "The engine writes through a durable Saves link; Share Saves exports via the system sheet and Import Saves copies chosen files back with a replace confirmation. A real 166-byte PLRS profile (BOND.dat) survived app relaunch and opened with its saved mission progress at The Exchange, which then loaded into gameplay.",
         "An app reinstall (the simulator update path) kept the save, settings file, touch layout and imported tree byte-identical.",
-        "Save restore now writes atomically, so an interrupted restore keeps the previous file; the fixture hook proved the collision prompt, replacement and unrelated-file isolation."
+        "Save restore now writes atomically, so an interrupted restore keeps the previous file; the fixture hook proved the collision prompt, replacement and unrelated-file isolation. Picker selection, a checkpoint written after an objective and an interrupted engine write remain."
       ]
     },
     "R12": {
@@ -1635,6 +1638,17 @@
         "evidence/ios-shell/xbox-controls-live.png",
         "docs/TEST-MATRIX.md"
       ]
+    },
+    {
+      "at": "2026-10-28T12:00:00Z",
+      "goal": "G05",
+      "summary": "Confirmed a real in-game codename profile: the 166-byte PLRS BOND.dat survived an app relaunch, appeared in Select Codename, kept The Exchange as its mission, and loaded that mission into gameplay. The file stayed unchanged through a clean Stop Game.",
+      "evidence": [
+        "evidence/ios-shell/codename-profile-persisted.png",
+        "evidence/ios-shell/bond-profile-progress.png",
+        "evidence/ios-shell/the-exchange-loaded.png",
+        "docs/TEST-MATRIX.md"
+      ]
     }
   ],
   "completed_tests": [
@@ -1804,7 +1818,12 @@
       "name": "Xbox-finished touch overlay",
       "result": "PASS: graphite sticks and shoulders, dished D-pad cross, four face colours with dark lettering and system icons render on iPhone and iPad; contrast and layout gates pass",
       "target": "iPhone 17 Pro and iPad Pro 13-inch / iOS 26.5 simulator"
+    },
+    {
+      "name": "real codename profile survives app relaunch",
+      "result": "PASS: 166-byte PLRS BOND.dat listed after relaunch, kept The Exchange as its mission, and loaded that mission into gameplay",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
     }
   ],
-  "next_step": "Produce a real in-game save and run the first-play campaign route on the simulator; physical acceptance remains external."
+  "next_step": "Take a checkpoint save through an objective and continue the first-play campaign route on the simulator; physical acceptance remains external."
 }

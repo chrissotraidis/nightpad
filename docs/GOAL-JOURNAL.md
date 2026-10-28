@@ -2263,3 +2263,22 @@ are ignored and may contain paths, hashes, captures or device identities.
   on the simulator; physical acceptance still needs a signing identity and a
   connected iPhone and iPad.
 
+## 2026-10-28T12:00:00Z — a real codename profile survives relaunch
+
+- Goal: G05. Requirement: R11.
+- Observed: the simulator's Saves directory held `BOND.dat`, a 166-byte file
+  with the engine's `PLRS` record stream rather than the 25-byte fixture. It
+  was written by the game at 04:15 and had not changed since.
+- Verified after terminating and relaunching the app: the fresh engine session
+  listed BOND under Select Codename, its mission list still opened on The
+  Exchange, and selecting it loaded that mission into gameplay. The file stayed
+  byte-identical through the session and a clean Stop Game.
+- Evidence: `evidence/ios-shell/codename-profile-persisted.png`,
+  `bond-profile-progress.png` and `the-exchange-loaded.png`.
+- Verdict: the profile and campaign-progress path is real, not a fixture. An
+  auto-save written after an objective, an interrupted engine write and the
+  signed app-update path remain under R11.
+- Next: take a checkpoint through an objective, then compare the file and
+  resume from it; continue the campaign route while the device remains
+  unavailable.
+
