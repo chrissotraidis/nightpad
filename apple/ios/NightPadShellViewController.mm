@@ -189,8 +189,8 @@ static uint64_t ShellResidentBytes(void) {
         [_status.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor],
         [_status.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.view.safeAreaLayoutGuide.leadingAnchor constant:30],
         [_status.trailingAnchor constraintLessThanOrEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor constant:-30],
-        [_menuButton.widthAnchor constraintEqualToConstant:40],
-        [_menuButton.heightAnchor constraintEqualToConstant:40],
+        [_menuButton.widthAnchor constraintEqualToConstant:44],
+        [_menuButton.heightAnchor constraintEqualToConstant:44],
         [_menuButton.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor constant:-12],
         [_menuButton.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:12],
     ]];
@@ -443,11 +443,13 @@ static uint64_t ShellResidentBytes(void) {
                                handler:^{ [weakSelf startGame]; }];
     UIAction *pause = [self menuAction:@"App Pause" image:@"pause.fill" disabled:!_engineRunning
                                handler:^{ [weakSelf showPausePanel]; }];
-    UIMenu *game = [UIMenu menuWithTitle:@"Game"
-                                   image:[UIImage systemImageNamed:@"gamecontroller"]
+    // GalaxyPad keeps start/stop in the root menu instead of hiding it behind
+    // another submenu. App Pause lives with the rest of the in-session controls.
+    UIMenu *game = [UIMenu menuWithTitle:@""
+                                   image:nil
                                identifier:nil
-                                  options:0
-                                 children:@[ start, pause ]];
+                                  options:UIMenuOptionsDisplayInline
+                                 children:@[ start ]];
 
     UIAction *layout = [self menuAction:@"Touch Layout…" image:@"hand.draw" disabled:NO
                                 handler:^{ [weakSelf openTouchLayout]; }];
@@ -471,11 +473,11 @@ static uint64_t ShellResidentBytes(void) {
                                                           controllers, controllers == 1 ? @"" : @"s"];
     UIAction *controllerStatus = [self menuAction:controllerTitle image:@"gamecontroller" disabled:YES handler:nil];
     NSMutableArray<UIAction *> *controlActions =
-        [NSMutableArray arrayWithObjects:layout, help, show, autoHide, rumble, nil];
+        [NSMutableArray arrayWithObjects:layout, pause, show, autoHide, rumble, nil];
     if (controllers > 0)
         [controlActions addObject:controllerStatus];
     UIMenu *controls = [UIMenu menuWithTitle:@"Controls"
-                                       image:[UIImage systemImageNamed:@"hand.draw"]
+                                       image:[UIImage systemImageNamed:@"gamecontroller"]
                                   identifier:nil
                                      options:0
                                     children:controlActions];
@@ -544,7 +546,7 @@ static uint64_t ShellResidentBytes(void) {
     UIAction *ammo = [self menuAction:@"Unlimited Ammo" image:@"infinity" disabled:NO
                                handler:^{ [weakSelf toggleUnlimitedAmmo]; }];
     ammo.state = _settings.assistUnlimitedAmmo ? UIMenuElementStateOn : UIMenuElementStateOff;
-    UIMenu *assists = [UIMenu menuWithTitle:@"Assists"
+    UIMenu *assists = [UIMenu menuWithTitle:@"Enhancements"
                                       image:[UIImage systemImageNamed:@"shield.lefthalf.filled"]
                                  identifier:nil
                                     options:0
@@ -568,7 +570,7 @@ static uint64_t ShellResidentBytes(void) {
     UIAction *restoreFolderAction = [self menuAction:@"Restore Saves from NightPad Folder" image:@"folder"
                                            disabled:_engineRunning
                                             handler:^{ [weakSelf restoreSavesFromAppFolder]; }];
-    UIMenu *dataMenu = [UIMenu menuWithTitle:@"Data"
+    UIMenu *dataMenu = [UIMenu menuWithTitle:@"Data & Saves"
                                        image:[UIImage systemImageNamed:@"internaldrive"]
                                   identifier:nil
                                      options:0
@@ -579,13 +581,14 @@ static uint64_t ShellResidentBytes(void) {
                                 handler:^{ [weakSelf openAbout]; }];
     UIAction *diagnostics = [self menuAction:@"Diagnostics" image:@"doc.text.magnifyingglass" disabled:NO
                                      handler:^{ [weakSelf openDiagnostics]; }];
-    UIMenu *info = [UIMenu menuWithTitle:@"Info"
-                                   image:[UIImage systemImageNamed:@"info.circle"]
+    UIMenu *helpFeedback = [UIMenu menuWithTitle:@"Help & Feedback"
+                                           image:[UIImage systemImageNamed:@"questionmark.circle"]
                               identifier:nil
                                  options:0
-                                children:@[ about, diagnostics ]];
+                                children:@[ help, diagnostics, about ]];
 
-    return [UIMenu menuWithTitle:@"NightPad" children:@[ game, controls, display, assists, dataMenu, info ]];
+    return [UIMenu menuWithTitle:@"NightPad"
+                        children:@[ game, display, controls, dataMenu, assists, helpFeedback ]];
 }
 
 - (void)buildDataPanel {

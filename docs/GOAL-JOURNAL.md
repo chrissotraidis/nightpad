@@ -2155,3 +2155,54 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verified: the menu and the Data submenu render cleanly over the shell and over
   gameplay, and the accessibility tree lists the shortened titles.
 
+## 2026-10-28T08:05:00Z — the controls are GalaxyPad's, ported rather than re-invented
+
+- Goal: G06. Requirement: R14.
+- Observed: the SunPad-derived arrangement still read as a custom layout. The
+  user asked for GalaxyPad's controls to be inherited and refined.
+- Changed: the phone defaults now come from
+  `references/galaxypad/apple/ios/GalaxyPadGameOverlay.mm`: move stick lower-left
+  with the D-pad above it, camera stick lower-right, A large in the corner with
+  B up-left, the light X/Y pair beside them, a grey START inward at the upper
+  right, and GalaxyPad's auxiliary row along the bottom holding White, Black and
+  Back. The D-pad is four separate round keys in GalaxyPad's 3x3 hit group, not
+  one grey plate. Buttons use GalaxyPad's palette and metrics: A green, B red,
+  X/Y light grey with dark lettering, purple triggers and grey aux keys,
+  18-point bold titles, two-point white borders at 0.36 alpha, no shadow. The
+  move stick uses GalaxyPad's dark base and grey thumb; the look stick uses its
+  amber tilt-stick treatment.
+  White/Black/Back use WHT/BLK/BACK at 10 points to fit their 44-point keys.
+- Bumped the layout version to 3 so saved layouts fall back to these defaults.
+- Verified on the simulator: the overlay renders over the title with the touch
+  START entering the game, and `scripts/test_touch_layout.sh` passes with no
+  overlaps for phone defaults at 844x340, 800x320 and 1024x700, and tablet
+  defaults at 1024x700 and 1366x1032.
+
+## 2026-10-28T08:20:00Z — repeated sessions release their SDL GPU window; GalaxyPad UI tightened
+
+- Goal: G05/G06. Requirement: R06/R14/R15.
+- Observed: the second action-to-driving handoff could recreate a window whose
+  UIKit view never acquired a Metal layer, even while the engine presented into
+  the retained SDL GPU device. The window was destroyed while the device still
+  held its per-window claim.
+- Fixed: `D3D9_ReleaseGpuWindow` now calls `SDL_ReleaseWindowFromGPUDevice` and
+  `HostWindow_Close` invokes it before `SDL_DestroyWindow` (patch 0026). Stop
+  Game followed by Start Game renders Press START again in the same process;
+  the former second-session black surface is gone. The full Stop -> Start ->
+  driving-handoff route still needs a repeat before it replaces the older
+  driving-round-trip evidence.
+- UI refinement: control opacity now reaches the live overlay instead of only
+  the editor. Tablet controls use GalaxyPad's fixed iPad point sizes, with the
+  action cluster and right stick separated so they do not overlap on a 1024
+  point landscape canvas. The three-dot button is 44 points. Start/Stop is a root
+  action; the remaining groups are Display, Controls, Data & Saves,
+  Enhancements and Help & Feedback, with App Pause under Controls. The full set
+  fits without scrolling on the iPhone 17 Pro simulator.
+- Verified: the title and touch START render after Stop and Start; the D-pad,
+  sticks, face cluster and auxiliary row are visible over live gameplay; the
+  iPad Pro 13-inch landscape uses the fixed point layout;
+  `scripts/test_touch_layout.sh` and `scripts/test_contrast.sh` pass. Evidence:
+  `evidence/ios-shell/galaxypad-controls.png`,
+  `evidence/ios-shell/galaxypad-menu.png` and
+  `evidence/ios-shell/galaxypad-controls-ipad.png`.
+

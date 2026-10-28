@@ -16,43 +16,45 @@ struct DefaultControl {
     float x, y, w, h;
 };
 
-// Landscape phone geometry, following SunPad's controller arrangement: a round
-// move stick in the lower-left corner with the D-pad beside it, a camera stick
-// in the lower-right corner, a diamond face cluster above it, shoulders at the
-// top corners, White/Black down the right edge, and Start/Back at the top left.
-// Sizes are the SunPad point sizes against an 850x360 safe area.
+// Landscape phone geometry inherited from GalaxyPad's overlay (its 800x380
+// reference): the move stick lower-left with the D-pad above it, the camera
+// stick lower-right, A large in the corner with B up-left of it, the light
+// X/Y pair above, the right-rail key (GalaxyPad's Z) mapped to RT with the
+// mirrored LT on the left, Start inward at the upper right, and White/Black/
+// Back in GalaxyPad's auxiliary key row along the bottom.
 constexpr DefaultControl kPhone[] = {
-    { TouchControlId::LeftStick, 0.0594f, 0.5533f, 0.1412f, 0.3333f },
-    { TouchControlId::RightStick, 0.8286f, 0.6100f, 0.1129f, 0.2667f },
-    { TouchControlId::Dpad, 0.2612f, 0.5611f, 0.1176f, 0.2778f },
-    { TouchControlId::Y, 0.7730f, 0.1500f, 0.0541f, 0.1375f },
-    { TouchControlId::X, 0.6979f, 0.2950f, 0.0541f, 0.1375f },
-    { TouchControlId::B, 0.8432f, 0.3100f, 0.0635f, 0.1375f },
-    { TouchControlId::A, 0.7624f, 0.4550f, 0.0753f, 0.1375f },
-    { TouchControlId::LeftTrigger, 0.0359f, 0.1650f, 0.1082f, 0.1375f },
-    { TouchControlId::RightTrigger, 0.8559f, 0.1650f, 0.1082f, 0.1375f },
-    { TouchControlId::White, 0.9391f, 0.3150f, 0.0518f, 0.1375f },
-    { TouchControlId::Black, 0.9391f, 0.4600f, 0.0518f, 0.1375f },
-    { TouchControlId::Start, 0.0429f, 0.0200f, 0.0941f, 0.1375f },
-    { TouchControlId::Back, 0.1473f, 0.0200f, 0.0753f, 0.1375f },
+    { TouchControlId::LeftStick, 0.0448f, 0.6145f, 0.1575f, 0.3316f },
+    { TouchControlId::RightStick, 0.8695f, 0.6997f, 0.1075f, 0.2263f },
+    { TouchControlId::Dpad, 0.0000f, 0.2563f, 0.1650f, 0.3474f },
+    { TouchControlId::A, 0.8800f, 0.4740f, 0.0975f, 0.2053f },
+    { TouchControlId::B, 0.7938f, 0.6132f, 0.0725f, 0.1526f },
+    { TouchControlId::X, 0.8746f, 0.3300f, 0.0575f, 0.1211f },
+    { TouchControlId::Y, 0.8083f, 0.4663f, 0.0575f, 0.1211f },
+    { TouchControlId::LeftTrigger, 0.0463f, 0.0595f, 0.0575f, 0.1211f },
+    { TouchControlId::RightTrigger, 0.8963f, 0.0595f, 0.0575f, 0.1211f },
+    { TouchControlId::Start, 0.6625f, 0.5595f, 0.1150f, 0.1211f },
+    { TouchControlId::White, 0.3313f, 0.8195f, 0.0575f, 0.1211f },
+    { TouchControlId::Black, 0.4038f, 0.8195f, 0.0575f, 0.1211f },
+    { TouchControlId::Back, 0.5313f, 0.8195f, 0.0575f, 0.1211f },
 };
 
-// Tablet geometry: the same arrangement; the safe area is larger, so the
-// normalized controls stay proportional.
+// Tablet geometry: GalaxyPad's fixed iPad point sizes and reviewed centers on
+// a 1366x1024 safe area. The controls stay the same physical size as the iPad
+// grows instead of becoming tall, screen-relative pills.
 constexpr DefaultControl kTablet[] = {
-    { TouchControlId::LeftStick, 0.0650f, 0.5666f, 0.1299f, 0.3066f },
-    { TouchControlId::RightStick, 0.8331f, 0.6207f, 0.1039f, 0.2454f },
-    { TouchControlId::Dpad, 0.2659f, 0.5722f, 0.1082f, 0.2556f },
-    { TouchControlId::Y, 0.7752f, 0.1555f, 0.0498f, 0.1265f },
-    { TouchControlId::X, 0.7001f, 0.3005f, 0.0498f, 0.1265f },
-    { TouchControlId::B, 0.8458f, 0.3155f, 0.0584f, 0.1265f },
-    { TouchControlId::A, 0.7654f, 0.4605f, 0.0693f, 0.1265f },
-    { TouchControlId::LeftTrigger, 0.0402f, 0.1705f, 0.0995f, 0.1265f },
-    { TouchControlId::RightTrigger, 0.8602f, 0.1705f, 0.0995f, 0.1265f },
-    { TouchControlId::White, 0.9412f, 0.3205f, 0.0477f, 0.1265f },
-    { TouchControlId::Black, 0.9412f, 0.4655f, 0.0477f, 0.1265f },
-    { TouchControlId::Start, 0.0467f, 0.0255f, 0.0866f, 0.1265f },
-    { TouchControlId::Back, 0.1503f, 0.0255f, 0.0693f, 0.1265f },
+    { TouchControlId::LeftStick, 0.0681f, 0.7066f, 0.1259f, 0.1680f },
+    { TouchControlId::RightStick, 0.8926f, 0.8290f, 0.0615f, 0.0820f },
+    { TouchControlId::Dpad, 0.2204f, 0.7303f, 0.0966f, 0.1289f },
+    { TouchControlId::A, 0.8536f, 0.6902f, 0.0761f, 0.1016f },
+    { TouchControlId::B, 0.7962f, 0.7721f, 0.0556f, 0.0742f },
+    { TouchControlId::X, 0.9367f, 0.6853f, 0.0454f, 0.0605f },
+    { TouchControlId::Y, 0.9316f, 0.7567f, 0.0454f, 0.0605f },
+    { TouchControlId::LeftTrigger, 0.0523f, 0.0997f, 0.0454f, 0.0605f },
+    { TouchControlId::RightTrigger, 0.9023f, 0.0997f, 0.0454f, 0.0605f },
+    { TouchControlId::Start, 0.8543f, 0.5478f, 0.0849f, 0.0605f },
+    { TouchControlId::White, 0.3573f, 0.8195f, 0.0454f, 0.0605f },
+    { TouchControlId::Black, 0.4273f, 0.8195f, 0.0454f, 0.0605f },
+    { TouchControlId::Back, 0.5473f, 0.8195f, 0.0454f, 0.0605f },
 };
 
 TouchControlId ParseId(const std::string &name) {

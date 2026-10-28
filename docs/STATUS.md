@@ -363,21 +363,25 @@ simulator execution is no longer a platform blocker.
   window and raises it again afterwards. The Paris tutorial renders, the right
   trigger fires, Mission Failed and REPLAY TUTORIAL work, and Stop returns in
   1.7 s.
-- The first handoff after a launch now renders reliably. A second handoff in the
-  same process can still create an SDL window without its Metal view (black
-  surface while the engine reports ~360 draws); a fresh app launch restores the
-  working path. Details and the attempted fixes are in `docs/KNOWN-ISSUES.md`.
+- Repeated sessions no longer leave a window without its Metal view. The SDL
+  GPU backend released the previous window's device claim before destroying it
+  (patch 0026); Stop Game and a fresh Start now render Press START again in the
+  same process. The complete Stop -> Start -> driving-handoff route still needs
+  a repeat for driving-round-trip acceptance.
 - A mission followed by Stop and Start no longer crashes: the action engine's
   sound banks were freed at the start of the next session, after the heap they
   pointed into had been replaced. `SFXShutdown` unloads them at session cleanup
   (patch 0025); a Paris mission, Stop and a fresh Start reach the title with no
   crash report.
-- The touch controls now follow SunPad's layout: round sticks in the lower
-  corners, a face diamond with a large A, wide shoulders, White/Black down the
-  right edge, Start/Back capsules at the top left, and a D-pad beside the move
-  stick. The three-dot button is a 40-point capsule with SunPad's plain button
-  configuration. The layout version moved to 2, so older saved layouts fall
-  back to the new defaults.
+- The touch controls now inherit GalaxyPad's controls: four round D-pad keys
+  above the dark move stick, an amber look stick lower-right, A large in the
+  corner with B up-left, the light X/Y pair beside them, purple triggers, a grey
+  START, and White/Black/Back in the auxiliary bottom row. The live overlay uses
+  each control's saved opacity. Tablet controls use GalaxyPad's fixed point
+  sizes rather than screen-relative pills. The layout version moved to 3, so
+  older saved layouts fall back to the new defaults. The 44-point menu keeps
+  Start/Stop in the root list and groups Display, Controls, Data & Saves,
+  Enhancements and Help & Feedback without scrolling on a phone.
 - No valid Apple code-signing identity and no connected physical device were
   visible at inventory time. This blocks signed physical-device acceptance in
   G03, G06 and G12; independent build/UI work continues.

@@ -33,8 +33,8 @@ struct TouchControl {
 };
 
 struct TouchLayout {
-    // 2: the SunPad-derived controller layout. Version-1 files load as unsupported and fall back to the defaults.
-    int version = 2;
+    // 3: the GalaxyPad-derived controller layout. Older files load as unsupported and fall back to the defaults.
+    int version = 3;
     TouchDeviceClass device = TouchDeviceClass::Phone;
     std::vector<TouchControl> controls;
 

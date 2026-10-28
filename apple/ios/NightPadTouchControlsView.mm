@@ -2,7 +2,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#include "../shared/NightPadControlPalette.h"
+#include "../shared/NightPadControlPalette.h"   // AccessibilityOrderForControl
 
 #include <algorithm>
 #include <cmath>
@@ -16,11 +16,6 @@ namespace {
 constexpr CGFloat kCanvasMargin = 8.0;
 constexpr float kDpadDeadZone = 0.22f;
 
-UIColor *ControlColour(TouchControlId id) {
-    const nightpad::ControlColour colour = nightpad::ColourForControl(id);
-    return [UIColor colorWithRed:colour.red green:colour.green blue:colour.blue alpha:1];
-}
-
 NSString *ControlLabel(TouchControlId id) {
     switch (id) {
         case TouchControlId::LeftStick: return @"L";
@@ -32,8 +27,8 @@ NSString *ControlLabel(TouchControlId id) {
         case TouchControlId::Y: return @"Y";
         case TouchControlId::LeftTrigger: return @"LT";
         case TouchControlId::RightTrigger: return @"RT";
-        case TouchControlId::White: return @"WHITE";
-        case TouchControlId::Black: return @"BLACK";
+        case TouchControlId::White: return @"WHT";
+        case TouchControlId::Black: return @"BLK";
         case TouchControlId::Start: return @"START";
         case TouchControlId::Back: return @"BACK";
     }
@@ -86,6 +81,39 @@ BOOL IsRoundControl(TouchControlId id) {
            id == TouchControlId::White || id == TouchControlId::Black;
 }
 
+// GalaxyPad's control palette: A green, B red, the light X/Y pair with dark
+// lettering, purple triggers, a grey Start, dark movement and amber look sticks,
+// and grey auxiliary keys.
+struct ControlStyle {
+    UIColor *fill;
+    UIColor *text;
+};
+
+ControlStyle StyleForControl(TouchControlId id) {
+    switch (id) {
+        case TouchControlId::A:
+            return {[UIColor colorWithRed:0.08 green:0.56 blue:0.29 alpha:0.92], UIColor.whiteColor};
+        case TouchControlId::B:
+            return {[UIColor colorWithRed:0.78 green:0.10 blue:0.13 alpha:0.92], UIColor.whiteColor};
+        case TouchControlId::X:
+        case TouchControlId::Y:
+            return {[UIColor colorWithWhite:0.72 alpha:0.92], [UIColor colorWithWhite:0.12 alpha:1.0]};
+        case TouchControlId::LeftTrigger:
+        case TouchControlId::RightTrigger:
+            return {[UIColor colorWithRed:0.38 green:0.18 blue:0.58 alpha:0.94], UIColor.whiteColor};
+        case TouchControlId::Start:
+            return {[UIColor colorWithWhite:0.28 alpha:0.92], UIColor.whiteColor};
+        case TouchControlId::LeftStick:
+            return {[UIColor colorWithWhite:0.13 alpha:0.86], UIColor.whiteColor};
+        case TouchControlId::RightStick:
+            return {[UIColor colorWithRed:0.91 green:0.66 blue:0.08 alpha:0.90], UIColor.whiteColor};
+        case TouchControlId::Dpad:
+            return {UIColor.clearColor, UIColor.whiteColor};
+        default:
+            return {[UIColor colorWithWhite:0.22 alpha:0.88], UIColor.whiteColor};
+    }
+}
+
 }  // namespace
 
 @interface NightPadOverlayControlView : UIView
@@ -94,30 +122,26 @@ BOOL IsRoundControl(TouchControlId id) {
 @property(nonatomic, strong) UIView *thumb;
 @property(nonatomic, strong) UIView *fill;
 @property(nonatomic, copy) NSArray<UIImageView *> *arrows;
+@property(nonatomic, copy) NSArray<UIView *> *dpadKeys;
+@property(nonatomic, assign) CGFloat displayAlpha;
 - (void)setTouchPoint:(CGPoint)point offset:(CGPoint)offset active:(BOOL)active;
 @end
 
-@implementation NightPadOverlayControlView {
-    UIColor *_baseColour;
-}
+@implementation NightPadOverlayControlView
 
 - (instancetype)initWithControl:(const TouchControl &)control {
     if ((self = [super initWithFrame:CGRectZero])) {
         _controlId = control.id;
-        _baseColour = ControlColour(control.id);
-        self.backgroundColor = IsFaceButton(control.id)
-            ? [_baseColour colorWithAlphaComponent:0.26f]
-            : [UIColor colorWithWhite:1 alpha:0.11];
+        const ControlStyle style = StyleForControl(control.id);
+        _displayAlpha = std::clamp<CGFloat>(control.opacity, 0.2, 1.0);
+        self.backgroundColor = style.fill;
         self.layer.cornerRadius = 12;
-        self.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.42].CGColor;
-        self.layer.borderWidth = 2;
-        // A soft dark edge keeps the white borders readable over bright scenes
-        // (daylight Paris, white menus) without changing the translucent fill.
-        self.layer.shadowColor = UIColor.blackColor.CGColor;
-        self.layer.shadowOpacity = 0.35;
-        self.layer.shadowRadius = 3;
-        self.layer.shadowOffset = CGSizeMake(0, 1);
-        self.clipsToBounds = NO;
+        const BOOL stick = control.id == TouchControlId::LeftStick || control.id == TouchControlId::RightStick;
+        self.layer.borderColor = [UIColor colorWithWhite:1 alpha:(stick ? 0.34 : 0.36)].CGColor;
+        // GalaxyPad's D-pad is four separate round keys, not a large plate.
+        // The parent keeps the combined hit area but draws no background.
+        self.layer.borderWidth = control.id == TouchControlId::Dpad ? 0 : 2;
+        self.clipsToBounds = YES;
         self.userInteractionEnabled = NO;
         self.isAccessibilityElement = YES;
         self.accessibilityLabel = ControlAccessibilityLabel(control.id);
@@ -127,8 +151,9 @@ BOOL IsRoundControl(TouchControlId id) {
 
         if (control.id == TouchControlId::LeftStick || control.id == TouchControlId::RightStick) {
             _thumb = [[UIView alloc] initWithFrame:CGRectZero];
-            _thumb.backgroundColor = [UIColor colorWithWhite:1 alpha:0.32];
-            _thumb.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.5].CGColor;
+            _thumb.backgroundColor = control.id == TouchControlId::LeftStick
+                ? [UIColor colorWithWhite:0.58 alpha:0.94]
+                : [UIColor colorWithRed:1.0 green:0.84 blue:0.25 alpha:0.98];
             _thumb.layer.borderWidth = 0;
             _thumb.userInteractionEnabled = NO;
             [self addSubview:_thumb];
@@ -140,31 +165,38 @@ BOOL IsRoundControl(TouchControlId id) {
             [self insertSubview:_fill atIndex:0];
         }
         if (control.id == TouchControlId::Dpad) {
+            NSMutableArray<UIView *> *keys = [NSMutableArray array];
             NSMutableArray<UIImageView *> *arrows = [NSMutableArray array];
             for (NSInteger i = 0; i < 4; ++i) {
+                UIView *key = [UIView new];
+                key.backgroundColor = [UIColor colorWithWhite:0.22 alpha:0.88];
+                key.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.36].CGColor;
+                key.layer.borderWidth = 2;
+                key.clipsToBounds = YES;
+                key.userInteractionEnabled = NO;
+                [self addSubview:key];
+                [keys addObject:key];
+
                 UIImageView *arrow = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"chevron.up"]];
-                arrow.tintColor = [UIColor colorWithWhite:1 alpha:0.55];
+                arrow.tintColor = [UIColor colorWithWhite:1 alpha:0.92];
                 arrow.contentMode = UIViewContentModeScaleAspectFit;
                 arrow.userInteractionEnabled = NO;
                 arrow.tag = i;
-                [self addSubview:arrow];
+                [key addSubview:arrow];
                 [arrows addObject:arrow];
             }
+            _dpadKeys = keys;
             _arrows = arrows;
         }
 
         _label = [[UILabel alloc] initWithFrame:CGRectZero];
         _label.text = ControlLabel(control.id);
-        _label.textColor = UIColor.whiteColor;
+        _label.textColor = style.text;
         _label.textAlignment = NSTextAlignmentCenter;
-        UIFont *baseFont = [UIFont monospacedSystemFontOfSize:13 weight:UIFontWeightBold];
-        if (IsFaceButton(control.id))
-            baseFont = [UIFont systemFontOfSize:17 weight:UIFontWeightBold];
-        else if (control.id == TouchControlId::White || control.id == TouchControlId::Black)
-            baseFont = [UIFont monospacedSystemFontOfSize:9 weight:UIFontWeightBold];
-        else if (control.id == TouchControlId::Start || control.id == TouchControlId::Back ||
-                 control.id == TouchControlId::LeftTrigger || control.id == TouchControlId::RightTrigger)
-            baseFont = [UIFont monospacedSystemFontOfSize:12 weight:UIFontWeightBold];
+        UIFont *baseFont = [UIFont systemFontOfSize:18.0 weight:UIFontWeightBold];
+        if (control.id == TouchControlId::White || control.id == TouchControlId::Black ||
+            control.id == TouchControlId::Back)
+            baseFont = [UIFont systemFontOfSize:10.0 weight:UIFontWeightBold];
         _label.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleHeadline]
             scaledFontForFont:baseFont maximumPointSize:20];
         _label.adjustsFontForContentSizeCategory = YES;
@@ -193,15 +225,24 @@ BOOL IsRoundControl(TouchControlId id) {
     if (_fill != nil) {
         _fill.frame = CGRectMake(0, self.bounds.size.height, self.bounds.size.width, 0);
     }
-    if (_arrows.count == 4) {
-        const CGFloat size = side * 0.30;
-        const CGFloat inset = side * 0.10;
-        _arrows[0].frame = CGRectMake(CGRectGetMidX(self.bounds) - size / 2, inset, size, size);
-        _arrows[1].frame = CGRectMake(CGRectGetMidX(self.bounds) - size / 2,
-                                      self.bounds.size.height - inset - size, size, size);
-        _arrows[2].frame = CGRectMake(inset, CGRectGetMidY(self.bounds) - size / 2, size, size);
-        _arrows[3].frame = CGRectMake(self.bounds.size.width - inset - size,
-                                      CGRectGetMidY(self.bounds) - size / 2, size, size);
+    if (_dpadKeys.count == 4 && _arrows.count == 4) {
+        const CGFloat cell = side / 3.0;
+        const CGPoint center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+        const CGPoint offsets[] = {
+            CGPointMake(0, -cell), CGPointMake(0, cell),
+            CGPointMake(-cell, 0), CGPointMake(cell, 0),
+        };
+        for (NSUInteger i = 0; i < 4; ++i) {
+            UIView *key = _dpadKeys[i];
+            key.bounds = CGRectMake(0, 0, cell, cell);
+            key.center = CGPointMake(center.x + offsets[i].x, center.y + offsets[i].y);
+            key.layer.cornerRadius = cell * 0.5;
+
+            UIImageView *arrow = _arrows[i];
+            const CGFloat arrowSide = cell * 0.44;
+            arrow.bounds = CGRectMake(0, 0, arrowSide, arrowSide);
+            arrow.center = CGPointMake(cell * 0.5, cell * 0.5);
+        }
         _arrows[0].transform = CGAffineTransformIdentity;
         _arrows[1].transform = CGAffineTransformMakeRotation(M_PI);
         _arrows[2].transform = CGAffineTransformMakeRotation(-M_PI_2);
@@ -230,7 +271,6 @@ BOOL IsRoundControl(TouchControlId id) {
             }
             _thumb.center = CGPointMake(CGRectGetMidX(self.bounds) + dx * travel,
                                         CGRectGetMidY(self.bounds) + dy * travel);
-            self.backgroundColor = [UIColor colorWithWhite:1 alpha:active ? 0.22 : 0.11];
             self.accessibilityValue = active
                 ? [NSString stringWithFormat:@"%.0f%% right, %.0f%% down", dx * 100, dy * 100]
                 : @"Centred";
@@ -249,8 +289,9 @@ BOOL IsRoundControl(TouchControlId id) {
             NSArray<NSNumber *> *states = @[ @(up), @(down), @(left), @(right) ];
             for (NSUInteger i = 0; i < _arrows.count; ++i) {
                 _arrows[i].tintColor = [UIColor colorWithWhite:1 alpha:states[i].boolValue ? 1.0 : 0.45];
+                _dpadKeys[i].transform = states[i].boolValue
+                    ? CGAffineTransformMakeScale(0.92, 0.92) : CGAffineTransformIdentity;
             }
-            self.backgroundColor = [UIColor colorWithWhite:1 alpha:active ? 0.20 : 0.11];
             break;
         }
         case TouchControlId::LeftTrigger:
@@ -265,9 +306,7 @@ BOOL IsRoundControl(TouchControlId id) {
             break;
         }
         default:
-            self.backgroundColor = IsFaceButton(_controlId)
-                ? [_baseColour colorWithAlphaComponent:active ? 0.55f : 0.26f]
-                : [UIColor colorWithWhite:1 alpha:active ? 0.22 : 0.11];
+            self.backgroundColor = StyleForControl(_controlId).fill;
             self.transform = active ? CGAffineTransformMakeScale(0.96, 0.96) : CGAffineTransformIdentity;
             break;
     }
@@ -316,7 +355,7 @@ BOOL IsRoundControl(TouchControlId id) {
         NightPadOverlayControlView *view = [[NightPadOverlayControlView alloc] initWithControl:control];
         // A layout rebuild must not reveal controls the controller-hide policy
         // has hidden.
-        view.alpha = _hidden ? 0.0 : 1.0;
+        view.alpha = _hidden ? 0.0 : view.displayAlpha;
         [self addSubview:view];
         [_controlViews addObject:view];
     }
@@ -339,7 +378,7 @@ BOOL IsRoundControl(TouchControlId id) {
     self.accessibilityElementsHidden = hidden;
     void (^apply)(void) = ^{
         for (UIView *view in self->_controlViews)
-            view.alpha = hidden ? 0.0 : 1.0;
+            view.alpha = hidden ? 0.0 : ((NightPadOverlayControlView *)view).displayAlpha;
     };
     if (animated) {
         [UIView animateWithDuration:0.22 animations:apply];

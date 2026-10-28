@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T08:30:00Z",
+  "last_updated_at": "2026-10-28T08:23:00Z",
   "active_goal": "G13",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -183,10 +183,14 @@
         "patches/0018-ios-long-paths.patch",
         "patches/0023-missing-movie-finished.patch",
         "patches/0024-session-boot-reset.patch",
-        "patches/0025-sound-bank-shutdown.patch"
+        "patches/0025-sound-bank-shutdown.patch",
+        "patches/0026-gpu-window-release.patch",
+        "evidence/ios-shell/galaxypad-controls.png",
+        "evidence/ios-shell/galaxypad-menu.png",
+        "evidence/ios-shell/galaxypad-controls-ipad.png"
       ],
       "blockers": [],
-      "next_step": "Repeated handoff window creation is open (second handoff can black); investigate the SDL UIKit window/GPU swapchain creation, then continue the saves round trip."
+      "next_step": "Rerun the full repeated action-to-driving handoff with patch 0026, then continue the saves round trip."
     },
     "G06": {
       "status": "in_progress",
@@ -230,10 +234,13 @@
         "scripts/test_settings.sh",
         "docs/DECISIONS/0012-donor-ui-benchmark.md",
         "docs/CONTROL-SCHEMES.md",
-        "apple/ios/NightPadShellViewController.mm"
+        "apple/ios/NightPadShellViewController.mm",
+        "evidence/ios-shell/galaxypad-controls.png",
+        "evidence/ios-shell/galaxypad-menu.png",
+        "evidence/ios-shell/galaxypad-controls-ipad.png"
       ],
       "blockers": [],
-      "next_step": "The SunPad-derived overlay is in place; verify it in live gameplay on the simulator and keep the tablet layout in step."
+      "next_step": "The GalaxyPad-derived overlay is in place on phone and tablet; verify touch ergonomics in the original mission routes and keep the tablet layout in step."
     },
     "G07": {
       "status": "in_progress",

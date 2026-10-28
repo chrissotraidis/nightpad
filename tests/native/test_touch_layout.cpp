@@ -45,19 +45,33 @@ int main() {
     // Defaults must stay usable, not just in bounds: at realistic landscape
     // sizes no visible control may cover another (the 44-point floor used to
     // push the face-button diamond into itself).
-    for (const auto &size : { std::pair<float, float>{ 844, 340 }, { 800, 320 }, { 1024, 700 } }) {
-        for (TouchLayout layout : { phone, tablet }) {
-            layout.Clamp(size.first, size.second, 44);
-            for (size_t i = 0; i < layout.controls.size(); ++i) {
-                for (size_t j = i + 1; j < layout.controls.size(); ++j) {
-                    const auto &a = layout.controls[i];
-                    const auto &b = layout.controls[j];
-                    if (!a.visible || !b.visible)
-                        continue;
-                    const bool apart = a.x + a.width <= b.x + 1e-4f || b.x + b.width <= a.x + 1e-4f ||
-                                       a.y + a.height <= b.y + 1e-4f || b.y + b.height <= a.y + 1e-4f;
-                    Check(apart, "visible controls do not overlap");
-                }
+    struct LayoutCase {
+        TouchLayout layout;
+        float width;
+        float height;
+    };
+    for (const LayoutCase &item : {
+             LayoutCase{ phone, 844, 340 }, LayoutCase{ phone, 800, 320 },
+             LayoutCase{ phone, 1024, 700 }, LayoutCase{ tablet, 1024, 700 },
+             LayoutCase{ tablet, 1366, 1032 },
+         }) {
+        TouchLayout layout = item.layout;
+        const std::pair<float, float> size{ item.width, item.height };
+        layout.Clamp(size.first, size.second, 44);
+        for (size_t i = 0; i < layout.controls.size(); ++i) {
+            for (size_t j = i + 1; j < layout.controls.size(); ++j) {
+                const auto &a = layout.controls[i];
+                const auto &b = layout.controls[j];
+                if (!a.visible || !b.visible)
+                    continue;
+                const bool apart = a.x + a.width <= b.x + 1e-4f || b.x + b.width <= a.x + 1e-4f ||
+                                   a.y + a.height <= b.y + 1e-4f || b.y + b.height <= a.y + 1e-4f;
+                const std::string message = std::string("visible controls overlap: ") +
+                    nightpad::TouchControlName(a.id) + " / " +
+                    nightpad::TouchControlName(b.id) + " at " +
+                    std::to_string((int)size.first) + "x" +
+                    std::to_string((int)size.second);
+                Check(apart, message.c_str());
             }
         }
     }

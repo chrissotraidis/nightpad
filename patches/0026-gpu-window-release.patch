@@ -1,0 +1,102 @@
+diff --git a/src/action/engine/Direct3D/backendHost.cpp b/src/action/engine/Direct3D/backendHost.cpp
+index 0db6e71..b054c96 100644
+--- a/src/action/engine/Direct3D/backendHost.cpp
++++ b/src/action/engine/Direct3D/backendHost.cpp
+@@ -1,4 +1,5 @@
+ #include "../../../common/gfx/backendHost.h"
++#include "../../../common/gfx/d3d9Backend.h"   // D3D9_ReleaseGpuWindow
+ 
+ #include "../XboxSettings.h"
+ #include "../../devtools/Demo.h"
+@@ -40,4 +41,8 @@ void GfxHost_SizeWindow(uint32_t width, uint32_t height) {
+ void *GfxHost_SdlWindow(void) {
+     return HostWindowSdl_Window();
+ }
++
++void GfxHost_ReleaseGpuWindow(void *window) {
++    D3D9_ReleaseGpuWindow(window);
++}
+ #endif
+diff --git a/src/common/gfx/backendHost.h b/src/common/gfx/backendHost.h
+index d8c4971..376b8af 100644
+--- a/src/common/gfx/backendHost.h
++++ b/src/common/gfx/backendHost.h
+@@ -31,6 +31,8 @@ void *GfxHost_Window(void);
+ void GfxHost_SizeWindow(uint32_t width, uint32_t height);
+ // The SDL_Window itself, for the SDL GPU backend (sdlGpuBackend.cpp) to present into.
+ void *GfxHost_SdlWindow(void);
++// Release a window from the GPU device before it is destroyed.
++void GfxHost_ReleaseGpuWindow(void *window);
+ #endif
+ 
+ #endif // COMMON_GFX_BACKENDHOST_H_
+diff --git a/src/common/gfx/d3d9Backend.h b/src/common/gfx/d3d9Backend.h
+index dcd627b..9415447 100644
+--- a/src/common/gfx/d3d9Backend.h
++++ b/src/common/gfx/d3d9Backend.h
+@@ -140,6 +140,8 @@ void D3D9_KickOffAndWaitForIdle(void);
+ // Releases the previous game session's backend resources and recorded commands.
+ // The SDL GPU device, ring, transfer buffers and back buffer stay alive for reuse.
+ void D3D9_ResetSessionCache(void);
++// Releases a claimed window from the GPU device before the window is destroyed.
++void D3D9_ReleaseGpuWindow(void *window);
+ 
+ // Visibility tests: the NV2A counts the pixels that pass the depth test between Begin and End(index), and the
+ // game asks for the count later. Occlusion queries, one per index. GetResult returns 0 with the count when it
+diff --git a/src/common/gfx/sdlGpuBackend.cpp b/src/common/gfx/sdlGpuBackend.cpp
+index 8c088bd..4b4cb04 100644
+--- a/src/common/gfx/sdlGpuBackend.cpp
++++ b/src/common/gfx/sdlGpuBackend.cpp
+@@ -3003,3 +3003,13 @@ void D3D9_ResetSessionCache() {
+     g_passColour = g_passDepth = NULL;
+     g_currentTarget = g_backBuffer;
+ }
++
++// A window is about to be destroyed. SDL's GPU device keeps per-window data for every window it has claimed;
++// releasing it first is the documented order, and leaving it behind lets a later window inherit stale
++// bookkeeping (a window created with no Metal view while the engine still presents into the device).
++void D3D9_ReleaseGpuWindow(void *window) {
++    if (g_device == NULL || g_window == NULL || (void *)g_window != window)
++        return;
++    SDL_ReleaseWindowFromGPUDevice(g_device, g_window);
++    g_window = NULL;
++}
+diff --git a/src/driving/gfx/backendHost.cpp b/src/driving/gfx/backendHost.cpp
+index 7558035..766eb42 100644
+--- a/src/driving/gfx/backendHost.cpp
++++ b/src/driving/gfx/backendHost.cpp
+@@ -1,4 +1,5 @@
+ #include "../../common/gfx/backendHost.h"
++#include "../../common/gfx/d3d9Backend.h"   // D3D9_ReleaseGpuWindow
+ 
+ #include "d3dSeam.h"
+ #include "../devtools/Teleport.h"
+@@ -47,4 +48,8 @@ void GfxHost_SizeWindow(uint32_t width, uint32_t height) {
+ void *GfxHost_SdlWindow(void) {
+     return HostWindowSdl_Window();
+ }
++
++void GfxHost_ReleaseGpuWindow(void *window) {
++    D3D9_ReleaseGpuWindow(window);
++}
+ #endif
+diff --git a/src/driving/platform/HostWindowSdl.cpp b/src/driving/platform/HostWindowSdl.cpp
+index ecc9a83..b2b2ea6 100644
+--- a/src/driving/platform/HostWindowSdl.cpp
++++ b/src/driving/platform/HostWindowSdl.cpp
+@@ -11,6 +11,7 @@
+ #include <string.h>
+ 
+ #include "../../common/renderWindow.h"
++#include "../../common/gfx/backendHost.h"   // release the GPU device's claim before the window goes
+ 
+ // The window on SDL3 (NIGHTFIRE_SDL). SDL is started here, on the thread that will run the window's events - the
+ // loader's main thread, or the standalone executable's - which is the thread SDL takes for its main one. The game's
+@@ -105,6 +106,7 @@ void HostWindow_RequestQuit(void) {
+ 
+ void HostWindow_Close(void) {
+     if (Window != NULL) {
++        GfxHost_ReleaseGpuWindow(Window);
+         SDL_DestroyWindow(Window);
+         Window = NULL;
+     }

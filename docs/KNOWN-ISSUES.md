@@ -15,7 +15,6 @@ tester would see, what is blocked, and where the detail lives.
 | Secret Unlocks have no automated path here | Only a device run through the original front end can confirm persistence | `docs/SOURCES.md`, R19 |
 | Interrupted engine writes are untested | A crash during a save write has no evidence either way | R11 notes |
 | Simulator shader compilation has no wall-clock budget | A cold session compiles hundreds of pipelines; startup timing must be measured from host/process clocks, not the game's in-session timestamps | `docs/DECISIONS/0014-simulator-metal.md` |
-| A second handoff in one process can show a black surface | The first action-to-driving handoff after a launch renders (Paris intro and tutorial). After Stop and a new Start, the next handoff can create an SDL window whose view never loads its Metal layer, while the driving engine still reports ~360 draws at 60 fps. A fresh app launch restores the working first-handoff path. Tried without success: dropping the shell window level, a runloop turn before opening, keeping SDL initialized instead of `SDL_Quit`, and reusing the window (SDL allows one window and rejects it) | `docs/GOAL-JOURNAL.md`, G05 repeated-handoff row |
 | The attract trailer is absent from the 30 fps bundle | For a boot that opens the attract page, `073a0048.xmv` cannot play, so that page is black until A skips it; the front end then loads normally | `docs/GOAL-JOURNAL.md`, G05 repeated-session row |
 | Tablet sheet editing is not scriptable in this harness | Saving from the iPad form sheet and drag editing stay manual | `docs/TEST-MATRIX.md` |
 
@@ -39,6 +38,12 @@ tester would see, what is blocked, and where the detail lives.
   unloads the banks and stream at session cleanup while the heap is valid
   (patch 0025). A Paris mission, Stop and a fresh Start reach the title with no
   crash report.
+
+- A repeated session no longer creates an SDL window without its Metal view.
+  The GPU device retained per-window data after destruction; patch 0026 releases
+  the window from the device first. Stop then Start renders Press START in the
+  same process. The full repeated action-to-driving route is still a pending
+  test, not an observed failure.
 
 - The pitch-black preview behind the touch overlay in the simulator is the
   shell preview without an engine, not a render failure.
