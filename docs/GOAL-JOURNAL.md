@@ -1928,3 +1928,18 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: repeated starts render and the previous hard crash is fixed. Repeated
   front-end navigation is partial and remains active work.
 
+## 2026-10-28T02:35:00Z — the black restart starts from a non-title page
+
+- Goal: G05. Requirement: R15 in progress.
+- Observed: Stop/Start from the title is stable. Stopping while the codename
+  page is displayed reliably leaves the next session on a black game surface
+  before the title, with the touch overlay still present.
+- Hypothesis tested: stale save-flow or menu-manager state. Resetting `ls`,
+  `ls_updating`, `enum_state`, the save dialog, and deleting all menu managers
+  before cleanup did not change the failure. Those probes were reverted.
+- Evidence: before/after page-transition logs and the simulator reproduction;
+  the final tree contains no diagnostic prints or speculative reset code.
+- Verdict: the trigger is narrowed to stopping from a non-title front-end page.
+  The next investigation should target boot state after a non-title stop rather
+  than the save-flow bookkeeping.
+

@@ -114,10 +114,10 @@ simulator execution is no longer a platform blocker.
   renderer was retaining its bound-index pointer across sessions and crashed in
   the first sky draw; it now invalidates that cache at graphics init and treats
   a missing index buffer as a reported draw miss instead of a null dereference.
-- Two consecutive Stop/Start cycles now render the title, and a third session
-  also reaches it after the action runtime resets the backend's per-session GPU
-  resource and command caches. The third session's transition from the title
-  into the profile screen still stalls on a black frame; that remains open.
+- Stop/Start from the title renders the next title after the action runtime
+  resets the backend's per-session GPU resource and command caches. Stopping from
+  a non-title front-end page, such as the codename page, can still leave the
+  next session black before the title; that remains open.
 - The simulator renderer uses SDL's Metal backend through a narrow patch to the
   pinned SDL source. SDL 3.4.18 assumes the iOS device-family query on the
   simulator, where Metal exposes the host GPU instead. The build applies

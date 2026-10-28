@@ -15,7 +15,7 @@ tester would see, what is blocked, and where the detail lives.
 | Secret Unlocks have no automated path here | Only a device run through the original front end can confirm persistence | `docs/SOURCES.md`, R19 |
 | Interrupted engine writes are untested | A crash during a save write has no evidence either way | R11 notes |
 | Simulator shader compilation has no wall-clock budget | A cold session compiles hundreds of pipelines; startup timing must be measured from host/process clocks, not the game's in-session timestamps | `docs/DECISIONS/0014-simulator-metal.md` |
-| A third sequential session can stall after title Start | Stop/Start twice and the third title render, but the third title's Start transition can remain on a black front end with the touch overlay still visible | `docs/GOAL-JOURNAL.md`, G05 repeated-session row |
+| Stopping from a non-title front-end page can black the next session | Stopping while the codename page is showing reliably makes the next Start render only a black game surface before the title. Stopping from the title page is the stable path. Save-flow and menu-manager resets did not fix it | `docs/GOAL-JOURNAL.md`, G05 repeated-session row |
 | Tablet sheet editing is not scriptable in this harness | Saving from the iPad form sheet and drag editing stay manual | `docs/TEST-MATRIX.md` |
 
 ## Not issues
