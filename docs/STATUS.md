@@ -347,6 +347,16 @@ simulator execution is no longer a platform blocker.
 
 ## Current uncertainty and blockers
 
+- The simulator now stops both engines cleanly: Stop Game from the Paris
+  driving session joins in 1.7-3.7 s. The former 60-second hang came from the
+  speech `.spe` big file failing to open at an exactly-260-character host path;
+  the driving engine's `CreateFileA` now resolves into a host-sized buffer
+  (patch 0018) and the stream layer recovers from an open that fails (0022).
+- A second engine boot in one app process can still show a black surface in
+  `GAMEFLOW_LOAD_LEVEL`; a fresh app launch reaches the title. The attract
+  trailer `073a0048.xmv` is absent from the supplied 30 fps bundle and shows as
+  a black page that A skips; missing movies now count as finished (0023) and the
+  front-end idle count restarts each session (0024).
 - No valid Apple code-signing identity and no connected physical device were
   visible at inventory time. This blocks signed physical-device acceptance in
   G03, G06 and G12; independent build/UI work continues.

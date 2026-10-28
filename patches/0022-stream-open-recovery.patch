@@ -1,0 +1,67 @@
+diff --git a/src/driving/sound/snd/Stream.cpp b/src/driving/sound/snd/Stream.cpp
+index 0d29186..3de2543 100644
+--- a/src/driving/sound/snd/Stream.cpp
++++ b/src/driving/sound/snd/Stream.cpp
+@@ -43,6 +43,7 @@ namespace {
+ constexpr uint32_t kMagic = 0x4d525453;   // "STRM"
+ constexpr uint32_t kWrap = 0xffffffff;    // chunk tag: continue at ringStart
+ constexpr uint32_t kSkip = 0xfffffffe;    // chunk tag: released or skipped
++constexpr int kFileOpUnknown = -3;        // FILESYS_opstatus: no operation has that handle
+ 
+ // The FILESYS completion callbacks
+ #define OpenDone (reinterpret_cast<FsCallback>(FUN_0014aee0))     // FUN_0014aee0
+@@ -283,6 +284,21 @@ void SndStream_NextRequest(StrmInternal *s, int priority) {
+ 
+ // ---- the FILESYS callbacks and the read loop
+ 
++// NightPad: an open that failed leaves the stream nothing to read. The original assumed it always succeeded
++// and would wait for a read that can never come, leaving the stream "reading" for the rest of the session -
++// and STREAM_destroy waiting on it at the end. Finish the request and let the stream go idle or move on.
++static void SndStream_OpenFailed(StrmInternal *s) {
++    StrmRequest *request = s->current;
++    if (request != NULL) {
++        MUTEX_lock(&s->mutex);
++        if (request->state != 4)
++            request->state = 3;
++        MUTEX_unlock(&s->mutex);
++    }
++    s->fileName[0] = 0;   // no slot is open: the next request opens its own file
++    SndStream_NextRequest(s, s->priorityGreedy);
++}
++
+ // FUNC_AT(0x0014aee0)
+ void FUN_0014aee0(unsigned operation, int status, StrmInternal *s) {
+     (void)operation;
+@@ -291,6 +307,8 @@ void FUN_0014aee0(unsigned operation, int status, StrmInternal *s) {
+     s->fileSlot = slot;
+     if (slot != 0)
+         FUN_0014b730(s, s->priorityGreedy);
++    else
++        SndStream_OpenFailed(s);
+ }
+ 
+ // FUNC_AT(0x0014af10)
+@@ -302,6 +320,8 @@ void FUN_0014af10(unsigned operation, int status, StrmInternal *s) {
+     s->operation = next;
+     if (next != 0)
+         FILESYS_callbackop(next, OpenDone);
++    else
++        SndStream_OpenFailed(s);
+ }
+ 
+ // FUNC_AT(0x0014b660)
+@@ -945,7 +965,14 @@ void STREAM_destroy(SND::StrmReader *stream) {
+     if (s->magic != kMagic)
+         return;
+     STREAM_kill(stream);
++    int spins = 0;
+     while (s->state == 1) {   // an operation still in flight: wait for the worker to finish it
++        // NightPad: an operation the file system no longer knows can never complete, and waiting on it
++        // would hang shutdown (a stream file this data set lacks used to do exactly that). Check now and
++        // then, since a live operation is pending or done and keeps the loop going.
++        if ((++spins & 0x3ff) == 0 &&
++            (s->operation == 0 || FILESYS_opstatus(s->operation) == kFileOpUnknown))
++            break;
+         if (THREAD_iscurrent(NULL))
+             SYNCTASK_run(0);
+         THREAD_yield(0);

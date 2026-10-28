@@ -1973,3 +1973,42 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: fresh app starts no longer inherit a stale cross-engine handoff page.
   Driving Stop remains the next lifecycle issue.
 
+## 2026-10-28T05:00:00Z — the driving Stop hang is a 260-character path, and the black session is a load stall
+
+- Goal: G05/G04. Requirement: R06/R11/R15.
+- Observed: the driving session's Stop did not join; a sample put the game
+  thread in `Bond_CleanUp` -> `AStream::Destruct` -> `SNDSTRM_destroy` ->
+  `STREAM_destroy` yielding on `s->state == 1`. Live inspection (lldb) showed
+  the stream's file slot at 0, its current request cancelled, and its last
+  FILESYS operation already completed and returned to the free list, while the
+  file worker was idle: the stream was waiting for a completion that could not
+  arrive.
+- Root cause: an action/driving stream opens `driving/mis01en.spe` and then its
+  members as `|`-relative big-file entries. `Xbox_CreateFileA` resolved host
+  paths into a 260-byte buffer, and the imported data's host path for the speech
+  file is exactly 260 characters, so the `.spe` big file never opened. The
+  speech event (`for_heli`) then queued requests against a stream whose open had
+  failed; `FUN_0014aee0` left `state` at 1 for a read that was never issued,
+  and cleanup waited on it forever.
+- Fixed: the driving engine's `CreateFileA`/`DeleteFileA` use the host's
+  `HOST_MAX_PATH` (4096 off Windows) instead of the Xbox's 260 (patch 0018).
+  On the simulator `|for_heli.asf` now opens from `mis01en.spe` and reads flow.
+- Hardened: a failed stream open finishes its request and lets the stream go
+  idle; `STREAM_destroy` stops waiting when the file system no longer knows the
+  operation (patch 0022). Host gates `test_driving_early_stop`,
+  `test_driving_pause`, `test_engine_handoff` and the action lifecycle pass.
+- Observed on the final simulator build: Paris driving view renders; Stop Game
+  from the driving session returns to the shell home in 1.7-3.7 seconds
+  (previously the 60-second timeout fired).
+- Separately, a second engine boot in one app process can sit in
+  `GAMEFLOW_LOAD_LEVEL` and show a black surface with the touch overlay; the
+  engine advances ~60 frames/s and the state does not progress. A fresh app
+  launch always reaches the title, and the front end's attract trailer
+  (`073a0048.xmv`) is absent from the supplied 30 fps bundle, which shows as a
+  black attract page that A skips. Movie open failures now count as finished
+  (patch 0023) and the front-end idle counter starts at zero each session
+  (patch 0024); the load-stall itself remains open.
+- Evidence: lldb stream/op inspection, `/tmp/np-final.txt` console log, final
+  simulator Stop timings, `scripts/verify_patches.sh` PASS (61 files),
+  `scripts/verify_quick.sh` PASS.
+

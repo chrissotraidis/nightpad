@@ -15,11 +15,16 @@ tester would see, what is blocked, and where the detail lives.
 | Secret Unlocks have no automated path here | Only a device run through the original front end can confirm persistence | `docs/SOURCES.md`, R19 |
 | Interrupted engine writes are untested | A crash during a save write has no evidence either way | R11 notes |
 | Simulator shader compilation has no wall-clock budget | A cold session compiles hundreds of pipelines; startup timing must be measured from host/process clocks, not the game's in-session timestamps | `docs/DECISIONS/0014-simulator-metal.md` |
-| Stopping from a non-title front-end page can black the next session | Stopping while the codename page is showing reliably makes the next Start render only a black game surface before the title. Stopping from the title page is the stable path. Save-flow and menu-manager resets did not fix it | `docs/GOAL-JOURNAL.md`, G05 repeated-session row |
-| Driving Stop can exceed 60 seconds in audio cleanup | Action-to-driving handoff and driving gameplay work, but Stop can block in `Bond_CleanUp` destroying a sound stream. The shell reports the delayed stop rather than misreporting success | `docs/GOAL-JOURNAL.md`, G05 driving-stop row |
+| A second engine boot in one app process can show a black loading surface | After Stop then Start in the same process, the second boot can stay in `GAMEFLOW_LOAD_LEVEL` with the touch overlay on a black surface; frame counts still advance. A fresh app launch reaches the title reliably. The missing 30 fps attract trailer (`073a0048.xmv`) also shows a black attract page that A skips | `docs/GOAL-JOURNAL.md`, G05 repeated-session row |
 | Tablet sheet editing is not scriptable in this harness | Saving from the iPad form sheet and drag editing stay manual | `docs/TEST-MATRIX.md` |
 
 ## Not issues
+
+- Driving Stop is fixed: the former 60-second hang was a 260-character host-path
+  limit that kept the speech `.spe` big file from opening, leaving a sound
+  stream waiting on a read that could not be issued. The path fix plus the
+  stream-recovery and teardown guards make Stop return in 1.7-3.7 seconds on the
+  simulator. See the 2026-10-28T05:00Z journal entry.
 
 - The pitch-black preview behind the touch overlay in the simulator is the
   shell preview without an engine, not a render failure.

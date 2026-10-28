@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T03:40:00Z",
+  "last_updated_at": "2026-10-28T05:00:00Z",
   "active_goal": "G13",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -123,7 +123,9 @@
         "evidence/ios-shell/simulator-exchange-gameplay.png",
         "evidence/ios-shell/simulator-paris-driving.png",
         "patches/0019-action-stop-observability.patch",
-        "patches/0020-action-session-index-reset.patch"
+        "patches/0020-action-session-index-reset.patch",
+        "patches/0022-stream-open-recovery.patch",
+        "patches/0023-missing-movie-finished.patch"
       ],
       "blockers": [
         "B01"
@@ -176,10 +178,13 @@
         "patches/0020-action-session-index-reset.patch",
         "patches/0021-action-gpu-session-reset.patch",
         "evidence/ios-shell/simulator-second-session-title.png",
-        "evidence/ios-shell/simulator-paris-driving.png"
+        "evidence/ios-shell/simulator-paris-driving.png",
+        "patches/0024-session-idle-reset.patch",
+        "patches/0018-ios-long-paths.patch",
+        "patches/0023-missing-movie-finished.patch"
       ],
       "blockers": [],
-      "next_step": "Run the production Files picker with a prepared retail package on device, then verify SDL/overlay composition and pause/resume."
+      "next_step": "Investigate the in-process second-boot stall in GAMEFLOW_LOAD_LEVEL (black surface, frames advance); a fresh app launch reaches the title."
     },
     "G06": {
       "status": "in_progress",
@@ -1724,7 +1729,17 @@
       "run_at": "2026-10-27T18:15:40Z",
       "verdict": "passed",
       "command": "scripts/verify_engine.sh"
+    },
+    {
+      "name": "iOS simulator driving Stop after the host-path fix",
+      "result": "PASS: Paris driving view renders; Stop Game returns to the shell in 1.7-3.7 s",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator repeated action start/stop",
+      "result": "First session title renders; second in-process boot can stall in GAMEFLOW_LOAD_LEVEL (open)",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
     }
   ],
-  "next_step": "Run scripts/device_handoff.sh with an identity and trusted device, then work docs/DEVICE-HANDOFF.md; the campaign and driving-mission inventories are complete and the remaining source work is the multiplayer map/mode matrix."
+  "next_step": "Fix the in-process second-boot load stall on the simulator, then finish the multiplayer map/mode matrix; physical acceptance remains external."
 }
