@@ -29,6 +29,8 @@ extern "C" int NightPadActionEngineStart(int argc, char **argv) {
     }
     D3D9_ResetSessionCache();
     HostSetCommandLine(argc, argv);
+    Settings_Reload();
+    printf("[settings] action session: widescreen=%u fov=%.0f\n", GetVideoMode(), Settings_GetFovDegrees());
     LaunchOptions_Read();
     Demo_Init();
     Xbox_SetDiscRoot(Settings_GetDiscPath());

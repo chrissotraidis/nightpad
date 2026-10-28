@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-28 16:40 UTC
+Updated: 2026-10-28 17:36 UTC
 
 ## Outcome
 
@@ -363,7 +363,26 @@ simulator execution is no longer a platform blocker.
   (mean/median/min/max fps, working and waiting milliseconds) with `--skip` for
   loading samples and a hard failure when a log has none.
 
+- A fresh NPRUN codename was created through the original keyboard/save UI.
+  Unassisted Paris showed its intro, driving handoff, sniper/fire input,
+  failure, Replay and Quit back to action. The failed runs kept its initial
+  profile byte-identical; no earned campaign progression is credited.
+- Two one-minute Arena matches on Skyrail with one touch-controlled human and
+  all six bots reached the original debriefing. The second began through Replay;
+  results show bot victories/deaths and two human deaths. Other maps/modes and
+  physical ports remain. Evidence: `evidence/multiplayer/arena-skyrail/`.
+- Widescreen now writes numeric `1/0`, which both engine parsers require. The
+  real action parser passes 4:3/16:9, FOV/FPS/disc-root and reload tests. Patch
+  0029 reloads cached action settings before each session; a simulator process
+  logs `widescreen=1` then `0` across Stop/change/Start. Both iOS lanes, native
+  action build/lifecycle and the rebuilt unsigned device package pass their
+  relevant checks. Full-window stretching remains separate and unresolved.
+
 ## Current uncertainty and blockers
+
+- R18 presentation is failing: the SDL GPU presentation blit fills the whole
+  swapchain. A 4:3 frame stretches across the phone. Numeric widescreen and
+  settings reload now work, but aspect fitting and device acceptance remain.
 
 - The simulator now stops both engines cleanly: Stop Game from the Paris
   driving session joins in 1.7-3.7 s. The former 60-second hang came from the
@@ -419,12 +438,14 @@ a signing identity and a trusted device exist, then work the checklist in
 trip, touch and controller sessions, Secret Unlocks, display modes and the
 fifteen-minute stability runs.
 
-Independent work that can continue meanwhile: complete a mission, continue
-past its results to save, and verify earned progress after relaunch. Individual
-objectives do not write a profile save. Continue original unlock coverage and
-the first-play campaign route on the simulator, then the multiplayer matrix. Keep the fifteen-cycle action gate,
-ten-cycle driving gate, mixed round trip, pause, transition, handoff and
-data-import checks as regressions.
+Next independent repair: preserve the selected 4:3/16:9 aspect inside the
+phone drawable instead of stretching the back buffer across the whole window;
+verify both engines, menus/HUD/scope and phone/tablet. See decision 0016.
+Then continue the fresh NPRUN route through a completed mission/results save
+and relaunch, plus objective-mode and remaining multiplayer map coverage.
+Individual campaign objectives do not write a profile save. Keep the fifteen-cycle
+action gate, ten-cycle driving gate, mixed round trip, pause, transition, handoff
+and data-import checks as regressions.
 
 Verification entry points are `scripts/verify_quick.sh` (host logic, both
 shell builds, device link contract) and `scripts/verify_engine.sh` (lifecycle,

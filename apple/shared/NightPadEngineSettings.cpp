@@ -11,7 +11,7 @@ std::string BuildEngineSettings(const std::string &discPath, const EngineDisplay
     out << "RenderWidth=" << display.renderWidth << "\n";
     out << "RenderHeight=" << display.renderHeight << "\n";
     out << "AntiAliasing=" << (display.antiAliasing ? 1 : 0) << "\n";
-    out << "Widescreen=" << (display.widescreen ? "on" : "off") << "\n";
+    out << "Widescreen=" << (display.widescreen ? 1 : 0) << "\n";
     out << "FOV=" << display.fov << "\n";
     out << "Region=NTSC\n";
     out << "FPS=60\n";

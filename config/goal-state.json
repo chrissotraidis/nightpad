@@ -6,8 +6,8 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T16:40:01Z",
-  "active_goal": "G05",
+  "last_updated_at": "2026-10-28T17:36:21Z",
+  "active_goal": "G09",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
   "actual_source_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
@@ -25,27 +25,29 @@
   },
   "current_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
+    "nightpad_base_commit": "1afa631",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
-    "profile_save_patch_sha256": "19ccce6d961d4f912c2b8845eac35f880f0ff436f8a5051a66bf6f06825c5b4b",
+    "session_settings_patch_sha256": "6758410f14f5642ed12c295760a27d1d0c8f4fa4b8e623ce6e5d7aad00941ab6",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "6aae91b53020b6c8265b88ea80edfdce6a6e802e059aaafac9fa8e308ab4f787",
+    "simulator_binary_sha256": "335e432fd7134cb7b385bedcccbe8a1068375253eada65df22653e475c125432",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "7eea77b1c2a7e23f451068ed831a9e716bdd4c8591c1a52f706b37b5096df2a7",
-    "evidence": "evidence/save-durability/build-identity.json",
-    "verified_at": "2026-10-28T16:40:01Z",
-    "acceptance_scope": "simulator saves/unlocks and host gates only; no physical acceptance"
+    "unsigned_device_package_sha256": "1e161fb35c66d178f383c6cbe7579a250270985d077ef2d32e92ad5fc26b6991",
+    "evidence": "evidence/display-settings/build-identity.json",
+    "verified_at": "2026-10-28T17:36:21Z",
+    "acceptance_scope": "host/parser/build gates and simulator state/menus only; presentation defect and physical acceptance remain"
   },
   "last_known_good_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
+    "nightpad_base_commit": "1afa631",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
-    "profile_save_patch_sha256": "19ccce6d961d4f912c2b8845eac35f880f0ff436f8a5051a66bf6f06825c5b4b",
+    "session_settings_patch_sha256": "6758410f14f5642ed12c295760a27d1d0c8f4fa4b8e623ce6e5d7aad00941ab6",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "6aae91b53020b6c8265b88ea80edfdce6a6e802e059aaafac9fa8e308ab4f787",
+    "simulator_binary_sha256": "335e432fd7134cb7b385bedcccbe8a1068375253eada65df22653e475c125432",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "7eea77b1c2a7e23f451068ed831a9e716bdd4c8591c1a52f706b37b5096df2a7",
-    "evidence": "evidence/save-durability/build-identity.json",
-    "verified_at": "2026-10-28T16:40:01Z",
-    "acceptance_scope": "simulator saves/unlocks and host gates only; no physical acceptance"
+    "unsigned_device_package_sha256": "1e161fb35c66d178f383c6cbe7579a250270985d077ef2d32e92ad5fc26b6991",
+    "evidence": "evidence/display-settings/build-identity.json",
+    "verified_at": "2026-10-28T17:36:21Z",
+    "acceptance_scope": "host/parser/build gates and simulator state/menus only; presentation defect and physical acceptance remain"
   },
   "goals": {
     "G00": {
@@ -215,10 +217,12 @@
         "patches/0028-atomic-profile-save.patch",
         "scripts/test_engine_save.sh",
         "docs/DECISIONS/0015-atomic-profile-saves.md",
-        "evidence/save-durability/ui-save-result.json"
+        "evidence/save-durability/ui-save-result.json",
+        "evidence/campaign-first-play/nprun/created-profile.json",
+        "evidence/campaign-first-play/nprun/paris-attempts.json"
       ],
       "blockers": [],
-      "next_step": "Complete a mission through its results save and verify earned progress after relaunch; continue original unlock and campaign coverage on the simulator while physical acceptance is blocked."
+      "next_step": "Complete a mission through its results and reload earned progress on the fresh NPRUN profile; failure/replay/quit have been exercised without altering the profile."
     },
     "G06": {
       "status": "in_progress",
@@ -280,7 +284,9 @@
       "evidence": [
         "docs/CAMPAIGN-INVENTORY.md",
         "patches/0016-standalone-file-dump.patch",
-        "scripts/inspect_driving_track.py"
+        "scripts/inspect_driving_track.py",
+        "evidence/campaign-first-play/nprun/created-profile.json",
+        "evidence/campaign-first-play/nprun/paris-attempts.json"
       ],
       "blockers": [],
       "next_step": "Run the first-play route when device execution is available."
@@ -290,10 +296,13 @@
       "started_at": "2026-10-27T23:20:00Z",
       "completed_at": null,
       "evidence": [
-        "docs/MULTIPLAYER-INVENTORY.md"
+        "docs/MULTIPLAYER-INVENTORY.md",
+        "evidence/multiplayer/arena-skyrail/run.json",
+        "evidence/multiplayer/arena-skyrail/results-1.png",
+        "evidence/multiplayer/arena-skyrail/results-2.png"
       ],
       "blockers": [],
-      "next_step": "Run each map/mode family, then complete an Arena and an objective match with bots and controllers (device required)."
+      "next_step": "Continue objective-mode and remaining map/mode coverage; two Arena/Skyrail six-bot matches now reach results and replay on simulator. Physical multi-controller acceptance remains."
     },
     "G09": {
       "status": "in_progress",
@@ -305,10 +314,14 @@
         "tests/native/test_engine_settings.cpp",
         "scripts/test_engine_settings.sh",
         "evidence/save-durability/unlock-result.json",
-        "evidence/save-durability/unlock-success.png"
+        "evidence/save-durability/unlock-success.png",
+        "docs/DECISIONS/0016-display-settings-contract.md",
+        "patches/0029-session-settings-reload.patch",
+        "evidence/display-settings/numeric-widescreen.json",
+        "evidence/display-settings/stretched-4x3-before.png"
       ],
       "blockers": [],
-      "next_step": "Validate aspect/scope/HUD behaviour and sustained performance at each advertised size, then finish unlock validation (device required)."
+      "next_step": "Repair R18 presentation: fit the selected 4:3/16:9 frame inside the drawable instead of stretching across the swapchain; verify both engines and phone/tablet. Then continue earned campaign-results save and remaining objective-mode/map coverage. Physical acceptance remains external."
     },
     "G10": {
       "status": "in_progress",
@@ -475,12 +488,15 @@
         "docs/CAMPAIGN-INVENTORY.md",
         "docs/TEST-MATRIX.md",
         "scripts/verify_engine.sh",
-        "docs/DRIVING-CONTROLS.md"
+        "docs/DRIVING-CONTROLS.md",
+        "evidence/campaign-first-play/nprun/created-profile.json",
+        "evidence/campaign-first-play/nprun/paris-attempts.json"
       ],
       "decision_id": null,
       "notes": [
         "Campaign order, level parts, objectives and media are inventoried; the action and driving engines both boot missions on the host and the action-driving-action transition passes.",
-        "A full first-play route from a fresh codename through the ending, with saves and relaunch, needs a device."
+        "A full first-play route from a fresh codename through the ending, with saves and relaunch, needs a device.",
+        "A fresh NPRUN codename was created through the original keyboard/save UI. Unassisted Operative Paris runs show the intro, real handoff, sniper/fire input, failure, Replay and Quit back to action; the profile remains byte-identical with zero scores. Mission completion and results saving remain unverified."
       ]
     },
     "R10": {
@@ -514,7 +530,9 @@
         "patches/0028-atomic-profile-save.patch",
         "scripts/test_engine_save.sh",
         "docs/DECISIONS/0015-atomic-profile-saves.md",
-        "evidence/save-durability/ui-save-result.json"
+        "evidence/save-durability/ui-save-result.json",
+        "evidence/campaign-first-play/nprun/created-profile.json",
+        "evidence/campaign-first-play/nprun/paris-attempts.json"
       ],
       "decision_id": null,
       "notes": [
@@ -606,23 +624,35 @@
     "R17": {
       "status": "in_progress",
       "evidence": [
-        "docs/MULTIPLAYER-INVENTORY.md"
+        "docs/MULTIPLAYER-INVENTORY.md",
+        "evidence/multiplayer/arena-skyrail/run.json",
+        "evidence/multiplayer/arena-skyrail/results-1.png",
+        "evidence/multiplayer/arena-skyrail/results-2.png"
       ],
       "decision_id": null,
       "notes": [
-        "Limits, modes, maps, weapon sets, Enviro-Mods, map rules, unlock matrix, match rules and bot setup options are inventoried. Match execution and physical ports remain."
+        "Original limits, modes, maps, weapons, modifiers, unlocks and bot parameters are inventoried.",
+        "Simulator: two original one-minute Arena matches on Skyrail with NPRUN, Normal weapons, six bots, ten points and friendly fire off reached debriefing. Replay started the second match in the same process; its results recorded two human deaths and bot victories. The log lists all six bot skins (6-11).",
+        "Only one map/mode and one human port were exercised. Objective matches, remaining maps/modes, original modifiers and physical multiple-controller/reconnect coverage remain."
       ]
     },
     "R18": {
-      "status": "in_progress",
+      "status": "failed",
       "evidence": [
         "apple/shared/NightPadEngineSettings.cpp",
         "scripts/test_engine_settings.sh",
-        "scripts/test_render_cost.sh"
+        "scripts/test_render_cost.sh",
+        "docs/DECISIONS/0016-display-settings-contract.md",
+        "patches/0029-session-settings-reload.patch",
+        "evidence/display-settings/numeric-widescreen.json",
+        "evidence/display-settings/stretched-4x3-before.png"
       ],
       "decision_id": null,
       "notes": [
-        "Render scale, FXAA, widescreen and vertical FOV (60/70/80) are exposed, persisted and written to the engine; host runs at 1x-3x reach the same cap. Aspect/HUD/scope checks and device performance remain."
+        "Render scale, FXAA and vertical FOV are exposed and persisted; native 1x-3x runs reach the same cap. Device performance remains unverified.",
+        "Fixed the configuration contract: the app now writes numeric Widescreen=1/0. The real action engine parser fails 16:9 with the former on value and passes after the change. Tests also reload aspect, FOV and disc root in one process.",
+        "Patch 0029 reloads action settings before every session. A real simulator Stop/change/Start in the same app PID logs widescreen=1 then widescreen=0, matching the generated files.",
+        "R18 is still failing presentation: sdlGpuBackend PresentOnWindowThread blits across the entire phone swapchain, stretching a 4:3 frame. Aspect fitting/letterboxing, both-engine HUD/scope checks and physical performance remain."
       ]
     },
     "R19": {
@@ -824,6 +854,11 @@
       "id": "0015-atomic-profile-saves",
       "path": "docs/DECISIONS/0015-atomic-profile-saves.md",
       "summary": "Use atomic POSIX profile replacement with a flushed previous-copy backup; preserve the original serialized bytes and save flow."
+    },
+    {
+      "id": "0016-display-settings-contract",
+      "path": "docs/DECISIONS/0016-display-settings-contract.md",
+      "summary": "Write numeric widescreen values and reload cached action settings at each new session; presentation aspect fitting remains a required repair."
     }
   ],
   "blockers": [
@@ -1714,6 +1749,18 @@
         "evidence/save-durability/build-identity.json",
         "build/tests/engine-save/package-device.log"
       ]
+    },
+    {
+      "at": "2026-10-28T17:36:21Z",
+      "goal": "G05/G07/G08/G09",
+      "summary": "Created a fresh original-UI NPRUN profile and recorded Paris failure/replay/return without progression credit. Completed two original six-bot Arena/Skyrail matches. Fixed numeric widescreen settings and added per-session action settings reload; real parser and same-process simulator evidence pass. Confirmed full-window stretching as the next R18 repair.",
+      "evidence": [
+        "evidence/campaign-first-play/nprun",
+        "evidence/multiplayer/arena-skyrail",
+        "evidence/display-settings",
+        "docs/DECISIONS/0016-display-settings-contract.md",
+        "build/tests/engine-settings"
+      ]
     }
   ],
   "completed_tests": [
@@ -1898,7 +1945,22 @@
       "name": "original Secret Unlock mission toggle, relaunch and invalid code",
       "result": "PASS simulator-only: mission mask 0x3 -> 0x103 -> app update/relaunch/load -> 0x3, exact backup copies, invalid entry and save leave profile unchanged; other code families and hardware remain unverified",
       "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "fresh codename and Paris failure/replay/return",
+      "result": "PASS for original creation and failure/return; mission completion NOT VERIFIED; NPRUN remains at initial mask 0x3 with zero scores",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "two six-bot Arena matches and original Replay",
+      "result": "PASS simulator-only: Skyrail, one human, six bots, one-minute duration, Normal weapons, results and a second match; physical ports and other scenarios remain",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "real engine display-settings parse and reload",
+      "result": "PASS: numeric 4:3/16:9 values, FOV/FPS/disc root, same-process reload; simulator session log changes widescreen=1 to 0 across Stop/change/Start. Presentation still stretches.",
+      "target": "macOS arm64 / iPhone 17 Pro simulator"
     }
   ],
-  "next_step": "Complete a mission through its results save and verify earned progress after relaunch; continue original unlock and campaign coverage on the simulator while physical acceptance is blocked."
+  "next_step": "Repair R18 presentation: fit the selected 4:3/16:9 frame inside the drawable instead of stretching across the swapchain; verify both engines and phone/tablet. Then continue earned campaign-results save and remaining objective-mode/map coverage. Physical acceptance remains external."
 }

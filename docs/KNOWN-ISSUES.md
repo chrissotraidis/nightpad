@@ -7,6 +7,9 @@ tester would see, what is blocked, and where the detail lives.
 
 | Issue | Effect | Detail |
 | --- | --- | --- |
+| Game presentation stretches across the phone window | Original 4:3 content has incorrect proportions; numeric widescreen selection and next-Start settings reload are fixed, but drawable aspect fitting remains | `docs/DECISIONS/0016-display-settings-contract.md`, R18 |
+| Campaign completion/results save is not verified | A fresh codename and Paris failure/replay/return work, but timed sniper attempts have not completed the mission; no earned progress is credited | `docs/TEST-MATRIX.md`, R09/R11 |
+| Six-bot run reports the sound-buffer tracking limit | The log warns that more buffers exist than the backend tracks; the audible effect has not been measured | `evidence/campaign-first-play/nprun/stdout.log`, R10 |
 | No signing identity or device on this machine | Nothing physical has been installed; touch feel, controller rumble, campaign progression, performance and the final freeze are unverified | `docs/DEVICE-HANDOFF.md`, `docs/TEST-MATRIX.md` |
 | The supplied image has only the 30 fps movie bundle | One action recording stops early on a movie the image lacks; NightPad writes `Region=NTSC` | `docs/STATUS.md`, G02 blocker |
 | All-weapons assist is not wired | The menu offers immortality and unlimited ammo only | `docs/CHEATS-RESEARCH.md`, R20 |

@@ -1,0 +1,31 @@
+diff --git a/src/action/engine/XboxSettings.cpp b/src/action/engine/XboxSettings.cpp
+index 60084cc..1eb0573 100644
+--- a/src/action/engine/XboxSettings.cpp
++++ b/src/action/engine/XboxSettings.cpp
+@@ -234,6 +234,12 @@ static void LoadSettingsFile() {
+     fclose(file);
+ }
+
++void Settings_Reload(void) {
++    g_settings = {};
++    LoadSettingsFile();
++    g_settingsLoaded = true;
++}
++
+ static Settings *GetSettings() {
+     if (!g_settingsLoaded) {
+         LoadSettingsFile();
+diff --git a/src/action/engine/XboxSettings.h b/src/action/engine/XboxSettings.h
+index 479b3b9..0d2a01d 100644
+--- a/src/action/engine/XboxSettings.h
++++ b/src/action/engine/XboxSettings.h
+@@ -12,6 +12,9 @@ unsigned char XboxGetAVRegion(void);
+ uint32_t GetVideoMode(void);
+ uint32_t GetAudioMode(void);
+
++// Reload only while the engine is stopped, before a new in-process session.
++void Settings_Reload(void);
++
+ // FPS override from settings.ini's [Settings] FPS key. 0 means "not set" - callers should fall back to
+ // their own region-appropriate default (mainloop does: 60 for NTSC-ish regions, 50 for PAL-I).
+ int Settings_GetFPSOverride(void);

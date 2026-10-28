@@ -2352,3 +2352,56 @@ are ignored and may contain paths, hashes, captures or device identities.
   the next campaign attempt. Unlock/settings tests above are UI/persistence
   evidence, not unassisted campaign evidence. Stop Game joined cleanly; the
   single booted iPhone simulator is now at the shell with its data ready.
+
+## 2026-10-28T17:36:21Z — fresh campaign evidence, two bot matches and real display settings
+
+- Goals: G05/G07/G08/G09. Requirements: R09/R11/R17/R18. Continued from
+  `1afa631`; only the existing iPhone simulator was booted; both app assists
+  were off. No prior acceptance gate was waived.
+- Fresh profile: created NPRUN through the original keyboard and Save flow,
+  decoded initial mask `0x3` and twelve zero scores, then selected NightFire
+  controls. Operative Paris showed its intro and real action-to-driving
+  handoff. Touch fire reduced ammunition; failure, Replay and Quit back to
+  the action title worked. Timed aiming attempts did not complete the mission.
+  NPRUN and every pre-existing profile stayed byte-identical; no campaign
+  completion or earned-progress credit is claimed.
+- Multiplayer: the original front end enabled all six bot slots for a
+  one-minute Arena match on Skyrail, one human using NPRUN, Normal weapons,
+  ten points and friendly fire off. Two runs reached debriefing, with the
+  second started by Replay in the same app process. Winners had four and
+  three victories; the second results recorded two human deaths. The engine
+  log lists all six bot skins (6-11). Other modes/maps and physical ports remain.
+- Hypothesis: `Widescreen=on/off` is a shell/engine contract mismatch because
+  the action parser uses `atoi` and the driving seam uses `strtol`. Added an
+  actual action-parser test: 4:3 passed but 16:9 failed before the fix.
+  Writing numeric `1/0` makes both pass; FOV/FPS/disc-root checks also pass.
+- Lifetime: the action settings cache survives app-local engine restarts.
+  Patch 0029 clears/reloads it before each session, while the old thread is
+  stopped. Tests rewrite and reload aspect, FOV and disc root in one process.
+  On the final simulator build, one PID logs `widescreen=1 fov=70`, then
+  `widescreen=0 fov=70` after Stop/native aspect change/Start. The launch files
+  match; Original 4:3 and both assists off are the restored baseline.
+- Verification: real parser tests, quick verification, both iOS lanes, native
+  action targets and three joined native action cycles pass. Final simulator
+  and unsigned Release device builds/package checks pass. Patch provenance
+  reproduces 73 files from `8779cf79` with 29 patches.
+- New verified boundary: R18 still fails presentation. The SDL GPU blit uses
+  the whole swapchain, stretching the frame on a phone. Do not count the menu,
+  numeric-key or cache fixes as proof of correct display proportions. The
+  six-bot logs also report the 128-buffer tracking limit; audible impact is
+  unverified, not assumed safe or broken.
+- Evidence: `evidence/campaign-first-play/nprun/`,
+  `evidence/multiplayer/arena-skyrail/`, `evidence/display-settings/`,
+  `build/tests/engine-settings/`; decision 0016. Full artifact hashes and
+  source-file hashes are in the private display build identity.
+- Next: implement aspect-fit presentation with cleared bars, preserve the
+  controls' usable canvas, and verify action/driving plus phone/tablet.
+  Then return to mission completion/results saves and the multiplayer matrix.
+
+- Resume checkpoint: the final simulator app is installed and stopped at the
+  data-ready shell, with Original 4:3, FOV 70 and both assists off. Only the
+  iPhone simulator is booted. The app was launched with `--log-input` and its
+  stdout/stderr go to `evidence/display-settings/session-*.log`. The untouched
+  fresh NPRUN profile and before/after snapshots remain available. Start with
+  decision 0016 and `sdlGpuBackend.cpp:PresentOnWindowThread`; preserve the
+  offscreen back buffer and rendering goldens while fixing only presentation.

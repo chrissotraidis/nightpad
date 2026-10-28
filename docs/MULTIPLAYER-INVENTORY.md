@@ -1,7 +1,8 @@
 # Multiplayer inventory
 
 Status: **partial**. Limits, modes, maps, weapon sets and the Enviro-Mods
-options come from the reconstructed source; match behaviour is not yet run.
+options come from the reconstructed source. Two Arena/Skyrail matches now run
+on simulator; other scenario and hardware coverage remains.
 
 ## Slots and layout
 
@@ -116,3 +117,19 @@ back when the bot is benched or stops playing.
 - Bot behaviour at six bots and team composition rules.
 - Actual matches: kills, respawns, scoring, results and a second match.
 - Touch plus controller port assignment during a match.
+
+## Simulator matches, 2026-10-28
+
+The original front end configured NPRUN as one touch-controlled human, all six
+bots (skins 6-11), Skyrail, Arena, Normal weapons, ten points, one-minute
+duration and friendly fire off. Two matches reached debriefing; the second
+started through the original Replay action in the same app process. The first
+winner had four victories; the second had three. The second debriefing records
+two deaths for NPRUN. No app assists were enabled and profiles stayed unchanged.
+
+Evidence: `evidence/multiplayer/arena-skyrail/` (setup, gameplay, both result
+captures, roster log and indexed settings). This is one simulator configuration;
+it does not finish the map/mode matrix, objective rules, physical controllers,
+full split-screen coverage or audible/performance acceptance. The logs also
+warn that sound buffers exceed the backend tracking limit; audible impact is
+unverified and remains an R10 investigation.
