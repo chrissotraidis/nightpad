@@ -363,6 +363,11 @@ simulator execution is no longer a platform blocker.
   window and raises it again afterwards. The Paris tutorial renders, the right
   trigger fires, Mission Failed and REPLAY TUTORIAL work, and Stop returns in
   1.7 s.
+- A mission followed by Stop and Start no longer crashes: the action engine's
+  sound banks were freed at the start of the next session, after the heap they
+  pointed into had been replaced. `SFXShutdown` unloads them at session cleanup
+  (patch 0025); a Paris mission, Stop and a fresh Start reach the title with no
+  crash report.
 - No valid Apple code-signing identity and no connected physical device were
   visible at inventory time. This blocks signed physical-device acceptance in
   G03, G06 and G12; independent build/UI work continues.

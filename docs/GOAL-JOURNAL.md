@@ -2059,3 +2059,22 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Evidence: simulator screenshots of the handoff, the sniper tutorial and the
   Mission Failed screen; `/tmp/np-handoff2.txt`.
 
+## 2026-10-28T06:45:00Z — sound banks are freed at session end, not in the next session
+
+- Goal: G05. Requirement: R11/R15.
+- Observed: after reaching the Paris mission and pressing Stop, the next Start
+  crashed with SIGSEGV. The crash report's faulting thread: `Mem_Free` <-
+  `psiSFXFreeFileMem` <- `SFXReset` <- `Sound_Kill` <- `ResetMap_Load` <-
+  `mainloop`; no crash report appeared for the repaired run.
+- Cause: the action engine's sound banks are process statics and hold sample
+  memory in the game heap. `cleanupSystem` called only `SoundShutdown`, which
+  unbinds the voices but leaves the banks loaded, so the next session's level
+  load called `Sound_Kill` -> `SFXReset` and freed pointers into the previous
+  session's heap.
+- Fixed: `SFXShutdown` unloads the banks and stops and frees the sound stream at
+  session cleanup, after `SoundShutdown` has unbound the voices and while the
+  heap is still valid (patch 0025).
+- Observed on the simulator: Start -> Paris intro/mission -> Stop (4.4 s) ->
+  Start again reaches Press START with the process alive and no new crash
+  report. `scripts/verify_patches.sh` PASS (65 files).
+

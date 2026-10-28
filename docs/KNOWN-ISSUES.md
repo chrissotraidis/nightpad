@@ -32,6 +32,13 @@ tester would see, what is blocked, and where the detail lives.
   session start. Three consecutive Start/Stop cycles each reach the title, and
   the handoff to Paris still works. See the 2026-10-28T05:40Z journal entry.
 
+- A mission followed by Stop and Start no longer crashes. The action engine's
+  sound banks held sample memory in the session heap; the next session's
+  `SFXReset` freed those pointers and faulted in `Mem_Free`. `SFXShutdown` now
+  unloads the banks and stream at session cleanup while the heap is valid
+  (patch 0025). A Paris mission, Stop and a fresh Start reach the title with no
+  crash report.
+
 - The pitch-black preview behind the touch overlay in the simulator is the
   shell preview without an engine, not a render failure.
 - The first cell of a nested three-dot submenu cannot be tapped through the

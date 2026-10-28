@@ -1,0 +1,65 @@
+diff --git a/src/action/engine/XboxSystem.cpp b/src/action/engine/XboxSystem.cpp
+index bfa937f..0e312d3 100644
+--- a/src/action/engine/XboxSystem.cpp
++++ b/src/action/engine/XboxSystem.cpp
+@@ -7,6 +7,7 @@
+ #include "psiSave.h"        // psiInternalLoadingDataState
+ #include "Direct3D/d3dSeam.h"
+ #include "../sound/dsndSeam.h"
++#include "../sound/SFX.h"    // SFXShutdown: free the session's sound banks while its heap is still valid
+ #include "../game.h"        // timestamp, Graphics_IsSomeGraphicsRegion
+ #include "../devtools/Demo.h"
+ #include "LaunchOptions.h"
+@@ -321,6 +322,9 @@ void cleanupSystem(void) {
+     BackgroundMovieCleanup();
+     d3dReleaseResources();
+     SoundShutdown();
++    // The next launch in this process gets a new game heap; the banks and stream file memory belong to this
++    // one, so free them now (after the voices stopped referencing them) instead of in the next session.
++    SFXShutdown();
+     InputShutdown();
+ }
+ 
+diff --git a/src/action/sound/SFX.cpp b/src/action/sound/SFX.cpp
+index 45b0aa7..da17bd3 100644
+--- a/src/action/sound/SFX.cpp
++++ b/src/action/sound/SFX.cpp
+@@ -1288,6 +1288,26 @@ void SFXUnloadSoundBank(int index) {
+     bank->Loaded = 0;
+ }
+ 
++// NightPad: another launch follows this session in the same process. The banks' sample memory and a stream's
++// file memory live in the game heap, which the next session replaces; unload them while it is still valid,
++// or the next session's SFXReset frees those pointers and faults in Mem_Free. Unlike SFXReset this leaves
++// the audio stream system and the mixer alone.
++void SFXShutdown(void) {
++    SFXItem *next;
++    for (SFXItem *Sfx = BaseSFXActive; Sfx != NULL; Sfx = next) {
++        next = Sfx->Next;
++        KillSFX(Sfx);
++    }
++    for (int slot = 0; slot < SFX_NUM_BANKS; slot++) {
++        if (SoundBankData[slot].Loaded)
++            SFXUnloadSoundBank(SoundBankData[slot].HashCode);
++    }
++    StreamData *stream = &Streams[0];
++    if (StreamIsActive(stream))
++        SFXStopStream(stream);
++    stream->Status = STREAM_FREE;
++}
++
+ // Stops every sound and the stream, frees the banks, and puts the mixer back as it starts
+ // AUTOINJECT
+ void SFXReset(void) {
+diff --git a/src/action/sound/SFX.h b/src/action/sound/SFX.h
+index 171ccd7..e397db6 100644
+--- a/src/action/sound/SFX.h
++++ b/src/action/sound/SFX.h
+@@ -512,6 +512,7 @@ void SFXInitialiseItems(void);
+ void LoadSoundBank(int index);
+ void SFXUnloadSoundBank(int index);
+ void SFXReset(void);
++void SFXShutdown(void);
+ void SFXInitialise(char *path);
+ void SFXLoadCorrectBank(void);
+ void SFXSuspendFileAccess(void);

@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T06:20:00Z",
+  "last_updated_at": "2026-10-28T06:45:00Z",
   "active_goal": "G13",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -182,7 +182,8 @@
         "patches/0024-session-idle-reset.patch",
         "patches/0018-ios-long-paths.patch",
         "patches/0023-missing-movie-finished.patch",
-        "patches/0024-session-boot-reset.patch"
+        "patches/0024-session-boot-reset.patch",
+        "patches/0025-sound-bank-shutdown.patch"
       ],
       "blockers": [],
       "next_step": "Continue the simulator acceptance sweep (saves round trip, campaign slices, audio) while physical acceptance stays external."
@@ -1749,6 +1750,11 @@
     {
       "name": "iOS simulator Paris tutorial input and mission flow",
       "result": "PASS: handoff renders, right trigger fires, Mission Failed and Replay Tutorial work; stop 1.7 s",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator mission then restart (sound bank lifetime)",
+      "result": "PASS: Paris intro/mission, Stop 4.4 s, next Start reaches title with no crash report",
       "target": "iPhone 17 Pro / iOS 26.5 simulator"
     }
   ],
