@@ -141,7 +141,8 @@
         view.isAccessibilityElement = YES;
         UILabel *label = [UILabel new];
         label.text = [self labelFor:control.id];
-        label.textColor = UIColor.whiteColor;
+        label.textColor = nightpad::UsesDarkLabel(control.id)
+            ? [UIColor colorWithWhite:0.06 alpha:1.0] : UIColor.whiteColor;
         label.textAlignment = NSTextAlignmentCenter;
         UIFont *baseFont = [UIFont monospacedSystemFontOfSize:14 weight:UIFontWeightBold];
         label.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleHeadline]

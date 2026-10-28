@@ -9,16 +9,20 @@ struct ControlColour {
     float red = 1, green = 1, blue = 1;
 };
 
-// The Xbox face colours and the neutral controls, darkened enough for white
-// labels to meet WCAG AA (contrast at least 4.5:1).
+// The original Xbox face colours and the neutral controls, darkened enough for
+// white labels to meet WCAG AA (contrast at least 4.5:1).
 ControlColour ColourForControl(TouchControlId id);
 
 // VoiceOver order: movement, shoulders, system, look, then face buttons.
 int AccessibilityOrderForControl(TouchControlId id);
 
+// The Xbox face buttons and the white auxiliary key use dark lettering.
+bool UsesDarkLabel(TouchControlId id);
+
 float RelativeLuminance(const ControlColour &colour);
 // Contrast ratio against pure white text.
 float ContrastWithWhite(const ControlColour &colour);
+float ContrastWithBlack(const ControlColour &colour);
 
 }  // namespace nightpad
 

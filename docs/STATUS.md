@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-28 02:10 UTC
+Updated: 2026-10-28 11:55 UTC
 
 ## Outcome
 
@@ -67,9 +67,13 @@ simulator execution is no longer a platform blocker.
   vehicles and action queues) after the old heap is gone.
 - Thread stacks are reserved from the image's in-window arena rather than the
   fragmented general window, so repeated launches no longer fail with
-  `ENOMEM` on the third start.
+  `ENOMEM` on the third start. Patch 0027 returns engine and timer stacks to a
+  process cache when they are released and reuses the same in-window addresses
+  on the next session.
 - Ten action start/stop/join cycles pass. Resident memory grows about 2.4 MB
   per cycle after warm-up (224 MB to 248 MB over ten cycles).
+- Fifteen action start/stop/join cycles pass with resident memory steady at
+  264 MB after warm-up; ten driving cycles settle at 280 MB.
 - Ten driving start/stop/join cycles pass. Resident memory warms to about
   296 MB and the tenth cycle is lower than the ninth.
 - Ten mixed driving/action cycles pass: 20 launch requests, both directions,
@@ -374,15 +378,13 @@ simulator execution is no longer a platform blocker.
   pointed into had been replaced. `SFXShutdown` unloads them at session cleanup
   (patch 0025); a Paris mission, Stop and a fresh Start reach the title with no
   crash report.
-- The touch controls now inherit GalaxyPad's controls: four round D-pad keys
-  above the dark move stick, an amber look stick lower-right, A large in the
-  corner with B up-left, the light X/Y pair beside them, purple triggers, a grey
-  START, and White/Black/Back in the auxiliary bottom row. The live overlay uses
-  each control's saved opacity. Tablet controls use GalaxyPad's fixed point
-  sizes rather than screen-relative pills. The layout version moved to 3, so
-  older saved layouts fall back to the new defaults. The 44-point menu keeps
-  Start/Stop in the root list and groups Display, Controls, Data & Saves,
-  Enhancements and Help & Feedback without scrolling on a phone.
+- GalaxyPad's touch geometry now carries an Xbox finish: graphite sticks and
+  shoulders, a dished D-pad cross, molded highlights, four face-button colours
+  with dark lettering, and White/Black/Back icons. The live overlay uses each
+  control's saved opacity. Tablet controls use GalaxyPad's fixed point sizes.
+  The layout version is 3, so older saved layouts fall back to the defaults.
+  The 44-point menu keeps Start/Stop in the root list and groups Display,
+  Controls, Data & Saves, Enhancements and Help & Feedback without scrolling.
 - No valid Apple code-signing identity and no connected physical device were
   visible at inventory time. This blocks signed physical-device acceptance in
   G03, G06 and G12; independent build/UI work continues.
@@ -390,9 +392,10 @@ simulator execution is no longer a platform blocker.
   `073f0048.xmv` movie required by one recording. The alias is an explicitly
   labeled compatibility experiment, not a verified PAL replacement.
 - Physical pointer, Metal, SDL and lifecycle behavior is unverified.
-- G04's game-state, file-handle, GPU-cache, worker-thread and stack-reset
-  contract passes ten cycles on macOS. Physical-device lifecycle evidence
-  remains blocked by the missing signing identity and connected hardware.
+- G04's game-state, file-handle, GPU-cache, worker-thread and stack-
+  reuse contract passes fifteen action cycles, ten driving cycles and the
+  mixed round trip on macOS. Physical-device lifecycle evidence remains
+  blocked by the missing signing identity and connected hardware.
 
 ## Next step
 
@@ -402,10 +405,11 @@ a signing identity and a trusted device exist, then work the checklist in
 trip, touch and controller sessions, Secret Unlocks, display modes and the
 fifteen-minute stability runs.
 
-Independent work that can continue meanwhile: the campaign inventory is
-complete, including the driving missions' goals and hints; what remains is the
-multiplayer mode/map support matrix. Keep the ten-cycle lifecycle, pause,
-transition, handoff and data-import gates as regressions.
+Independent work that can continue meanwhile: produce a real in-game save and
+walk the first-play campaign route on the simulator, then run the multiplayer
+mode/map matrix. Keep the fifteen-cycle action gate, ten-cycle driving gate,
+mixed round trip, pause, transition, handoff and data-import checks as
+regressions.
 
 Verification entry points are `scripts/verify_quick.sh` (host logic, both
 shell builds, device link contract) and `scripts/verify_engine.sh` (lifecycle,

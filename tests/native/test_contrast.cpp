@@ -4,9 +4,11 @@
 
 using nightpad::ColourForControl;
 using nightpad::ContrastWithWhite;
+using nightpad::ContrastWithBlack;
 using nightpad::ControlColour;
 using nightpad::RelativeLuminance;
 using nightpad::TouchControlId;
+using nightpad::UsesDarkLabel;
 
 static int failures = 0;
 static void Check(bool value, const char *what) {
@@ -23,7 +25,9 @@ int main() {
 
     for (int i = 0; i <= int(TouchControlId::Back); ++i) {
         const TouchControlId id = TouchControlId(i);
-        const float contrast = ContrastWithWhite(ColourForControl(id));
+        const float contrast = UsesDarkLabel(id)
+            ? ContrastWithBlack(ColourForControl(id))
+            : ContrastWithWhite(ColourForControl(id));
         if (contrast < 4.5f) {
             std::cerr << "FAIL: " << nightpad::TouchControlName(id) << " contrast " << contrast << "\n";
             ++failures;

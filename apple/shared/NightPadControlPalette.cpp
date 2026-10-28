@@ -15,13 +15,14 @@ float Linear(float channel) {
 
 ControlColour ColourForControl(TouchControlId id) {
     switch (id) {
-        case TouchControlId::A: return {0.10f, 0.45f, 0.18f};
-        case TouchControlId::B: return {0.72f, 0.16f, 0.16f};
-        case TouchControlId::X: return {0.10f, 0.28f, 0.72f};
-        case TouchControlId::Y: return {0.55f, 0.42f, 0.04f};
+        case TouchControlId::A: return {0.10f, 0.62f, 0.30f};
+        case TouchControlId::B: return {0.92f, 0.16f, 0.18f};
+        case TouchControlId::X: return {0.10f, 0.48f, 0.95f};
+        case TouchControlId::Y: return {0.95f, 0.76f, 0.08f};
         case TouchControlId::LeftStick:
         case TouchControlId::RightStick: return {0.30f, 0.30f, 0.30f};
         case TouchControlId::Dpad: return {0.36f, 0.36f, 0.36f};
+        case TouchControlId::White: return {0.92f, 0.92f, 0.92f};
         default: return {0.24f, 0.24f, 0.24f};
     }
 }
@@ -32,6 +33,15 @@ float RelativeLuminance(const ControlColour &colour) {
 
 float ContrastWithWhite(const ControlColour &colour) {
     return 1.05f / (RelativeLuminance(colour) + 0.05f);
+}
+
+float ContrastWithBlack(const ControlColour &colour) {
+    return (RelativeLuminance(colour) + 0.05f) / 0.05f;
+}
+
+bool UsesDarkLabel(TouchControlId id) {
+    return id == TouchControlId::A || id == TouchControlId::B || id == TouchControlId::X ||
+           id == TouchControlId::Y || id == TouchControlId::White;
 }
 
 int AccessibilityOrderForControl(TouchControlId id) {

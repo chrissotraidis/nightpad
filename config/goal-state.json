@@ -125,7 +125,8 @@
         "patches/0019-action-stop-observability.patch",
         "patches/0020-action-session-index-reset.patch",
         "patches/0022-stream-open-recovery.patch",
-        "patches/0023-missing-movie-finished.patch"
+        "patches/0023-missing-movie-finished.patch",
+        "patches/0027-thread-stack-reuse.patch"
       ],
       "blockers": [
         "B01"
@@ -238,7 +239,10 @@
         "apple/ios/NightPadShellViewController.mm",
         "evidence/ios-shell/galaxypad-controls.png",
         "evidence/ios-shell/galaxypad-menu.png",
-        "evidence/ios-shell/galaxypad-controls-ipad.png"
+        "evidence/ios-shell/galaxypad-controls-ipad.png",
+        "evidence/ios-shell/xbox-controls.png",
+        "evidence/ios-shell/xbox-controls-live.png",
+        "evidence/ios-shell/xbox-controls-ipad.png"
       ],
       "blockers": [],
       "next_step": "The GalaxyPad-derived overlay is in place on phone and tablet; verify touch ergonomics in the original mission routes and keep the tablet layout in step."
@@ -1620,6 +1624,17 @@
         "scripts/device_handoff.sh",
         "docs/DEVICE-HANDOFF.md"
       ]
+    },
+    {
+      "at": "2026-10-28T11:55:00Z",
+      "goal": "G04/G06",
+      "summary": "Recovered the interrupted working tree: finished the Xbox touch-control treatment, completed patch 0027 so it carries the timer-stack path, and re-ran the repeated-session gates. Fifteen action cycles, ten driving cycles and the action-driving-action round trip pass with steady memory.",
+      "evidence": [
+        "patches/0027-thread-stack-reuse.patch",
+        "apple/ios/NightPadTouchControlsView.mm",
+        "evidence/ios-shell/xbox-controls-live.png",
+        "docs/TEST-MATRIX.md"
+      ]
     }
   ],
   "completed_tests": [
@@ -1772,14 +1787,24 @@
     },
     {
       "name": "iOS simulator repeated handoff",
-      "result": "OPEN: second handoff can create a window without the Metal view (black, ~360 draws); fresh launch works",
+      "result": "PASS after patches 0026: the second driving session releases the prior GPU window, creates a new device and renders the Paris mission in the same process",
       "target": "iPhone 17 Pro / iOS 26.5 simulator"
     },
     {
       "name": "iOS simulator SunPad-derived touch layout and menu",
       "result": "PASS: overlay renders, touch START enters Paris, look stick registers, menu opens over gameplay; layout test no-overlap PASS",
       "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "thread stack reuse across repeated sessions",
+      "result": "PASS: 15 action cycles join with RSS steady at 264 MB; 10 driving cycles settle at 280 MB; action-driving-action round trip passes",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "Xbox-finished touch overlay",
+      "result": "PASS: graphite sticks and shoulders, dished D-pad cross, four face colours with dark lettering and system icons render on iPhone and iPad; contrast and layout gates pass",
+      "target": "iPhone 17 Pro and iPad Pro 13-inch / iOS 26.5 simulator"
     }
   ],
-  "next_step": "Investigate the repeated-handoff window creation on the simulator and produce a real in-game save; physical acceptance remains external."
+  "next_step": "Produce a real in-game save and run the first-play campaign route on the simulator; physical acceptance remains external."
 }

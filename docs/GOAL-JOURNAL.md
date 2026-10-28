@@ -2231,3 +2231,35 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Evidence: `/tmp/np-handoff-window2.log`; `scripts/verify_patches.sh` PASS
   (70 files reproduced from `8779cf79ff623b83b53b9acf9c0b0cd6639b75ab`).
 
+## 2026-10-28T11:55:00Z — the Xbox finish lands and repeated sessions reuse their stacks
+
+- Goal: G04/G06. Requirements: R07, R12, R29.
+- Recovered: the working tree held an uncommitted touch-overlay treatment and
+  an untracked `0027-thread-stack-reuse.patch`. The patch covered engine
+  threads but not the in-window stacks created for host timers, so the tracked
+  series no longer reproduced the vendor tree.
+- Controls: GalaxyPad's geometry now carries an Xbox finish rather than its
+  purple and amber palette. Sticks and shoulders are graphite with a recessed
+  well and a highlighted thumb; the D-pad is one dished cross driven by two
+  arms; keys have a restrained top-light gradient; A, B, X and Y use the four
+  Xbox colours with dark lettering; White, Black and Back use icons or dark
+  lettering on light keys. Start and Back draw their system symbols. The
+  editor uses the same dark-label rule, and the layout remains GalaxyPad's.
+- Stacks: patch 0027 now returns both pthread and timer stacks to a mutex-held
+  process cache when their owner is released, and takes the first matching
+  block for the next thread. The cached block stays in the game window, so a
+  repeated engine launch reuses the same valid addresses instead of reserving
+  another 1 MB stack per thread.
+- Verified: `scripts/test_contrast.sh` and `scripts/test_touch_layout.sh` pass;
+  the simulator shell builds; the live overlay and the iPad landscape frame
+  render with the new finish. Fifteen action cycles all join with resident
+  memory steady at 264 MB, ten driving cycles settle at 280 MB, and
+  `scripts/test_engine_roundtrip.sh` passes action -> driving -> action.
+  `scripts/verify_patches.sh` reproduces 70 files from the pinned revision.
+- Evidence: `evidence/ios-shell/xbox-controls.png`,
+  `xbox-controls-live.png`, `xbox-controls-ipad.png`; `patches/0027-thread-stack-reuse.patch`;
+  `/tmp/np-quick-current.log`.
+- Next: produce a real in-game save and continue the first-play campaign route
+  on the simulator; physical acceptance still needs a signing identity and a
+  connected iPhone and iPad.
+
