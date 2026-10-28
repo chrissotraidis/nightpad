@@ -2206,3 +2206,28 @@ are ignored and may contain paths, hashes, captures or device identities.
   `evidence/ios-shell/galaxypad-menu.png` and
   `evidence/ios-shell/galaxypad-controls-ipad.png`.
 
+## 2026-10-28T08:50:00Z — the second driving handoff creates its own device and window
+
+- Goal: G04/G05. Requirement: R06/R15.
+- Observed: the repeated-handoff black surface persisted after releasing the SDL
+  GPU window. Console logging showed the second `DRIVING.XBE` session reached
+  `main` and rendered shaders but never logged `Direct3D_CreateDevice`, never
+  claimed a window and never made a Metal view. UIKit listed a new
+  `SDL_uikitviewcontroller` rooted in the generic `SDL_uikitview` layer.
+- Root cause: the driving engine keeps its device in the process-global
+  `D3DDevicePointer`. The first driving session left it non-null; the second
+  session took EAGL's existing-device branch, called the no-op Reset/Persist
+  paths, and rendered into the retained offscreen back buffer without a new
+  swapchain.
+- Fixed: `D3dSeam_ResetDeviceForSession()` clears the driving device token
+  before each driving session, so `SetupFrameBuffers` calls
+  `Direct3D_CreateDevice` and claims the new window. Patch 0026 now contains
+  both this reset and the prior-window release before destruction.
+- Verified in one process: action title -> driving Paris intro -> Stop -> action
+  title -> driving Paris intro again -> sniper gameplay -> Mission Failed. The
+  console showed a new D3D device, a successful window claim and device-ready
+  log for both driving sessions; the second frame is captured in
+  `evidence/ios-shell/repeated-driving-handoff.png`.
+- Evidence: `/tmp/np-handoff-window2.log`; `scripts/verify_patches.sh` PASS
+  (70 files reproduced from `8779cf79ff623b83b53b9acf9c0b0cd6639b75ab`).
+

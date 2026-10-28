@@ -365,9 +365,10 @@ simulator execution is no longer a platform blocker.
   1.7 s.
 - Repeated sessions no longer leave a window without its Metal view. The SDL
   GPU backend released the previous window's device claim before destroying it
-  (patch 0026); Stop Game and a fresh Start now render Press START again in the
-  same process. The complete Stop -> Start -> driving-handoff route still needs
-  a repeat for driving-round-trip acceptance.
+  (patch 0026), and the driving engine now clears its process-global D3D device
+  token at each session start so it creates a device for the new window. A
+  complete action -> driving -> Stop -> action -> driving route renders the
+  second Paris intro and reaches Mission Failed in the same process.
 - A mission followed by Stop and Start no longer crashes: the action engine's
   sound banks were freed at the start of the next session, after the heap they
   pointed into had been replaced. `SFXShutdown` unloads them at session cleanup

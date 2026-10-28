@@ -31,6 +31,7 @@ extern "C" int NightPadDrivingEngineStart(int argc, char **argv) {
         g_processServicesStarted = true;
     }
     Inject_LaunchOptions();
+    D3dSeam_ResetDeviceForSession();
     if (!HostWindow_Open(640, 480, "NightPad")) {
         return 0;
     }

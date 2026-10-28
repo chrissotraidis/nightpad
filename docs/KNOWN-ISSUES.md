@@ -41,9 +41,10 @@ tester would see, what is blocked, and where the detail lives.
 
 - A repeated session no longer creates an SDL window without its Metal view.
   The GPU device retained per-window data after destruction; patch 0026 releases
-  the window from the device first. Stop then Start renders Press START in the
-  same process. The full repeated action-to-driving route is still a pending
-  test, not an observed failure.
+  the window from the device first. The driving engine also clears its stale
+  process-global device token, forcing a new device and swapchain. A complete
+  action -> driving -> action -> driving route now renders the second Paris
+  mission and reaches Mission Failed in the same process.
 
 - The pitch-black preview behind the touch overlay in the simulator is the
   shell preview without an engine, not a render failure.

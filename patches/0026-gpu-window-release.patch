@@ -5,7 +5,7 @@ index 0db6e71..b054c96 100644
 @@ -1,4 +1,5 @@
  #include "../../../common/gfx/backendHost.h"
 +#include "../../../common/gfx/d3d9Backend.h"   // D3D9_ReleaseGpuWindow
- 
+
  #include "../XboxSettings.h"
  #include "../../devtools/Demo.h"
 @@ -40,4 +41,8 @@ void GfxHost_SizeWindow(uint32_t width, uint32_t height) {
@@ -28,7 +28,7 @@ index d8c4971..376b8af 100644
 +// Release a window from the GPU device before it is destroyed.
 +void GfxHost_ReleaseGpuWindow(void *window);
  #endif
- 
+
  #endif // COMMON_GFX_BACKENDHOST_H_
 diff --git a/src/common/gfx/d3d9Backend.h b/src/common/gfx/d3d9Backend.h
 index dcd627b..9415447 100644
@@ -47,7 +47,7 @@ diff --git a/src/common/gfx/sdlGpuBackend.cpp b/src/common/gfx/sdlGpuBackend.cpp
 index 8c088bd..4b4cb04 100644
 --- a/src/common/gfx/sdlGpuBackend.cpp
 +++ b/src/common/gfx/sdlGpuBackend.cpp
-@@ -3003,3 +3003,13 @@ void D3D9_ResetSessionCache() {
+@@ -3003,3 +3003,14 @@ void D3D9_ResetSessionCache() {
      g_passColour = g_passDepth = NULL;
      g_currentTarget = g_backBuffer;
  }
@@ -56,8 +56,9 @@ index 8c088bd..4b4cb04 100644
 +// releasing it first is the documented order, and leaving it behind lets a later window inherit stale
 +// bookkeeping (a window created with no Metal view while the engine still presents into the device).
 +void D3D9_ReleaseGpuWindow(void *window) {
-+    if (g_device == NULL || g_window == NULL || (void *)g_window != window)
++    if (g_device == NULL || g_window == NULL || (void *)g_window != window) {
 +        return;
++    }
 +    SDL_ReleaseWindowFromGPUDevice(g_device, g_window);
 +    g_window = NULL;
 +}
@@ -100,3 +101,41 @@ index ecc9a83..b2b2ea6 100644
          SDL_DestroyWindow(Window);
          Window = NULL;
      }
+diff --git a/src/driving/gfx/d3dSeam.cpp b/src/driving/gfx/d3dSeam.cpp
+index b37bbe1..341d345 100644
+--- a/src/driving/gfx/d3dSeam.cpp
++++ b/src/driving/gfx/d3dSeam.cpp
+@@ -5,6 +5,7 @@
+ #include "../../common/xbeEntrySeam.h"
+ #include "../../common/xbeProfiler.h"
+ #include "../../common/xboxPath.h"   // XGWriteSurfaceToFile
++#include "../eagl/EaglGlobals.h"   // D3DDevicePointer
+ #include "../platform/Host.h"   // the resources' heap on a 64-bit host
+ #include "../platform/Ptr32.h"
+ #include "../platform/RealSystem.h"   // TimerFrequency: 50 on a PAL video mode, 60 on an NTSC one (TIMER_init)
+@@ -1470,6 +1471,10 @@ void D3dSeam_Init(void) {
+     g_streamsVolatile = true;
+ }
+
++void D3dSeam_ResetDeviceForSession(void) {
++    D3DDevicePointer = NULL;
++}
++
+ #ifndef NIGHTFIRE_STANDALONE
+ void Inject_D3dSeam(void) {
+     D3dSeam_Init();
+diff --git a/src/driving/gfx/d3dSeam.h b/src/driving/gfx/d3dSeam.h
+index 0d6efd2..800a6d4 100644
+--- a/src/driving/gfx/d3dSeam.h
++++ b/src/driving/gfx/d3dSeam.h
+@@ -9,6 +9,10 @@ void Inject_D3dSeam(void);
+ // What both builds set up before the device is made: where the backend reads D3D8's state.
+ void D3dSeam_Init(void);
+
++// The game keeps its D3D device in a process global. A second driving session in the same app process must
++// create a device for its new window instead of resetting the previous session's device token.
++void D3dSeam_ResetDeviceForSession(void);
++
+ // Which patched entry points have been reached without an implementation, and how often. Printed with the
+ // backend's periodic frame-timing report; this is the list that says what to implement next.
+ void D3dSeam_ReportMissing(void);

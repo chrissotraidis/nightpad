@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T08:23:00Z",
+  "last_updated_at": "2026-10-28T08:50:00Z",
   "active_goal": "G13",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -187,10 +187,11 @@
         "patches/0026-gpu-window-release.patch",
         "evidence/ios-shell/galaxypad-controls.png",
         "evidence/ios-shell/galaxypad-menu.png",
-        "evidence/ios-shell/galaxypad-controls-ipad.png"
+        "evidence/ios-shell/galaxypad-controls-ipad.png",
+        "evidence/ios-shell/repeated-driving-handoff.png"
       ],
       "blockers": [],
-      "next_step": "Rerun the full repeated action-to-driving handoff with patch 0026, then continue the saves round trip."
+      "next_step": "The repeated action-to-driving route passes; continue the saves round trip and first-play campaign route."
     },
     "G06": {
       "status": "in_progress",
