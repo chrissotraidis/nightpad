@@ -429,3 +429,14 @@ Device test plan: enter one mission code twice (on, then off), a reward-set code
 a single-reward toggle, an upgrade code and an invalid string; save the codename,
 relaunch, and confirm the unlocks and upgrades persisted while the invalid entry
 left everything unchanged.
+
+### Simulator evidence, 2026-10-28
+
+On the isolated NPQA profile, the original touch keyboard accepted one mission
+code, Save Codename changed the mask from `0x3` to `0x103`, and an in-place app
+update/relaunch/load retained it. Entering the same code again returned the
+saved file to exactly its previous bytes (`0x3`). An invalid entry produced no
+success message and left a subsequent save byte-identical. The previous-copy
+backup matched each preceding file. Evidence: `evidence/save-durability/`.
+This covers one mission-toggle family; the reward/upgrade families and physical
+acceptance remain. Unlock testing does not count as earned campaign progress.

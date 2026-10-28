@@ -2282,3 +2282,73 @@ are ignored and may contain paths, hashes, captures or device identities.
   resume from it; continue the campaign route while the device remains
   unavailable.
 
+
+## 2026-10-28T16:32:14Z — restore the loop and protect profile writes
+
+- Goal: G05. Requirement: R11. Hypothesis: the POSIX `fopen(..., "wb")`
+  truncates the previous profile before its new bytes are safe; staging and
+  atomic replacement should preserve complete old/new bytes on interruption.
+- Recovery: continued from `5aa9531` on `codex/resume-save-durability`.
+  Recreated the active app goal; the implementation state now names G05.
+  Shut down the stale NightPad iPad preview, keeping only the iPhone simulator.
+  Rechecked signing and hardware: zero identities and no physical devices.
+- Change: patch 0028 writes and flushes a unique hidden stage, retains a
+  flushed previous copy as `.dat.bak`, and atomically replaces the live file.
+  Backups stay out of the Codename list, hidden stages stay out of exports,
+  and explicit codename deletion removes the backup. Serialized bytes and the
+  game's save triggers are unchanged. See decision 0015.
+- Expected/observed: all 12 injected I/O cases and SIGKILL before and after
+  commit retain a complete old/new file and the appropriate previous copy.
+  Actual `psiSaveData`, `psiLoadData`, poll and delete entries pass. The native
+  engine, both iOS lanes, quick verification and three native lifecycle cycles
+  pass. Patch verification reproduces 72 files from the pinned engine.
+- Original UI: made a separate NPQA copy of the valid profile, changed Classic
+  Bond to NightFire in Controller Setup, then used Save Codename. Exactly
+  byte 8 changed in the 166-byte file, the previous copy matched exactly, and
+  NightFire reloaded after terminating and relaunching the app. Existing saves
+  stayed byte-identical through updates and testing.
+- Evidence correction: decoding the prior BOND.dat shows mission mask `0x3`
+  and twelve zero scores/Bond-moment counts. The 12:00 entry proves a real
+  initial profile and mission load, not earned campaign progression. Source
+  confirms that mission results write progress; individual objectives do not.
+- Evidence: `evidence/save-durability/` (private snapshots, decode, UI result
+  and captures); `build/tests/engine-save/` (focused result, native build,
+  lifecycle and quick verification logs). Dependency lock SHA-256:
+  `f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e`.
+- Limitations: host syscall faults and process interruption do not prove
+  physical power-loss behavior. A completed mission's results save, picker
+  selection and signed-device update/acceptance remain open. No goal is waived.
+- Next: finish the original mission-toggle relaunch check on NPQA, then
+  continue a fresh campaign route through a real mission-results save.
+
+## 2026-10-28T16:40:01Z — original unlock persistence and final package
+
+- Goals: G05/G09. Requirements: R11/R19/R26. Expected: an original mission
+  toggle persists through save/relaunch and reverses from the loaded state;
+  an invalid entry changes nothing. Use only NPQA, preserving existing saves.
+- Observed: touch keyboard entry showed Unlock successful. Save Codename
+  changed the mission mask `0x3 -> 0x103`; an in-place final-build update and
+  app relaunch/load retained it. The same code then saved `0x3` again, with
+  the entire file byte-identical to its pre-unlock state. Each backup matched
+  the preceding file. An invalid entry showed no success; saving afterwards
+  left the profile byte-identical. All original profiles remained unchanged.
+- Final build: simulator and device lanes pass quick verification; the native
+  action targets build. The unsigned Release device IPA rebuilt at 3.6 MB and
+  passed arm64, system-only linkage, landscape and file-sharing checks.
+- Evidence: `evidence/save-durability/unlock-result.json`, `unlock-success.png`,
+  `build-identity.json`; `build/tests/engine-save/package-device.log`.
+- Verdict: simulator mission-toggle persistence/reversal and invalid input pass.
+  Other unlock families and physical acceptance remain. No campaign progression
+  credit: the underlying profile still has only the two initially open missions.
+- Resume: only the iPhone simulator is booted. NPQA is saved with NightFire
+  controls, initial mission mask `0x3`, zero scores and no app assists. The next
+  required campaign experiment is a fresh codename through the Paris mission,
+  continue past its results, then relaunch and decode/load earned progress.
+  Keep originals and the private before-update snapshot. Use the existing
+  simulator app; rebuild only if code/input identities change.
+
+- Checkpoint detail: the prior app settings had immortality enabled. Disabled it
+  through Enhancements and verified both assist settings persisted as `0` before
+  the next campaign attempt. Unlock/settings tests above are UI/persistence
+  evidence, not unassisted campaign evidence. Stop Game joined cleanly; the
+  single booted iPhone simulator is now at the shell with its data ready.

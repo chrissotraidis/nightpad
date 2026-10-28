@@ -6,8 +6,8 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T08:50:00Z",
-  "active_goal": "G13",
+  "last_updated_at": "2026-10-28T16:40:01Z",
+  "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
   "actual_source_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
@@ -23,8 +23,30 @@
     "media_bundle": "30_fps only",
     "data_identity": "data-8a0dc0e713f44e48b000"
   },
-  "current_build": {},
-  "last_known_good_build": null,
+  "current_build": {
+    "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
+    "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
+    "profile_save_patch_sha256": "19ccce6d961d4f912c2b8845eac35f880f0ff436f8a5051a66bf6f06825c5b4b",
+    "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
+    "simulator_binary_sha256": "6aae91b53020b6c8265b88ea80edfdce6a6e802e059aaafac9fa8e308ab4f787",
+    "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
+    "unsigned_device_package_sha256": "7eea77b1c2a7e23f451068ed831a9e716bdd4c8591c1a52f706b37b5096df2a7",
+    "evidence": "evidence/save-durability/build-identity.json",
+    "verified_at": "2026-10-28T16:40:01Z",
+    "acceptance_scope": "simulator saves/unlocks and host gates only; no physical acceptance"
+  },
+  "last_known_good_build": {
+    "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
+    "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
+    "profile_save_patch_sha256": "19ccce6d961d4f912c2b8845eac35f880f0ff436f8a5051a66bf6f06825c5b4b",
+    "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
+    "simulator_binary_sha256": "6aae91b53020b6c8265b88ea80edfdce6a6e802e059aaafac9fa8e308ab4f787",
+    "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
+    "unsigned_device_package_sha256": "7eea77b1c2a7e23f451068ed831a9e716bdd4c8591c1a52f706b37b5096df2a7",
+    "evidence": "evidence/save-durability/build-identity.json",
+    "verified_at": "2026-10-28T16:40:01Z",
+    "acceptance_scope": "simulator saves/unlocks and host gates only; no physical acceptance"
+  },
   "goals": {
     "G00": {
       "status": "passed",
@@ -189,10 +211,14 @@
         "evidence/ios-shell/galaxypad-controls.png",
         "evidence/ios-shell/galaxypad-menu.png",
         "evidence/ios-shell/galaxypad-controls-ipad.png",
-        "evidence/ios-shell/repeated-driving-handoff.png"
+        "evidence/ios-shell/repeated-driving-handoff.png",
+        "patches/0028-atomic-profile-save.patch",
+        "scripts/test_engine_save.sh",
+        "docs/DECISIONS/0015-atomic-profile-saves.md",
+        "evidence/save-durability/ui-save-result.json"
       ],
       "blockers": [],
-      "next_step": "The repeated action-to-driving route passes; continue the saves round trip and first-play campaign route."
+      "next_step": "Complete a mission through its results save and verify earned progress after relaunch; continue original unlock and campaign coverage on the simulator while physical acceptance is blocked."
     },
     "G06": {
       "status": "in_progress",
@@ -277,7 +303,9 @@
         "apple/shared/NightPadEngineSettings.h",
         "apple/shared/NightPadEngineSettings.cpp",
         "tests/native/test_engine_settings.cpp",
-        "scripts/test_engine_settings.sh"
+        "scripts/test_engine_settings.sh",
+        "evidence/save-durability/unlock-result.json",
+        "evidence/save-durability/unlock-success.png"
       ],
       "blockers": [],
       "next_step": "Validate aspect/scope/HUD behaviour and sustained performance at each advertised size, then finish unlock validation (device required)."
@@ -482,13 +510,19 @@
         "evidence/ios-shell/save-restore.png",
         "evidence/ios-shell/codename-profile-persisted.png",
         "evidence/ios-shell/bond-profile-progress.png",
-        "evidence/ios-shell/the-exchange-loaded.png"
+        "evidence/ios-shell/the-exchange-loaded.png",
+        "patches/0028-atomic-profile-save.patch",
+        "scripts/test_engine_save.sh",
+        "docs/DECISIONS/0015-atomic-profile-saves.md",
+        "evidence/save-durability/ui-save-result.json"
       ],
       "decision_id": null,
       "notes": [
-        "The engine writes through a durable Saves link; Share Saves exports via the system sheet and Import Saves copies chosen files back with a replace confirmation. A real 166-byte PLRS profile (BOND.dat) survived app relaunch and opened with its saved mission progress at The Exchange, which then loaded into gameplay.",
-        "An app reinstall (the simulator update path) kept the save, settings file, touch layout and imported tree byte-identical.",
-        "Save restore now writes atomically, so an interrupted restore keeps the previous file; the fixture hook proved the collision prompt, replacement and unrelated-file isolation. Picker selection, a checkpoint written after an objective and an interrupted engine write remain."
+        "The durable Saves link, share sheet and import with replacement confirmation are implemented. The real BOND.dat profile survives relaunch and loads The Exchange, but decoding shows only the initial mission mask 0x3 and zero scores; this is not proof of earned campaign progress.",
+        "An app reinstall (the simulator update path) kept saves, settings, layout and imported data byte-identical.",
+        "Restore copies atomically. Patch 0028 also makes engine saves atomic on POSIX, retains a previous .dat.bak, and keeps hidden stages out of exports. Twelve I/O scenarios and SIGKILL immediately before/after commit preserve complete bytes; actual psiSaveData/load/delete entries pass.",
+        "The original Save Codename flow changed NPQA from Classic Bond to NightFire, changed only byte 8 of the 166-byte profile, retained the exact old file as backup, and reloaded NightFire after app relaunch. NPQA was an isolated copy of the existing valid profile; original files remained byte-identical.",
+        "A completed mission and results save/relaunch, picker selection, physical-device interruption and signed app-update acceptance remain unverified."
       ]
     },
     "R12": {
@@ -594,11 +628,14 @@
     "R19": {
       "status": "in_progress",
       "evidence": [
-        "docs/CAMPAIGN-INVENTORY.md"
+        "docs/CAMPAIGN-INVENTORY.md",
+        "evidence/save-durability/unlock-result.json",
+        "evidence/save-durability/unlock-success.png"
       ],
       "decision_id": null,
       "notes": [
-        "Secret Unlocks has 52 codes in five families applied to the edited codename; mechanism and device test plan recorded. Physical entry/persistence remains."
+        "The 52-code/five-family inventory and original front-end mechanisms are recorded. A real simulator UI run on isolated NPQA toggled one mission on (mask 0x3 to 0x103), saved, updated/relaunched/loaded the app, then toggled it back to exactly 0x3 and saved. An invalid entry produced no success and left the re-saved profile byte-identical.",
+        "Reward-set, single-reward and upgrade families, all-mission entry, physical entry/ergonomics and signed-device persistence remain unverified. This test did not earn campaign progression."
       ]
     },
     "R20": {
@@ -782,6 +819,11 @@
       "id": "0013-texture-overrides",
       "path": "docs/DECISIONS/0013-texture-overrides.md",
       "summary": "No texture-override feature in this candidate; bounded SDL/Metal port deferred."
+    },
+    {
+      "id": "0015-atomic-profile-saves",
+      "path": "docs/DECISIONS/0015-atomic-profile-saves.md",
+      "summary": "Use atomic POSIX profile replacement with a flushed previous-copy backup; preserve the original serialized bytes and save flow."
     }
   ],
   "blockers": [
@@ -1649,6 +1691,29 @@
         "evidence/ios-shell/the-exchange-loaded.png",
         "docs/TEST-MATRIX.md"
       ]
+    },
+    {
+      "at": "2026-10-28T16:32:14Z",
+      "goal": "G05",
+      "summary": "Restored the active goal loop and one-simulator constraint. Fixed truncating POSIX engine profile writes with atomic replacement and previous-copy backup; fault tests and original Save Codename/relaunch pass. Decoded BOND.dat and narrowed earlier campaign-progress claims to initial-profile persistence.",
+      "evidence": [
+        "patches/0028-atomic-profile-save.patch",
+        "scripts/test_engine_save.sh",
+        "docs/DECISIONS/0015-atomic-profile-saves.md",
+        "evidence/save-durability",
+        "build/tests/engine-save/verify-quick.log",
+        "build/tests/engine-save/lifecycle.log"
+      ]
+    },
+    {
+      "at": "2026-10-28T16:40:01Z",
+      "goal": "G05/G09",
+      "summary": "The original touch keyboard accepts a reversible mission unlock. Its saved mask survives an in-place final-build update and app relaunch, then the same code returns the profile to the exact prior bytes. An invalid entry produces no success and leaves a subsequent save byte-identical. The final unsigned Release device package rebuilds and passes its contents/linkage checks.",
+      "evidence": [
+        "evidence/save-durability/unlock-result.json",
+        "evidence/save-durability/build-identity.json",
+        "build/tests/engine-save/package-device.log"
+      ]
     }
   ],
   "completed_tests": [
@@ -1823,7 +1888,17 @@
       "name": "real codename profile survives app relaunch",
       "result": "PASS: 166-byte PLRS BOND.dat listed after relaunch, kept The Exchange as its mission, and loaded that mission into gameplay",
       "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "atomic engine profile writes and original Save Codename relaunch",
+      "result": "PASS: 12 I/O cases, 2 killed writers, actual engine save/load/delete, simulator settings save with exact previous copy and reload; earned campaign progression remains unverified",
+      "target": "macOS arm64 / iPhone 17 Pro, iOS 26.5 simulator"
+    },
+    {
+      "name": "original Secret Unlock mission toggle, relaunch and invalid code",
+      "result": "PASS simulator-only: mission mask 0x3 -> 0x103 -> app update/relaunch/load -> 0x3, exact backup copies, invalid entry and save leave profile unchanged; other code families and hardware remain unverified",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
     }
   ],
-  "next_step": "Take a checkpoint save through an objective and continue the first-play campaign route on the simulator; physical acceptance remains external."
+  "next_step": "Complete a mission through its results save and verify earned progress after relaunch; continue original unlock and campaign coverage on the simulator while physical acceptance is blocked."
 }

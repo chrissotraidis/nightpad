@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-28 12:00 UTC
+Updated: 2026-10-28 16:40 UTC
 
 ## Outcome
 
@@ -270,10 +270,20 @@ simulator execution is no longer a platform blocker.
 - Game Data > Import Saves opens the document picker and copies the chosen
   files into Saves, asking before replacing a name that already exists. The
   picker selection itself is a manual step.
-- A real 166-byte PLRS profile written by the engine (`BOND.dat`) survived an
-  app relaunch. Select Codename listed it again and its mission list opened on
-  The Exchange, which loaded into gameplay. A checkpoint written after an
-  objective and an interrupted write still need evidence.
+- A real 166-byte PLRS profile (`BOND.dat`) survives app relaunch and loads
+  The Exchange. Its decoded mission mask is the initial `0x3`, with all scores
+  zero; this proves profile persistence, not earned campaign progression.
+- Engine profile writes now use a flushed hidden stage and atomic replacement,
+  retaining the previous `.dat.bak`. Twelve injected I/O scenarios and two
+  forcibly killed writers preserve a complete old/new profile. The original
+  Save Codename flow changed an isolated NPQA profile from Classic Bond to
+  NightFire and reloaded that setting after app relaunch. Existing saves stayed
+  byte-identical. See decision 0015 and `scripts/test_engine_save.sh`.
+- An original mission Secret Unlock was entered with the touch keyboard on
+  NPQA, saved, reloaded after an app update/relaunch, and reversed to the exact
+  prior bytes with the same code. An invalid entry and subsequent save left
+  the profile unchanged. This covers one mission-toggle family on simulator;
+  other unlock families and physical acceptance remain.
 - Control colours come from one shared palette; the test checks each control's
   actual lettering, dark on the face keys and white on the graphite keys, at
   4.5:1 or better.
@@ -409,9 +419,10 @@ a signing identity and a trusted device exist, then work the checklist in
 trip, touch and controller sessions, Secret Unlocks, display modes and the
 fifteen-minute stability runs.
 
-Independent work that can continue meanwhile: exercise a checkpoint save after
-an objective and keep walking the first-play campaign route on the simulator,
-then run the multiplayer mode/map matrix. Keep the fifteen-cycle action gate,
+Independent work that can continue meanwhile: complete a mission, continue
+past its results to save, and verify earned progress after relaunch. Individual
+objectives do not write a profile save. Continue original unlock coverage and
+the first-play campaign route on the simulator, then the multiplayer matrix. Keep the fifteen-cycle action gate,
 ten-cycle driving gate, mixed round trip, pause, transition, handoff and
 data-import checks as regressions.
 
