@@ -16,6 +16,7 @@ tester would see, what is blocked, and where the detail lives.
 | Interrupted engine writes are untested | A crash during a save write has no evidence either way | R11 notes |
 | Simulator shader compilation has no wall-clock budget | A cold session compiles hundreds of pipelines; startup timing must be measured from host/process clocks, not the game's in-session timestamps | `docs/DECISIONS/0014-simulator-metal.md` |
 | Stopping from a non-title front-end page can black the next session | Stopping while the codename page is showing reliably makes the next Start render only a black game surface before the title. Stopping from the title page is the stable path. Save-flow and menu-manager resets did not fix it | `docs/GOAL-JOURNAL.md`, G05 repeated-session row |
+| Driving Stop can exceed 60 seconds in audio cleanup | Action-to-driving handoff and driving gameplay work, but Stop can block in `Bond_CleanUp` destroying a sound stream. The shell reports the delayed stop rather than misreporting success | `docs/GOAL-JOURNAL.md`, G05 driving-stop row |
 | Tablet sheet editing is not scriptable in this harness | Saving from the iPad form sheet and drag editing stay manual | `docs/TEST-MATRIX.md` |
 
 ## Not issues

@@ -12,6 +12,7 @@ static __weak NightPadEngineHost *gHost;
 
 @interface NightPadEngineHost ()
 - (void)recordHandoff:(const char *)image;
+- (BOOL)startActionPreservingLaunchData:(BOOL)preserve;
 @end
 
 @implementation NightPadEngineHost {
@@ -97,7 +98,15 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
 }
 
 - (BOOL)startAction {
+    return [self startActionPreservingLaunchData:NO];
+}
+
+- (BOOL)startActionPreservingLaunchData:(BOOL)preserve {
 #if NIGHTPAD_HAS_ENGINE
+    if (!preserve && _launchState.length != 0) {
+        NSString *launchFile = [_launchState stringByAppendingPathComponent:@"psiLaunch.bin"];
+        unlink(launchFile.fileSystemRepresentation);
+    }
     NightPadActionEngineSetLaunchRequestCallback(AcceptLaunchRequest);
     char program[] = "NightPad";
     char *argv[] = { program, nullptr };
@@ -181,7 +190,7 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
         return NO;
     const BOOL toDriving = [target containsString:@"driving.xbe"];
     _handoffImage = nil;
-    return toDriving ? [self startDriving] : [self startAction];
+    return toDriving ? [self startDriving] : [self startActionPreservingLaunchData:YES];
 }
 
 - (BOOL)pollWindow {

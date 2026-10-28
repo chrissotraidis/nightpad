@@ -118,6 +118,14 @@ simulator execution is no longer a platform blocker.
   resets the backend's per-session GPU resource and command caches. Stopping from
   a non-title front-end page, such as the codename page, can still leave the
   next session black before the title; that remains open.
+- The simulator now completes the action-to-driving switch by selecting Paris
+  Prelude and enters the driving engine's Paris sniper view at 60 fps. Stopping
+  from that driving mission can exceed 60 seconds in `Bond_CleanUp` audio-stream
+  destruction; the driving-stop issue remains open.
+- User-initiated Start now removes a stale `psiLaunch.bin` before launching the
+  action engine, so reopening the app returns to the title or the saved
+  profile's resume state instead of the previous driving Results page.
+  In-process action/driving handoffs still preserve their launch page.
 - The simulator renderer uses SDL's Metal backend through a narrow patch to the
   pinned SDL source. SDL 3.4.18 assumes the iOS device-family query on the
   simulator, where Metal exposes the host GPU instead. The build applies

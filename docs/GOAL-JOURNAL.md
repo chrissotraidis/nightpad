@@ -1943,3 +1943,33 @@ are ignored and may contain paths, hashes, captures or device identities.
   The next investigation should target boot state after a non-title stop rather
   than the save-flow bookkeeping.
 
+## 2026-10-28T03:20:00Z — Paris Prelude reaches the driving engine
+
+- Goal: G04. Requirement: R06/R15 in progress.
+- Observed: from a fresh simulator session, selecting Paris Prelude requested
+  `d:\driving.xbe`, stopped and joined the action engine, started the driving
+  engine from the 3,072-byte launch page, and entered the mission's sniper view.
+  The running driving session reported 60 fps.
+- Observed: Stop from the driving mission did not join within 60 seconds. A
+  process sample puts the game thread in `Bond_CleanUp` -> `AStream::Destruct`
+  -> `STREAM_destroy`, yielding while a sound stream is torn down. This differs
+  from the action-engine SDL-present stop defect fixed earlier.
+- Evidence: `evidence/ios-shell/simulator-paris-driving.png` and the filtered
+  launch/join console log.
+- Verdict: the action-to-driving handoff and driving gameplay pass on the
+  simulator. Driving Stop is a separate open lifecycle issue.
+
+## 2026-10-28T03:40:00Z — a new app Start ignores the previous handoff page
+
+- Goal: G05. Requirement: R11/R15 in progress.
+- Observed: after leaving a driving session, relaunching and pressing Start
+  reopened the previous driving launch page and landed on Results instead of the
+  title.
+- Observed: `NightPadEngineHost` now deletes `LaunchState/psiLaunch.bin` for a
+  user-initiated action start. In-process action/driving handoffs use a separate
+  path that preserves the page the other engine just wrote.
+- Evidence: the relaunched simulator reached Press START instead of Results, and
+  the subsequent profile resume reached the saved Paris mission.
+- Verdict: fresh app starts no longer inherit a stale cross-engine handoff page.
+  Driving Stop remains the next lifecycle issue.
+
