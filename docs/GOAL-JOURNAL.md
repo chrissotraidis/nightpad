@@ -2078,3 +2078,29 @@ are ignored and may contain paths, hashes, captures or device identities.
   Start again reaches Press START with the process alive and no new crash
   report. `scripts/verify_patches.sh` PASS (65 files).
 
+## 2026-10-28T07:30:00Z — first handoff renders; a repeated handoff still recreates a dead window
+
+- Goal: G05/G06. Requirement: R06/R15.
+- Observed: after the sound-bank fix, a first action-to-driving handoff renders
+  Paris and the sniper tutorial; the right trigger fires; Stop returns in 1.7 s.
+  A second handoff in the same process (Start, handoff, Stop, Start, handoff) can
+  create an SDL window whose root view is `SDL_uikitview` instead of the Metal
+  view, while the engine reports ~360 draws at 60 fps and the screen stays black.
+- Tried, each without fixing the repeated case: dropping the shell window to the
+  normal level while the target window opens (this fixed the earlier always-black
+  handoff), one extra main-runloop turn before starting the target, keeping SDL
+  initialized instead of `SDL_Quit` (the device then outlives nothing but the
+  window still fails), and reusing the window (SDL rejects a second window per
+  display with "Only one window allowed per display").
+- Kept: the shell window-level drop and the one-turn delay, because the first
+  handoff now renders reliably across fresh launches; the repeated-handoff
+  window creation is recorded as an open simulator issue with the fresh-launch
+  workaround.
+- Also observed: the simulator's audio mixer produces sound (about 11k chunks
+  mixed with about 3.7k carrying sound during the front end), and the existing
+  `Saves/slot1.sav` is a 25-byte `nightpad-save-sentinel-01` fixture, so a real
+  in-game save is still not produced by the front end path.
+- Evidence: simulator screenshots of the handoff and black repeated handoff;
+  `/tmp/np-final2.txt`, `/tmp/np-noquit.txt`; `scripts/verify_patches.sh` PASS
+  (65 files).
+

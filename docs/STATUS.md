@@ -363,6 +363,10 @@ simulator execution is no longer a platform blocker.
   window and raises it again afterwards. The Paris tutorial renders, the right
   trigger fires, Mission Failed and REPLAY TUTORIAL work, and Stop returns in
   1.7 s.
+- The first handoff after a launch now renders reliably. A second handoff in the
+  same process can still create an SDL window without its Metal view (black
+  surface while the engine reports ~360 draws); a fresh app launch restores the
+  working path. Details and the attempted fixes are in `docs/KNOWN-ISSUES.md`.
 - A mission followed by Stop and Start no longer crashes: the action engine's
   sound banks were freed at the start of the next session, after the heap they
   pointed into had been replaced. `SFXShutdown` unloads them at session cleanup

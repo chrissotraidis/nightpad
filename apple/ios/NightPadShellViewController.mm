@@ -1097,32 +1097,42 @@ static uint64_t ShellResidentBytes(void) {
             // updateGameplaySurface raises the shell above it again once the target is running.
             strongSelf.view.window.windowLevel = UIWindowLevelNormal;
             [strongSelf->_engineHost closeWindow];
-            if (![strongSelf->_engineHost startHandoffTarget]) {
-                strongSelf->_switchingEngine = NO;
-                strongSelf->_engineTeardown = NO;
-                [strongSelf showError:@"The next game session could not start."];
-                [strongSelf stopGame];
-                return;
-            }
-            strongSelf->_enginePaused = NO;
-            strongSelf->_uiPausedEngine = NO;
-            strongSelf->_uiInputSuspended = NO;
-            [strongSelf->_gameInput engineChanged];
-            [strongSelf logSessionEvent:(strongSelf->_engineHost.activeEngine == NightPadEngineKindDriving
-                                             ? @"engine switched to driving"
-                                             : @"engine switched to action")];
-            if (strongSelf->_engineHost.activeEngine == NightPadEngineKindAction) {
-                [strongSelf->_engineHost setImmortal:strongSelf->_settings.assistImmortal];
-                [strongSelf->_engineHost setUnlimitedAmmo:strongSelf->_settings.assistUnlimitedAmmo];
-            }
-            strongSelf->_switchingEngine = NO;
-            strongSelf->_engineTeardown = NO;
-            strongSelf->_engineTimer = [NSTimer timerWithTimeInterval:1.0 / 60.0 target:strongSelf
-                                                             selector:@selector(pollEngine)
-                                                           userInfo:nil repeats:YES];
-            [NSRunLoop.mainRunLoop addTimer:strongSelf->_engineTimer forMode:NSRunLoopCommonModes];
-            [strongSelf updateGameplaySurface];
-            [strongSelf refreshMenu];
+            // The old window's UIWindow is torn down asynchronously. Building the next SDL window in this same
+            // runloop turn could leave its view controller without a loaded view (a black surface with the
+            // engine still presenting), so let UIKit finish one turn first.
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NightPadShellViewController *startSelf = weakSelf;
+                if (startSelf == nil)
+                    return;
+                if (![startSelf->_engineHost startHandoffTarget]) {
+                    startSelf->_switchingEngine = NO;
+                    startSelf->_engineTeardown = NO;
+                    [startSelf showError:@"The next game session could not start."];
+                    [startSelf stopGame];
+                    return;
+                }
+                startSelf->_enginePaused = NO;
+                startSelf->_uiPausedEngine = NO;
+                startSelf->_uiInputSuspended = NO;
+                [startSelf->_gameInput engineChanged];
+                [startSelf logSessionEvent:(startSelf->_engineHost.activeEngine == NightPadEngineKindDriving
+                                               ? @"engine switched to driving"
+                                               : @"engine switched to action")];
+                if (startSelf->_engineHost.activeEngine == NightPadEngineKindAction) {
+                    [startSelf->_engineHost setImmortal:startSelf->_settings.assistImmortal];
+                    [startSelf->_engineHost setUnlimitedAmmo:startSelf->_settings.assistUnlimitedAmmo];
+                }
+                startSelf->_switchingEngine = NO;
+                startSelf->_engineTeardown = NO;
+                startSelf->_engineTimer = [NSTimer timerWithTimeInterval:1.0 / 60.0
+                                                                 target:startSelf
+                                                               selector:@selector(pollEngine)
+                                                               userInfo:nil
+                                                                repeats:YES];
+                [NSRunLoop.mainRunLoop addTimer:startSelf->_engineTimer forMode:NSRunLoopCommonModes];
+                [startSelf updateGameplaySurface];
+                [startSelf refreshMenu];
+            });
         });
     });
 }
