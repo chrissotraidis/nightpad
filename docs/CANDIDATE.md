@@ -37,7 +37,7 @@ The fields a freeze must record:
 - Repository commit: `git rev-parse HEAD`
 - Engine pin: `8779cf79ff623b83b53b9acf9c0b0cd6639b75ab`
 - Patch series: `patches/0001`..`0017`, verified by
-  `scripts/verify_patches.sh` (53 files reproduced)
+  `scripts/verify_patches.sh` (57 files reproduced)
 - Dependency lock: `config/dependencies.lock.json`
 - Data identity: the imported tree's `manifest.json` (currently
   `data-a3c98ab965ac41e559ac` in the simulator)

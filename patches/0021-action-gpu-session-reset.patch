@@ -1,0 +1,14 @@
+diff --git a/src/common/gfx/d3d9Backend.h b/src/common/gfx/d3d9Backend.h
+index 2047398..dcd627b 100644
+--- a/src/common/gfx/d3d9Backend.h
++++ b/src/common/gfx/d3d9Backend.h
+@@ -137,6 +137,9 @@ bool D3D9_IsStandInSurface(const void *pSurface);
+ bool D3D9_ReadBackBuffer(void *destination, uint32_t pitch, uint32_t width, uint32_t height);
+ void D3D9_BlockUntilNotBusy(void *pResource);
+ void D3D9_KickOffAndWaitForIdle(void);
++// Releases the previous game session's backend resources and recorded commands.
++// The SDL GPU device, ring, transfer buffers and back buffer stay alive for reuse.
++void D3D9_ResetSessionCache(void);
+ 
+ // Visibility tests: the NV2A counts the pixels that pass the depth test between Begin and End(index), and the
+ // game asks for the count later. Occlusion queries, one per index. GetResult returns 0 with the count when it

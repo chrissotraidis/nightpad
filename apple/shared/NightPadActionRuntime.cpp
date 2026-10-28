@@ -11,6 +11,7 @@
 #include "../../vendor/nightfire/src/action/engine/XboxSettings.h"
 #include "../../vendor/nightfire/src/action/engine/XboxStartup.h"
 #include "../../vendor/nightfire/src/action/memory.h"
+#include "../../vendor/nightfire/src/common/gfx/d3d9Backend.h"
 #include "../../vendor/nightfire/src/driving/platform/Host.h"
 #include "../../vendor/nightfire/src/driving/platform/HostWindow.h"
 #include "../../vendor/nightfire/src/driving/platform/HostInput.h"
@@ -26,6 +27,7 @@ extern "C" int NightPadActionEngineStart(int argc, char **argv) {
     if (g_gameThread != nullptr) {
         return 0;
     }
+    D3D9_ResetSessionCache();
     HostSetCommandLine(argc, argv);
     LaunchOptions_Read();
     Demo_Init();

@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-28 01:40 UTC
+Updated: 2026-10-28 02:10 UTC
 
 ## Outcome
 
@@ -114,6 +114,10 @@ simulator execution is no longer a platform blocker.
   renderer was retaining its bound-index pointer across sessions and crashed in
   the first sky draw; it now invalidates that cache at graphics init and treats
   a missing index buffer as a reported draw miss instead of a null dereference.
+- Two consecutive Stop/Start cycles now render the title, and a third session
+  also reaches it after the action runtime resets the backend's per-session GPU
+  resource and command caches. The third session's transition from the title
+  into the profile screen still stalls on a black frame; that remains open.
 - The simulator renderer uses SDL's Metal backend through a narrow patch to the
   pinned SDL source. SDL 3.4.18 assumes the iOS device-family query on the
   simulator, where Metal exposes the host GPU instead. The build applies
@@ -292,7 +296,7 @@ simulator execution is no longer a platform blocker.
   frame. NightPad writes `Region=NTSC` to match the supplied 30 fps bundle.
 - `scripts/verify_patches.sh` now proves the tracked patch series reproduces
   the vendor tree: every patch applies to a clean worktree at the pinned
-  revision and 53 files match byte-for-byte. It is part of the quick pass.
+  revision and 57 files match byte-for-byte. It is part of the quick pass.
 - `scripts/package_device_app.sh` builds the Release app and writes a 3.6 MB
   unsigned IPA with no loose dylibs; signing and installation remain the device
   handoff step.

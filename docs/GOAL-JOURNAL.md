@@ -1910,3 +1910,21 @@ are ignored and may contain paths, hashes, captures or device identities.
 - Verdict: one Stop/Start cycle passes after live gameplay. Longer repeated
   sessions, driving handoff and physical-device stability remain.
 
+## 2026-10-28T02:10:00Z — repeated starts clear their GPU session
+
+- Goal: G05. Requirement: R15 in progress.
+- Observed: the second session rendered, but a third session could stall with
+  the engine waiting in `SDL_RunOnMainThread` while the main thread pumped SDL
+  present callbacks. The action runtime had never reset the backend's recorded
+  commands and per-session GPU resources between starts.
+- Observed: the action runtime now calls the backend's session-cache reset before
+  each start. `scripts/test_action_lifecycle.sh` passes three host cycles, and
+  the simulator completed Stop, Start, Stop, Start with the third title visible.
+- Open issue: pressing Start on the third title can remain on a black front end.
+  The touch overlay is still present and the process continues rendering, so this
+  is now recorded as a repeated-session input/front-end issue rather than a crash.
+- Evidence: second/third-session simulator logs and
+  `patches/0021-action-gpu-session-reset.patch`.
+- Verdict: repeated starts render and the previous hard crash is fixed. Repeated
+  front-end navigation is partial and remains active work.
+
