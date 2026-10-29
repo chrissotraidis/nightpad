@@ -1,10 +1,11 @@
 # NightPad status
 
-Updated: 2026-10-29 10:35 UTC
+Updated: 2026-10-29 11:16 UTC
 
 ## Outcome
 
-The goal loop is active. G00 and G01 are complete on their documented source
+The autonomous goal loop is paused at the user’s request after a bounded
+README and smoke-check wrap-up. The private-candidate gate remains incomplete. G00 and G01 are complete on their documented source
 and data scopes. G02 has a working native baseline and is blocked on the
 missing PAL movie set. The iPhone Simulator now runs the real game: imported
 data loads, the action engine hands off to driving, and the Paris tutorial
@@ -24,15 +25,20 @@ simulator execution is no longer a platform blocker.
   advancing. Native 50% survives app relaunch; live mute/100% and clean Stop
   pass. Removing the redundant root heading keeps all seven actions visible
   on the phone at standard row size. Decision 0025 records exact scope.
-- Current facf3fc reproduces the original NPRUN/Operative truck objective and
-  automatic CastleCourtyard transition with both native assists OFF. The live
-  touch route now enters the guardroom, cuts the left wire (original Searchlights
-  deactivated/Bond Move), picks up armor, crosses the helipad and descends to the
-  barrel courtyard. Bond is alive at the small left stair/arch, SG5 10/18, held
-  by native menu. No whole mission or earned results save is credited. All seven
-  saves and phone layout remain byte-identical. Visual truck alignment corrects
-  the earlier immediate-jump advice: wait for the bed below, then stay concealed
-  for roughly a minute. Navigation detours are not established engine defects.
+- Current facf3fc reproduces the original NPRUN/Operative truck objective,
+  automatic CastleCourtyard, searchlight laser/Bond Move and armor pickup.
+  The touch route crosses the helipad and courtyard, enters the party with
+  its new Rendezvous objective, and reaches the gallery. The live checkpoint
+  was cleanly stopped for the requested wrap-up. Same-process Start returns
+  the original title; touch Start opens the front end; final Stop returns the
+  launcher. All seven existing saves and phone layout remain byte-identical.
+  Both native assists remain OFF. No whole mission or earned results save is
+  credited. Final app state is stopped at launcher.
+- Final README links, complete quick suite, both iOS shell builds, link checks,
+  38-patch/85-file reconstruction and privacy pass. Installed and rebuilt
+  simulator binary hashes match the recorded facf3fc artifact. Exact local
+  smoke evidence: `evidence/final-smoke/result.json`. Resume only when requested;
+  campaign, multiplayer and physical-device acceptance remain incomplete.
 - All three unchanged CastleExterior recordings pass on current engine source,
   matching 25,784 frames. This is replay evidence and route reference, separate
   from the live simulator campaign. Exact subset: private

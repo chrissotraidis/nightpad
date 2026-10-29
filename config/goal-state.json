@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T10:35:27.478113+00:00",
+  "last_updated_at": "2026-10-29T11:16:05.491051+00:00",
   "active_goal": "G07",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -309,7 +309,7 @@
         "evidence/campaign-truck/result.json"
       ],
       "blockers": [],
-      "next_step": "Resume the held live NPRUN/Operative CastleCourtyard session on facf3fc, both native assists OFF. Searchlights are disabled and armor collected; Bond is alive on the left small staircase/arch beside the barrel courtyard, SG5 10/18. Use screenshot-led short turns to locate the two-barrel passage toward Main Gates; do not repeat blind doorway input. Preserve this live checkpoint. Earn original mission results/save/relaunch; human multiplayer frag/capture and physical gates remain open."
+      "next_step": "If user explicitly resumes: original party entrance/gallery reached previously; app now stopped, no live checkpoint. Continue earned mission/results/save/relaunch plus remaining campaign/multiplayer/device requirements."
     },
     "G08": {
       "status": "in_progress",
@@ -1974,6 +1974,16 @@
         "evidence/campaign-truck/volume-campaign-result.json",
         "evidence/action-demos/20261029T093704Z/results.json"
       ]
+    },
+    {
+      "at": "2026-10-29T11:16:05.491051+00:00",
+      "goal": "G05/G06/G07/G13",
+      "summary": "User-requested bounded wrap-up. README finalized; party section/gallery reached, then clean Stop/Start/title/touch Start/final Stop pass. Quick suite and save/layout protection pass. Loop paused by user; whole private-candidate objective remains incomplete.",
+      "evidence": [
+        "README.md",
+        "evidence/final-smoke/result.json",
+        "build/tests/final-smoke-20261029.log"
+      ]
     }
   ],
   "completed_tests": [
@@ -2313,7 +2323,17 @@
       "name": "post-0038 exterior replay and original touch campaign mechanic subset",
       "result": "PASS for all three CastleExterior recordings,25784frames, and original NPRUN/Operative truck transition, guardroom left-wire laser/Searchlights deactivated Bond Move, armor pickup and helipad/barrel courtyard. Native assists OFF; all seven saves/layout unchanged; live session held. Whole mission and earned save NOT VERIFIED.",
       "target": "macOS arm64 action replay / iPhone 17 Pro iOS26.5 simulator"
+    },
+    {
+      "name": "final bounded README and simulator smoke",
+      "result": "PASS: all README relative links, full quick suite including both shell lanes, final engine patch reconstruction38/85, clean party Stop, same-process title restart, touch Start/front end and clean final Stop. All7existing saves and phone layout unchanged; installed/built hashes match. No earned save or physical acceptance.",
+      "target": "macOS arm64 / iPhone17Pro iOS26.5 simulator / unsigned iPhoneOS build"
     }
   ],
-  "next_step": "Resume the held live NPRUN/Operative CastleCourtyard session on facf3fc, both native assists OFF. Searchlights are disabled and armor collected; Bond is alive on the left small staircase/arch beside the barrel courtyard, SG5 10/18. Use screenshot-led short turns to locate the two-barrel passage toward Main Gates; do not repeat blind doorway input. Preserve this live checkpoint. Earn original mission results/save/relaunch; human multiplayer frag/capture and physical gates remain open."
+  "next_step": "Autonomous loop paused at user request after bounded README and smoke verification. App is cleanly stopped at launcher. A later explicit resume must start original campaign again; no live party checkpoint or earned save exists.",
+  "execution_control": {
+    "status": "paused_by_user",
+    "reason": "User requested final README and bounded works check; stop continuing indefinitely.",
+    "at": "2026-10-29T11:16:05.491051+00:00"
+  }
 }

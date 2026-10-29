@@ -7,8 +7,9 @@ driving engines with an Apple shell, Xbox touch controls, and local gamepad
 support. Rendering uses SDL GPU on Metal; movies use FFmpeg.
 
 **Work in progress.** The real game runs in the iPhone Simulator, including
-original menus, action play, driving handoffs, and local bot matches. A complete
-campaign, signed physical-device play, touch comfort, audio fidelity, and
+original menus, action play through the Exchange party entrance, driving
+handoffs, and local bot matches. Complete campaign coverage, signed
+physical-device play, touch comfort, audio fidelity, and
 sustained device performance are still acceptance work. An unsigned build is
 not a finished or installable private candidate. See [current status](docs/STATUS.md)
 and the [test matrix](docs/TEST-MATRIX.md) for the verified boundary.
@@ -24,6 +25,7 @@ and the [test matrix](docs/TEST-MATRIX.md) for the verified boundary.
 - Native display settings for original through 4× rendering, 4:3/16:9,
   FXAA, and selected FOV values. A selectable setting is not a device
   performance endorsement; full visual-mode acceptance is still open.
+- Persistent master volume for game and movie audio, including mute.
 - Prepared-data import, separate save storage, save export/restore,
   diagnostics, and original control references.
 - Two optional action-engine assists, off by default: immortality and
@@ -178,7 +180,13 @@ scripts/verify_quick.sh        # host logic, both iOS shell lanes, links, privac
 scripts/verify_engine.sh       # slower actual-engine regression suite
 ```
 
-The current engine patch stack reproduces 37 patches across 83 files. Native
+The latest smoke check passes clean Stop/Start, title/front-end touch input,
+menu access, and preservation of existing saves and layouts. The quick suite
+also passes host tests and both iOS shell build lanes. This is simulator and
+build verification; earned mission-save/relaunch and physical play remain
+unverified.
+
+The current engine patch stack reproduces 38 patches across 85 files. Native
 lifecycle, save durability, input, and focused simulator checks have passed on
 their recorded scopes. Eleven unchanged action recordings cover 208,364
 frames on an earlier recorded candidate; they are not a continuous campaign
