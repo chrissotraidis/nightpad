@@ -456,3 +456,16 @@ success message and left a subsequent save byte-identical. The previous-copy
 backup matched each preceding file. Evidence: `evidence/save-durability/`.
 This covers one mission-toggle family; the reward/upgrade families and physical
 acceptance remain. Unlock testing does not count as earned campaign progress.
+
+
+### Five-family native/simulator evidence, 2026-10-29
+
+The native regression now covers all five families, invalid input, toggle/set
+semantics, actual weapon and multiplayer selectors, whole-profile save and
+fresh-process reload (118 parent and 32 child checks). Original simulator entry
+on isolated NPQA also accepts all-mission access, both reward sets, one individual
+reward toggle and weapon/gadget upgrades. After original Save Codename, Stop and
+process relaunch, final-mission access, Gold P2K/stunner upgrades and Uplink are
+visible. The expected 166-byte profile and previous copy are verified; NPRUN and
+unrelated saves are unchanged. No earned campaign progression is credited.
+Physical entry and signed-device persistence remain unverified.

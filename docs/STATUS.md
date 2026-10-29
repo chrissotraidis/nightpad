@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-29 01:30 UTC
+Updated: 2026-10-29 03:22 UTC
 
 ## Outcome
 
@@ -470,15 +470,24 @@ shell builds, device link contract) and `scripts/verify_engine.sh` (lifecycle,
 pause, transition and handoff).
 
 
-The Mac is currently locked, so simulator control is waiting for unlock.
-The phone's f504a63 app is held at the Exchange main gate and NPRUN is still
-unchanged. A matching native replay guide shows the higher-ledge/truck/crouch
-route into CastleCourtyard; the next live attempt should follow that route.
-This guide is not continuous campaign acceptance.
+The Mac is unlocked and simulator control works. NPRUN was protected and
+verified unchanged, the prior attempt cleanly stopped, and the patch-0035 app
+installed. The live original UI NPRUN run completed the truck/crouch objective and
+automatically entered CastleCourtyard with both native assists off. Three
+courtyard gameplay deaths exercised Replay; the attempt ended with clean Stop.
+The whole mission and earned results save remain unverified.
+`evidence/campaign-truck/result.json` records the boundary.
 
 Patch 0035 repairs the later-boot action audio-buffer registry overflow. The
 actual SDL/cache/mixer test passes fifteen boots and 2,880 buffers; fifteen
 real action lifecycle cycles join without overflow. Both iOS builds, quick
 checks, focused replay and the unsigned package pass. Full post-fix native engine
-verification passes. The new build is not installed in the locked
-simulator. HRTF/reverb and physical audio acceptance remain outstanding.
+verification passes. The new build is installed; its hash matches the verified artifact. HRTF/reverb and physical audio acceptance remain outstanding.
+
+Original Secret Unlocks now have five-family native coverage (118 checks plus
+32 fresh-process reload checks). The isolated NPQA original keyboard/save path
+accepts all-mission access, reward sets, an individual reward toggle and upgrades.
+A new app process reloads final-mission access, Gold P2K/stunner upgrades and
+Uplink selection. The 166-byte profile has expected masks and an exact previous
+copy; NPRUN and all unrelated saves are unchanged. Physical entry/persistence
+remain open. See `evidence/secret-unlocks/result.json`.

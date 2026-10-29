@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T01:35:54Z",
+  "last_updated_at": "2026-10-29T03:20:58.653818+00:00",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -33,10 +33,10 @@
     "unsigned_device_package_sha256": "eee1bf9fcbf7e2eaa54e8f5cdcbb62eae1099e1fa4142caba49dd289162c5b70",
     "evidence": "evidence/action-audio-sessions/build-identity.json",
     "verified_at": "2026-10-29T01:35:54Z",
-    "acceptance_scope": "post-0035 native audio/lifecycle/full engine suite and host/build gates; simulator remains on paused f504a63; campaign and physical acceptance remain",
-    "installed_simulator_source_commit": "f504a63",
-    "installed_simulator_binary_sha256": "95414d17a4d49188f415e9162f6760903e0feb8bc5e3ebf8023305246af18177",
-    "simulator_install_state": "not updated: Mac locked, prior campaign run held under native menu"
+    "acceptance_scope": "post-0035 native engine/build gates, live first truck objective, five-family unlock native/UI persistence subset; full campaign and physical acceptance remain",
+    "installed_simulator_source_commit": "241160e",
+    "installed_simulator_binary_sha256": "864331d6c780129442269af8894934b3c966055898be80c00164fc0605e93f1f",
+    "simulator_install_state": "patch-0035 installed and verified; live truck objective/courtyard and QA unlock relaunch subset pass"
   },
   "last_known_good_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
@@ -48,10 +48,10 @@
     "unsigned_device_package_sha256": "eee1bf9fcbf7e2eaa54e8f5cdcbb62eae1099e1fa4142caba49dd289162c5b70",
     "evidence": "evidence/action-audio-sessions/build-identity.json",
     "verified_at": "2026-10-29T01:35:54Z",
-    "acceptance_scope": "post-0035 native audio/lifecycle/full engine suite and host/build gates; simulator remains on paused f504a63; campaign and physical acceptance remain",
-    "installed_simulator_source_commit": "f504a63",
-    "installed_simulator_binary_sha256": "95414d17a4d49188f415e9162f6760903e0feb8bc5e3ebf8023305246af18177",
-    "simulator_install_state": "not updated: Mac locked, prior campaign run held under native menu"
+    "acceptance_scope": "post-0035 native engine/build gates, live first truck objective, five-family unlock native/UI persistence subset; full campaign and physical acceptance remain",
+    "installed_simulator_source_commit": "241160e",
+    "installed_simulator_binary_sha256": "864331d6c780129442269af8894934b3c966055898be80c00164fc0605e93f1f",
+    "simulator_install_state": "patch-0035 installed and verified; live truck objective/courtyard and QA unlock relaunch subset pass"
   },
   "goals": {
     "G00": {
@@ -159,7 +159,7 @@
       "blockers": [
         "B01"
       ],
-      "next_step": "Native lifecycle, boot, movie pause and handover gates pass after patch 0035. Obtain signed physical-device evidence, including loading-screen quit stability. Simulator route awaits Mac unlock."
+      "next_step": "Native lifecycle, boot, movie pause and handover gates pass after patch 0035. Updated simulator installed and campaign active. Obtain signed physical-device evidence, including loading-screen quit stability."
     },
     "G05": {
       "status": "in_progress",
@@ -226,7 +226,7 @@
         "evidence/campaign-first-play/nprun/paris-attempts.json"
       ],
       "blockers": [],
-      "next_step": "After Mac unlock, preserve the paused f504a63 NPRUN run and profile, stop/restart through original UI, and use the higher ledge to board and crouch in the supply truck through the castle gate. Continue actual continuous mission/results saving and relaunch; no mission has been earned yet. Patch 0035 SDL regression, fifteen real action cycles, full native suite, quick/build/package now pass; install its built simulator app only after protecting the current run. Remaining campaign/multiplayer/display and physical gates stay open."
+      "next_step": "R19 native five-family/save/relaunch checks pass; original QA UI accepts remaining families and reloads final mission, upgrades and Uplink. Continue original NPRUN Exchange through confirmed truck objective into courtyard, then earned results save/relaunch. Objective multiplayer and physical gates remain."
     },
     "G06": {
       "status": "in_progress",
@@ -290,10 +290,11 @@
         "patches/0016-standalone-file-dump.patch",
         "scripts/inspect_driving_track.py",
         "evidence/campaign-first-play/nprun/created-profile.json",
-        "evidence/campaign-first-play/nprun/paris-attempts.json"
+        "evidence/campaign-first-play/nprun/paris-attempts.json",
+        "evidence/campaign-truck/result.json"
       ],
       "blockers": [],
-      "next_step": "Resume fresh NPRUN continuous campaign after unlock. Truck route from the higher ledge is visible in the matching native CastleExterior recording, but live objective completion and earned results saving remain unverified."
+      "next_step": "Original NPRUN truck/crouch route completed first objective and entered CastleCourtyard on patch 0035. Three courtyard gameplay deaths ended in clean Stop. Resume fresh original campaign, clear raised pavilion, find dolphin fountain guardroom, then complete earned mission/results save and relaunch."
     },
     "G08": {
       "status": "in_progress",
@@ -328,10 +329,13 @@
         "scripts/test_presentation.sh",
         "tests/native/test_presentation.cpp",
         "docs/DECISIONS/0017-display-fit-and-flow-timing.md",
-        "evidence/presentation-fit"
+        "evidence/presentation-fit",
+        "tests/native/test_secret_unlocks.cpp",
+        "scripts/test_secret_unlocks.sh",
+        "evidence/secret-unlocks/result.json"
       ],
       "blockers": [],
-      "next_step": "Presentation repairs and full available replay recheck are recorded. Complete the R15 movie pause repair, then continue campaign/results saves, multiplayer and remaining display/device matrix."
+      "next_step": "R19 five-family native and simulator save/relaunch subset passes. Physical entry/persistence and remaining display, scope, split-screen, sustained device checks remain; campaign dependency remains open."
     },
     "G10": {
       "status": "in_progress",
@@ -697,12 +701,15 @@
       "evidence": [
         "docs/CAMPAIGN-INVENTORY.md",
         "evidence/save-durability/unlock-result.json",
-        "evidence/save-durability/unlock-success.png"
+        "evidence/save-durability/unlock-success.png",
+        "tests/native/test_secret_unlocks.cpp",
+        "scripts/test_secret_unlocks.sh",
+        "evidence/secret-unlocks/result.json"
       ],
       "decision_id": null,
       "notes": [
         "The 52-code/five-family inventory and original front-end mechanisms are recorded. A real simulator UI run on isolated NPQA toggled one mission on (mask 0x3 to 0x103), saved, updated/relaunched/loaded the app, then toggled it back to exactly 0x3 and saved. An invalid entry produced no success and left the re-saved profile byte-identical.",
-        "Reward-set, single-reward and upgrade families, all-mission entry, physical entry/ergonomics and signed-device persistence remain unverified. This test did not earn campaign progression."
+        "Native actual engine: all five families, invalid/no-match, set idempotence, individual toggles, other-player protection, actual weapon/dossier/multiplayer menu effects and whole-profile fresh-process load pass (118+32 checks). Simulator original NPQA UI accepts all-mission, character/scenario sets, individual character off toggle and spaced upgrade code. Original Save Codename writes expected masks, exact backup, unchanged unrelated profiles; new app process loads final mission, Gold P2K/stunner upgrades and Uplink. Physical input and signed-device persistence remain unverified. No earned progression is claimed."
       ]
     },
     "R20": {
@@ -962,12 +969,14 @@
         "G08",
         "G09"
       ],
-      "status": "open",
-      "description": "Simulator-control tool reports the Mac is locked and cannot interact. The live NPRUN run is held under native UI; unlock was requested. Independent native work continues.",
+      "status": "resolved",
+      "description": "User unlocked the Mac; simulator control works. Protected NPRUN, cleanly stopped old run and installed patch-0035 app.",
       "evidence": [
-        "evidence/campaign-route/lock-checkpoint.json"
+        "evidence/campaign-route/lock-checkpoint.json",
+        "evidence/campaign-truck/resume-identity.json"
       ],
-      "next_step": "Unlock the Mac manually, then resume the preserved simulator route."
+      "next_step": null,
+      "resolved_at": "2026-10-29T01:51:24.302849+00:00"
     }
   ],
   "journal_entries": [
@@ -1890,6 +1899,14 @@
         "build/tests/action-audio-sessions",
         "evidence/action-demos/20261029T010941Z/results.json"
       ]
+    },
+    {
+      "at": "2026-10-29T01:51:24.302849+00:00",
+      "goal": "G05",
+      "summary": "Previous held attempt cleanly stopped; updated app installed; original UI NPRUN/Operative/Exchange restarted; now high ledge above supply road. Mac access restored; temporary keep-awake active; no campaign save acceptance claimed.",
+      "evidence": [
+        "evidence/campaign-truck/resume-identity.json"
+      ]
     }
   ],
   "completed_tests": [
@@ -2174,7 +2191,22 @@
       "name": "post-0035 focused action replay",
       "result": "PASS: unchanged CastleIndoors1 all 635 frames",
       "target": "macOS arm64 action test"
+    },
+    {
+      "name": "actual Secret Unlocks five-family/save/process reload",
+      "result": "PASS: 118 parent +32 child checks, original menu/weapon effects, exact whole profile and previous copy, unrelated codename/player unchanged",
+      "target": "macOS arm64 native engine"
+    },
+    {
+      "name": "original unlock families and app relaunch",
+      "result": "PASS simulator subset: all-mission/reward sets/individual reward/upgrade UI, expected 166-byte save and exact backup, original new-process loader with final mission/Gold P2K/stunner/Uplink; other profiles unchanged",
+      "target": "iPhone 17 Pro iOS 26.5 simulator"
+    },
+    {
+      "name": "live unassisted Exchange truck objective",
+      "result": "PASS objective subset: truck boarding/crouch/concealment, objective complete and CastleCourtyard transition; three courtyard deaths/replay, no whole mission or earned save",
+      "target": "iPhone 17 Pro iOS 26.5 simulator"
     }
   ],
-  "next_step": "After Mac unlock, preserve the paused f504a63 NPRUN run and profile, stop/restart through original UI, and use the higher ledge to board and crouch in the supply truck through the castle gate. Continue actual continuous mission/results saving and relaunch; no mission has been earned yet. Patch 0035 SDL regression, fifteen real action cycles, full native suite, quick/build/package now pass; install its built simulator app only after protecting the current run. Remaining campaign/multiplayer/display and physical gates stay open."
+  "next_step": "R19 native five-family/save/relaunch checks pass; original QA UI accepts remaining families and reloads final mission, upgrades and Uplink. Continue original NPRUN Exchange through confirmed truck objective into courtyard, then earned results save/relaunch. Objective multiplayer and physical gates remain."
 }

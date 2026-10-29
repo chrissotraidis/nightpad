@@ -2615,3 +2615,19 @@ are ignored and may contain paths, hashes, captures or device identities.
   still has f504a63 held at frame 16005; new patch-0035 artifacts are built but
   not installed. New source/build hashes are in the private audio-session
   identity. Resume after unlock without pretending this paused run is saved.
+
+
+## 2026-10-29T01:51:24.302849+00:00 — unlocked simulator campaign resume
+
+- User confirmed unlock; simulator input works. A task-owned four-hour display/idle sleep assertion is active at the user’s request. Authentication settings are unchanged.
+- Protected NPRUN remains byte-identical, cleanly stopped the old attempt, installed source 241160e and verified its binary against the post-0035 build. Original UI NPRUN/Operative/Exchange is active at the high ledge. B03 resolved.
+- Identity: `evidence/campaign-truck/resume-identity.json`. No completed mission or earned save is credited. Continue the supply-truck/crouch route through the main gate.
+
+
+## 2026-10-29 03:22 UTC — live truck objective and complete unlock-family subset
+
+- Hypothesis: the higher ledge/truck/crouch route reaches CastleCourtyard without assists. On installed source 241160e, original NPRUN/Operative completed the first objective and changed section automatically. Original Replay recovered from three courtyard gameplay deaths. Clean Stop; no completed mission/results save, and NPRUN stayed byte-identical. The next route clears the raised pavilion before entering the dolphin fountain guardroom. Gameplay deaths are not evidence of an engine regression. `evidence/campaign-truck/result.json`.
+- Independent R19 hypothesis: all five retail code families survive original whole-profile persistence without changing unrelated players/profiles. Added a native regression linked to the actual raw engine: invalid input, all-mission, reversible mission/single-reward toggles, idempotent reward sets/upgrades, actual weapon/dossier and multiplayer selectors, 166-byte save, exact backup and fork/exec reload. `scripts/test_secret_unlocks.sh` passes 118 parent and 32 child checks; registered in engine verification. No engine/app binary change or new exports.
+- Simulator original NPQA keyboard accepts the remaining all-mission/reward-set/single-reward/upgrade families, including a space. Original Save Codename writes mission mask 0xfff, expected reward/upgrade words, and exact preceding backup. Stop, process termination, relaunch and original profile load retain final mission selection, Gold P2K/stunner upgrades and Uplink scenario. Protected unrelated profiles are unchanged. `evidence/secret-unlocks/result.json`, captures and `build/tests/secret-unlocks-run.log`.
+- Exact engine/dependency/build identity remains the post-0035 artifact in `evidence/action-audio-sessions/build-identity.json`; engine pin 8779cf79ff623b83b53b9acf9c0b0cd6639b75ab and dependency hash f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e. Prior same-artifact full engine/build gates remain scoped evidence; only the new focused native test reran.
+- R19 remains partial for physical input and signed-device persistence. Campaign, remaining multiplayer/display and physical acceptance remain open. Mac is unlocked with the task-owned temporary keep-awake assertion. Goal stays active; next independent step is an objective multiplayer match on a second map, then the original NPRUN earned campaign path.
