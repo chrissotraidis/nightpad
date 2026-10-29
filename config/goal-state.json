@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T09:20:01.265674+00:00",
+  "last_updated_at": "2026-10-29T10:35:27.478113+00:00",
   "active_goal": "G07",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -309,7 +309,7 @@
         "evidence/campaign-truck/result.json"
       ],
       "blockers": [],
-      "next_step": "Current facf3fc audio/menu candidate is installed and cleanly stopped at launcher. Start original NPRUN/Operative Exchange with both native assists OFF. Use immediate truck/crouch timing recorded on f5c5303, then clear pavilion guards before crossing banner arch. Inspect guardroom stairs/door using short observed inputs; avoid wrong left arch and narrow-landing falls. Earn original mission results/save/relaunch; human multiplayer frag/capture and physical gates remain."
+      "next_step": "Resume the held live NPRUN/Operative CastleCourtyard session on facf3fc, both native assists OFF. Searchlights are disabled and armor collected; Bond is alive on the left small staircase/arch beside the barrel courtyard, SG5 10/18. Use screenshot-led short turns to locate the two-barrel passage toward Main Gates; do not repeat blind doorway input. Preserve this live checkpoint. Earn original mission results/save/relaunch; human multiplayer frag/capture and physical gates remain open."
     },
     "G08": {
       "status": "in_progress",
@@ -1965,6 +1965,15 @@
         "evidence/campaign-truck/current-attempt.json",
         "evidence/master-volume/result.json"
       ]
+    },
+    {
+      "at": "2026-10-29T10:35:27.478113+00:00",
+      "goal": "G07",
+      "summary": "Current audio/menu build reproduces truck objective; laser disables searchlights, armor pickup and helipad/barrel-courtyard progression pass on original unassisted touch route. Three unchanged CastleExterior recordings match all25784frames. Live session preserved; earned whole-mission save remains open. Earlier immediate truck timing corrected by visual wait.",
+      "evidence": [
+        "evidence/campaign-truck/volume-campaign-result.json",
+        "evidence/action-demos/20261029T093704Z/results.json"
+      ]
     }
   ],
   "completed_tests": [
@@ -2299,7 +2308,12 @@
       "name": "post-0038 master volume and complete native menu",
       "result": "Full native engine suite; actual game/movie final PCM master-volume tests; quick before final root-heading/inline-group-only delta; final both iOS builds, 37 exports, 38-patch/85-file reconstruction, unchanged 635-frame replay, unsigned Release package and phone Audio/relaunch/Stop subset pass. Physical listening/campaign acceptance remain open. Native 50% persists through process relaunch, live mute/100% selection and clean Stop work; all seven saves and layout unchanged.",
       "target": "macOS arm64 / iPhone 17 Pro iOS 26.5 simulator / unsigned iPhoneOS build"
+    },
+    {
+      "name": "post-0038 exterior replay and original touch campaign mechanic subset",
+      "result": "PASS for all three CastleExterior recordings,25784frames, and original NPRUN/Operative truck transition, guardroom left-wire laser/Searchlights deactivated Bond Move, armor pickup and helipad/barrel courtyard. Native assists OFF; all seven saves/layout unchanged; live session held. Whole mission and earned save NOT VERIFIED.",
+      "target": "macOS arm64 action replay / iPhone 17 Pro iOS26.5 simulator"
     }
   ],
-  "next_step": "Current facf3fc audio/menu candidate is installed and cleanly stopped at launcher. Start original NPRUN/Operative Exchange with both native assists OFF. Use immediate truck/crouch timing recorded on f5c5303, then clear pavilion guards before crossing banner arch. Inspect guardroom stairs/door using short observed inputs; avoid wrong left arch and narrow-landing falls. Earn original mission results/save/relaunch; human multiplayer frag/capture and physical gates remain."
+  "next_step": "Resume the held live NPRUN/Operative CastleCourtyard session on facf3fc, both native assists OFF. Searchlights are disabled and armor collected; Bond is alive on the left small staircase/arch beside the barrel courtyard, SG5 10/18. Use screenshot-led short turns to locate the two-barrel passage toward Main Gates; do not repeat blind doorway input. Preserve this live checkpoint. Earn original mission results/save/relaunch; human multiplayer frag/capture and physical gates remain open."
 }

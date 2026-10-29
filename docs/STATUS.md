@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-29 09:20 UTC
+Updated: 2026-10-29 10:35 UTC
 
 ## Outcome
 
@@ -24,15 +24,19 @@ simulator execution is no longer a platform blocker.
   advancing. Native 50% survives app relaunch; live mute/100% and clean Stop
   pass. Removing the redundant root heading keeps all seven actions visible
   on the phone at standard row size. Decision 0025 records exact scope.
-- Reviewed controls on source f5c5303 reproduce the truck objective and
-  automatic CastleCourtyard transition. The raised-pavilion/banner route
-  reaches the dolphin fountain; combat at the guardroom stairs remains
-  unfinished. Original Replay recovers the courtyard; no completed mission
-  or earned results save is credited. That live checkpoint was cleanly
-  stopped to install the Audio candidate. Current facf3fc is installed/hash
-  verified and stopped at the launcher after volume/relaunch/title/Stop checks.
-  All seven save files and the phone layout remain unchanged. Start original
-  NPRUN/Operative Exchange next; both native assists remain OFF.
+- Current facf3fc reproduces the original NPRUN/Operative truck objective and
+  automatic CastleCourtyard transition with both native assists OFF. The live
+  touch route now enters the guardroom, cuts the left wire (original Searchlights
+  deactivated/Bond Move), picks up armor, crosses the helipad and descends to the
+  barrel courtyard. Bond is alive at the small left stair/arch, SG5 10/18, held
+  by native menu. No whole mission or earned results save is credited. All seven
+  saves and phone layout remain byte-identical. Visual truck alignment corrects
+  the earlier immediate-jump advice: wait for the bed below, then stay concealed
+  for roughly a minute. Navigation detours are not established engine defects.
+- All three unchanged CastleExterior recordings pass on current engine source,
+  matching 25,784 frames. This is replay evidence and route reference, separate
+  from the live simulator campaign. Exact subset: private
+  `evidence/campaign-truck/volume-campaign-result.json`.
 - Project root: `/Users/chrissotraidis/GitHub/nightpad`.
 - Nightfire, GalaxyPad, SunPad and extract-xiso are checked out at the exact
   revisions in `config/dependencies.lock.json`.
