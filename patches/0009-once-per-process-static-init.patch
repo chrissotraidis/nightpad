@@ -1,0 +1,21 @@
+diff --git a/src/driving/platform/XboxStartup.cpp b/src/driving/platform/XboxStartup.cpp
+index 9edd52c..ceeed9b 100644
+--- a/src/driving/platform/XboxStartup.cpp
++++ b/src/driving/platform/XboxStartup.cpp
+@@ -451,9 +451,13 @@ DWORD WINAPI mainXapiStartup(LPVOID unused) {
+     Xbox_mtinit();                                               // _rtinit
+     Crt::_fpmath();                                              // _cinit
+     Crt::_onexitinit();
+-    if (!StaticInitDump_RunOriginalTable())                      // the C++ constructors
+-        RunStaticInitialisers();
+-    StaticInitDump_Write();
++    static bool staticInitialisersRan = false;
++    if (!staticInitialisersRan) {
++        if (!StaticInitDump_RunOriginalTable())                  // the C++ constructors
++            RunStaticInitialisers();
++        StaticInitDump_Write();
++        staticInitialisersRan = true;
++    }
+ 
+     printf("[startup] calling main\n");
+     fflush(stdout);

@@ -1,0 +1,20 @@
+diff --git a/src/action/game.cpp b/src/action/game.cpp
+index 8d1f6d2..7c8e28b 100644
+--- a/src/action/game.cpp
++++ b/src/action/game.cpp
+@@ -294,13 +294,8 @@ void psiStartBackgroundMovie(HASHCODE hashcode, char looping, int volume) {
+   BackgroundMovieSetVolume(scaledVolume);
+   printf("Playing background movie %s\n", BackgroundMovieFilename);
+   BackgroundMoviePlayFile(BackgroundMovieFilename);
+-  // NightPad: a movie this data set lacks, or one the decoder refuses, counts as finished at once. The front
+-  // end otherwise waits for a page that never draws - the attract page is a full-screen black frame until a
+-  // button press, which is what a session whose trailer is missing showed.
+-  if (BackgroundMovieHashcode != 0 && !BackgroundMovieIsPlaying()) {
+-    BackgroundMovieCleanup();
+-    BackgroundMovieHashcode = 0;
+-  }
++  // Keep the retail flow/input timing when a movie is unavailable. The front
++  // end's missing attract trailer is handled by P_ATTRACT_Handler specifically.
+ }
+
+ bool IsMultiplayerMission(HASHCODE level) {

@@ -1,0 +1,62 @@
+#ifndef NIGHTPAD_TOUCH_LAYOUT_H_
+#define NIGHTPAD_TOUCH_LAYOUT_H_
+
+#include <filesystem>
+#include <string>
+#include <vector>
+
+namespace nightpad {
+
+enum class TouchControlId {
+    LeftStick,
+    RightStick,
+    Dpad,
+    A,
+    B,
+    X,
+    Y,
+    LeftTrigger,
+    RightTrigger,
+    White,
+    Black,
+    Start,
+    Back,
+};
+
+enum class TouchDeviceClass { Phone, Tablet };
+
+struct TouchControl {
+    TouchControlId id;
+    float x = 0, y = 0, width = 0, height = 0;   // normalized safe-area rectangle
+    float opacity = 0.7f;
+    bool visible = true;
+};
+
+struct TouchLayout {
+    // File format, independent of default geometry. Existing custom layouts
+    // remain valid when the authored defaults change; Reset adopts new defaults.
+    int version = 3;
+    TouchDeviceClass device = TouchDeviceClass::Phone;
+    std::vector<TouchControl> controls;
+
+    static TouchLayout Defaults(TouchDeviceClass device);
+    void Reset();
+
+    // Keeps every control inside the safe area and no smaller than minPoints in
+    // either axis. Opacity is clamped to [0.2, 1].
+    void Clamp(float viewWidth, float viewHeight, float minPoints = 44.0f);
+
+    // The same resolved rectangles drive drawing, hit testing and editing.
+    // Round controls stay square in points, including on a different aspect.
+    TouchLayout ForCanvas(float viewWidth, float viewHeight, float minPoints = 44.0f) const;
+
+    bool Save(const std::filesystem::path &path, std::string *error) const;
+    bool Load(const std::filesystem::path &path, std::string *error);
+};
+
+const char *TouchControlName(TouchControlId id);
+const char *TouchDeviceName(TouchDeviceClass device);
+
+}  // namespace nightpad
+
+#endif  // NIGHTPAD_TOUCH_LAYOUT_H_

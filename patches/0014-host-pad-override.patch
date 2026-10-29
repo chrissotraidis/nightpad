@@ -1,0 +1,97 @@
+--- a/src/driving/platform/HostInput.h
++++ b/src/driving/platform/HostInput.h
+@@ -57,6 +57,14 @@
+ void HostInput_SetSuspended(bool suspended);
+ bool HostInput_Suspended(void);
+ 
++// NightPad: the app is the pad authority. While host pads are enabled, SDL's own gamepads are ignored and each
++// port answers the last state published here; a port with no published state reports no pad. Rumble requests go
++// to the handler instead of SDL so the app can drive the connected controller.
++typedef void (*HostRumbleHandler)(int port, uint16_t leftMotor, uint16_t rightMotor);
++void HostInput_SetHostPadsEnabled(bool enabled);
++void HostInput_SetHostPad(int port, const HostPadState *state);
++void HostInput_SetRumbleHandler(HostRumbleHandler handler);
++
+ // The mouse, for the action engine's mouse look (src/action/engine/mouseLook.cpp)
+ struct HostMouseState {
+     int32_t dx, dy;       // movement since the last read: the device's own counts where the host has them
+--- a/src/driving/platform/HostInputSdl.cpp
++++ b/src/driving/platform/HostInputSdl.cpp
+@@ -18,6 +18,10 @@
+ 
+ static SDL_Gamepad *Ports[kPorts];
+ static std::atomic<bool> Suspended{false};
++static std::atomic<bool> HostPadsEnabled{false};
++static HostPadState HostPads[kPorts];
++static bool HostPadPresent[kPorts];
++static std::atomic<HostRumbleHandler> HostRumble{nullptr};
+ 
+ bool HostInput_Suspended(void) {
+     return Suspended.load(std::memory_order_acquire);
+@@ -104,6 +108,23 @@
+     static HostPadState last[kPorts];
+     static uint32_t packets[kPorts];
+ 
++    if (HostPadsEnabled.load(std::memory_order_acquire)) {
++        HostEnterLock(PortsLock());
++        HostPadState now = HostPads[port];
++        const bool present = HostPadPresent[port];
++        HostLeaveLock(PortsLock());
++        if (!present)
++            return false;
++        if (Suspended.load(std::memory_order_acquire))
++            memset(&now, 0, sizeof(now));
++        if (memcmp(&now, &last[port], sizeof(now)) != 0)
++            packets[port]++;
++        last[port] = now;
++        now.packetNumber = packets[port];
++        *state = now;
++        return true;
++    }
++
+     HostEnterLock(PortsLock());
+     SDL_Gamepad *pad = Ports[port];
+     if (pad == NULL) {
+@@ -142,12 +163,42 @@
+ 
+ // Each call replaces the last; SDL ends a rumble after at most 65 seconds unless it is set again.
+ void HostInput_SetRumble(int port, uint16_t leftMotor, uint16_t rightMotor) {
++    if (HostRumbleHandler handler = HostRumble.load(std::memory_order_acquire)) {
++        handler(port, leftMotor, rightMotor);
++        return;
++    }
+     HostEnterLock(PortsLock());
+     if (Ports[port] != NULL)
+         SDL_RumbleGamepad(Ports[port], leftMotor, rightMotor, 0xffffffffu);
+     HostLeaveLock(PortsLock());
+ }
+ 
++void HostInput_SetHostPadsEnabled(bool enabled) {
++    HostEnterLock(PortsLock());
++    memset(HostPads, 0, sizeof(HostPads));
++    memset(HostPadPresent, 0, sizeof(HostPadPresent));
++    HostPadsEnabled.store(enabled, std::memory_order_release);
++    HostLeaveLock(PortsLock());
++}
++
++void HostInput_SetHostPad(int port, const HostPadState *state) {
++    if (port < 0 || port >= kPorts)
++        return;
++    HostEnterLock(PortsLock());
++    HostPadPresent[port] = state != NULL;
++    if (state != NULL) {
++        HostPads[port] = *state;
++        HostPads[port].packetNumber = 0;
++    } else {
++        memset(&HostPads[port], 0, sizeof(HostPads[port]));
++    }
++    HostLeaveLock(PortsLock());
++}
++
++void HostInput_SetRumbleHandler(HostRumbleHandler handler) {
++    HostRumble.store(handler, std::memory_order_release);
++}
++
+ bool HostInput_KeyHeld(HostKey key) {
+     if (Suspended.load(std::memory_order_acquire))
+         return false;

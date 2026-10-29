@@ -1,0 +1,58 @@
+diff --git a/src/action/game.cpp b/src/action/game.cpp
+index ae86a8f..8d1f6d2 100644
+--- a/src/action/game.cpp
++++ b/src/action/game.cpp
+@@ -1087,6 +1087,14 @@ void GameFlow_QuickPushState(uint state) {
+     set_InhibitGameDrawIfRequired();
+ }
+ 
++// NightPad: a launch in this process is a fresh game boot. The flow stack is a process static, so without this a
++// second session continued from the previous one's top state (GAMEFLOW_GAME), skipped GAMEFLOW_BOOT, never
++// initialised the front end, and drew an empty black screen while frames advanced.
++void GameFlow_ResetForBoot(void) {
++    StackIndex = 1;
++    GameStateStack[0] = GAMEFLOW_BOOT;
++}
++
+ // ---------------------------------------------------------------------------------------------------------------
+ // Eurocom's frame-timing helper. The original is four instructions and they are worth reading, because the
+ // reason this is reimplemented is in them:
+diff --git a/src/action/game.h b/src/action/game.h
+index cb8a6f5..2a6ea18 100644
+--- a/src/action/game.h
++++ b/src/action/game.h
+@@ -55,6 +55,7 @@ enum GameFlowState {
+ };
+ 
+ uint GameFlow_GetState(void);
++void GameFlow_ResetForBoot(void);
+ void ResetMap_LevelToLoad(HASHCODE level, bool warmReset, bool skipFmv);
+ void ResetMap_GameInit(void);
+ void ResetMap_GenLoadScreen(void);
+diff --git a/src/action/main.cpp b/src/action/main.cpp
+index dfe3189..af5902b 100644
+--- a/src/action/main.cpp
++++ b/src/action/main.cpp
+@@ -8,6 +8,7 @@
+ #include "engine/XboxSystem.h"
+ #include "engine/XboxError.h"
+ #include "game.h"
++#include "ui/Menu.h"   // Menu_ResetNoInputCount: the front end's idle count starts afresh each session
+ #include "../common/engineLifecycle.h"
+ #include "../driving/platform/Host.h"       // HostSleep for the pause wait
+ #include <atomic>
+@@ -56,6 +57,14 @@ int NfWarnMuted;
+ // FUNC_AT(000e8e90)
+ void Game_Main(int argc, char **argv) {
+ 
++    // NightPad: a launch in this process is a fresh game boot. The front end opens its attract page once the
++    // idle count reaches MENU_IDLE_ATTRACT, and that count is a process static; without this, a second session
++    // inherited the first one's idle frames and opened the attract trailer (missing from the 30 fps data) at
++    // once, leaving a black page until a button.
++    Menu_ResetNoInputCount();
++    // The flow stack must start at GAMEFLOW_BOOT like a new process; a second session otherwise stayed in the
++    // previous session's GAMEFLOW_GAME with no front end initialised.
++    GameFlow_ResetForBoot();
+     xboxInitInputDevices();
+     xboxInitGraphics();
+     FS_Init();

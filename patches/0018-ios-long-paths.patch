@@ -1,0 +1,62 @@
+diff --git a/src/action/engine/XboxSettings.cpp b/src/action/engine/XboxSettings.cpp
+index 561748d..60084cc 100644
+--- a/src/action/engine/XboxSettings.cpp
++++ b/src/action/engine/XboxSettings.cpp
+@@ -48,7 +48,9 @@ struct Settings {
+     bool mouseInvertY;
+     bool mouseZoomToggle;
+     float fovDegrees;
+-    char discPath[240];  // where the game's disc data lives; see common/xboxPath.cpp
++    // iPhone application containers put the imported data well past Windows' old 240-character
++    // settings limit. Keep the full sandbox path that NightPad writes.
++    char discPath[1024];  // where the game's disc data lives; see common/xboxPath.cpp
+ };
+ 
+ static Settings g_settings;
+diff --git a/src/driving/platform/Host.h b/src/driving/platform/Host.h
+index 9dfc112..69e92e9 100644
+--- a/src/driving/platform/Host.h
++++ b/src/driving/platform/Host.h
+@@ -50,7 +50,13 @@ typedef unsigned long HostUlongPtr;
+ #define HOST_CREATE_SUSPENDED 4u
+ #define HOST_TLS_OUT_OF_INDEXES 0xffffffffu
+ #define HOST_HEAP_ZERO_MEMORY 8u
++#ifdef _WIN32
+ #define HOST_MAX_PATH        260
++#else
++// iOS application containers and their imported game-data paths routinely
++// exceed Windows' MAX_PATH once the disc root is included.
++#define HOST_MAX_PATH        4096
++#endif
+ 
+ typedef HostDword (__stdcall *HostThreadStart)(void *parameter);
+ typedef void (__stdcall *HostTimerCallback)(unsigned id, unsigned message, HostUlongPtr user,
+diff --git a/src/driving/platform/XboxXapi.cpp b/src/driving/platform/XboxXapi.cpp
+index bd8281d..c048b46 100644
+--- a/src/driving/platform/XboxXapi.cpp
++++ b/src/driving/platform/XboxXapi.cpp
+@@ -122,11 +122,13 @@ DWORD Xbox_XGetVideoFlags(void) {
+ // ---- files
+ 
+ // CreateFileA (0x0010f76c). The path is an Xbox one ("d:\driving\..."), resolved onto the host as the loader
+-// resolves NtCreateFile's (src/loader/file.cpp); a share mode of zero opens shared, as there.
++// resolves NtCreateFile's (src/loader/file.cpp); a share mode of zero opens shared, as there. The resolved
++// path is a host one: an iOS application container puts the game data well past MAX_PATH, so the buffer is
++// the host's own (4096 off Windows) rather than the Xbox's 260.
+ HANDLE __stdcall Xbox_CreateFileA(const char *path, DWORD access, DWORD share, SECURITY_ATTRIBUTES *security,
+                                          DWORD disposition, DWORD flags, HANDLE templateFile) {
+     (void)security; (void)templateFile;
+-    char hostPath[MAX_PATH];
++    char hostPath[HOST_MAX_PATH];
+     if (path == NULL || !Xbox_ResolvePath(path, hostPath, sizeof(hostPath))) {
+         HostSetLastError(ERROR_PATH_NOT_FOUND);
+         return INVALID_HANDLE_VALUE;
+@@ -138,7 +140,7 @@ HANDLE __stdcall Xbox_CreateFileA(const char *path, DWORD access, DWORD share, S
+ 
+ // DeleteFileA (0x0010fd88).
+ BOOL __stdcall Xbox_DeleteFileA(const char *path) {
+-    char hostPath[MAX_PATH];
++    char hostPath[HOST_MAX_PATH];
+     if (path == NULL || !Xbox_ResolvePath(path, hostPath, sizeof(hostPath))) {
+         HostSetLastError(ERROR_PATH_NOT_FOUND);
+         return FALSE;

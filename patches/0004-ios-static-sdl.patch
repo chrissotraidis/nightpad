@@ -1,0 +1,73 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index bcebc75..4d389d6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1093,10 +1093,23 @@ if(NIGHTFIRE_SDL)
+   set(NF_SDL3_DIR "" CACHE PATH "An installed SDL3's CMake package directory; empty to build the pinned release")
+   if(NF_SDL3_DIR)
+     find_package(SDL3 REQUIRED CONFIG PATHS ${NF_SDL3_DIR} NO_DEFAULT_PATH)
++    if(IOS AND TARGET SDL3::SDL3-static)
++      set(NF_SDL3_LIB SDL3::SDL3-static)
++    else()
++      set(NF_SDL3_LIB SDL3::SDL3)
++    endif()
+   else()
+     include(FetchContent)
+-    set(SDL_SHARED ON CACHE BOOL "" FORCE)
+-    set(SDL_STATIC OFF CACHE BOOL "" FORCE)
++    if(IOS)
++      # iOS apps embed static code; a loose dylib in the app bundle is not a supported product shape.
++      set(SDL_SHARED OFF CACHE BOOL "" FORCE)
++      set(SDL_STATIC ON CACHE BOOL "" FORCE)
++      set(NF_SDL3_LIB SDL3::SDL3-static)
++    else()
++      set(SDL_SHARED ON CACHE BOOL "" FORCE)
++      set(SDL_STATIC OFF CACHE BOOL "" FORCE)
++      set(NF_SDL3_LIB SDL3::SDL3)
++    endif()
+     set(SDL_TEST_LIBRARY OFF CACHE BOOL "" FORCE)
+     foreach(subsystem RENDER GPU CAMERA SENSOR DIALOG TRAY)   # what the game does not use
+       set(SDL_${subsystem} OFF CACHE BOOL "" FORCE)
+@@ -1387,13 +1400,15 @@ foreach(target action_standalone action_standalone_test)
+       target_link_libraries(${target} PRIVATE dxvk_d3d9)
+     endif()
+     target_link_libraries(${target} PRIVATE ${CMAKE_DL_LIBS} Threads::Threads)
+-    add_custom_command(TARGET ${target} POST_BUILD
+-                       COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_SONAME_FILE:SDL3::SDL3> ${NF_DXVK_D3D9}
+-                               ${NF_FFMPEG_FILES} $<TARGET_FILE_DIR:${target}>)
++    if(NOT IOS)
++      add_custom_command(TARGET ${target} POST_BUILD
++                         COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_SONAME_FILE:SDL3::SDL3> ${NF_DXVK_D3D9}
++                                 ${NF_FFMPEG_FILES} $<TARGET_FILE_DIR:${target}>)
++    endif()
+   endif()
+   if(NIGHTFIRE_SDL)
+     target_compile_definitions(${target} PRIVATE NIGHTFIRE_SDL)
+-    target_link_libraries(${target} PRIVATE SDL3::SDL3)
++    target_link_libraries(${target} PRIVATE ${NF_SDL3_LIB})
+     if(WIN32)
+       add_custom_command(TARGET ${target} POST_BUILD
+                          COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL3::SDL3> $<TARGET_FILE_DIR:${target}>)
+@@ -1570,16 +1585,18 @@ foreach(target driving_standalone driving_standalone_test)
+     endif()
+     target_link_libraries(${target} PRIVATE ${CMAKE_DL_LIBS} Threads::Threads)
+     target_compile_options(${target} PRIVATE -include ${CMAKE_SOURCE_DIR}/src/common/linux/msvcNames.h)
+-    add_custom_command(TARGET ${target} POST_BUILD   # beside the executable
+-                       COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_SONAME_FILE:SDL3::SDL3> ${NF_DXVK_D3D9}
+-                               ${NF_FFMPEG_FILES} $<TARGET_FILE_DIR:${target}>)
++    if(NOT IOS)
++      add_custom_command(TARGET ${target} POST_BUILD   # beside the executable
++                         COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_SONAME_FILE:SDL3::SDL3> ${NF_DXVK_D3D9}
++                                 ${NF_FFMPEG_FILES} $<TARGET_FILE_DIR:${target}>)
++    endif()
+   else()
+     target_link_libraries(${target} PRIVATE drivinghost)
+     target_compile_options(${target} PRIVATE -include ${CMAKE_SOURCE_DIR}/src/common/linux/msvcNames.h)
+   endif()
+   if(NIGHTFIRE_SDL)
+     target_compile_definitions(${target} PRIVATE NIGHTFIRE_SDL)
+-    target_link_libraries(${target} PRIVATE SDL3::SDL3)
++    target_link_libraries(${target} PRIVATE ${NF_SDL3_LIB})
+     if(WIN32)   # beside the executable (the 32-bit Release folder also gets one from drivinginject)
+       add_custom_command(TARGET ${target} POST_BUILD
+                          COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL3::SDL3> $<TARGET_FILE_DIR:${target}>)

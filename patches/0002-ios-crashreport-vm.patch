@@ -1,0 +1,47 @@
+diff --git a/src/driving/standalone/CrashReportPosix.cpp b/src/driving/standalone/CrashReportPosix.cpp
+index 1ba1e91..4dc3bf5 100644
+--- a/src/driving/standalone/CrashReportPosix.cpp
++++ b/src/driving/standalone/CrashReportPosix.cpp
+@@ -9,7 +9,9 @@
+ #include <unistd.h>
+ #ifdef __APPLE__
+ #include <mach/mach.h>
++#if !defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
+ #include <mach/mach_vm.h>
++#endif
+ #include <sys/ucontext.h>
+ #else
+ #include <ucontext.h>
+@@ -46,6 +48,24 @@ uintptr_t Hex(const char **p) {
+ #ifdef __APPLE__
+ void ReadMappings(void) {
+     g_mappingCount = 0;
++#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
++    for (uintptr_t address = 0; g_mappingCount < 1024;) {
++        vm_address_t start = (vm_address_t)address;
++        vm_size_t length = 0;
++        vm_region_basic_info_data_64_t info;
++        mach_msg_type_number_t count = VM_REGION_BASIC_INFO_COUNT_64;
++        mach_port_t object;
++        if (vm_region_64(mach_task_self(), &start, &length, VM_REGION_BASIC_INFO_64,
++                         reinterpret_cast<vm_region_info_t>(&info), &count, &object) != KERN_SUCCESS)
++            break;
++        Mapping &m = g_mappings[g_mappingCount++];
++        m.start = (uintptr_t)start;
++        m.end = (uintptr_t)start + (uintptr_t)length;
++        m.readable = (info.protection & VM_PROT_READ) != 0;
++        m.executable = (info.protection & VM_PROT_EXECUTE) != 0;
++        address = (uintptr_t)start + (uintptr_t)length;
++    }
++#else
+     for (mach_vm_address_t address = 0; g_mappingCount < 1024;) {
+         mach_vm_size_t length = 0;
+         vm_region_basic_info_data_64_t info;
+@@ -61,6 +81,7 @@ void ReadMappings(void) {
+         m.executable = (info.protection & VM_PROT_EXECUTE) != 0;
+         address += length;
+     }
++#endif
+ }
+ #else
+ // Each line: "start-end perms offset dev inode path"

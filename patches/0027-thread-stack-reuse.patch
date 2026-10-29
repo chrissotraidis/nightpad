@@ -1,0 +1,161 @@
+diff --git a/src/driving/platform/HostPosix.cpp b/src/driving/platform/HostPosix.cpp
+index 9968d3c..fb00f3f 100644
+--- a/src/driving/platform/HostPosix.cpp
++++ b/src/driving/platform/HostPosix.cpp
+@@ -223,6 +223,8 @@ struct Thread : Object {
+     pthread_cond_t resumeCond;
+     bool suspended;
+     int references;
++    void *windowStack;          // the in-window reservation backing this pthread, if any
++    size_t windowStackSize;
+ };
+ 
+ struct File : Object {
+@@ -238,9 +240,41 @@ struct Heap : Object {
+     HostDword flags;
+ };
+ 
++struct CachedWindowStack {
++    void *block;
++    size_t size;
++};
++
++static std::vector<CachedWindowStack> g_cachedWindowStacks;
++static pthread_mutex_t g_cachedWindowStacksMutex = PTHREAD_MUTEX_INITIALIZER;
++
++static void *TakeWindowStack(size_t *size) {
++    pthread_mutex_lock(&g_cachedWindowStacksMutex);
++    void *block = NULL;
++    for (size_t i = 0; i < g_cachedWindowStacks.size(); ++i) {
++        if (g_cachedWindowStacks[i].size < *size)
++            continue;
++        block = g_cachedWindowStacks[i].block;
++        *size = g_cachedWindowStacks[i].size;
++        g_cachedWindowStacks.erase(g_cachedWindowStacks.begin() + i);
++        break;
++    }
++    pthread_mutex_unlock(&g_cachedWindowStacksMutex);
++    return block;
++}
++
++static void ReturnWindowStack(void *block, size_t size) {
++    if (block == NULL)
++        return;
++    pthread_mutex_lock(&g_cachedWindowStacksMutex);
++    g_cachedWindowStacks.push_back({block, size});
++    pthread_mutex_unlock(&g_cachedWindowStacksMutex);
++}
++
+ static long Release(Thread *thread) {
+     long left = __atomic_sub_fetch(&thread->references, 1, __ATOMIC_ACQ_REL);
+     if (left == 0) {
++        ReturnWindowStack(thread->windowStack, thread->windowStackSize);
+         DestroySignal(&thread->finished);
+         pthread_cond_destroy(&thread->resumeCond);
+         pthread_mutex_destroy(&thread->resumeMutex);
+@@ -304,7 +338,7 @@ static void *ThreadMain(void *argument) {
+ }
+ 
+ #if UINTPTR_MAX > 0xffffffffu
+-static bool SetWindowStack(pthread_attr_t *attributes, size_t size);
++static bool SetWindowStack(pthread_attr_t *attributes, size_t size, void **blockOut);
+ #endif
+ 
+ HostHandle HostCreateThread(size_t stackSize, HostThreadStart start, void *parameter, HostDword flags,
+@@ -320,6 +354,8 @@ HostHandle HostCreateThread(size_t stackSize, HostThreadStart start, void *param
+     pthread_cond_init(&thread->resumeCond, NULL);
+     thread->suspended = (flags & HOST_CREATE_SUSPENDED) != 0;
+     thread->references = 2;   // the handle and the thread
++    thread->windowStack = NULL;
++    thread->windowStackSize = 0;
+ 
+     pthread_attr_t attributes;
+     pthread_attr_init(&attributes);
+@@ -333,13 +369,25 @@ HostHandle HostCreateThread(size_t stackSize, HostThreadStart start, void *param
+     const size_t kStackFallbacks[] = { 0x100000, 0x80000, 0x40000, 0x20000, 0x10000 };
+ #if UINTPTR_MAX > 0xffffffffu
+     bool stackSet = false;
+-    for (size_t candidate : kStackFallbacks) {
+-        if (candidate > stackReserve)
+-            continue;
+-        if (SetWindowStack(&attributes, candidate)) {
+-            stackReserve = candidate;
+-            stackSet = true;
+-            break;
++    void *reused = TakeWindowStack(&stackReserve);
++    if (reused != NULL && pthread_attr_setstack(&attributes, reused, stackReserve) == 0) {
++        thread->windowStack = reused;
++        thread->windowStackSize = stackReserve;
++        stackSet = true;
++    } else {
++        if (reused != NULL)
++            ReturnWindowStack(reused, stackReserve);
++        for (size_t candidate : kStackFallbacks) {
++            if (candidate > stackReserve)
++                continue;
++            void *block = NULL;
++            if (SetWindowStack(&attributes, candidate, &block)) {
++                stackReserve = candidate;
++                thread->windowStack = block;
++                thread->windowStackSize = candidate;
++                stackSet = true;
++                break;
++            }
+         }
+     }
+     if (!stackSet) {
+@@ -875,10 +923,13 @@ int HostCommit(void *address, size_t size) {
+ // their stacks in the window, above where contiguous memory goes first. They come from the image's in-window arena:
+ // a relaunch in this process starts more threads than the original's one-shot process did, and the general window is
+ // too fragmented for another low mapping by the third launch.
+-static bool SetWindowStack(pthread_attr_t *attributes, size_t size) {
++static bool SetWindowStack(pthread_attr_t *attributes, size_t size, void **blockOut) {
+     const uintptr_t kStacksLowest = 0x10000000;
+     void *stack = HostReserveLow(size, kStacksLowest);
+-    return stack != NULL && HostCommit(stack, size) && pthread_attr_setstack(attributes, stack, size) == 0;
++    if (stack == NULL || !HostCommit(stack, size) || pthread_attr_setstack(attributes, stack, size) != 0)
++        return false;
++    *blockOut = stack;
++    return true;
+ }
+ #endif
+ 
+@@ -1417,6 +1468,8 @@ struct Timer {
+     bool periodic;
+     HostTimerCallback callback;
+     HostUlongPtr user;
++    void *windowStack;
++    size_t windowStackSize;
+ };
+ 
+ // Each due time follows the last by the period, as winmm's periodic timer keeps its rate; a timer that has fallen
+@@ -1447,6 +1500,7 @@ static void *TimerMain(void *argument) {
+         if (now.tv_sec > due.tv_sec + 1)
+             due = now;
+     }
++    ReturnWindowStack(timer->windowStack, timer->windowStackSize);
+     delete timer;
+     return NULL;
+ }
+@@ -1461,13 +1515,20 @@ unsigned HostSetTimerEvent(unsigned delayMs, unsigned resolutionMs, HostTimerCal
+     timer->periodic = (flags & kTimePeriodic) != 0;
+     timer->callback = callback;
+     timer->user = user;
++    timer->windowStack = NULL;
++    timer->windowStackSize = 0;
+ 
+     pthread_t thread;
+     pthread_attr_t attributes;
+     pthread_attr_init(&attributes);
+     pthread_attr_setdetachstate(&attributes, PTHREAD_CREATE_DETACHED);
+ #if UINTPTR_MAX > 0xffffffffu
+-    int error = SetWindowStack(&attributes, 0x100000) ? 0 : ENOMEM;   // the callback is the game's
++    void *block = NULL;
++    int error = SetWindowStack(&attributes, 0x100000, &block) ? 0 : ENOMEM;   // the callback is the game's
++    if (error == 0) {
++        timer->windowStack = block;
++        timer->windowStackSize = 0x100000;
++    }
+     if (error == 0)
+         error = pthread_create(&thread, &attributes, TimerMain, timer);
+ #else

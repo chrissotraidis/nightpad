@@ -1,0 +1,70 @@
+--- a/src/common/sound/voiceMixer.cpp
++++ b/src/common/sound/voiceMixer.cpp
+@@ -7,6 +7,8 @@
+ #include <stdarg.h>
+ #include <stdio.h>
+ #include <string.h>
++#include <cmath>
++#include <mutex>
+
+ // The stream asks for audio on SDL's audio thread; the mix is made there, four milliseconds (one chunk) at a time,
+ // under the lock the games' calls take. A voice's play cursor is where its current chunk began, the write cursor
+@@ -60,6 +62,10 @@
+ };
+
+ static SDL_AudioDeviceID Device;
++// Device creation and native volume changes share this lock. The audio callback
++// never takes it, and the device lives for the process, like the original mixer.
++static std::mutex DeviceMutex;
++static float MasterVolume = 1.0f;
+ static SDL_AudioStream *Stream;
+ static HostLock Lock;
+ static bool StartAttempted;
+@@ -179,6 +185,7 @@
+ // ---- the device
+
+ bool VoiceMixer_Start(void) {
++    std::lock_guard<std::mutex> guard(DeviceMutex);
+     if (StartAttempted)
+         return Stream != NULL;
+     StartAttempted = true;
+@@ -200,7 +207,7 @@
+     }
+     Stream = SDL_CreateAudioStream(&spec, &spec);
+     if (Stream == NULL || !SDL_SetAudioStreamGetCallback(Stream, FeedStream, NULL) ||
+-        !SDL_BindAudioStream(Device, Stream)) {
++        !SDL_BindAudioStream(Device, Stream) || !SDL_SetAudioDeviceGain(Device, MasterVolume)) {
+         AudioLog("[sdl-audio] the mix's stream could not be made: %s - no audio\n", SDL_GetError());
+         SDL_DestroyAudioStream(Stream);
+         Stream = NULL;
+@@ -219,6 +226,16 @@
+
+ uint32_t VoiceMixer_Device(void) {
+     return Device;
++}
++
++bool VoiceMixer_SetMasterVolume(float amplitude) {
++    if (!std::isfinite(amplitude) || amplitude < 0.0f || amplitude > 1.0f)
++        return false;
++    std::lock_guard<std::mutex> guard(DeviceMutex);
++    if (Device != 0 && !SDL_SetAudioDeviceGain(Device, amplitude))
++        return false;
++    MasterVolume = amplitude;
++    return true;
+ }
+
+ // ---- voices
+--- a/src/common/sound/voiceMixer.h
++++ b/src/common/sound/voiceMixer.h
+@@ -24,6 +24,11 @@
+
+ // SDL's id of the output device, or 0: the movie players bind streams of their own to it (common/fmv/FmvAudioSdl.cpp)
+ uint32_t VoiceMixer_Device(void);
++
++// App-level attenuation of the complete logical output, including movie streams.
++// Safe before Start and from a native UI thread. Does not change game voice volumes.
++// Accepts finite amplitudes from 0 (mute) to 1 (original output).
++bool VoiceMixer_SetMasterVolume(float amplitude);
+
+ // A voice for samples of this format. formatTag is WAVE_FORMAT_PCM or WAVE_FORMAT_XBOX_ADPCM (0x69). NULL if the
+ // output did not start or the format is neither.

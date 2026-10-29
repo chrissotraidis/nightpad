@@ -1,0 +1,113 @@
+--- a/src/driving/platform/HostInput.h
++++ b/src/driving/platform/HostInput.h
+@@ -53,6 +53,9 @@
+ bool HostInput_KeyHeld(HostKey key);
+ // Whether the game's window has the keyboard (true when it cannot be told)
+ bool HostInput_WindowHasFocus(void);
++// Native UI is in front: reads answer neutral and pointer motion since the last read is discarded.
++void HostInput_SetSuspended(bool suspended);
++bool HostInput_Suspended(void);
+ 
+ // The mouse, for the action engine's mouse look (src/action/engine/mouseLook.cpp)
+ struct HostMouseState {
+--- a/src/driving/platform/HostInputSdl.cpp
++++ b/src/driving/platform/HostInputSdl.cpp
+@@ -5,6 +5,7 @@
+ #include <SDL3/SDL.h>
+ #include <stdio.h>
+ #include <string.h>
++#include <atomic>
+ 
+ // Controllers and the keyboard from SDL3 (NIGHTFIRE_SDL), given in XInput's numbers so that XboxInput.cpp's
+ // translation to the Xbox's is the one the XInput path has.
+@@ -16,7 +17,12 @@
+ static const int kPorts = 4;
+ 
+ static SDL_Gamepad *Ports[kPorts];
++static std::atomic<bool> Suspended{false};
+ 
++bool HostInput_Suspended(void) {
++    return Suspended.load(std::memory_order_acquire);
++}
++
+ static HostLock *PortsLock(void) {
+     static HostLock lock;
+     static bool ready = (HostInitLock(&lock), true);
+@@ -65,7 +71,7 @@
+         Opened(event->gdevice.which);
+     else if (event->type == SDL_EVENT_GAMEPAD_REMOVED)
+         Closed(event->gdevice.which);
+-    else
++    else if (!Suspended.load(std::memory_order_acquire))
+         MouseEvent(event);
+ }
+ 
+@@ -103,6 +109,14 @@
+     if (pad == NULL) {
+         HostLeaveLock(PortsLock());
+         return false;
++    }
++    if (Suspended.load(std::memory_order_acquire)) {
++        HostPadState neutral;
++        memset(&neutral, 0, sizeof(neutral));
++        neutral.packetNumber = ++packets[port];
++        HostLeaveLock(PortsLock());
++        *state = neutral;
++        return true;
+     }
+     HostPadState now;
+     memset(&now, 0, sizeof(now));
+@@ -135,6 +149,8 @@
+ }
+ 
+ bool HostInput_KeyHeld(HostKey key) {
++    if (Suspended.load(std::memory_order_acquire))
++        return false;
+     const bool *keys = SDL_GetKeyboardState(NULL);
+     switch (key) {
+         case kKeyA:      return keys[SDL_SCANCODE_A];
+@@ -192,6 +208,14 @@
+     return &lock;
+ }
+ 
++void HostInput_SetSuspended(bool suspended) {
++    Suspended.store(suspended, std::memory_order_release);
++    HostEnterLock(MouseLock());
++    Mouse.dx = Mouse.dy = 0;
++    Mouse.wheel = 0.0f;
++    HostLeaveLock(MouseLock());
++}
++
+ static void MouseEvent(const SDL_Event *event) {
+     HostEnterLock(MouseLock());
+     switch (event->type) {
+@@ -220,6 +244,10 @@
+ }
+ 
+ void HostMouse_Read(HostMouseState *state) {
++    if (Suspended.load(std::memory_order_acquire)) {
++        memset(state, 0, sizeof(*state));
++        return;
++    }
+     HostEnterLock(MouseLock());
+     state->dx = Mouse.dx;
+     state->dy = Mouse.dy;
+--- a/src/driving/platform/HostInputWin32.cpp
++++ b/src/driving/platform/HostInputWin32.cpp
+@@ -17,6 +17,16 @@
+ };
+ 
+ static_assert(sizeof(HostPadState) == 16, "HostPadState is XINPUT_STATE");
++
++static bool InputSuspended;
++
++void HostInput_SetSuspended(bool suspended) {
++    InputSuspended = suspended;
++}
++
++bool HostInput_Suspended(void) {
++    return InputSuspended;
++}
+ 
+ extern "C" __declspec(dllimport) unsigned long __stdcall XInputGetState(unsigned long index, HostPadState *state);
+ extern "C" __declspec(dllimport) unsigned long __stdcall XInputSetState(unsigned long index,

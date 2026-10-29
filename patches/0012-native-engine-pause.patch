@@ -1,0 +1,89 @@
+--- a/src/common/engineLifecycle.h
++++ b/src/common/engineLifecycle.h
+@@ -22,5 +22,24 @@
+     EngineLifecycle_StopFlag().store(false, std::memory_order_release);
+ }
+ 
++// A native app pause, separate from the game's own Xbox Start pause. The loop keeps its thread and resources alive,
++// but stops advancing frames until ResumePause.
++inline std::atomic<bool> &EngineLifecycle_PauseFlag() {
++    static std::atomic<bool> paused{false};
++    return paused;
++}
++
++inline bool EngineLifecycle_PauseRequested() {
++    return EngineLifecycle_PauseFlag().load(std::memory_order_acquire);
++}
++
++inline void EngineLifecycle_RequestPause() {
++    EngineLifecycle_PauseFlag().store(true, std::memory_order_release);
++}
++
++inline void EngineLifecycle_ReleasePause() {
++    EngineLifecycle_PauseFlag().store(false, std::memory_order_release);
++}
++
+ #endif // COMMON_ENGINE_LIFECYCLE_H_
+ 
+--- a/src/action/main.cpp
++++ b/src/action/main.cpp
+@@ -4,15 +4,22 @@
+ #include "engine/Direct3D/d3dSeam.h" // xboxInitGraphics is reimplemented there now
+ #include "gfx/LowLevel.h"                // Graphics_Init_LowLevel
+ #include "sound/dsndSeam.h"            // xboxInitSound is reimplemented there now
++#include "sound/SFX.h"                  // SFXPause/SFXUnPause and the stream pause pair
+ #include "engine/XboxSystem.h"
+ #include "engine/XboxError.h"
+ #include "game.h"
+ #include "../common/engineLifecycle.h"
++#include "../driving/platform/Host.h"       // HostSleep for the pause wait
+ #include <atomic>
+ 
+ static std::atomic<unsigned> g_testDrivingAfterFrames{0};
+ static std::atomic<unsigned> g_framesSinceStart{0};
++static std::atomic<unsigned long> g_mainloopFrames{0};
+ 
++extern "C" unsigned long NightPadActionEngineFrameCount(void) {
++    return g_mainloopFrames.load(std::memory_order_acquire);
++}
++
+ extern "C" void NightPadActionEngineTriggerDrivingAfter(unsigned frames) {
+     g_framesSinceStart.store(0, std::memory_order_release);
+     g_testDrivingAfterFrames.store(frames, std::memory_order_release);
+@@ -36,8 +43,24 @@
+     GetPTPData_Copy();
+     Graphics_Init_LowLevel();
+ 
++    bool paused = false;
+     while (!EngineLifecycle_StopRequested()) {
++        if (EngineLifecycle_PauseRequested()) {
++            if (!paused) {
++                SFXPause();
++                SFXPauseAllStreams();
++                paused = true;
++            }
++            HostSleep(10);
++            continue;
++        }
++        if (paused) {
++            SFXUnPause();
++            SFXUnPauseAllStreams();
++            paused = false;
++        }
+         mainloop();
++        g_mainloopFrames.fetch_add(1, std::memory_order_acq_rel);
+         unsigned after = g_testDrivingAfterFrames.load(std::memory_order_acquire);
+         if (after != 0 && g_framesSinceStart.fetch_add(1, std::memory_order_acq_rel) + 1 >= after) {
+             g_testDrivingAfterFrames.store(0, std::memory_order_release);
+@@ -54,6 +77,11 @@
+         }
+     }
+ 
++    if (paused) {
++        SFXUnPause();
++        SFXUnPauseAllStreams();
++    }
++
+     cleanupSystem();
+ 
+ }

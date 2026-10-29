@@ -1,0 +1,2339 @@
+{
+  "schema_version": 1,
+  "product": "NightPad",
+  "plan_version": "1.0",
+  "project_status": "implementation_in_progress",
+  "implementation_started": true,
+  "execution_started_at": "2026-10-27T10:34:02Z",
+  "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
+  "last_updated_at": "2026-10-29T11:16:05.491051+00:00",
+  "active_goal": "G07",
+  "source_lock_file": "sources.lock.json",
+  "actual_dependency_lock": "config/dependencies.lock.json",
+  "actual_source_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
+  "content_identity": {
+    "source_sha256": "8a0dc0e713f44e48b00054ca021fb027571e6f7877b8225cc5ae275af2435ebe",
+    "source_bytes": 2063740928,
+    "extracted_bytes": 2062585542,
+    "file_count": 55,
+    "title_id": "0x45410026",
+    "title_name": "007: Nightfire",
+    "version": 1,
+    "region_mask": "0x00000007",
+    "media_bundle": "30_fps only",
+    "data_identity": "data-8a0dc0e713f44e48b000"
+  },
+  "current_build": {
+    "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
+    "nightpad_base_commit": "facf3fc1eb23a780554887c0bf1af133e8626a71",
+    "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
+    "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
+    "simulator_binary_sha256": "ad414fcfe0bfdfce211a18c8bfac40da009dd92bc524ed2db0c93f312db3abbd",
+    "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
+    "unsigned_device_package_sha256": "0273c2f800f908ac8a0ad40f2573042cfd5a75e50ee75f4c461bb3c7511ebbfd",
+    "evidence": "evidence/master-volume/result.json",
+    "verified_at": "2026-10-29T09:20:01.265674+00:00",
+    "acceptance_scope": "Full native engine suite; actual game/movie final PCM master-volume tests; quick before final root-heading/inline-group-only delta; final both iOS builds, 37 exports, 38-patch/85-file reconstruction, unchanged 635-frame replay, unsigned Release package and phone Audio/relaunch/Stop subset pass. Physical listening/campaign acceptance remain open.",
+    "installed_simulator_binary_sha256": "ad414fcfe0bfdfce211a18c8bfac40da009dd92bc524ed2db0c93f312db3abbd",
+    "simulator_install_state": "Phone candidate installed/hash verified; original title loaded at 50%, live mute/100% and clean Stop pass. Current launcher stopped. Seven saves and phone layout unchanged; only master_volume=100 added to settings. Tablet shut down.",
+    "source_delta": "facf3fc: patch 0038, per-engine master-volume bridge, native Audio group, root title removal and inline volume choices; 38 patches/85 vendor files.",
+    "installed_simulator_source_commit": "facf3fc1eb23a780554887c0bf1af133e8626a71",
+    "device_binary_sha256": "6725ab0807ce8603d3b699120d50ed7debb09effcdf7a44f263022440ebaca36"
+  },
+  "last_known_good_build": {
+    "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
+    "nightpad_base_commit": "facf3fc1eb23a780554887c0bf1af133e8626a71",
+    "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
+    "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
+    "simulator_binary_sha256": "ad414fcfe0bfdfce211a18c8bfac40da009dd92bc524ed2db0c93f312db3abbd",
+    "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
+    "unsigned_device_package_sha256": "0273c2f800f908ac8a0ad40f2573042cfd5a75e50ee75f4c461bb3c7511ebbfd",
+    "evidence": "evidence/master-volume/result.json",
+    "verified_at": "2026-10-29T09:20:01.265674+00:00",
+    "acceptance_scope": "Full native engine suite; actual game/movie final PCM master-volume tests; quick before final root-heading/inline-group-only delta; final both iOS builds, 37 exports, 38-patch/85-file reconstruction, unchanged 635-frame replay, unsigned Release package and phone Audio/relaunch/Stop subset pass. Physical listening/campaign acceptance remain open.",
+    "installed_simulator_binary_sha256": "ad414fcfe0bfdfce211a18c8bfac40da009dd92bc524ed2db0c93f312db3abbd",
+    "simulator_install_state": "Phone candidate installed/hash verified; original title loaded at 50%, live mute/100% and clean Stop pass. Current launcher stopped. Seven saves and phone layout unchanged; only master_volume=100 added to settings. Tablet shut down.",
+    "source_delta": "facf3fc: patch 0038, per-engine master-volume bridge, native Audio group, root title removal and inline volume choices; 38 patches/85 vendor files.",
+    "installed_simulator_source_commit": "facf3fc1eb23a780554887c0bf1af133e8626a71",
+    "device_binary_sha256": "6725ab0807ce8603d3b699120d50ed7debb09effcdf7a44f263022440ebaca36"
+  },
+  "goals": {
+    "G00": {
+      "status": "passed",
+      "started_at": "2026-10-27T10:34:02Z",
+      "completed_at": "2026-10-27T11:05:00Z",
+      "evidence": [
+        "config/dependencies.lock.json",
+        "config/toolchain.json",
+        "docs/PROVENANCE.md"
+      ],
+      "blockers": [],
+      "next_step": null
+    },
+    "G01": {
+      "status": "passed",
+      "started_at": "2026-10-27T10:34:02Z",
+      "completed_at": "2026-10-27T11:05:00Z",
+      "evidence": [
+        "scripts/prepare_game_data.py",
+        "build/data/iso-list.txt"
+      ],
+      "blockers": [],
+      "next_step": null
+    },
+    "G02": {
+      "status": "blocked_external",
+      "started_at": "2026-10-27T11:05:00Z",
+      "completed_at": null,
+      "evidence": [
+        "vendor/nightfire/build/macos-arm64",
+        "evidence/action-demos",
+        "evidence/driving-baseline-a.log",
+        "evidence/driving-baseline-b.log"
+      ],
+      "blockers": [
+        "B02"
+      ],
+      "next_step": "The post-fix eleven-recording replay recheck passed all 208364 frames. Matching PAL movie data is still required for SpaceStationD; no core route is waived."
+    },
+    "G03": {
+      "status": "blocked_external",
+      "started_at": "2026-10-27T11:05:00Z",
+      "completed_at": null,
+      "evidence": [
+        "evidence/ios-probe/result.json",
+        "evidence/ios-probe/platform-probe-result.png",
+        "docs/DECISIONS/0001-ios-platform-probe.md",
+        "build/ios-device/Debug-iphoneos/NightPadProbe.app",
+        "scripts/device_handoff.sh",
+        "docs/DEVICE-HANDOFF.md",
+        "docs/DECISIONS/0014-simulator-metal.md",
+        "patches/sdl3-ios-simulator-metal.patch",
+        "evidence/ios-shell/simulator-title.png",
+        "evidence/ios-shell/simulator-gameplay.png",
+        "evidence/ios-shell/simulator-exchange-gameplay.png",
+        "evidence/ios-shell/simulator-paris-driving.png"
+      ],
+      "blockers": [
+        "B01"
+      ],
+      "next_step": "Install the signed build on a trusted iPhone and iPad for physical acceptance; the simulator now runs the real SDL/Metal engine path."
+    },
+    "G04": {
+      "status": "blocked_external",
+      "started_at": "2026-10-27T11:18:00Z",
+      "completed_at": null,
+      "evidence": [
+        "scripts/build_combined_engine_link.sh",
+        "build/ios-combined/nightpad-combined-link",
+        "docs/DECISIONS/0002-engine-object-isolation.md",
+        "docs/DECISIONS/0003-launch-request-bridge.md",
+        "docs/DECISIONS/0004-ios-static-sdl.md",
+        "docs/DECISIONS/0005-ios-static-ffmpeg.md",
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "patches/0006-engine-stop-lifecycle.patch",
+        "patches/0010-engine-session-reset.patch",
+        "tests/native/test_action_lifecycle.cpp",
+        "docs/TEST-MATRIX.md",
+        "tests/native/test_engine_handoff.cpp",
+        "scripts/test_engine_handoff.sh",
+        "tests/native/test_driving_pause.cpp",
+        "scripts/test_driving_pause.sh",
+        "patches/0015-driving-loop-pause.patch",
+        "docs/DECISIONS/0010-engine-handoff.md",
+        "apple/ios/NightPadEngineHost.mm",
+        "apple/shared/NightPadDrivingRuntime.cpp",
+        "apple/shared/NightPadEngineBridge.h",
+        "tests/native/test_driving_early_stop.cpp",
+        "scripts/test_driving_early_stop.sh",
+        "tests/native/test_engine_roundtrip.cpp",
+        "scripts/test_engine_roundtrip.sh",
+        "patches/0018-ios-long-paths.patch",
+        "patches/sdl3-ios-simulator-metal.patch",
+        "scripts/patch_ios_sdl.sh",
+        "evidence/ios-shell/simulator-gameplay.png",
+        "evidence/ios-shell/simulator-exchange-gameplay.png",
+        "evidence/ios-shell/simulator-paris-driving.png",
+        "patches/0019-action-stop-observability.patch",
+        "patches/0020-action-session-index-reset.patch",
+        "patches/0022-stream-open-recovery.patch",
+        "patches/0023-missing-movie-finished.patch",
+        "patches/0027-thread-stack-reuse.patch"
+      ],
+      "blockers": [
+        "B01"
+      ],
+      "next_step": "Native lifecycle, boot, movie pause and handover gates pass after patch 0035. Updated simulator installed and campaign active. Obtain signed physical-device evidence, including loading-screen quit stability."
+    },
+    "G05": {
+      "status": "in_progress",
+      "started_at": "2026-10-27T14:26:55Z",
+      "completed_at": null,
+      "evidence": [
+        "apple/shared/NightPadPaths.h",
+        "apple/shared/NightPadPaths.cpp",
+        "apple/shared/NightPadGameDataImport.h",
+        "apple/shared/NightPadGameDataImport.cpp",
+        "tests/native/test_data_import.cpp",
+        "scripts/test_data_import.sh",
+        "apple/ios/CMakeLists.txt",
+        "docs/DECISIONS/0007-app-data-layout.md",
+        "apple/ios/main.mm",
+        "apple/ios/NightPadShellViewController.h",
+        "apple/ios/NightPadShellViewController.mm",
+        "apple/ios/NightPadShellInfo.plist.in",
+        "scripts/build_ios_shell.sh",
+        "docs/DECISIONS/0008-native-shell-surface.md",
+        "apple/ios/NightPadEngineHost.h",
+        "apple/ios/NightPadEngineHost.mm",
+        "scripts/build_combined_engine_link.sh",
+        "build/ios-combined/libnightpad-engines.a",
+        "patches/0011-nonblocking-window-poll.patch",
+        "scripts/check_ios_shell_link.sh",
+        "patches/0012-native-engine-pause.patch",
+        "scripts/test_action_pause.sh",
+        "patches/0013-native-input-suspension.patch",
+        "apple/shared/NightPadDiagnostics.h",
+        "apple/shared/NightPadDiagnostics.cpp",
+        "apple/ios/NightPadDiagnosticsViewController.h",
+        "apple/ios/NightPadDiagnosticsViewController.mm",
+        "tests/native/test_diagnostics.cpp",
+        "scripts/test_diagnostics.sh",
+        "apple/ios/NightPadAboutViewController.h",
+        "apple/ios/NightPadAboutViewController.mm",
+        "evidence/ios-shell/data-ready-real.png",
+        "apple/shared/NightPadSaves.cpp",
+        "scripts/test_saves_link.sh",
+        "docs/DECISIONS/0014-simulator-metal.md",
+        "evidence/ios-shell/simulator-gameplay.png",
+        "evidence/ios-shell/simulator-exchange-gameplay.png",
+        "patches/0019-action-stop-observability.patch",
+        "patches/0020-action-session-index-reset.patch",
+        "patches/0021-action-gpu-session-reset.patch",
+        "evidence/ios-shell/simulator-second-session-title.png",
+        "evidence/ios-shell/simulator-paris-driving.png",
+        "patches/0024-session-idle-reset.patch",
+        "patches/0018-ios-long-paths.patch",
+        "patches/0023-missing-movie-finished.patch",
+        "patches/0024-session-boot-reset.patch",
+        "patches/0025-sound-bank-shutdown.patch",
+        "patches/0026-gpu-window-release.patch",
+        "evidence/ios-shell/galaxypad-controls.png",
+        "evidence/ios-shell/galaxypad-menu.png",
+        "evidence/ios-shell/galaxypad-controls-ipad.png",
+        "evidence/ios-shell/repeated-driving-handoff.png",
+        "patches/0028-atomic-profile-save.patch",
+        "scripts/test_engine_save.sh",
+        "docs/DECISIONS/0015-atomic-profile-saves.md",
+        "evidence/save-durability/ui-save-result.json",
+        "evidence/campaign-first-play/nprun/created-profile.json",
+        "evidence/campaign-first-play/nprun/paris-attempts.json",
+        "patches/0036-action-assist-profile-authority.patch",
+        "docs/DECISIONS/0022-assist-profile-authority.md",
+        "evidence/assist-profile/result.json",
+        "docs/DECISIONS/0024-touch-menu-review.md",
+        "evidence/touch-menu-audit/result.json",
+        "patches/0038-master-volume.patch",
+        "docs/DECISIONS/0025-native-master-volume.md",
+        "scripts/test_master_volume.sh",
+        "evidence/master-volume/result.json"
+      ],
+      "blockers": [],
+      "next_step": "Native Audio and owner-requested menu/touch review now have scoped host/simulator evidence. Continue original earned campaign save and remaining physical menu/input/audio acceptance; no full G05 acceptance claimed."
+    },
+    "G06": {
+      "status": "in_progress",
+      "started_at": "2026-10-27T15:13:56Z",
+      "completed_at": null,
+      "evidence": [
+        "apple/shared/NightPadInput.h",
+        "apple/shared/NightPadInput.cpp",
+        "tests/native/test_input.cpp",
+        "scripts/test_input.sh",
+        "apple/ios/CMakeLists.txt",
+        "apple/shared/NightPadTouchLayout.h",
+        "apple/shared/NightPadTouchLayout.cpp",
+        "tests/native/test_touch_layout.cpp",
+        "scripts/test_touch_layout.sh",
+        "apple/ios/NightPadTouchLayoutViewController.h",
+        "apple/ios/NightPadTouchLayoutViewController.mm",
+        "apple/shared/NightPadTouchInput.h",
+        "apple/shared/NightPadTouchInput.cpp",
+        "tests/native/test_touch_input.cpp",
+        "scripts/test_touch_input.sh",
+        "apple/shared/NightPadControllerSlots.h",
+        "apple/shared/NightPadControllerSlots.cpp",
+        "tests/native/test_controller_slots.cpp",
+        "scripts/test_controller_slots.sh",
+        "apple/ios/NightPadTouchControlsView.h",
+        "apple/ios/NightPadTouchControlsView.mm",
+        "apple/ios/NightPadControllerAuthority.h",
+        "apple/ios/NightPadControllerAuthority.mm",
+        "apple/ios/NightPadControllerRumble.h",
+        "apple/ios/NightPadControllerRumble.mm",
+        "apple/ios/NightPadGameInput.h",
+        "apple/ios/NightPadGameInput.mm",
+        "patches/0014-host-pad-override.patch",
+        "docs/DECISIONS/0009-input-authority.md",
+        "apple/ios/NightPadControlsHelpViewController.h",
+        "apple/ios/NightPadControlsHelpViewController.mm",
+        "apple/shared/NightPadSettings.h",
+        "apple/shared/NightPadSettings.cpp",
+        "tests/native/test_settings.cpp",
+        "scripts/test_settings.sh",
+        "docs/DECISIONS/0012-donor-ui-benchmark.md",
+        "docs/CONTROL-SCHEMES.md",
+        "apple/ios/NightPadShellViewController.mm",
+        "evidence/ios-shell/galaxypad-controls.png",
+        "evidence/ios-shell/galaxypad-menu.png",
+        "evidence/ios-shell/galaxypad-controls-ipad.png",
+        "evidence/ios-shell/xbox-controls.png",
+        "evidence/ios-shell/xbox-controls-live.png",
+        "evidence/ios-shell/xbox-controls-ipad.png",
+        "docs/DECISIONS/0024-touch-menu-review.md",
+        "evidence/touch-menu-audit/result.json"
+      ],
+      "blockers": [],
+      "next_step": "Physical grip/simultaneous input, controller ports/rumble, drag/pinch and redesigned-editor larger text remain; new screenshot-led layout/menu subset recorded in decision 0024."
+    },
+    "G07": {
+      "status": "in_progress",
+      "started_at": "2026-10-27T21:10:00Z",
+      "completed_at": null,
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "patches/0016-standalone-file-dump.patch",
+        "scripts/inspect_driving_track.py",
+        "evidence/campaign-first-play/nprun/created-profile.json",
+        "evidence/campaign-first-play/nprun/paris-attempts.json",
+        "evidence/campaign-truck/result.json"
+      ],
+      "blockers": [],
+      "next_step": "If user explicitly resumes: original party entrance/gallery reached previously; app now stopped, no live checkpoint. Continue earned mission/results/save/relaunch plus remaining campaign/multiplayer/device requirements."
+    },
+    "G08": {
+      "status": "in_progress",
+      "started_at": "2026-10-27T23:20:00Z",
+      "completed_at": null,
+      "evidence": [
+        "docs/MULTIPLAYER-INVENTORY.md",
+        "evidence/multiplayer/arena-skyrail/run.json",
+        "evidence/multiplayer/arena-skyrail/results-1.png",
+        "evidence/multiplayer/arena-skyrail/results-2.png"
+      ],
+      "blockers": [],
+      "next_step": "Post-0037 unassisted Fort Knox/Uplink six-bot subset verifies countdown hold, bot objective scoring, human death/respawn, ammo pickup, results and Replay. Human frag and satellite capture remain; complete these and remaining map/mode/split-screen/controller/device matrix."
+    },
+    "G09": {
+      "status": "in_progress",
+      "started_at": "2026-10-27T22:45:00Z",
+      "completed_at": null,
+      "evidence": [
+        "apple/shared/NightPadEngineSettings.h",
+        "apple/shared/NightPadEngineSettings.cpp",
+        "tests/native/test_engine_settings.cpp",
+        "scripts/test_engine_settings.sh",
+        "evidence/save-durability/unlock-result.json",
+        "evidence/save-durability/unlock-success.png",
+        "docs/DECISIONS/0016-display-settings-contract.md",
+        "patches/0029-session-settings-reload.patch",
+        "evidence/display-settings/numeric-widescreen.json",
+        "evidence/display-settings/stretched-4x3-before.png",
+        "patches/0030-fit-display-presentation.patch",
+        "patches/0031-driving-video-flags.patch",
+        "scripts/test_presentation.sh",
+        "tests/native/test_presentation.cpp",
+        "docs/DECISIONS/0017-display-fit-and-flow-timing.md",
+        "evidence/presentation-fit",
+        "tests/native/test_secret_unlocks.cpp",
+        "scripts/test_secret_unlocks.sh",
+        "evidence/secret-unlocks/result.json"
+      ],
+      "blockers": [],
+      "next_step": "R19 five-family native and simulator save/relaunch subset passes. Physical entry/persistence and remaining display, scope, split-screen, sustained device checks remain; campaign dependency remains open."
+    },
+    "G10": {
+      "status": "in_progress",
+      "started_at": "2026-10-27T23:40:00Z",
+      "completed_at": null,
+      "evidence": [
+        "docs/CHEATS-RESEARCH.md",
+        "apple/shared/NightPadActionRuntime.cpp",
+        "patches/0017-app-assists.patch",
+        "tests/native/test_assists.cpp",
+        "scripts/test_assists.sh"
+      ],
+      "blockers": [],
+      "next_step": "Profile authority repair passes host/simulator subset; continue death/restart/load/transition and physical assist acceptance, all-weapons research remains open."
+    },
+    "G11": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "evidence": [
+        "docs/DECISIONS/0011-netplay-deferral.md"
+      ],
+      "blockers": [],
+      "next_step": "Decision recorded. No online work is scheduled; revisit only on explicit request or upstream support, and G11 still depends on G08."
+    },
+    "G12": {
+      "status": "in_progress",
+      "started_at": "2026-10-28T06:10:00Z",
+      "completed_at": null,
+      "evidence": [
+        "docs/PERFORMANCE-BUDGET.md",
+        "patches/0038-master-volume.patch",
+        "docs/DECISIONS/0025-native-master-volume.md",
+        "scripts/test_master_volume.sh",
+        "evidence/master-volume/result.json"
+      ],
+      "blockers": [],
+      "next_step": "Run the frozen routes on phone and tablet, then compare optimizations one at a time."
+    },
+    "G13": {
+      "status": "in_progress",
+      "started_at": "2026-10-28T06:40:00Z",
+      "completed_at": null,
+      "evidence": [
+        "scripts/verify_patches.sh",
+        "docs/CANDIDATE.md",
+        "scripts/package_device_app.sh",
+        "docs/KNOWN-ISSUES.md",
+        "scripts/check_package.sh",
+        "scripts/freeze_candidate.sh",
+        "patches/0018-ios-long-paths.patch",
+        "patches/sdl3-ios-simulator-metal.patch",
+        "docs/DECISIONS/0014-simulator-metal.md"
+      ],
+      "blockers": [],
+      "next_step": "Clean-checkout build and package recipe; final candidate after device acceptance."
+    }
+  },
+  "requirements": {
+    "R01": {
+      "status": "passed",
+      "evidence": [
+        "config/dependencies.lock.json",
+        "docs/PROVENANCE.md",
+        "docs/SOURCES.md",
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/MULTIPLAYER-INVENTORY.md",
+        "patches/",
+        "scripts/verify_patches.sh",
+        "docs/UPSTREAM-DELTA.md"
+      ],
+      "decision_id": null,
+      "notes": [
+        "The reconstructed action and driving engines are the game's own code from the pinned nightfire-cxbx revision, patched only for the Apple port; the supplied Xbox image and both XBEs are the game itself.",
+        "Campaign and multiplayer systems are preserved in source and inventoried; runtime acceptance stays under R09 and R17."
+      ]
+    },
+    "R02": {
+      "status": "passed",
+      "evidence": [
+        "config/dependencies.lock.json",
+        "config/toolchain.json",
+        "patches/0001-ios-host-vm-abi.patch"
+      ],
+      "decision_id": null,
+      "notes": []
+    },
+    "R03": {
+      "status": "passed",
+      "evidence": [
+        "private ISO manifest",
+        "docs/TEST-MATRIX.md",
+        "tests/test_data_tools.py",
+        "scripts/test_data_tools.sh",
+        "scripts/inspect_driving_track.py"
+      ],
+      "decision_id": null,
+      "notes": [
+        "tests/test_data_tools.py now covers the listing validation, BIGF/RefPack readers and the CARP track inspector, and verify_quick runs it."
+      ]
+    },
+    "R04": {
+      "status": "passed",
+      "evidence": [
+        "apple/shared/NightPadGameDataImport.cpp",
+        "apple/shared/NightPadGameDataImport.h",
+        "tests/native/test_data_import.cpp",
+        "scripts/test_data_import.sh",
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Preflight, staging, validation, cancellation, atomic activation, replacement and rollback retention are covered by scripts/test_data_import.sh.",
+        "The shell imports a prepared tree from the picker or from Documents/NightPad Import with progress and cancel, and re-import leaves Saves byte-identical.",
+        "Choosing an arbitrary external folder still uses the system picker and is manual in this harness.",
+        "Startup cleanup removes stage trees left by earlier imports; a 7.6 GB pile in the simulator fell to the single active tree."
+      ]
+    },
+    "R05": {
+      "status": "in_progress",
+      "evidence": [
+        "scripts/build_ios_shell.sh",
+        "scripts/check_ios_shell_link.sh",
+        "scripts/check_package.sh",
+        "scripts/package_device_app.sh",
+        "docs/TEST-MATRIX.md"
+      ],
+      "decision_id": null,
+      "notes": [
+        "The device shell links the combined action and driving engines with static SDL, FFmpeg and SPIRV-Cross; the IPA is arm64 with only system libraries.",
+        "A signed install and run on physical hardware, without a debugger or JIT, is the remaining proof."
+      ]
+    },
+    "R06": {
+      "status": "in_progress",
+      "evidence": [
+        "evidence/ios-probe/result.json"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Simulator pointer/Metal/media probes pass; macOS action, driving and mixed ten-cycle gates pass. Physical device execution remains blocked."
+      ]
+    },
+    "R07": {
+      "status": "in_progress",
+      "evidence": [
+        "docs/DECISIONS/0002-engine-object-isolation.md"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Cooperative stop, worker and file-slot shutdown, heap re-arm, explicit session-static reset and GPU-cache reset pass ten action, ten driving and ten mixed cycles."
+      ]
+    },
+    "R08": {
+      "status": "in_progress",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Names/order, start levels, chains, media coverage, difficulty/failure structure and missing-intro tolerance are inventoried; NTSC matches the supplied 30 fps bundle. Runs and completion evidence remain."
+      ]
+    },
+    "R09": {
+      "status": "in_progress",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/TEST-MATRIX.md",
+        "scripts/verify_engine.sh",
+        "docs/DRIVING-CONTROLS.md",
+        "evidence/campaign-first-play/nprun/created-profile.json",
+        "evidence/campaign-first-play/nprun/paris-attempts.json"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Campaign order, level parts, objectives and media are inventoried; the action and driving engines both boot missions on the host and the action-driving-action transition passes.",
+        "A full first-play route from a fresh codename through the ending, with saves and relaunch, needs a device.",
+        "A fresh NPRUN codename was created through the original keyboard/save UI. Unassisted Operative Paris runs show the intro, real handoff, sniper/fire input, failure, Replay and Quit back to action; the profile remains byte-identical with zero scores. Mission completion and results saving remain unverified."
+      ]
+    },
+    "R10": {
+      "status": "in_progress",
+      "evidence": [
+        "scripts/test_action_pause.sh",
+        "scripts/test_driving_pause.sh",
+        "scripts/verify_engine.sh",
+        "docs/TEST-MATRIX.md",
+        "patches/0035-action-audio-session-buffers.patch",
+        "scripts/test_action_audio_sessions.sh",
+        "docs/DECISIONS/0021-action-audio-session-buffers.md",
+        "build/tests/action-audio-sessions",
+        "patches/0038-master-volume.patch",
+        "scripts/test_master_volume.sh",
+        "evidence/master-volume/result.json"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Host gates show action SFX and streams paused and resumed with frames held, and the driving sound manager paused and resumed; movies play in the handoff gate.",
+        "Device interruptions (calls, route changes, audio focus) and sustained synchronization under load are unverified.",
+        "The fixed 256-buffer registry overflowed after 192 buffers per native boot. Patch 0035 retires old buffers/voices at the next device creation; actual SDL/cache/mixer and fifteen real action cycles pass. New build has no simulator/physical audio acceptance yet.",
+        "SDL spatial voices currently have distance/pan but no HRTF or I3DL2 reverb. Audio fidelity and physical listening remain unverified.",
+        "Native Audio master volume now attenuates both game and movie logical output while preserving original mix/clock behavior. Actual final PCM, settings/relaunch, live simulator choice and clean Stop pass; physical listening/route changes and HRTF/reverb remain open."
+      ]
+    },
+    "R11": {
+      "status": "in_progress",
+      "evidence": [
+        "apple/shared/NightPadSaves.h",
+        "apple/shared/NightPadSaves.cpp",
+        "tests/native/test_saves_link.cpp",
+        "scripts/test_saves_link.sh",
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "apple/shared/NightPadPaths.cpp",
+        "evidence/ios-shell/save-restore.png",
+        "evidence/ios-shell/codename-profile-persisted.png",
+        "evidence/ios-shell/bond-profile-progress.png",
+        "evidence/ios-shell/the-exchange-loaded.png",
+        "patches/0028-atomic-profile-save.patch",
+        "scripts/test_engine_save.sh",
+        "docs/DECISIONS/0015-atomic-profile-saves.md",
+        "evidence/save-durability/ui-save-result.json",
+        "evidence/campaign-first-play/nprun/created-profile.json",
+        "evidence/campaign-first-play/nprun/paris-attempts.json"
+      ],
+      "decision_id": null,
+      "notes": [
+        "The durable Saves link, share sheet and import with replacement confirmation are implemented. The real BOND.dat profile survives relaunch and loads The Exchange, but decoding shows only the initial mission mask 0x3 and zero scores; this is not proof of earned campaign progress.",
+        "An app reinstall (the simulator update path) kept saves, settings, layout and imported data byte-identical.",
+        "Restore copies atomically. Patch 0028 also makes engine saves atomic on POSIX, retains a previous .dat.bak, and keeps hidden stages out of exports. Twelve I/O scenarios and SIGKILL immediately before/after commit preserve complete bytes; actual psiSaveData/load/delete entries pass.",
+        "The original Save Codename flow changed NPQA from Classic Bond to NightFire, changed only byte 8 of the 166-byte profile, retained the exact old file as backup, and reloaded NightFire after app relaunch. NPQA was an isolated copy of the existing valid profile; original files remained byte-identical.",
+        "A completed mission and results save/relaunch, picker selection, physical-device interruption and signed app-update acceptance remain unverified."
+      ]
+    },
+    "R12": {
+      "status": "in_progress",
+      "evidence": [
+        "apple/shared/NightPadTouchLayout.cpp",
+        "scripts/test_touch_layout.sh",
+        "apple/ios/NightPadTouchLayoutViewController.h",
+        "apple/ios/NightPadTouchLayoutViewController.mm",
+        "apple/shared/NightPadTouchInput.h",
+        "apple/shared/NightPadTouchInput.cpp",
+        "tests/native/test_touch_input.cpp",
+        "apple/ios/NightPadTouchControlsView.mm",
+        "apple/shared/NightPadSettings.cpp",
+        "scripts/test_settings.sh"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Touch layout, editor, overlay, simultaneous mapping, app settings (including older files without newer keys) and accessibility pass their checks. Physical ergonomics remain."
+      ]
+    },
+    "R13": {
+      "status": "in_progress",
+      "evidence": [
+        "apple/ios/NightPadControlsHelpViewController.mm",
+        "docs/DRIVING-CONTROLS.md",
+        "docs/CONTROL-SCHEMES.md"
+      ],
+      "decision_id": null,
+      "notes": [
+        "The engine keeps its schemes and preferences; help separates Driving from Mounted views and names the POV variations across eight configurations. In-game checks remain.",
+        "All eight action schemes are mapped from psiInput.cpp with their differences from Nightfire recorded in docs/CONTROL-SCHEMES.md."
+      ]
+    },
+    "R14": {
+      "status": "in_progress",
+      "evidence": [
+        "apple/shared/NightPadInput.h",
+        "apple/shared/NightPadInput.cpp",
+        "tests/native/test_input.cpp",
+        "scripts/test_input.sh",
+        "apple/ios/CMakeLists.txt",
+        "apple/ios/NightPadControllerAuthority.mm",
+        "apple/ios/NightPadControllerRumble.mm",
+        "apple/shared/NightPadControllerSlots.cpp",
+        "scripts/test_controller_slots.sh",
+        "patches/0014-host-pad-override.patch",
+        "apple/shared/NightPadTouchPolicy.h",
+        "tests/native/test_touch_policy.cpp",
+        "scripts/test_touch_policy.sh"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Four-port mixer, touch mapping, GameController authority, slot reconciliation, per-port rumble, host-pad override and touch auto-hide owned by port 0 are implemented. Physical connect/reconnect and a real second controller remain.",
+        "Native interruption now withholds each source until buttons, triggers and sticks are all neutral; actual mixer regression tests cover independent source/port release. No physical-controller claim is added."
+      ]
+    },
+    "R15": {
+      "status": "in_progress",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/DECISIONS/0008-native-shell-surface.md",
+        "scripts/test_action_pause.sh",
+        "scripts/test_driving_pause.sh",
+        "docs/DECISIONS/0018-native-ui-pause-owners.md",
+        "apple/shared/NightPadBackgroundPolicy.cpp",
+        "scripts/test_background_policy.sh",
+        "scripts/test_input.sh",
+        "evidence/native-ui-pause",
+        "docs/DECISIONS/0019-native-movie-pause.md",
+        "scripts/test_fmv_audio.sh",
+        "scripts/test_driving_movie_pause.sh",
+        "patches/0033-native-movie-pause.patch",
+        "evidence/fmv-pause",
+        "docs/DECISIONS/0024-touch-menu-review.md"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Corrected the prior blanket claim: root UIMenu did not invoke native pause. It now uses documented visibility callbacks and independent menu/surface/alert/activity ownership; menu rebuilding is deferred while visible.",
+        "Simulator traces prove action/menu/sheet, nested App Pause, background/foreground and driving-simulation holds. Host tests prevent held buttons/triggers/sticks from resurfacing before neutral. Physical ergonomics and interruptions remain unverified.",
+        "Patch 0033 repairs blocking movie voice/clock pause and cooperative stop. Actual SDL clock/voice regression and two native intro cycles pass; simulator action timestamp and driving presented frames hold, resume and stop while paused. Physical interruptions/audio acceptance remain unverified.",
+        "Screenshot-led redesign: shared resolved geometry, minimum targets, clear root/submenus, phone 4:3/tablet 16:9 HUD capture. Previous editor larger-text/form-sheet evidence is historical; redesigned gesture/larger-text and physical acceptance remain open."
+      ]
+    },
+    "R16": {
+      "status": "in_progress",
+      "evidence": [
+        "apple/shared/NightPadBackgroundPolicy.h",
+        "scripts/test_background_policy.sh"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Background pause/foreground resume follows a tested rule that preserves native-UI and player pauses. Memory-warning, surface recreation and device suspension remain.",
+        "Foreground ownership now follows WillResignActive/DidBecomeActive and cannot release a visible native owner. A real simulator Home/return while menu open retains frame 3685; physical interruption/suspension acceptance remains."
+      ]
+    },
+    "R17": {
+      "status": "in_progress",
+      "evidence": [
+        "docs/MULTIPLAYER-INVENTORY.md",
+        "evidence/multiplayer/arena-skyrail/run.json",
+        "evidence/multiplayer/arena-skyrail/results-1.png",
+        "evidence/multiplayer/arena-skyrail/results-2.png"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Original limits, modes, maps, weapons, modifiers, unlocks and bot parameters are inventoried.",
+        "Simulator: two original one-minute Arena matches on Skyrail with NPRUN, Normal weapons, six bots, ten points and friendly fire off reached debriefing. Replay started the second match in the same process; its results recorded two human deaths and bot victories. The log lists all six bot skins (6-11).",
+        "Only one map/mode and one human port were exercised. Objective matches, remaining maps/modes, original modifiers and physical multiple-controller/reconnect coverage remain."
+      ]
+    },
+    "R18": {
+      "status": "in_progress",
+      "evidence": [
+        "apple/shared/NightPadEngineSettings.cpp",
+        "scripts/test_engine_settings.sh",
+        "scripts/test_render_cost.sh",
+        "docs/DECISIONS/0016-display-settings-contract.md",
+        "patches/0029-session-settings-reload.patch",
+        "evidence/display-settings/numeric-widescreen.json",
+        "evidence/display-settings/stretched-4x3-before.png",
+        "patches/0030-fit-display-presentation.patch",
+        "patches/0031-driving-video-flags.patch",
+        "scripts/test_presentation.sh",
+        "tests/native/test_presentation.cpp",
+        "docs/DECISIONS/0017-display-fit-and-flow-timing.md",
+        "evidence/presentation-fit"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Render scale, FXAA and vertical FOV are exposed and persisted; native 1x-3x runs reach the same cap. Device performance remains unverified.",
+        "Fixed the configuration contract: the app now writes numeric Widescreen=1/0. The real action engine parser fails 16:9 with the former on value and passes after the change. Tests also reload aspect, FOV and disc root in one process.",
+        "Patch 0029 reloads action settings before every session. A real simulator Stop/change/Start in the same app PID logs widescreen=1 then widescreen=0, matching the generated files.",
+        "Patches 0030/0031 fit the selected aspect inside the SDL window safe area and encode driving XC_VIDEO widescreen in bit 16 for its actual XAPI consumer. Real action/kernel/XAPI/POSIX settings tests cover both modes and reload. Geometry tests cover safe-area scaling, resize and integer boundaries.",
+        "Simulator-only evidence: phone/tablet action titles in both aspects, phone 16:9 and tablet 4:3 driving HUD, and a circular tablet 16:9 scope after the dashboard bit fix. Action scope/FOV combinations, remaining display matrix and physical performance remain unverified."
+      ]
+    },
+    "R19": {
+      "status": "in_progress",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "evidence/save-durability/unlock-result.json",
+        "evidence/save-durability/unlock-success.png",
+        "tests/native/test_secret_unlocks.cpp",
+        "scripts/test_secret_unlocks.sh",
+        "evidence/secret-unlocks/result.json"
+      ],
+      "decision_id": null,
+      "notes": [
+        "The 52-code/five-family inventory and original front-end mechanisms are recorded. A real simulator UI run on isolated NPQA toggled one mission on (mask 0x3 to 0x103), saved, updated/relaunched/loaded the app, then toggled it back to exactly 0x3 and saved. An invalid entry produced no success and left the re-saved profile byte-identical.",
+        "Native actual engine: all five families, invalid/no-match, set idempotence, individual toggles, other-player protection, actual weapon/dossier/multiplayer menu effects and whole-profile fresh-process load pass (118+32 checks). Simulator original NPQA UI accepts all-mission, character/scenario sets, individual character off toggle and spaced upgrade code. Original Save Codename writes expected masks, exact backup, unchanged unrelated profiles; new app process loads final mission, Gold P2K/stunner upgrades and Uplink. Physical input and signed-device persistence remain unverified. No earned progression is claimed."
+      ]
+    },
+    "R20": {
+      "status": "decision_complete",
+      "evidence": [
+        "docs/CHEATS-RESEARCH.md",
+        "apple/shared/NightPadSettings.cpp",
+        "apple/ios/NightPadEngineHost.mm",
+        "scripts/test_assists.sh",
+        "docs/TEST-MATRIX.md",
+        "docs/DECISIONS/0022-assist-profile-authority.md",
+        "evidence/assist-profile/result.json"
+      ],
+      "decision_id": null,
+      "notes": [
+        "The reconstructed debug table is audited with a per-option product decision; only immortality and unlimited ammo are exposed, off by default and excluded from acceptance runs.",
+        "All-weapons equip is deferred with a concrete blocker: it needs player 0 to exist and the standalone harness cannot boot a live level. Unlock-everything is rejected because it bypasses progression.",
+        "A QA Uplink run revealed saved-profile immortality can remain enabled while native toggles are OFF. Native CHET-load regression reproduces both default-OFF and returned-OFF failures. Repair and candidate revalidation in progress; that match is diagnostic, not unassisted acceptance.",
+        "Repaired in patch 0036/decision 0022: app-owned two choices reconcile every frame, including OFF; no app ownership preserves standalone/replay behavior. Actual CHET-load regression and simulator NPQA stored-immortal load/damage/death/Replay/ON-under-fire/OFF-death pass. Native choices restored OFF and all profile files unchanged; device scope remains."
+      ]
+    },
+    "R21": {
+      "status": "decision_complete",
+      "evidence": [
+        "docs/DECISIONS/0013-texture-overrides.md",
+        "vendor/nightfire/src/common/gfx/sdlGpuBackend.cpp",
+        "vendor/nightfire/src/common/gfx/textureReplace.cpp"
+      ],
+      "decision_id": null,
+      "notes": [
+        "D3D9-only DDS replacement; SDL/Metal port planned but deferred because no Xbox texture pack scene exists."
+      ]
+    },
+    "R22": {
+      "status": "decision_complete",
+      "evidence": [
+        "docs/DECISIONS/0011-netplay-deferral.md"
+      ],
+      "decision_id": "0011-netplay-deferral",
+      "notes": [
+        "Source has no networking layer and the front-end exposes only local multiplayer. Two approaches analysed; both are out of scope without source support, so online play is deferred."
+      ]
+    },
+    "R23": {
+      "status": "not_applicable",
+      "evidence": [],
+      "decision_id": "0011-netplay-deferral",
+      "notes": [
+        "Netplay is deferred, so two-device consistency and impairment testing do not apply."
+      ]
+    },
+    "R24": {
+      "status": "in_progress",
+      "evidence": [
+        "docs/PERFORMANCE-BUDGET.md",
+        "scripts/summarize_perf.py",
+        "scripts/test_perf_summary.sh"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Measurement routes, provisional budgets and a PerfLog summarizer are in place; no device measurement has run."
+      ]
+    },
+    "R25": {
+      "status": "passed",
+      "evidence": [
+        "apple/shared/NightPadDiagnostics.cpp",
+        "scripts/test_diagnostics.sh",
+        "scripts/test_release_diagnostics.sh",
+        "scripts/check_privacy.sh",
+        "docs/TEST-MATRIX.md"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Reports carry app/build identity, data and engine state, display options, assist state and session events, with paths and credential-looking values redacted; nothing is uploaded.",
+        "The Release lane reports build_configuration=performance/release, and test_release_diagnostics.sh boots and shuts down one simulator to read it."
+      ]
+    },
+    "R26": {
+      "status": "in_progress",
+      "evidence": [
+        "scripts/verify_patches.sh",
+        "scripts/package_device_app.sh",
+        "scripts/test_clean_shell_build.sh"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Patch provenance, a clean shell build and an unsigned device IPA recipe pass. Signing/install and a full clean-checkout rebuild of engine and dependencies remain.",
+        "scripts/test_clean_shell_build.sh rebuilt both lanes from empty trees at 5b8583a and the link check passed; the unsigned package was rebuilt at the same commit.",
+        "scripts/check_package.sh verifies the IPA contents, arm64 slice, system-only linkage and the required Info.plist keys; the package script runs it."
+      ]
+    },
+    "R27": {
+      "status": "passed",
+      "evidence": [
+        "docs/PROVENANCE.md",
+        "docs/UPSTREAM-DELTA.md",
+        "scripts/check_privacy.sh",
+        "docs/TEST-MATRIX.md"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Donor notices and pins live in UPSTREAM-DELTA and dependencies.lock; the upstream engine has no reviewed first-party license, which PROVENANCE records as an open distribution question.",
+        "scripts/check_privacy.sh fails on retail, binary or private trees and on any networking API in apple/."
+      ]
+    },
+    "R28": {
+      "status": "passed",
+      "evidence": [
+        "scripts/verify_engine.sh",
+        "scripts/verify_quick.sh",
+        "docs/TEST-MATRIX.md",
+        "docs/STATUS.md"
+      ],
+      "decision_id": null,
+      "notes": [
+        "scripts/verify_engine.sh passed in full on commit 480ac5a: action and driving lifecycles, action and driving pause with audio, assists, driving early stop, transition, handoff and round trip.",
+        "scripts/verify_quick.sh covers the host unit tests, both shell lanes, the link contract, patch provenance and privacy.",
+        "Device-only scenarios and the missing PAL media are listed as explicit blockers in docs/TEST-MATRIX.md rather than assumed."
+      ]
+    },
+    "R29": {
+      "status": "in_progress",
+      "evidence": [
+        "apple/ios/NightPadTouchControlsView.mm",
+        "apple/shared/NightPadControlPalette.h",
+        "apple/shared/NightPadControlPalette.cpp",
+        "scripts/test_contrast.sh",
+        "apple/ios/NightPadShellViewController.mm",
+        "apple/ios/NightPadDiagnosticsViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "apple/ios/NightPadAboutViewController.mm",
+        "evidence/ios-shell/diagnostics-dynamic-type.png",
+        "docs/DECISIONS/0024-touch-menu-review.md"
+      ],
+      "decision_id": null,
+      "notes": [
+        "Labels, 44-point controls, Dynamic Type, 4.5:1 contrast and explicit overlay/editor reading order are verified in the simulator. Physical VoiceOver remains.",
+        "All shell labels now opt into Dynamic Type; the data panel and About render at XXL with the card still fitting.",
+        "The monospaced titles and the diagnostics report now scale through UIFontMetrics; the report and About stay scrollable at XXL.",
+        "Screenshot-led redesign: shared resolved geometry, minimum targets, clear root/submenus, phone 4:3/tablet 16:9 HUD capture. Previous editor larger-text/form-sheet evidence is historical; redesigned gesture/larger-text and physical acceptance remain open."
+      ]
+    },
+    "R30": {
+      "status": "in_progress",
+      "evidence": [
+        "docs/CANDIDATE.md",
+        "scripts/candidate_identity.sh"
+      ],
+      "decision_id": null,
+      "notes": [
+        "The manifest draft and identity script cover the whole pinned graph (five checkouts), lock/patch hashes, data/content and package hashes, and refuse an uncommitted freeze. Device results remain."
+      ]
+    }
+  },
+  "features": {
+    "debug_cheats": {
+      "status": "uninvestigated",
+      "adopted": false,
+      "decision_id": null
+    },
+    "texture_overrides": {
+      "status": "uninvestigated",
+      "adopted": false,
+      "decision_id": null
+    },
+    "network_play": {
+      "status": "uninvestigated",
+      "adopted": false,
+      "scope": null,
+      "decision_id": null
+    }
+  },
+  "physical_targets": [],
+  "decisions": [
+    {
+      "id": "0011-netplay-deferral",
+      "path": "docs/DECISIONS/0011-netplay-deferral.md",
+      "summary": "Online netplay deferred; local multiplayer only."
+    },
+    {
+      "id": "0012-donor-ui-benchmark",
+      "path": "docs/DECISIONS/0012-donor-ui-benchmark.md",
+      "summary": "SunPad and GalaxyPad are the UI quality bar."
+    },
+    {
+      "id": "0013-texture-overrides",
+      "path": "docs/DECISIONS/0013-texture-overrides.md",
+      "summary": "No texture-override feature in this candidate; bounded SDL/Metal port deferred."
+    },
+    {
+      "id": "0015-atomic-profile-saves",
+      "path": "docs/DECISIONS/0015-atomic-profile-saves.md",
+      "summary": "Use atomic POSIX profile replacement with a flushed previous-copy backup; preserve the original serialized bytes and save flow."
+    },
+    {
+      "id": "0016-display-settings-contract",
+      "path": "docs/DECISIONS/0016-display-settings-contract.md",
+      "summary": "Write numeric widescreen values and reload cached action settings at each new session; presentation aspect fitting remains a required repair."
+    },
+    {
+      "id": "0017-display-fit-and-flow-timing",
+      "path": "docs/DECISIONS/0017-display-fit-and-flow-timing.md",
+      "summary": "Fit selected display aspect within safe-area pixels, correct driving dashboard widescreen encoding, and scope missing-movie recovery to the attract page to preserve recorded input timing."
+    },
+    {
+      "id": "0018-native-ui-pause-owners",
+      "path": "docs/DECISIONS/0018-native-ui-pause-owners.md",
+      "summary": "Wire native menu visibility and independent pause owners, require neutral input after interruption, and leave the blocking movie pause gap explicit."
+    },
+    {
+      "id": "0019",
+      "path": "docs/DECISIONS/0019-native-movie-pause.md",
+      "summary": "Pause movie voices and clocks and observe stop during blocking playback; validate actual presented frames separately from simulation."
+    },
+    {
+      "id": "0020",
+      "path": "docs/DECISIONS/0020-action-boot-state.md",
+      "summary": "Reset action loader phase and launch page per boot while preserving original handover semantics."
+    },
+    {
+      "id": "0021",
+      "path": "docs/DECISIONS/0021-action-audio-session-buffers.md",
+      "summary": "Retire the prior action boot buffer/voice set before creating the next device so PCM ownership and 3D tracking remain complete."
+    },
+    {
+      "id": "0024",
+      "path": "docs/DECISIONS/0024-touch-menu-review.md",
+      "summary": "Screenshot-led Xbox touch defaults, consistent menu hierarchy and shared editor/input/drawing geometry; retain saved custom v3 layouts."
+    },
+    {
+      "id": "0025",
+      "path": "docs/DECISIONS/0025-native-master-volume.md",
+      "summary": "Apply persisted master attenuation to both engines logical SDL outputs, including movie streams; keep every root row visible at standard size by removing the redundant heading."
+    }
+  ],
+  "blockers": [
+    {
+      "id": "B01",
+      "scope": [
+        "G03",
+        "G04",
+        "G06",
+        "G12"
+      ],
+      "status": "open",
+      "description": "No valid Apple code-signing identity and no connected physical iPhone/iPad were visible to xcrun.",
+      "evidence": [
+        "config/toolchain.json",
+        "docs/DECISIONS/0001-ios-platform-probe.md"
+      ],
+      "next_step": "Make an ordinary signing identity and trusted device available; install the prepared probe."
+    },
+    {
+      "id": "B02",
+      "scope": [
+        "G02",
+        "G07",
+        "G12"
+      ],
+      "status": "open",
+      "description": "The supplied image lacks the PAL 25_fps movie bundle and 073f0048.xmv, so one recording cannot reach its final frames.",
+      "evidence": [
+        "evidence/action-demos"
+      ],
+      "next_step": "Supply legitimate matching media for the blocked PAL recording; independently validate the supplied NTSC Equinox route. No core campaign route is waived."
+    },
+    {
+      "id": "B03",
+      "scope": [
+        "G05",
+        "G07",
+        "G08",
+        "G09"
+      ],
+      "status": "resolved",
+      "description": "User unlocked the Mac; simulator control works. Protected NPRUN, cleanly stopped old run and installed patch-0035 app.",
+      "evidence": [
+        "evidence/campaign-route/lock-checkpoint.json",
+        "evidence/campaign-truck/resume-identity.json"
+      ],
+      "next_step": null,
+      "resolved_at": "2026-10-29T01:51:24.302849+00:00"
+    }
+  ],
+  "journal_entries": [
+    {
+      "at": "2026-10-27T10:34:02Z",
+      "goal": "G00",
+      "summary": "Loop activated; pinned sources, toolchain and ownership boundaries recorded.",
+      "evidence": [
+        "config/dependencies.lock.json",
+        "config/toolchain.json",
+        "docs/PROVENANCE.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T10:34:02Z",
+      "goal": "G01",
+      "summary": "Supplied image deduplicated, hashed and listed; required trees present.",
+      "evidence": [
+        "build/data/iso-list.txt",
+        "scripts/prepare_game_data.py"
+      ]
+    },
+    {
+      "at": "2026-10-27T11:05:00Z",
+      "goal": "G02/G03",
+      "summary": "Native baseline built; replay and iOS simulator probes reached their content/device boundaries.",
+      "evidence": [
+        "evidence/action-demos",
+        "evidence/ios-probe",
+        "docs/DECISIONS/0001-ios-platform-probe.md",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T11:18:00Z",
+      "goal": "G04",
+      "summary": "Both full engines compile for iPhoneOS and their isolated objects link in one executable with two bridge symbols.",
+      "evidence": [
+        "docs/DECISIONS/0002-engine-object-isolation.md",
+        "build/ios-combined/nightpad-combined-link"
+      ]
+    },
+    {
+      "at": "2026-10-27T11:22:00Z",
+      "goal": "G04",
+      "summary": "Added opt-in in-process launch request seam; page and requesting thread verified without child process.",
+      "evidence": [
+        "patches/0003-in-process-launch-request.patch",
+        "docs/DECISIONS/0003-launch-request-bridge.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T11:32:00Z",
+      "goal": "G04",
+      "summary": "Switched iOS engine builds to static SDL; standalone and combined arm64 links pass without a loose SDL dylib dependency.",
+      "evidence": [
+        "patches/0004-ios-static-sdl.patch",
+        "docs/DECISIONS/0004-ios-static-sdl.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T11:36:00Z",
+      "goal": "G04",
+      "summary": "Bound FFmpeg statically in both iOS engines and preserved the native dynamic path; native 635-frame smoke still passes.",
+      "evidence": [
+        "patches/0005-ios-static-ffmpeg.patch",
+        "docs/DECISIONS/0005-ios-static-ffmpeg.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T12:02:00Z",
+      "goal": "G04",
+      "summary": "Shared GameWindow/HostPosix allocator runtime fixes the symbolized shader heap crash; worker-thread leak remains.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "scripts/test_action_lifecycle.sh"
+      ]
+    },
+    {
+      "at": "2026-10-27T12:10:00Z",
+      "goal": "G04",
+      "summary": "Three isolated action start/stop cycles pass with a shared allocator; surviving threads identified as Cocoa/GCD pool and stable.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "tests/native/test_action_lifecycle.cpp"
+      ]
+    },
+    {
+      "at": "2026-10-27T12:18:00Z",
+      "goal": "G04",
+      "summary": "Driving start and cleanup work; cross-engine launch request captures page but hangs before join.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "scripts/test_driving_lifecycle.sh"
+      ]
+    },
+    {
+      "at": "2026-10-27T12:28:00Z",
+      "goal": "G04",
+      "summary": "Fault was missing window quit in driving stop plus join-before-close ordering; driving one-cycle lifecycle now joins.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "scripts/test_driving_lifecycle.sh"
+      ]
+    },
+    {
+      "at": "2026-10-27T12:35:00Z",
+      "goal": "G04",
+      "summary": "Page-driven combined harness added; driving boots into shader 7 then crashes when both isolated engines are linked.",
+      "evidence": [
+        "tests/native/test_engine_transition.cpp",
+        "scripts/test_engine_transition.sh",
+        "docs/DECISIONS/0006-engine-stop-boundary.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T12:45:00Z",
+      "goal": "G04",
+      "summary": "Combined crash localized to load-time engine initialization/MEM_size, not shader translation.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "tests/native/test_engine_transition.cpp"
+      ]
+    },
+    {
+      "at": "2026-10-27T12:52:00Z",
+      "goal": "G04",
+      "summary": "Enumerated combined mod-init tables; common sdlGpuBackend constructor runs twice and leads the static-init conflict.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T13:00:00Z",
+      "goal": "G04",
+      "summary": "Lazy Fmv/LaunchOptions singletons fixed combined load-time conflict; page-driven driving-to-action transition passes.",
+      "evidence": [
+        "patches/0007-lazy-action-singletons.patch",
+        "tests/native/test_engine_transition.cpp"
+      ]
+    },
+    {
+      "at": "2026-10-27T13:12:00Z",
+      "goal": "G04",
+      "summary": "Reverse action->driving transition passes through psiLaunchDriving; combined harness is bidirectional.",
+      "evidence": [
+        "patches/0008-action-driving-test-seam.patch",
+        "tests/native/test_engine_transition.cpp"
+      ]
+    },
+    {
+      "at": "2026-10-27T13:20:00Z",
+      "goal": "G04",
+      "summary": "One bidirectional cycle passes; repeated driving start faults after main, isolating mutable engine global reset.",
+      "evidence": [
+        "patches/0009-once-per-process-static-init.patch",
+        "tests/native/test_engine_transition.cpp"
+      ]
+    },
+    {
+      "at": "2026-10-27T13:38:00Z",
+      "goal": "G04",
+      "summary": "Kernel initialization guarded once; SDL persistence experiment reverted after driving join regression.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T13:50:00Z",
+      "goal": "G04",
+      "summary": "Reverse trigger now uses Boot_GetPTPData; repeated driving start still fails, ruling out malformed page.",
+      "evidence": [
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "patches/0008-action-driving-test-seam.patch"
+      ]
+    },
+    {
+      "at": "2026-10-27T13:49:54Z",
+      "goal": "G04",
+      "summary": "Session-scoped heap/static reset and in-window thread stacks make three driving and three mixed cycles pass; ten action cycles still grow Metal graphics memory.",
+      "evidence": [
+        "patches/0010-engine-session-reset.patch",
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:21:36Z",
+      "goal": "G04",
+      "summary": "Ten action, driving and mixed cycles pass with stable joins and plateauing memory; G04 now waits only on physical-device evidence.",
+      "evidence": [
+        "patches/0010-engine-session-reset.patch",
+        "docs/DECISIONS/0006-engine-stop-boundary.md",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:26:55Z",
+      "goal": "G05",
+      "summary": "Added explicit app paths and a transactional prepared-data import core with cancellation, validation, atomic activation and save separation.",
+      "evidence": [
+        "scripts/test_data_import.sh",
+        "apple/shared/NightPadGameDataImport.cpp",
+        "apple/shared/NightPadPaths.cpp"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:32:45Z",
+      "goal": "G05",
+      "summary": "Added the native shell target with persistent three-dot menu, data import/status panel, pause/about/diagnostics surfaces; simulator and device builds pass.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/DECISIONS/0008-native-shell-surface.md",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:37:38Z",
+      "goal": "G05",
+      "summary": "Linked the combined engine archive into the iPhoneOS shell and added an engine-host wrapper that prepares private settings; live window and pause wiring remain.",
+      "evidence": [
+        "apple/ios/NightPadEngineHost.mm",
+        "scripts/build_combined_engine_link.sh",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:43:28Z",
+      "goal": "G05",
+      "summary": "Added a nonblocking SDL poll bridge and wired shell Start/Stop with a transparent overlay above the engine window; device runtime and pause gating remain.",
+      "evidence": [
+        "patches/0011-nonblocking-window-poll.patch",
+        "apple/ios/NightPadEngineHost.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:52:35Z",
+      "goal": "G05",
+      "summary": "Added cooperative engine pause with audio suspension, shell App Pause/Back to Game wiring, and a passing frame-stop/resume test.",
+      "evidence": [
+        "patches/0012-native-engine-pause.patch",
+        "scripts/test_action_pause.sh",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T14:56:00Z",
+      "goal": "G05",
+      "summary": "Suspended pad/keyboard/pointer input while native UI is open and tied it to shell menu/pause surfaces; device builds pass.",
+      "evidence": [
+        "patches/0013-native-input-suspension.patch",
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T15:03:53Z",
+      "goal": "G05",
+      "summary": "Added a reviewable local diagnostics report with path/credential redaction and explicit share; simulator review and device build pass.",
+      "evidence": [
+        "apple/shared/NightPadDiagnostics.cpp",
+        "apple/ios/NightPadDiagnosticsViewController.mm",
+        "scripts/test_diagnostics.sh"
+      ]
+    },
+    {
+      "at": "2026-10-27T15:05:57Z",
+      "goal": "G05",
+      "summary": "Verified the reviewed diagnostic report reaches the system share sheet and is written privately under Logs/NightPad with redaction.",
+      "evidence": [
+        "apple/ios/NightPadDiagnosticsViewController.mm",
+        "scripts/test_diagnostics.sh",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T15:08:56Z",
+      "goal": "G05",
+      "summary": "Added a native About page with source/donor links and independence/game-data notices; builds and simulator rendering pass.",
+      "evidence": [
+        "apple/ios/NightPadAboutViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T15:11:50Z",
+      "goal": "G05",
+      "summary": "Shell imported a synthetic prepared folder through real validation/activation, persisted the active identity across relaunch and preserved saves.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T15:13:56Z",
+      "goal": "G06",
+      "summary": "Added and tested a four-port Xbox input mixer with source merging, tap edges, dead zones, triggers and release-before-reacquire.",
+      "evidence": [
+        "apple/shared/NightPadInput.cpp",
+        "scripts/test_input.sh",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-27T15:15:56Z",
+      "goal": "G06",
+      "summary": "Added a versioned normalized touch-layout model with independent phone/tablet defaults, clamping, reset and atomic persistence.",
+      "evidence": [
+        "apple/shared/NightPadTouchLayout.cpp",
+        "scripts/test_touch_layout.sh",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T12:45:00Z",
+      "goal": "G06",
+      "summary": "Menu actions now defer sheet presentation until the UIMenu dismisses; alerts use the same route, and layout rebuilds keep hidden controls invisible to VoiceOver.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "apple/ios/NightPadTouchControlsView.mm",
+        "evidence/ios-shell/menu-touch-layout.png",
+        "evidence/ios-shell/menu-diagnostics.png",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T13:05:00Z",
+      "goal": "G07",
+      "summary": "Resolved the extra front-end headings: they are campaign chapters inside the twelve wheel missions, not selectable entries, and the engine never references them.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "vendor/nightfire/src/action/assets.h",
+        "vendor/nightfire/src/action/ui/ui_nightfire.cpp",
+        "build/tests/action-dump/run/dump/UKTxt.Dat"
+      ]
+    },
+    {
+      "at": "2026-10-28T13:35:00Z",
+      "goal": "G07",
+      "summary": "Inventoried the objectives of all 24 action level parts from MissionData, which also identifies the two cut chapters by their placeholder objectives.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "vendor/nightfire/src/action/game/sp/Mission.cpp",
+        "build/tests/action-dump/run/dump/UKTxt.Dat",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T13:50:00Z",
+      "goal": "G07",
+      "summary": "Documented how each mission part starts and ends: per-part objective reset, first-part stats reset, outro routing for final parts and the four failure channels.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "vendor/nightfire/src/action/game/sp/Mission.cpp"
+      ]
+    },
+    {
+      "at": "2026-10-28T14:05:00Z",
+      "goal": "G07",
+      "summary": "Mission progress is saved from the results page with SAVE_ALL, not by any level part, so failure and death lose the run.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "vendor/nightfire/src/action/ui/ui_nightfire.cpp",
+        "vendor/nightfire/src/action/ui/ui_codenames.cpp"
+      ]
+    },
+    {
+      "at": "2026-10-28T14:20:00Z",
+      "goal": "G06",
+      "summary": "The touch editor can hide or show a control from a long-press menu; the flag round-trips and the live overlay omits hidden controls.",
+      "evidence": [
+        "apple/ios/NightPadTouchLayoutViewController.mm",
+        "tests/native/test_touch_layout.cpp",
+        "scripts/test_touch_layout.sh",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/touch-layout-hidden.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T14:35:00Z",
+      "goal": "G13",
+      "summary": "Refreshed the draft candidate identity and rebuilt the unsigned IPA on the current clean tree; final freeze still needs device acceptance.",
+      "evidence": [
+        "docs/CANDIDATE.md",
+        "scripts/candidate_identity.sh",
+        "scripts/package_device_app.sh"
+      ]
+    },
+    {
+      "at": "2026-10-28T14:50:00Z",
+      "goal": "G06",
+      "summary": "Checked the tablet touch defaults and live overlay on an iPad simulator; iPad sheet saving and drag editing remain open.",
+      "evidence": [
+        "docs/TEST-MATRIX.md",
+        "tests/native/test_touch_layout.cpp",
+        "evidence/ios-shell/ipad-touch-overlay.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T15:05:00Z",
+      "goal": "G05",
+      "summary": "Added Import from NightPad Folder for Documents/NightPad Import and made both import paths show the data panel with progress and Cancel Import.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/import-from-folder.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T15:20:00Z",
+      "goal": "G11",
+      "summary": "Decided R21: the engine DDS replacement is D3D9-only, the SDL backend has no hook, and no Xbox texture pack scene exists; prototype deferred with a plan.",
+      "evidence": [
+        "docs/DECISIONS/0013-texture-overrides.md",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T15:45:00Z",
+      "goal": "G04",
+      "summary": "Filled the empty R01 and R28 records: foundation provenance for R01, and a full current-tree engine suite (verify_engine PASS) plus explicit device/media blockers for R28.",
+      "evidence": [
+        "scripts/verify_engine.sh",
+        "scripts/verify_quick.sh",
+        "docs/TEST-MATRIX.md",
+        "config/dependencies.lock.json",
+        "docs/PROVENANCE.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T16:00:00Z",
+      "goal": "G05",
+      "summary": "Closed R04, R20, R25 and R27 against existing evidence: transactional import with progress and cancel, the audited cheat decision, local diagnostics with distinct builds, and the provenance/privacy boundary.",
+      "evidence": [
+        "docs/TEST-MATRIX.md",
+        "docs/CHEATS-RESEARCH.md",
+        "docs/PROVENANCE.md",
+        "scripts/test_data_import.sh",
+        "scripts/test_release_diagnostics.sh",
+        "scripts/check_privacy.sh"
+      ]
+    },
+    {
+      "at": "2026-10-28T16:15:00Z",
+      "goal": "G05",
+      "summary": "The data panel import button now offers the system picker and the NightPad folder side by side, and the folder path works from the panel with progress and cancel.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T16:35:00Z",
+      "goal": "G05",
+      "summary": "Verified that an app reinstall keeps saves, settings, touch layout and imported game data byte-identical; only interrupted engine writes and a signed store update remain for R11.",
+      "evidence": [
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T16:50:00Z",
+      "goal": "G05",
+      "summary": "Save restore writes atomically and is now driven end to end by a fixture hook: collision prompt, exact contents, unrelated files untouched.",
+      "evidence": [
+        "docs/TEST-MATRIX.md",
+        "apple/ios/NightPadShellViewController.mm",
+        "evidence/ios-shell/save-restore.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T17:05:00Z",
+      "goal": "G13",
+      "summary": "Device handoff checklist updated for the app-folder import, save restore, control hiding and the rebuilt package; candidate snapshot refreshed.",
+      "evidence": [
+        "docs/DEVICE-HANDOFF.md",
+        "docs/CANDIDATE.md",
+        "scripts/package_device_app.sh"
+      ]
+    },
+    {
+      "at": "2026-10-28T17:20:00Z",
+      "goal": "G05",
+      "summary": "Added Restore Saves from NightPad Folder so save restore no longer needs the system picker; verified contents, collision prompt and isolation from unrelated files.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "docs/DEVICE-HANDOFF.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T17:35:00Z",
+      "goal": "G13",
+      "summary": "Clean shell rebuild and package reproduction re-verified at 5b8583a; handoff and candidate manifests carry the new package hash.",
+      "evidence": [
+        "scripts/test_clean_shell_build.sh",
+        "docs/DEVICE-HANDOFF.md",
+        "docs/CANDIDATE.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T17:55:00Z",
+      "goal": "G06",
+      "summary": "Deferred presentations now wait for the window and alerts stack, so a corrupt settings file and a corrupt layout are both reported instead of one being lost.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T18:15:00Z",
+      "goal": "G06",
+      "summary": "Mapped the eight action control schemes from psiInput.cpp, documented the differences from Nightfire, and named them in Control Help.",
+      "evidence": [
+        "docs/CONTROL-SCHEMES.md",
+        "apple/ios/NightPadControlsHelpViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T18:30:00Z",
+      "goal": "G07",
+      "summary": "Located the driving objective strings in data/gfx/locale inside misc.viv and documented the table format; per-mission attribution still needs the track event parser.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T18:45:00Z",
+      "goal": "G13",
+      "summary": "Collected the open issues and the apparent-but-expected behaviours into docs/KNOWN-ISSUES.md for the candidate handoff.",
+      "evidence": [
+        "docs/KNOWN-ISSUES.md",
+        "docs/CANDIDATE.md",
+        "docs/STATUS.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T19:20:00Z",
+      "goal": "G07",
+      "summary": "Tried a headless objective log: Mission 1 loads and runs but never posts an objective without driving input, so attribution needs the track parser or a driven run. The hook was reverted.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/GOAL-JOURNAL.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T19:40:00Z",
+      "goal": "G07",
+      "summary": "Holding throttle through the host-pad hook for 30s and 90s still produced no objective message; headless attribution is ruled out and the experimental hooks were reverted.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/GOAL-JOURNAL.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T20:10:00Z",
+      "goal": "G06",
+      "summary": "The touch editor exposes per-control opacity through a long-press submenu; the value applies live and persists in the layout file.",
+      "evidence": [
+        "apple/ios/NightPadTouchLayoutViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/touch-opacity.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T20:30:00Z",
+      "goal": "G06",
+      "summary": "Sheets now report interactive dismissal, so swiping a sheet away clears native UI instead of leaving the game flagged paused; unsaved editor changes are dropped like Cancel.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T20:45:00Z",
+      "goal": "G05",
+      "summary": "The data panel now shows the data state and identity itself, since the home status label is hidden behind it.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/panel-status.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T20:55:00Z",
+      "goal": "G05",
+      "summary": "The home status label hides while the data panel is open, so the panel is the only status surface and nothing shows through the card.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "evidence/ios-shell/panel-status.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T21:10:00Z",
+      "goal": "G05",
+      "summary": "The Game Data & Saves panel now offers Share Saves and Restore Saves beside import, with restore refused while the engine runs.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/panel-saves.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T21:25:00Z",
+      "goal": "G05",
+      "summary": "The panel's Restore button now offers the system picker and the Save Import folder, matching the import row.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T21:40:00Z",
+      "goal": "G06",
+      "summary": "Session history now records a resume only when native UI actually held the game, and interactive dismissal logs its own sheet-dismissed event.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T22:00:00Z",
+      "goal": "G13",
+      "summary": "Added a package content check (three entries, arm64, system libraries only, minimum OS, landscape, file sharing) and wired it into the packaging script; manifests carry the rebuilt hash.",
+      "evidence": [
+        "scripts/check_package.sh",
+        "docs/TEST-MATRIX.md",
+        "docs/CANDIDATE.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T22:20:00Z",
+      "goal": "G13",
+      "summary": "Missing Dynamic Type opt-ins were added across the shell and diagnostics; the data panel and About render at XXL.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/panel-dynamic-type.png"
+      ]
+    },
+    {
+      "at": "2026-10-28T22:45:00Z",
+      "goal": "G05",
+      "summary": "Abandoned import stage trees are removed at startup, freeing 7.6 GB in the simulator while keeping the active tree and saves.",
+      "evidence": [
+        "apple/shared/NightPadGameDataImport.cpp",
+        "tests/native/test_data_import.cpp",
+        "docs/TEST-MATRIX.md",
+        "docs/KNOWN-ISSUES.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T23:00:00Z",
+      "goal": "G05",
+      "summary": "Old identity trees left by importing different content are removed at launch, keeping only the active identity; the host test covers the rule.",
+      "evidence": [
+        "apple/shared/NightPadGameDataImport.cpp",
+        "tests/native/test_data_import.cpp",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T23:15:00Z",
+      "goal": "G05",
+      "summary": "Leftover-tree cleanup moved to a utility queue at launch, so multi-gigabyte deletes no longer block the first frame; planted leftovers were gone within three seconds.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T23:30:00Z",
+      "goal": "G13",
+      "summary": "Refreshed STATUS: current outcome, timestamp and next-step list, including the driving-objective attribution as the open source item.",
+      "evidence": [
+        "docs/STATUS.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T23:45:00Z",
+      "goal": "G07",
+      "summary": "Filled the empty R09 and R10 records with the existing campaign inventory and host audio-pause evidence; both remain in progress pending device runs.",
+      "evidence": [
+        "config/goal-state.json",
+        "docs/TEST-MATRIX.md",
+        "scripts/test_action_pause.sh",
+        "scripts/test_driving_pause.sh"
+      ]
+    },
+    {
+      "at": "2026-10-28T23:55:00Z",
+      "goal": "G13",
+      "summary": "Filled R05 with the device-link, package and arm64 evidence it already had, leaving the signed hardware run as the open part.",
+      "evidence": [
+        "config/goal-state.json",
+        "scripts/check_package.sh",
+        "scripts/check_ios_shell_link.sh"
+      ]
+    },
+    {
+      "at": "2026-10-29T00:00:00Z",
+      "goal": "G13",
+      "summary": "The home and About titles and the diagnostics report now scale through UIFontMetrics; the report is readable and scrollable at XXL.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "apple/ios/NightPadAboutViewController.mm",
+        "apple/ios/NightPadDiagnosticsViewController.mm",
+        "evidence/ios-shell/diagnostics-dynamic-type.png"
+      ]
+    },
+    {
+      "at": "2026-10-29T00:15:00Z",
+      "goal": "G07",
+      "summary": "A MakeEvent-time objective log also produced nothing: the track creates those events only when the mission reaches that stage. The hook was reverted; three headless routes are ruled out.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/GOAL-JOURNAL.md"
+      ]
+    },
+    {
+      "at": "2026-10-29T00:40:00Z",
+      "goal": "G07",
+      "summary": "A 180-second event-hook run still produced no objective: the direct -mission boot takes the EU PAL default, misses paris_intro, and starts its main loop a minute in. The harness default is now recorded; the hook was reverted.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/KNOWN-ISSUES.md"
+      ]
+    },
+    {
+      "at": "2026-10-29T01:00:00Z",
+      "goal": "G07",
+      "summary": "Added a CARP track inspector that decodes the map group and rule event lists; Paris objective events have empty comments, so the text lives in another event family.",
+      "evidence": [
+        "scripts/inspect_driving_track.py",
+        "docs/CAMPAIGN-INVENTORY.md"
+      ]
+    },
+    {
+      "at": "2026-10-29T01:30:00Z",
+      "goal": "G07",
+      "summary": "The driving missions name their description and hints in loading-screen layouts, not objective comments; the five missions and their ids are inventoried, and resolving them needs the locale index decoded.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "scripts/inspect_driving_track.py"
+      ]
+    },
+    {
+      "at": "2026-10-29T02:00:00Z",
+      "goal": "G07",
+      "summary": "Resolved the driving missions descriptions and hints through the engine during headless boots and wrote the paraphrased goals into the campaign inventory; the temporary hook was reverted.",
+      "evidence": [
+        "docs/CAMPAIGN-INVENTORY.md",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-29T02:20:00Z",
+      "goal": "G03",
+      "summary": "The data tools finally run in verify_quick, and the track inspector has a synthetic-CARP test.",
+      "evidence": [
+        "tests/test_data_tools.py",
+        "scripts/test_data_tools.sh",
+        "scripts/verify_quick.sh"
+      ]
+    },
+    {
+      "at": "2026-10-29T02:40:00Z",
+      "goal": "G06",
+      "summary": "Added --open-pause so the App Pause card can be inspected without an engine; it renders and scales, and the home status label stays hidden under it.",
+      "evidence": [
+        "apple/ios/NightPadShellViewController.mm",
+        "docs/TEST-MATRIX.md",
+        "evidence/ios-shell/pause-panel.png"
+      ]
+    },
+    {
+      "at": "2026-10-29T03:00:00Z",
+      "goal": "G13",
+      "summary": "Moved the active goal to the candidate handoff and refreshed the next-step text: the campaign and driving inventories are complete, so only device acceptance and the multiplayer matrix remain.",
+      "evidence": [
+        "config/goal-state.json",
+        "docs/STATUS.md"
+      ]
+    },
+    {
+      "at": "2026-10-29T03:20:00Z",
+      "goal": "G13",
+      "summary": "Added scripts/freeze_candidate.sh: a clean-tree check, the gates, a fresh package and the identity in one command, logged to build/package/candidate.txt.",
+      "evidence": [
+        "scripts/freeze_candidate.sh",
+        "docs/DEVICE-HANDOFF.md",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-29T04:00:00Z",
+      "goal": "G13",
+      "summary": "Moved the freeze log out of build/package and ran the full freeze: quick gates, engine suite PASS, package and identity all captured in build/candidate.txt.",
+      "evidence": [
+        "scripts/freeze_candidate.sh",
+        "build/candidate.txt",
+        "docs/DEVICE-HANDOFF.md"
+      ]
+    },
+    {
+      "at": "2026-10-29T04:20:00Z",
+      "goal": "G13",
+      "summary": "Verified the handoff preflight: it builds the unsigned device shell, reports no connected devices and prints the install command. All remaining work needs hardware.",
+      "evidence": [
+        "scripts/device_handoff.sh",
+        "docs/DEVICE-HANDOFF.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T11:55:00Z",
+      "goal": "G04/G06",
+      "summary": "Recovered the interrupted working tree: finished the Xbox touch-control treatment, completed patch 0027 so it carries the timer-stack path, and re-ran the repeated-session gates. Fifteen action cycles, ten driving cycles and the action-driving-action round trip pass with steady memory.",
+      "evidence": [
+        "patches/0027-thread-stack-reuse.patch",
+        "apple/ios/NightPadTouchControlsView.mm",
+        "evidence/ios-shell/xbox-controls-live.png",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T12:00:00Z",
+      "goal": "G05",
+      "summary": "Confirmed a real in-game codename profile: the 166-byte PLRS BOND.dat survived an app relaunch, appeared in Select Codename, kept The Exchange as its mission, and loaded that mission into gameplay. The file stayed unchanged through a clean Stop Game.",
+      "evidence": [
+        "evidence/ios-shell/codename-profile-persisted.png",
+        "evidence/ios-shell/bond-profile-progress.png",
+        "evidence/ios-shell/the-exchange-loaded.png",
+        "docs/TEST-MATRIX.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T16:32:14Z",
+      "goal": "G05",
+      "summary": "Restored the active goal loop and one-simulator constraint. Fixed truncating POSIX engine profile writes with atomic replacement and previous-copy backup; fault tests and original Save Codename/relaunch pass. Decoded BOND.dat and narrowed earlier campaign-progress claims to initial-profile persistence.",
+      "evidence": [
+        "patches/0028-atomic-profile-save.patch",
+        "scripts/test_engine_save.sh",
+        "docs/DECISIONS/0015-atomic-profile-saves.md",
+        "evidence/save-durability",
+        "build/tests/engine-save/verify-quick.log",
+        "build/tests/engine-save/lifecycle.log"
+      ]
+    },
+    {
+      "at": "2026-10-28T16:40:01Z",
+      "goal": "G05/G09",
+      "summary": "The original touch keyboard accepts a reversible mission unlock. Its saved mask survives an in-place final-build update and app relaunch, then the same code returns the profile to the exact prior bytes. An invalid entry produces no success and leaves a subsequent save byte-identical. The final unsigned Release device package rebuilds and passes its contents/linkage checks.",
+      "evidence": [
+        "evidence/save-durability/unlock-result.json",
+        "evidence/save-durability/build-identity.json",
+        "build/tests/engine-save/package-device.log"
+      ]
+    },
+    {
+      "at": "2026-10-28T17:36:21Z",
+      "goal": "G05/G07/G08/G09",
+      "summary": "Created a fresh original-UI NPRUN profile and recorded Paris failure/replay/return without progression credit. Completed two original six-bot Arena/Skyrail matches. Fixed numeric widescreen settings and added per-session action settings reload; real parser and same-process simulator evidence pass. Confirmed full-window stretching as the next R18 repair.",
+      "evidence": [
+        "evidence/campaign-first-play/nprun",
+        "evidence/multiplayer/arena-skyrail",
+        "evidence/display-settings",
+        "docs/DECISIONS/0016-display-settings-contract.md",
+        "build/tests/engine-settings"
+      ]
+    },
+    {
+      "at": "2026-10-28T18:10:59Z",
+      "goal": "G02/G04/G09",
+      "summary": "Implemented safe-area aspect fitting, fixed driving dashboard flag encoding, and narrowed the earlier missing-movie recovery after reproducing a frame-2 replay regression. Simulator display and native/build gates pass; fresh full replay recheck remains live. No campaign progression or physical acceptance credit.",
+      "evidence": [
+        "docs/DECISIONS/0017-display-fit-and-flow-timing.md",
+        "evidence/presentation-fit",
+        "build/tests/presentation"
+      ]
+    },
+    {
+      "at": "2026-10-28T18:54:50Z",
+      "goal": "G02/G05/G07",
+      "summary": "Verified all eleven complete replays. Fresh NPRUN Exchange attempts confirmed on-foot controls/failure without earned progress. Found and wired the missing root-menu pause, added independent native owners and neutral-before-resume input. Simulator menu/simulation holds pass; blocking driving intro movie pause remains a known R15 failure and next repair.",
+      "evidence": [
+        "evidence/action-demos/20261028T180115Z/results.json",
+        "evidence/campaign-first-play/exchange",
+        "evidence/native-ui-pause",
+        "docs/DECISIONS/0018-native-ui-pause-owners.md"
+      ]
+    },
+    {
+      "at": "2026-10-28T19:36:02Z",
+      "goal": "G04/G05",
+      "summary": "Repaired native movie voice/clock pause and blocking driving stop; actual SDL/native/simulator evidence passes. Restart after stopping an action movie shows a stale zero-score Results page and remains next investigation. No earned progression.",
+      "evidence": [
+        "docs/DECISIONS/0019-native-movie-pause.md",
+        "evidence/fmv-pause",
+        "build/tests/fmv-pause"
+      ]
+    },
+    {
+      "at": "2026-10-29T00:52:46Z",
+      "goal": "G04/G05",
+      "summary": "Patch 0034 resets interrupted loader phase and per-boot handover cache. Regression fails before/passes after, simulator movie Stop/Start reaches title, original Paris Quit returns to mission menu. NPRUN unchanged; earned progression remains unverified.",
+      "evidence": [
+        "docs/DECISIONS/0020-action-boot-state.md",
+        "evidence/action-boot",
+        "build/tests/action-boot"
+      ]
+    },
+    {
+      "at": "2026-10-29T01:35:54Z",
+      "goal": "G04/G05/G07/G12",
+      "summary": "Live NPRUN reaches Exchange main gate without completion; matching replay reveals ledge/truck/crouch route. Mac lock blocks UI and unlock is requested. Patch 0035 repairs repeated-boot audio registry/PCM ownership; fifteen actual action cycles, SDL regression, full native suite, quick/build/package pass. New artifacts not installed; paused f504a63 run and profile preserved.",
+      "evidence": [
+        "docs/DECISIONS/0021-action-audio-session-buffers.md",
+        "evidence/campaign-route",
+        "build/tests/action-audio-sessions",
+        "evidence/action-demos/20261029T010941Z/results.json"
+      ]
+    },
+    {
+      "at": "2026-10-29T01:51:24.302849+00:00",
+      "goal": "G05",
+      "summary": "Previous held attempt cleanly stopped; updated app installed; original UI NPRUN/Operative/Exchange restarted; now high ledge above supply road. Mac access restored; temporary keep-awake active; no campaign save acceptance claimed.",
+      "evidence": [
+        "evidence/campaign-truck/resume-identity.json"
+      ]
+    },
+    {
+      "at": "2026-10-29T08:07:41.368883+00:00",
+      "goal": "G05/G06",
+      "summary": "Owner-requested touch/menu review implemented and locally committed. README expanded, final phone layout survives relaunch, seven saves/settings unchanged; tablet no saves/settings unchanged. Goal remains active.",
+      "evidence": [
+        "evidence/touch-menu-audit/result.json"
+      ]
+    },
+    {
+      "at": "2026-10-29T09:20:01.265674+00:00",
+      "goal": "G05/G07/G12",
+      "summary": "Reviewed controls reproduce the truck objective/courtyard on f5c5303; fountain/guardroom combat deaths and Replay recorded without earned-save credit. Added native Audio/master volume in facf3fc, validated actual PCM and persistence, and corrected root overflow found in screenshots. Final candidate cleanly stopped; seven saves and layout unchanged. Goal remains active.",
+      "evidence": [
+        "evidence/campaign-truck/current-attempt.json",
+        "evidence/master-volume/result.json"
+      ]
+    },
+    {
+      "at": "2026-10-29T10:35:27.478113+00:00",
+      "goal": "G07",
+      "summary": "Current audio/menu build reproduces truck objective; laser disables searchlights, armor pickup and helipad/barrel-courtyard progression pass on original unassisted touch route. Three unchanged CastleExterior recordings match all25784frames. Live session preserved; earned whole-mission save remains open. Earlier immediate truck timing corrected by visual wait.",
+      "evidence": [
+        "evidence/campaign-truck/volume-campaign-result.json",
+        "evidence/action-demos/20261029T093704Z/results.json"
+      ]
+    },
+    {
+      "at": "2026-10-29T11:16:05.491051+00:00",
+      "goal": "G05/G06/G07/G13",
+      "summary": "User-requested bounded wrap-up. README finalized; party section/gallery reached, then clean Stop/Start/title/touch Start/final Stop pass. Quick suite and save/layout protection pass. Loop paused by user; whole private-candidate objective remains incomplete.",
+      "evidence": [
+        "README.md",
+        "evidence/final-smoke/result.json",
+        "build/tests/final-smoke-20261029.log"
+      ]
+    }
+  ],
+  "completed_tests": [
+    {
+      "name": "macOS gamewindow_test 200000 operations",
+      "result": "0 of 200029 differ",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "macOS action replay set with 25/30 fps alias",
+      "result": "11 of 12 pass, 208364 frames; SpaceStationD blocked by missing 073f0048.xmv",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "macOS driving Mission 1 lockstep repeat",
+      "result": "16 frames each; 5 pixels differ; 381193-line sound traces byte-identical to tick 9000",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "iOS simulator platform probe",
+      "result": "pointer 0 differ, Metal pass, XMV video/audio pass",
+      "target": "iPhone 17 / iOS 26.5 simulator"
+    },
+    {
+      "name": "unsigned iPhoneOS build",
+      "result": "Mach-O arm64, iOS 16 deployment target, link pass; not installed",
+      "target": "iPhoneOS 26.5"
+    },
+    {
+      "name": "iPhoneOS action_standalone build",
+      "result": "Complete Mach-O arm64 app target built and linked unsigned",
+      "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "iPhoneOS driving_standalone build",
+      "result": "Complete Mach-O arm64 app target built and linked unsigned",
+      "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "combined iOS engine link proof",
+      "result": "Both isolated engine objects link in one Mach-O arm64 executable with exactly 2 exported engine entrypoints",
+      "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "launch request bridge page/thread test",
+      "result": "3072-byte page identical, image DRIVING.XBE, callback once, requesting thread exits, process continues",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "iOS static SDL engine link",
+      "result": "Both engines and combined link use libSDL3.a; no SDL dylib dependency",
+      "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "iOS static FFmpeg engine link",
+      "result": "Both complete engines and combined link use pinned static FFmpeg archives; no FFmpeg dylib dependency",
+      "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "iOS engine build recipe",
+      "result": "scripts/build_ios_engines.sh device builds both full engines with static SDL/FFmpeg and rejects loose dylibs",
+      "target": "iPhoneOS 26.5 arm64"
+    },
+    {
+      "name": "action cooperative stop raw-link harness",
+      "result": "FAIL: Game_Main returns and thread joins, but thread count 1->6->7; localized variant segfaults in ShaderMsl_Translate",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "shared allocator runtime for localized engines",
+      "result": "GameWindow+HostPosix shared object removes ShaderMsl_Translate crash; start/join works but thread count 1->6->7",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "three repeated action lifecycle cycles",
+      "result": "PASS: all cycles join; settled thread pool stays 7 after first cycle; no engine worker visible",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "driving engine start/stop/request",
+      "result": "Mission 1 cleanup completes; in-process DEFAULT.XBE request captured but game thread hangs at join",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "driving lifecycle boundary",
+      "result": "PASS: stop, DEFAULT.XBE callback, close-before-join, 3072-byte page, thread joined",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "combined driving-to-action restart",
+      "result": "PASS: driving page request, close/join, action start from page, close/join; threads 11->10",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "bidirectional page-driven transition",
+      "result": "PASS: driving->action and action->driving in one process; both launch pages captured and both threads joined",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "3-cycle bidirectional transition soak",
+      "result": "FAIL: cycle 1 passes both directions; cycle 2 faults after entering driving main",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "SDL lifetime experiment",
+      "result": "rejected: action repetition improved but driving join timed out; SDL_Quit restored",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "real handover page repeated transition",
+      "result": "FAIL: cycle 1 passes using Boot_GetPTPData; cycle 2 still faults after driving main",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "full-engine-suite",
+      "revision": "3e7a133",
+      "run_at": "2026-10-27T18:15:40Z",
+      "verdict": "passed",
+      "command": "scripts/verify_engine.sh"
+    },
+    {
+      "name": "iOS simulator driving Stop after the host-path fix",
+      "result": "PASS: Paris driving view renders; Stop Game returns to the shell in 1.7-3.7 s",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator repeated action start/stop",
+      "result": "First session title renders; second in-process boot can stall in GAMEFLOW_LOAD_LEVEL (open)",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator repeated Start/Stop with game-flow reset",
+      "result": "PASS: three cycles reach Press START; Paris handoff and stop pass",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator Paris tutorial input and mission flow",
+      "result": "PASS: handoff renders, right trigger fires, Mission Failed and Replay Tutorial work; stop 1.7 s",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator mission then restart (sound bank lifetime)",
+      "result": "PASS: Paris intro/mission, Stop 4.4 s, next Start reaches title with no crash report",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator first handoff after launch",
+      "result": "PASS: Paris intro/tutorial renders, fire input works, stop 1.7 s",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator repeated handoff",
+      "result": "PASS after patches 0026: the second driving session releases the prior GPU window, creates a new device and renders the Paris mission in the same process",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "iOS simulator SunPad-derived touch layout and menu",
+      "result": "PASS: overlay renders, touch START enters Paris, look stick registers, menu opens over gameplay; layout test no-overlap PASS",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "thread stack reuse across repeated sessions",
+      "result": "PASS: 15 action cycles join with RSS steady at 264 MB; 10 driving cycles settle at 280 MB; action-driving-action round trip passes",
+      "target": "macOS 27 arm64"
+    },
+    {
+      "name": "Xbox-finished touch overlay",
+      "result": "PASS: graphite sticks and shoulders, dished D-pad cross, four face colours with dark lettering and system icons render on iPhone and iPad; contrast and layout gates pass",
+      "target": "iPhone 17 Pro and iPad Pro 13-inch / iOS 26.5 simulator"
+    },
+    {
+      "name": "real codename profile survives app relaunch",
+      "result": "PASS: 166-byte PLRS BOND.dat listed after relaunch, kept The Exchange as its mission, and loaded that mission into gameplay",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "atomic engine profile writes and original Save Codename relaunch",
+      "result": "PASS: 12 I/O cases, 2 killed writers, actual engine save/load/delete, simulator settings save with exact previous copy and reload; earned campaign progression remains unverified",
+      "target": "macOS arm64 / iPhone 17 Pro, iOS 26.5 simulator"
+    },
+    {
+      "name": "original Secret Unlock mission toggle, relaunch and invalid code",
+      "result": "PASS simulator-only: mission mask 0x3 -> 0x103 -> app update/relaunch/load -> 0x3, exact backup copies, invalid entry and save leave profile unchanged; other code families and hardware remain unverified",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "fresh codename and Paris failure/replay/return",
+      "result": "PASS for original creation and failure/return; mission completion NOT VERIFIED; NPRUN remains at initial mask 0x3 with zero scores",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "two six-bot Arena matches and original Replay",
+      "result": "PASS simulator-only: Skyrail, one human, six bots, one-minute duration, Normal weapons, results and a second match; physical ports and other scenarios remain",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "real engine display-settings parse and reload",
+      "result": "PASS: numeric 4:3/16:9 values, FOV/FPS/disc root, same-process reload; simulator session log changes widescreen=1 to 0 across Stop/change/Start. Presentation still stretches.",
+      "target": "macOS arm64 / iPhone 17 Pro simulator"
+    },
+    {
+      "name": "safe-area presentation geometry and actual driving widescreen contract",
+      "result": "PASS: fit/rounding/resize/overflow geometry; actual action parser, kernel, XAPI and POSIX INI reader see both numeric modes and same-process changes; final quick gates pass",
+      "target": "macOS arm64 / simulator and iPhoneOS build lanes"
+    },
+    {
+      "name": "phone/tablet Metal aspect fitting and corrected driving scope",
+      "result": "PASS for captured simulator subset: titles in both aspects, driving HUDs and circular tablet 16:9 scope; remaining display/gameplay/device acceptance is unverified",
+      "target": "iPhone 17 Pro and iPad Pro 13-inch (M5) / iOS 26.5 simulator, one booted at a time"
+    },
+    {
+      "name": "missing-movie replay timing repair",
+      "result": "PASS for CastleIndoors1: unchanged recording matches all 635 frames after generic early completion is removed. Old and new presentation backends both failed at frame 2 before that repair. Full eleven-recording recheck is running, not yet passed.",
+      "target": "macOS arm64 native action test engine"
+    },
+    {
+      "name": "final display build lifecycle and package",
+      "result": "PASS: three joined native action cycles, one joined driving cycle, both iOS lanes, unsigned Release package and patch reconstruction; no device acceptance",
+      "target": "macOS arm64 host"
+    },
+    {
+      "name": "post-fix full available action replay corpus",
+      "result": "PASS: all eleven complete recordings, 208364 frames matched; no recording/checksum/golden edits. SpaceStationD still blocked by missing media.",
+      "target": "macOS arm64 native action test engine"
+    },
+    {
+      "name": "native UIKit menu and surface pause ownership",
+      "result": "PASS simulator subset: action 927 fixed through menu-to-sheet, background/menu 3685, driving simulation 1277, final App Pause/nested-menu 1188. Blocking driving movie pause FAILS and remains required.",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "fresh NPRUN on-foot failure/replay save protection",
+      "result": "PASS for movement, look, jump, damage/death/replay and byte-identical profile after failed attempts; no completed mission or earned results save. Both assists off.",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "native movie voice/clock and two actual driving intro cycles",
+      "result": "PASS: silent/virtual/queued/drained/independent SDL voices; actual intro freezes, resumes, stops while paused and joins twice",
+      "target": "macOS arm64, SDL dummy audio"
+    },
+    {
+      "name": "simulator action/driving movie pause and paused Stop",
+      "result": "PASS for subset: action clock 11.357621 -> 11.357622 s; driving holds 77 and 624 presented frames; Stop 1.825 s; NPRUN unchanged",
+      "target": "iPhone 17 Pro / iOS 26.5 simulator"
+    },
+    {
+      "name": "post-0033 focused unchanged action replay",
+      "result": "PASS: CastleIndoors1 all 635 frames; full eleven-recording run remains patch 0032 evidence",
+      "target": "macOS arm64 action test"
+    },
+    {
+      "name": "action boot loader and per-session launch-page reset",
+      "result": "PASS after eight before-fix failures; source cases plus simulator movie Stop/Start title and original Paris Quit handover; NPRUN unchanged",
+      "target": "macOS arm64 / iPhone 17 Pro, iOS 26.5 simulator"
+    },
+    {
+      "name": "post-0034 focused replay, roundtrip and builds",
+      "result": "PASS: unchanged CastleIndoors1 all 635 frames, native mixed roundtrip joins, quick, both iOS lanes, 35 exports, 34 patches / 81 files, unsigned Release package",
+      "target": "macOS arm64 host"
+    },
+    {
+      "name": "actual action SDL audio across fifteen boots",
+      "result": "PASS after baseline failure: 2,880 buffers, PCM ownership tracked, old voice released, final zero voices, no registry overflow; Windows source only",
+      "target": "macOS arm64, actual SDL backend/cache/mixer with dummy audio"
+    },
+    {
+      "name": "fifteen actual post-0035 action lifecycle cycles",
+      "result": "PASS: all joined, settled threads six/seven, no registry overflow; RSS cold222MB -> final264MB, no physical memory acceptance",
+      "target": "macOS arm64 native action engine"
+    },
+    {
+      "name": "full post-0035 native engine regression",
+      "result": "PASS: lifecycle, boot, both pause paths, assists, actual intro pause/stop, early stop, transitions, handoff and mixed round trip",
+      "target": "macOS arm64"
+    },
+    {
+      "name": "post-0034 CastleExterior route guide",
+      "result": "PASS: unchanged recording all 5,649 frames, higher-ledge/truck/crouch route reaches CastleCourtyard; guide only, not continuous campaign acceptance",
+      "target": "macOS arm64 action test"
+    },
+    {
+      "name": "post-0035 focused action replay",
+      "result": "PASS: unchanged CastleIndoors1 all 635 frames",
+      "target": "macOS arm64 action test"
+    },
+    {
+      "name": "actual Secret Unlocks five-family/save/process reload",
+      "result": "PASS: 118 parent +32 child checks, original menu/weapon effects, exact whole profile and previous copy, unrelated codename/player unchanged",
+      "target": "macOS arm64 native engine"
+    },
+    {
+      "name": "original unlock families and app relaunch",
+      "result": "PASS simulator subset: all-mission/reward sets/individual reward/upgrade UI, expected 166-byte save and exact backup, original new-process loader with final mission/Gold P2K/stunner/Uplink; other profiles unchanged",
+      "target": "iPhone 17 Pro iOS 26.5 simulator"
+    },
+    {
+      "name": "live unassisted Exchange truck objective",
+      "result": "PASS objective subset: truck boarding/crouch/concealment, objective complete and CastleCourtyard transition; three courtyard deaths/replay, no whole mission or earned save",
+      "target": "iPhone 17 Pro iOS 26.5 simulator"
+    },
+    {
+      "name": "profile-loaded native assist authority",
+      "result": "PASS after before-fix OFF failures: actual CHET production encode/load while paused, unowned/default OFF/ON/returned OFF reconciliation, preserves AllWeapons and joins",
+      "target": "macOS arm64 actual action engine"
+    },
+    {
+      "name": "simulator stored immortality versus native OFF and ON/OFF",
+      "result": "PASS: actual QA CHET=01 profile load permits guard damage/death, Replay, explicit ON retains health under fire, OFF restores death; clean Stop, profile files unchanged",
+      "target": "iPhone 17 Pro iOS 26.5 simulator"
+    },
+    {
+      "name": "post-0036 full regression and candidate gates",
+      "result": "PASS: complete native engine suite including unlock families, quick/both iOS lanes, focused unchanged 635-frame replay, 36-patch/83-file reconstruction, unsigned Release package",
+      "target": "macOS arm64 / iOS build lanes"
+    },
+    {
+      "name": "native action gameplay-clock pause and reset",
+      "result": "PASS after baseline failure: real PSI clock/MP elapsed frozen over 800 ms; host clock free-running, resume +31 hundredths, Stop paused and second boot pass",
+      "target": "macOS arm64 native action engine"
+    },
+    {
+      "name": "post-0037 candidate regression and Uplink simulator subset",
+      "result": "PASS: full engine, quick/both iOS lanes, 37 patches/83 files, focused 635-frame replay, package; Uplink timer 1:58->1:57 across >=52 s hold, six-bot points, death/respawn/ammo pickup/results/Replay; protected saves unchanged",
+      "target": "macOS arm64 / iPhone 17 Pro iOS 26.5 simulator"
+    },
+    {
+      "name": "touch/menu screenshot-led review",
+      "result": "Full quick passed with final tablet geometry before the last phone right-stick 30-reference-point offset. Final offset passed focused layout/input tests, both shell builds, package and privacy/diff checks. Engine source/archive unchanged; previous full engine and replay scopes retained, not rerun/expanded. Phone/tablet original menu/gameplay subset, save protection and final phone layout relaunch pass; physical/gestures/larger-text remain.",
+      "target": "macOS arm64 / iPhone 17 Pro and iPad Pro 13-inch iOS 26.5 simulator"
+    },
+    {
+      "name": "post-0038 master volume and complete native menu",
+      "result": "Full native engine suite; actual game/movie final PCM master-volume tests; quick before final root-heading/inline-group-only delta; final both iOS builds, 37 exports, 38-patch/85-file reconstruction, unchanged 635-frame replay, unsigned Release package and phone Audio/relaunch/Stop subset pass. Physical listening/campaign acceptance remain open. Native 50% persists through process relaunch, live mute/100% selection and clean Stop work; all seven saves and layout unchanged.",
+      "target": "macOS arm64 / iPhone 17 Pro iOS 26.5 simulator / unsigned iPhoneOS build"
+    },
+    {
+      "name": "post-0038 exterior replay and original touch campaign mechanic subset",
+      "result": "PASS for all three CastleExterior recordings,25784frames, and original NPRUN/Operative truck transition, guardroom left-wire laser/Searchlights deactivated Bond Move, armor pickup and helipad/barrel courtyard. Native assists OFF; all seven saves/layout unchanged; live session held. Whole mission and earned save NOT VERIFIED.",
+      "target": "macOS arm64 action replay / iPhone 17 Pro iOS26.5 simulator"
+    },
+    {
+      "name": "final bounded README and simulator smoke",
+      "result": "PASS: all README relative links, full quick suite including both shell lanes, final engine patch reconstruction38/85, clean party Stop, same-process title restart, touch Start/front end and clean final Stop. All7existing saves and phone layout unchanged; installed/built hashes match. No earned save or physical acceptance.",
+      "target": "macOS arm64 / iPhone17Pro iOS26.5 simulator / unsigned iPhoneOS build"
+    }
+  ],
+  "next_step": "Autonomous loop paused at user request after bounded README and smoke verification. App is cleanly stopped at launcher. A later explicit resume must start original campaign again; no live party checkpoint or earned save exists.",
+  "execution_control": {
+    "status": "paused_by_user",
+    "reason": "User requested final README and bounded works check; stop continuing indefinitely.",
+    "at": "2026-10-29T11:16:05.491051+00:00"
+  }
+}

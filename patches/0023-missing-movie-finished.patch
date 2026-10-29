@@ -1,0 +1,42 @@
+diff --git a/src/action/game.cpp b/src/action/game.cpp
+index 7aee2fc..ae86a8f 100644
+--- a/src/action/game.cpp
++++ b/src/action/game.cpp
+@@ -294,7 +294,13 @@ void psiStartBackgroundMovie(HASHCODE hashcode, char looping, int volume) {
+   BackgroundMovieSetVolume(scaledVolume);
+   printf("Playing background movie %s\n", BackgroundMovieFilename);
+   BackgroundMoviePlayFile(BackgroundMovieFilename);
+-
++  // NightPad: a movie this data set lacks, or one the decoder refuses, counts as finished at once. The front
++  // end otherwise waits for a page that never draws - the attract page is a full-screen black frame until a
++  // button press, which is what a session whose trailer is missing showed.
++  if (BackgroundMovieHashcode != 0 && !BackgroundMovieIsPlaying()) {
++    BackgroundMovieCleanup();
++    BackgroundMovieHashcode = 0;
++  }
+ }
+ 
+ bool IsMultiplayerMission(HASHCODE level) {
+diff --git a/src/action/ui/ui_credits.cpp b/src/action/ui/ui_credits.cpp
+index e9ddde0..ef079e4 100644
+--- a/src/action/ui/ui_credits.cpp
++++ b/src/action/ui/ui_credits.cpp
+@@ -4,6 +4,7 @@
+ #include "Process.h"
+ 
+ #include "../engine/Text.h"
++#include "../engine/Fmv.h"
+ #include "../gfx/Font.h"
+ #include "../sound/SFX.h"
+ #include "../game.h"
+@@ -214,6 +215,10 @@ bool P_ATTRACT_Handler(uchar managerNum, M_CONTROL *control, uint hashcode, uint
+             movie = HT_Level_Menu_Esthero;
+         // stops the front-end music, not looped, locks input
+         Menu_PlayMovie(movie, 1, 0, 1, 1, 0);
++        // NightPad: a trailer this data set lacks (or the decoder refuses) is nothing to sit through - the
++        // page would otherwise hold a black frame, input locked, until a button. Leave it on the next update.
++        if (!BackgroundMovieIsPlaying())
++            bSkipAttract = 1;
+     }
+     else if (message == MessageType_PageUpdate) {
+         if (movieFinished()) {

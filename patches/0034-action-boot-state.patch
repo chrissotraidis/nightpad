@@ -1,0 +1,44 @@
+diff --git a/src/action/engine/XboxSystem.cpp b/src/action/engine/XboxSystem.cpp
+index 0e312d3..06f7551 100644
+--- a/src/action/engine/XboxSystem.cpp
++++ b/src/action/engine/XboxSystem.cpp
+@@ -283,6 +283,12 @@ static uint8_t HaveLaunchData;
+ // XBE_GLOBAL(0x002ff778, 0xc00)
+ static uint32_t LaunchInfoData[LAUNCH_DATA_BYTES / 4];
+
++void XboxSystem_ResetLaunchData(void) {
++    LaunchInfoUnread = 1;
++    HaveLaunchData = 0;
++    memset(LaunchInfoData, 0, sizeof(LaunchInfoData));
++}
++
+ static void *ReadLaunchData(void) {
+     if (!LaunchInfoUnread)
+         return HaveLaunchData ? LaunchInfoData : NULL;
+diff --git a/src/action/engine/XboxSystem.h b/src/action/engine/XboxSystem.h
+index c469660..90416d1 100644
+--- a/src/action/engine/XboxSystem.h
++++ b/src/action/engine/XboxSystem.h
+@@ -12,6 +12,7 @@ int Language_FromDashboard(void);       // the dashboard's language, as a langua
+
+ void *GetPTPData(void);                 // the launch data page, or null if there is none
+ void *GetPTPData_Copy(void);            // a second copy of GetPTPData, at 0x000e9340
++void XboxSystem_ResetLaunchData(void); // a new in-process boot reads its own handover page
+ void SetLaunchInfoAndLaunch(char *executableName, void *data, uint32_t len);
+ void WriteStateFileAndLaunch(uint32_t reason, void *data, int len);
+ void psiLaunchDriving(void *data, uint32_t len);
+diff --git a/src/action/game.cpp b/src/action/game.cpp
+index 7c8e28b..ac5e011 100644
+--- a/src/action/game.cpp
++++ b/src/action/game.cpp
+@@ -1088,6 +1088,10 @@ void GameFlow_QuickPushState(uint state) {
+ void GameFlow_ResetForBoot(void) {
+     StackIndex = 1;
+     GameStateStack[0] = GAMEFLOW_BOOT;
++    // A stop can interrupt ResetMap_Load during its movie. A new boot must
++    // begin at the loader's first phase, rather than finish that old movie.
++    ResetMap_State = RESETMAP_START;
++    XboxSystem_ResetLaunchData();
+ }
+
+ // ---------------------------------------------------------------------------------------------------------------

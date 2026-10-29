@@ -1,0 +1,30 @@
+diff --git a/src/action/main.cpp b/src/action/main.cpp
+--- a/src/action/main.cpp
++++ b/src/action/main.cpp
+@@ -21,6 +21,5 @@
+ // NightPad's two optional assists, owned by the app. Bit 0 is immortality and
+-// bit 1 is unlimited ammo; the runtime sets them. Applying them here means a
+-// codename load cannot silently turn an assist off.
++// bit 1 is unlimited ammo; bit 31 means the app owns both choices. Without
++// an app owner, standalone/replay boots retain the original profile behavior.
+ extern "C" unsigned NightPadActionAssistFlags = 0;
+-static unsigned g_appliedAssists = 0;
+
+@@ -28,12 +27,7 @@
+     const unsigned wanted = NightPadActionAssistFlags;
+-    if (wanted & 1u)
+-        CheatInfo.Immortal = 1;
+-    if (wanted & 2u)
+-        CheatInfo.UnlimitedAmmo = 1;
+-    if (wanted != g_appliedAssists) {
+-        if ((wanted & 1u) == 0)
+-            CheatInfo.Immortal = 0;
+-        if ((wanted & 2u) == 0)
+-            CheatInfo.UnlimitedAmmo = 0;
+-        g_appliedAssists = wanted;
++    if (wanted & 0x80000000u) {
++        // Loading a codename can change either flag while the app's choices
++        // stay unchanged, including both OFF. Reconcile both every frame.
++        CheatInfo.Immortal = (wanted & 1u) != 0;
++        CheatInfo.UnlimitedAmmo = (wanted & 2u) != 0;
+     }

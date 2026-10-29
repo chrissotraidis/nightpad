@@ -1,0 +1,145 @@
+diff --git a/src/action/main.cpp b/src/action/main.cpp
+index 0b75646..4c22acf 100644
+--- a/src/action/main.cpp
++++ b/src/action/main.cpp
+@@ -6,6 +6,7 @@
+ #include "sound/dsndSeam.h"            // xboxInitSound is reimplemented there now
+ #include "engine/XboxSystem.h"
+ #include "engine/XboxError.h"
++#include "../common/engineLifecycle.h"
+ 
+ // Set to silence NF_WARN (actionhelpers.h) - for the shadow tests
+ int NfWarnMuted;
+@@ -25,8 +26,10 @@ void Game_Main(int argc, char **argv) {
+     GetPTPData_Copy();
+     Graphics_Init_LowLevel();
+ 
+-    while(1) {
++    while (!EngineLifecycle_StopRequested()) {
+         mainloop();
+     }
+ 
+-}
+\ No newline at end of file
++    cleanupSystem();
++
++}
+diff --git a/src/common/engineLifecycle.h b/src/common/engineLifecycle.h
+new file mode 100644
+index 0000000..df2ab11
+--- /dev/null
++++ b/src/common/engineLifecycle.h
+@@ -0,0 +1,26 @@
++#ifndef COMMON_ENGINE_LIFECYCLE_H_
++#define COMMON_ENGINE_LIFECYCLE_H_
++
++#include <atomic>
++
++// A cooperative stop shared by the game loop and the host's in-process coordinator. The flag lives once per
++// isolated engine object, so stopping one engine cannot stop the other.
++inline std::atomic<bool> &EngineLifecycle_StopFlag() {
++    static std::atomic<bool> requested{false};
++    return requested;
++}
++
++inline bool EngineLifecycle_StopRequested() {
++    return EngineLifecycle_StopFlag().load(std::memory_order_acquire);
++}
++
++inline void EngineLifecycle_RequestStop() {
++    EngineLifecycle_StopFlag().store(true, std::memory_order_release);
++}
++
++inline void EngineLifecycle_ResetStop() {
++    EngineLifecycle_StopFlag().store(false, std::memory_order_release);
++}
++
++#endif // COMMON_ENGINE_LIFECYCLE_H_
++
+diff --git a/src/common/launchInfo.cpp b/src/common/launchInfo.cpp
+index e11752e..287dbe5 100644
+--- a/src/common/launchInfo.cpp
++++ b/src/common/launchInfo.cpp
+@@ -1,4 +1,5 @@
+ #include "launchInfo.h"
++#include "../driving/platform/Host.h"
+ #include <inttypes.h>
+ #include <stdint.h>
+ #include <stdio.h>
+@@ -237,11 +238,8 @@ int __stdcall XLaunchNewImageA(char *executableName, void *launchInfo) {
+         printf("[launch] handed %s to the in-process coordinator; ending the requesting game thread\n",
+                executableName);
+         fflush(stdout);
+-#ifdef _WIN32
+-        ExitThread(0);
+-#else
+-        pthread_exit(NULL);
+-#endif
++        // HostExitThread also marks the game's host-thread record finished before ending pthread_exit.
++        HostExitThread(0);
+     }
+ 
+     bool started = StartLoaderFor(executableName);
+diff --git a/src/driving/engine/GameLoop.cpp b/src/driving/engine/GameLoop.cpp
+index fe49e1c..374e50a 100644
+--- a/src/driving/engine/GameLoop.cpp
++++ b/src/driving/engine/GameLoop.cpp
+@@ -64,6 +64,7 @@
+ #include "../audio/SoundManager.h"
+ #include "../audio/Stream.h"
+ #include "../../common/launchInfo.h"
++#include "../../common/engineLifecycle.h"
+ #include "../../helpers.h"
+ #include "../logging.h"             // dbg_wprintf, our printf
+ #include "../platform/CRuntime.h"
+@@ -775,7 +776,7 @@ void RunTheGame(bool simulateOncePerLoop, int unused) {
+     GLoadingScreen::Status("Entering main loop");
+     fgScheduler->ResetTime();
+ 
+-    while (fgSimulation.simState != kSimFinished) {
++    while (fgSimulation.simState != kSimFinished && !EngineLifecycle_StopRequested()) {
+         while (!GlobalActionQueue.IsEmpty()) {
+             ActionRef action;
+             GlobalActionQueue.GetAction(&action);
+diff --git a/src/driving/platform/HostWindow.h b/src/driving/platform/HostWindow.h
+index 37202a7..9d4883e 100644
+--- a/src/driving/platform/HostWindow.h
++++ b/src/driving/platform/HostWindow.h
+@@ -14,6 +14,10 @@
+ bool HostWindow_Open(int width, int height, const char *title);
+ // Runs the window's events on the thread that opened it, until the window is closed.
+ void HostWindow_Run(void);
++// Asks the event loop to return at its next iteration. Safe from any thread.
++void HostWindow_RequestQuit(void);
++// Destroys the window and shuts SDL down. Main thread only, after HostWindow_Run returns.
++void HostWindow_Close(void);
+ // What Direct3D presents into: the HWND on Windows (with SDL3 too), the SDL_Window on other hosts (dxvk-native's
+ // convention). Null before the window is open.
+ void *HostWindow_Native(void);
+diff --git a/src/driving/platform/HostWindowSdl.cpp b/src/driving/platform/HostWindowSdl.cpp
+index 85abf88..34ce98c 100644
+--- a/src/driving/platform/HostWindowSdl.cpp
++++ b/src/driving/platform/HostWindowSdl.cpp
+@@ -85,6 +85,22 @@ void HostWindow_Run(void) {
+     fflush(stdout);
+ }
+ 
++void HostWindow_RequestQuit(void) {
++    SDL_Event event;
++    SDL_zero(event);
++    event.type = SDL_EVENT_QUIT;
++    if (SDL_PushEvent(&event) < 0)
++        printf("[sdl] could not request window quit: %s\n", SDL_GetError());
++}
++
++void HostWindow_Close(void) {
++    if (Window != NULL) {
++        SDL_DestroyWindow(Window);
++        Window = NULL;
++    }
++    SDL_Quit();
++}
++
+ void *HostWindow_Native(void) {
+     if (Window == NULL)
+         return NULL;

@@ -1,0 +1,178 @@
+diff --git a/src/action/engine/psiSave.cpp b/src/action/engine/psiSave.cpp
+index 98fc8d8..bcf605d 100644
+--- a/src/action/engine/psiSave.cpp
++++ b/src/action/engine/psiSave.cpp
+@@ -6,6 +6,10 @@
+ #include <string.h>
+ #include <ctype.h>
+
++#if !defined(_WIN32)
++#include "SaveFilePosix.h"
++#endif
++
+ #include "../../driving/platform/Host.h"
+
+ // XBE_GLOBAL(0x002adf0c, 0x4)
+@@ -55,12 +59,17 @@ undefined4 psiSaveData(void *data, uint32_t size, const char *profileName) {
+     char path[256];
+     BuildSavePath(path, sizeof(path), profileName);
+
++#if !defined(_WIN32)
++    bool ok = nightfire_save::WriteProfile(path, data, size);
++#else
+     bool ok = false;
+     FILE *file = fopen(path, "wb");
+     if (file != NULL) {
+         ok = fwrite(data, 1, size, file) == size;
+-        fclose(file);
++        if (fclose(file) != 0)
++            ok = false;
+     }
++#endif
+
+     psiInternalLoadingDataState = ok ? PSISAVE_SAVED : PSISAVE_SAVE_FAILED;
+     return 1;
+@@ -300,7 +309,14 @@ int SaveDrive_Delete(const char *profileName) {
+         return PSISAVE_DELETE_FAILED;
+     char path[256];
+     BuildSavePath(path, sizeof(path), profileName);
+-    return remove(path) == 0 ? PSISAVE_DELETED : PSISAVE_DELETE_FAILED;
++    if (remove(path) != 0)
++        return PSISAVE_DELETE_FAILED;
++#if !defined(_WIN32)
++    char backup[272];
++    snprintf(backup, sizeof(backup), "%s.bak", path);
++    remove(backup);
++#endif
++    return PSISAVE_DELETED;
+ }
+
+ // A codename's save deleted, and once it is, taken out of the cache (matched without case). The name is ours.
+diff --git a/src/action/engine/SaveFilePosix.h b/src/action/engine/SaveFilePosix.h
+new file mode 100644
+index 0000000..2abe076
+--- /dev/null
++++ b/src/action/engine/SaveFilePosix.h
+@@ -0,0 +1,122 @@
++#ifndef NIGHTFIRE_SAVE_FILE_POSIX_H
++#define NIGHTFIRE_SAVE_FILE_POSIX_H
++
++#include <errno.h>
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/stat.h>
++#include <unistd.h>
++
++// Host-only persistence; the game's original serialized bytes stay unchanged.
++namespace nightfire_save {
++
++static bool WriteAll(int fd, const void *data, size_t size) {
++    const char *at = static_cast<const char *>(data);
++    while (size != 0) {
++        ssize_t count = ::write(fd, at, size);
++        if (count < 0 && errno == EINTR)
++            continue;
++        if (count <= 0)
++            return false;
++        at += count;
++        size -= static_cast<size_t>(count);
++    }
++    return true;
++}
++
++struct PendingFile {
++    char path[512] = {};
++    int fd = -1;
++
++    bool Open(const char *target) {
++        const char *slash = strrchr(target, '/');
++        const char *name = slash != NULL ? slash + 1 : target;
++        int count = snprintf(path, sizeof(path), "%.*s.%s.tmp.XXXXXX",
++                             static_cast<int>(name - target), target, name);
++        if (count < 0 || static_cast<size_t>(count) >= sizeof(path)) {
++            path[0] = '\0';
++            return false;
++        }
++        fd = ::mkstemp(path);
++        if (fd < 0)
++            path[0] = '\0';
++        return fd >= 0;
++    }
++
++    bool Finish() {
++        bool ok = ::fsync(fd) == 0;
++        int result = ::close(fd);
++        fd = -1;
++        return ok && result == 0;
++    }
++
++    ~PendingFile() {
++        if (fd >= 0)
++            ::close(fd);
++        if (path[0] != '\0')
++            ::unlink(path);
++    }
++};
++
++static bool WriteProfile(const char *path, const void *data, size_t size) {
++    char parent[512];
++    int count = snprintf(parent, sizeof(parent), "%s", path);
++    if (count < 0 || static_cast<size_t>(count) >= sizeof(parent))
++        return false;
++    char *slash = strrchr(parent, '/');
++    if (slash == parent)
++        slash[1] = '\0';
++    else if (slash != NULL)
++        *slash = '\0';
++    else
++        strcpy(parent, ".");
++    int directory = ::open(parent, O_RDONLY | O_DIRECTORY);
++    if (directory < 0)
++        return false;
++
++    bool ok = false;
++    PendingFile next;
++    if (next.Open(path) && WriteAll(next.fd, data, size) && next.Finish()) {
++        // Install a fully flushed previous copy before replacing the live save.
++        // Backups do not match *.dat; hidden stages also stay out of exports.
++        char backup[512];
++        count = snprintf(backup, sizeof(backup), "%s.bak", path);
++        bool previousReady = count >= 0 && static_cast<size_t>(count) < sizeof(backup);
++        if (previousReady) {
++            int previous = ::open(path, O_RDONLY | O_NOFOLLOW);
++            if (previous >= 0) {
++                struct stat info;
++                PendingFile copy;
++                previousReady = ::fstat(previous, &info) == 0 && S_ISREG(info.st_mode) && copy.Open(backup);
++                char buffer[4096];
++                while (previousReady) {
++                    ssize_t bytes = ::read(previous, buffer, sizeof(buffer));
++                    if (bytes < 0 && errno == EINTR)
++                        continue;
++                    if (bytes <= 0) {
++                        previousReady = bytes == 0;
++                        break;
++                    }
++                    previousReady = WriteAll(copy.fd, buffer, static_cast<size_t>(bytes));
++                }
++                if (::close(previous) != 0)
++                    previousReady = false;
++                previousReady = previousReady && copy.Finish() && ::rename(copy.path, backup) == 0;
++            } else {
++                previousReady = errno == ENOENT;
++            }
++        }
++        // A killed process sees the old complete save or the new complete save.
++        // Report a failed flush to the original save UI, even after promotion.
++        ok = previousReady && ::fsync(directory) == 0 && ::rename(next.path, path) == 0 &&
++             ::fsync(directory) == 0;
++    }
++    if (::close(directory) != 0)
++        ok = false;
++    return ok;
++}
++
++} // namespace nightfire_save
++#endif

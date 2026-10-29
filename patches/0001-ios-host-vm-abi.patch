@@ -1,0 +1,74 @@
+diff --git a/src/driving/platform/HostPosix.cpp b/src/driving/platform/HostPosix.cpp
+index a05d493..da2dcf8 100644
+--- a/src/driving/platform/HostPosix.cpp
++++ b/src/driving/platform/HostPosix.cpp
+@@ -28,8 +28,10 @@
+ #include <vector>
+ #ifdef __APPLE__
+ #include <mach/mach.h>
++#if !defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
+ #include <mach/mach_vm.h>
+ #endif
++#endif
+ 
+ // The host layer on a POSIX system (docs/driving/portable.md): pthreads, clock_gettime and POSIX files behind the
+ // Win32 shapes Host.h describes. Handles are objects of ours; errors are Win32's numbers, kept per thread.
+@@ -642,12 +644,22 @@ const int kPageProtection = PROT_READ | PROT_WRITE | PROT_EXEC;
+ static void *MapFixed(uintptr_t address, size_t length, int protection, int flags) {
+ #ifdef __APPLE__
+     (void)flags;
++#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
++    // The iOS SDK exposes the narrower vm_* ABI; on arm64 its address and size words are still 64-bit.
++    vm_address_t at = (vm_address_t)address;
++    if (vm_allocate(mach_task_self(), &at, (vm_size_t)length, VM_FLAGS_FIXED) != KERN_SUCCESS)
++        return MAP_FAILED;
++    if (protection != (PROT_READ | PROT_WRITE))
++        mprotect(reinterpret_cast<void *>(at), length, protection);
++    return reinterpret_cast<void *>(at);
++#else
+     mach_vm_address_t at = address;
+     if (mach_vm_allocate(mach_task_self(), &at, length, VM_FLAGS_FIXED) != KERN_SUCCESS)
+         return MAP_FAILED;
+     if (protection != (PROT_READ | PROT_WRITE))
+         mprotect(reinterpret_cast<void *>(at), length, protection);
+     return reinterpret_cast<void *>(at);
++#endif
+ #else
+     return mmap(reinterpret_cast<void *>(address), length, protection,
+                 MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE | flags, -1, 0);
+@@ -668,16 +680,33 @@ static void *MapLowest(size_t size, uintptr_t lowest, uintptr_t limit) {
+     if (address < granularity)
+         address = granularity;
+     while (address < limit && size <= limit - address) {
+-        mach_vm_address_t start = address;   // the first mapping that ends above the address
+-        mach_vm_size_t length = 0;
+         vm_region_basic_info_data_64_t info;
+         mach_msg_type_number_t count = VM_REGION_BASIC_INFO_COUNT_64;
+         mach_port_t object;
++#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
++        uintptr_t start = address;   // the first mapping that ends above the address
++        uintptr_t length = 0;
++        vm_address_t vmStart = (vm_address_t)start;
++        vm_size_t vmLength = 0;
++        kern_return_t regionResult = vm_region_64(
++            mach_task_self(), &vmStart, &vmLength, VM_REGION_BASIC_INFO_64,
++            reinterpret_cast<vm_region_info_t>(&info), &count, &object);
++        if (regionResult == KERN_SUCCESS) {
++            start = (uintptr_t)vmStart;
++            length = (uintptr_t)vmLength;
++        } else {
++            start = limit;
++            length = 0;
++        }
++#else
++        mach_vm_address_t start = address;   // the first mapping that ends above the address
++        mach_vm_size_t length = 0;
+         if (mach_vm_region(mach_task_self(), &start, &length, VM_REGION_BASIC_INFO_64,
+                            reinterpret_cast<vm_region_info_t>(&info), &count, &object) != KERN_SUCCESS) {
+             start = limit;   // past the last mapping, the gap runs to the limit
+             length = 0;
+         }
++#endif
+         if (start > address && start - address >= size) {
+             void *block = MapAt(address, size);
+             if (block != NULL)
