@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-29 08:04 UTC
+Updated: 2026-10-29 09:20 UTC
 
 ## Outcome
 
@@ -19,13 +19,20 @@ simulator execution is no longer a platform blocker.
   Stop is last. Phone/tablet Exchange captures drove HUD clearance fixes.
   README and handoff paths are expanded. Decision 0024 records exact scope;
   physical comfort, drag/pinch and redesigned-editor larger text remain open.
-- Latest campaign run on source a0c43b7 completes the truck objective and
-  automatically enters CastleCourtyard. A crouched route passes the pavilion
-  guards without firing and reaches the dolphin fountain with full health.
-  The next searchlight court remains unfinished after combat deaths; original
-  Replay restores the courtyard checkpoint. No completed mission/earned save
-  is credited. That live checkpoint was cleanly stopped for the requested
-  touch/menu review; restart from the original Exchange mission next.
+- Native Audio now offers working master-volume choices. Actual final PCM
+  verifies combined game/movie attenuation and exact mute while clocks keep
+  advancing. Native 50% survives app relaunch; live mute/100% and clean Stop
+  pass. Removing the redundant root heading keeps all seven actions visible
+  on the phone at standard row size. Decision 0025 records exact scope.
+- Reviewed controls on source f5c5303 reproduce the truck objective and
+  automatic CastleCourtyard transition. The raised-pavilion/banner route
+  reaches the dolphin fountain; combat at the guardroom stairs remains
+  unfinished. Original Replay recovers the courtyard; no completed mission
+  or earned results save is credited. That live checkpoint was cleanly
+  stopped to install the Audio candidate. Current facf3fc is installed/hash
+  verified and stopped at the launcher after volume/relaunch/title/Stop checks.
+  All seven save files and the phone layout remain unchanged. Start original
+  NPRUN/Operative Exchange next; both native assists remain OFF.
 - Project root: `/Users/chrissotraidis/GitHub/nightpad`.
 - Nightfire, GalaxyPad, SunPad and extract-xiso are checked out at the exact
   revisions in `config/dependencies.lock.json`.
@@ -527,5 +534,15 @@ death/respawn, ammo pickup, results and Replay with native assists OFF. Human
 frag/capture and full multiplayer acceptance remain open. Clean Stop preserves
 all seven save files. Full engine, quick/both iOS builds, 37-patch/83-file
 reconstruction, focused unchanged 635-frame replay and unsigned package pass.
-Decision 0023 and `evidence/action-pause-clock/result.json` record the current
-installed build. Continue NPRUN earned campaign/results save and relaunch.
+Decision 0023 and `evidence/action-pause-clock/result.json` record that scoped
+build. Current candidate identity is in `evidence/master-volume/result.json`.
+Continue NPRUN earned campaign/results save and relaunch.
+
+Patch 0038 adds native master volume without changing the original game mix
+at 100%. Full native engine verification, actual PCM/setting tests, final both
+iOS builds, 37 bridge exports, 38-patch/85-file reconstruction, unchanged
+CastleIndoors1 all 635 frames and unsigned Release package pass. Full quick
+passed before the final root-heading/inline-group-only UI delta; final phone
+screenshots and both shell builds cover that delta. The temporary keep-awake
+assertion is renewed; authentication settings are unchanged. Physical audio,
+remaining campaign/multiplayer/display and signed-device gates remain open.

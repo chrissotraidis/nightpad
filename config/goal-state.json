@@ -6,8 +6,8 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T08:16:23.503452+00:00",
-  "active_goal": "G05",
+  "last_updated_at": "2026-10-29T09:20:01.265674+00:00",
+  "active_goal": "G07",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
   "actual_source_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
@@ -25,36 +25,37 @@
   },
   "current_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "f5c5303011c01fcd902c52d60aad71d4964c1d38",
+    "nightpad_base_commit": "facf3fc1eb23a780554887c0bf1af133e8626a71",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "ebfbb07610de794e58b64b71aabf1a181cec697ed7e62964b73b7d4cc24f0164",
+    "simulator_binary_sha256": "ad414fcfe0bfdfce211a18c8bfac40da009dd92bc524ed2db0c93f312db3abbd",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "151e9fa65992beaced078379d31a8373d59687bee490d52738a01a2cd3bd3b4e",
-    "evidence": "evidence/touch-menu-audit/result.json",
-    "verified_at": "2026-10-29T08:07:41.368883+00:00",
-    "acceptance_scope": "Full quick passed with final tablet geometry before the last phone right-stick 30-reference-point offset. Final offset passed focused layout/input tests, both shell builds, package and privacy/diff checks. Engine source/archive unchanged; previous full engine and replay scopes retained, not rerun/expanded. Phone 4:3/tablet 16:9 UX subset only; campaign/device gates remain.",
-    "installed_simulator_binary_sha256": "ebfbb07610de794e58b64b71aabf1a181cec697ed7e62964b73b7d4cc24f0164",
-    "simulator_install_state": "Final phone UI build installed/hash verified. NPRUN/Operative Exchange original Restart; full health/ammo on supply road approaching closed gate, native menu holds; no new objective/results save. Tablet stopped/shut down. Seven saves unchanged.",
-    "source_delta": "f5c5303: native menu, touch geometry/editor, tests and README; engine patch stack unchanged",
-    "installed_simulator_source_commit": "f5c5303011c01fcd902c52d60aad71d4964c1d38",
-    "device_binary_sha256": "a2d3168471b1f437123bdb421e7fb236964870285ad15409b6d36db32f6d6952"
+    "unsigned_device_package_sha256": "0273c2f800f908ac8a0ad40f2573042cfd5a75e50ee75f4c461bb3c7511ebbfd",
+    "evidence": "evidence/master-volume/result.json",
+    "verified_at": "2026-10-29T09:20:01.265674+00:00",
+    "acceptance_scope": "Full native engine suite; actual game/movie final PCM master-volume tests; quick before final root-heading/inline-group-only delta; final both iOS builds, 37 exports, 38-patch/85-file reconstruction, unchanged 635-frame replay, unsigned Release package and phone Audio/relaunch/Stop subset pass. Physical listening/campaign acceptance remain open.",
+    "installed_simulator_binary_sha256": "ad414fcfe0bfdfce211a18c8bfac40da009dd92bc524ed2db0c93f312db3abbd",
+    "simulator_install_state": "Phone candidate installed/hash verified; original title loaded at 50%, live mute/100% and clean Stop pass. Current launcher stopped. Seven saves and phone layout unchanged; only master_volume=100 added to settings. Tablet shut down.",
+    "source_delta": "facf3fc: patch 0038, per-engine master-volume bridge, native Audio group, root title removal and inline volume choices; 38 patches/85 vendor files.",
+    "installed_simulator_source_commit": "facf3fc1eb23a780554887c0bf1af133e8626a71",
+    "device_binary_sha256": "6725ab0807ce8603d3b699120d50ed7debb09effcdf7a44f263022440ebaca36"
   },
   "last_known_good_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "da2f9bd",
+    "nightpad_base_commit": "facf3fc1eb23a780554887c0bf1af133e8626a71",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "fd6913a542022ccbbf02707c52ebf80770201d417106910a0b7a86338e01c0a9",
+    "simulator_binary_sha256": "ad414fcfe0bfdfce211a18c8bfac40da009dd92bc524ed2db0c93f312db3abbd",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "1247cd99089240380a79b71796f2fe4efee764108b7acbd4ecfa6748626355c5",
-    "evidence": "evidence/action-pause-clock/result.json",
-    "verified_at": "2026-10-29T05:35:11.273709+00:00",
-    "acceptance_scope": "post-0037 full engine/quick/both iOS builds/package, focused unchanged replay, simulator match clock hold and Uplink death/respawn/results/Replay subset; whole campaign/device acceptance remains",
-    "installed_simulator_binary_sha256": "fd6913a542022ccbbf02707c52ebf80770201d417106910a0b7a86338e01c0a9",
-    "simulator_install_state": "Fixed source a0c43b7 installed/hash verified; original NPRUN CastleCourtyard checkpoint active with native menu holding; all seven save files unchanged at latest checkpoint",
-    "source_delta": "patches/0037-action-native-pause-clock.patch",
-    "installed_simulator_source_commit": "a0c43b7"
+    "unsigned_device_package_sha256": "0273c2f800f908ac8a0ad40f2573042cfd5a75e50ee75f4c461bb3c7511ebbfd",
+    "evidence": "evidence/master-volume/result.json",
+    "verified_at": "2026-10-29T09:20:01.265674+00:00",
+    "acceptance_scope": "Full native engine suite; actual game/movie final PCM master-volume tests; quick before final root-heading/inline-group-only delta; final both iOS builds, 37 exports, 38-patch/85-file reconstruction, unchanged 635-frame replay, unsigned Release package and phone Audio/relaunch/Stop subset pass. Physical listening/campaign acceptance remain open.",
+    "installed_simulator_binary_sha256": "ad414fcfe0bfdfce211a18c8bfac40da009dd92bc524ed2db0c93f312db3abbd",
+    "simulator_install_state": "Phone candidate installed/hash verified; original title loaded at 50%, live mute/100% and clean Stop pass. Current launcher stopped. Seven saves and phone layout unchanged; only master_volume=100 added to settings. Tablet shut down.",
+    "source_delta": "facf3fc: patch 0038, per-engine master-volume bridge, native Audio group, root title removal and inline volume choices; 38 patches/85 vendor files.",
+    "installed_simulator_source_commit": "facf3fc1eb23a780554887c0bf1af133e8626a71",
+    "device_binary_sha256": "6725ab0807ce8603d3b699120d50ed7debb09effcdf7a44f263022440ebaca36"
   },
   "goals": {
     "G00": {
@@ -231,10 +232,14 @@
         "docs/DECISIONS/0022-assist-profile-authority.md",
         "evidence/assist-profile/result.json",
         "docs/DECISIONS/0024-touch-menu-review.md",
-        "evidence/touch-menu-audit/result.json"
+        "evidence/touch-menu-audit/result.json",
+        "patches/0038-master-volume.patch",
+        "docs/DECISIONS/0025-native-master-volume.md",
+        "scripts/test_master_volume.sh",
+        "evidence/master-volume/result.json"
       ],
       "blockers": [],
-      "next_step": "UI review complete in f5c5303 with exact evidence. Resume NPRUN/Operative Exchange at supply road near closed main gate, native menu holding; truck window missed during review. Inspect route or use original Restart for fresh truck timing. Re-derive input timings for shared resolved geometry, both assists OFF. Continue earned results/save/relaunch; native audio and other open gates remain."
+      "next_step": "Native Audio and owner-requested menu/touch review now have scoped host/simulator evidence. Continue original earned campaign save and remaining physical menu/input/audio acceptance; no full G05 acceptance claimed."
     },
     "G06": {
       "status": "in_progress",
@@ -304,7 +309,7 @@
         "evidence/campaign-truck/result.json"
       ],
       "blockers": [],
-      "next_step": "Resume live fresh courtyard. Use the open arch beside truck, crouch past pavilion guards to banner arch/fountain. Preserve native pause during analysis. Find and avoid searchlight patrol before crossing; inspect the far staircase/door from cover and use original stunner/laser as required. Do not repeat the closed side-door or cellar detours. No earned result or whole campaign accepted; route detail in evidence/campaign-truck/current-attempt.json."
+      "next_step": "Current facf3fc audio/menu candidate is installed and cleanly stopped at launcher. Start original NPRUN/Operative Exchange with both native assists OFF. Use immediate truck/crouch timing recorded on f5c5303, then clear pavilion guards before crossing banner arch. Inspect guardroom stairs/door using short observed inputs; avoid wrong left arch and narrow-landing falls. Earn original mission results/save/relaunch; human multiplayer frag/capture and physical gates remain."
     },
     "G08": {
       "status": "in_progress",
@@ -376,7 +381,11 @@
       "started_at": "2026-10-28T06:10:00Z",
       "completed_at": null,
       "evidence": [
-        "docs/PERFORMANCE-BUDGET.md"
+        "docs/PERFORMANCE-BUDGET.md",
+        "patches/0038-master-volume.patch",
+        "docs/DECISIONS/0025-native-master-volume.md",
+        "scripts/test_master_volume.sh",
+        "evidence/master-volume/result.json"
       ],
       "blockers": [],
       "next_step": "Run the frozen routes on phone and tablet, then compare optimizations one at a time."
@@ -533,14 +542,18 @@
         "patches/0035-action-audio-session-buffers.patch",
         "scripts/test_action_audio_sessions.sh",
         "docs/DECISIONS/0021-action-audio-session-buffers.md",
-        "build/tests/action-audio-sessions"
+        "build/tests/action-audio-sessions",
+        "patches/0038-master-volume.patch",
+        "scripts/test_master_volume.sh",
+        "evidence/master-volume/result.json"
       ],
       "decision_id": null,
       "notes": [
         "Host gates show action SFX and streams paused and resumed with frames held, and the driving sound manager paused and resumed; movies play in the handoff gate.",
         "Device interruptions (calls, route changes, audio focus) and sustained synchronization under load are unverified.",
         "The fixed 256-buffer registry overflowed after 192 buffers per native boot. Patch 0035 retires old buffers/voices at the next device creation; actual SDL/cache/mixer and fifteen real action cycles pass. New build has no simulator/physical audio acceptance yet.",
-        "SDL spatial voices currently have distance/pan but no HRTF or I3DL2 reverb. Audio fidelity and physical listening remain unverified."
+        "SDL spatial voices currently have distance/pan but no HRTF or I3DL2 reverb. Audio fidelity and physical listening remain unverified.",
+        "Native Audio master volume now attenuates both game and movie logical output while preserving original mix/clock behavior. Actual final PCM, settings/relaunch, live simulator choice and clean Stop pass; physical listening/route changes and HRTF/reverb remain open."
       ]
     },
     "R11": {
@@ -951,6 +964,11 @@
       "id": "0024",
       "path": "docs/DECISIONS/0024-touch-menu-review.md",
       "summary": "Screenshot-led Xbox touch defaults, consistent menu hierarchy and shared editor/input/drawing geometry; retain saved custom v3 layouts."
+    },
+    {
+      "id": "0025",
+      "path": "docs/DECISIONS/0025-native-master-volume.md",
+      "summary": "Apply persisted master attenuation to both engines logical SDL outputs, including movie streams; keep every root row visible at standard size by removing the redundant heading."
     }
   ],
   "blockers": [
@@ -1938,6 +1956,15 @@
       "evidence": [
         "evidence/touch-menu-audit/result.json"
       ]
+    },
+    {
+      "at": "2026-10-29T09:20:01.265674+00:00",
+      "goal": "G05/G07/G12",
+      "summary": "Reviewed controls reproduce the truck objective/courtyard on f5c5303; fountain/guardroom combat deaths and Replay recorded without earned-save credit. Added native Audio/master volume in facf3fc, validated actual PCM and persistence, and corrected root overflow found in screenshots. Final candidate cleanly stopped; seven saves and layout unchanged. Goal remains active.",
+      "evidence": [
+        "evidence/campaign-truck/current-attempt.json",
+        "evidence/master-volume/result.json"
+      ]
     }
   ],
   "completed_tests": [
@@ -2267,7 +2294,12 @@
       "name": "touch/menu screenshot-led review",
       "result": "Full quick passed with final tablet geometry before the last phone right-stick 30-reference-point offset. Final offset passed focused layout/input tests, both shell builds, package and privacy/diff checks. Engine source/archive unchanged; previous full engine and replay scopes retained, not rerun/expanded. Phone/tablet original menu/gameplay subset, save protection and final phone layout relaunch pass; physical/gestures/larger-text remain.",
       "target": "macOS arm64 / iPhone 17 Pro and iPad Pro 13-inch iOS 26.5 simulator"
+    },
+    {
+      "name": "post-0038 master volume and complete native menu",
+      "result": "Full native engine suite; actual game/movie final PCM master-volume tests; quick before final root-heading/inline-group-only delta; final both iOS builds, 37 exports, 38-patch/85-file reconstruction, unchanged 635-frame replay, unsigned Release package and phone Audio/relaunch/Stop subset pass. Physical listening/campaign acceptance remain open. Native 50% persists through process relaunch, live mute/100% selection and clean Stop work; all seven saves and layout unchanged.",
+      "target": "macOS arm64 / iPhone 17 Pro iOS 26.5 simulator / unsigned iPhoneOS build"
     }
   ],
-  "next_step": "UI review complete in f5c5303 with exact evidence. Resume NPRUN/Operative Exchange at supply road near closed main gate, native menu holding; truck window missed during review. Inspect route or use original Restart for fresh truck timing. Re-derive input timings for shared resolved geometry, both assists OFF. Continue earned results/save/relaunch; native audio and other open gates remain."
+  "next_step": "Current facf3fc audio/menu candidate is installed and cleanly stopped at launcher. Start original NPRUN/Operative Exchange with both native assists OFF. Use immediate truck/crouch timing recorded on f5c5303, then clear pavilion guards before crossing banner arch. Inspect guardroom stairs/door using short observed inputs; avoid wrong left arch and narrow-landing falls. Earn original mission results/save/relaunch; human multiplayer frag/capture and physical gates remain."
 }
