@@ -1,0 +1,91 @@
+--- a/src/action/game.cpp
++++ b/src/action/game.cpp
+@@ -19,6 +19,7 @@
+
+ #include <cstring>
+ #include <cstdio>
++#include <mutex>
+
+ #include <stdio.h>
+ #include "engine/XboxSystem.h"
+@@ -1203,14 +1204,42 @@
+ // XBE_GLOBAL(0x002adf48, 0x8)
+ double INITIALISATION_TIME;
+
++// Only the game clock excludes native app holds. The host timestamp remains
++// free-running for file/stream timeouts; movies own their separate pause clock.
++static std::mutex nativeGameClockMutex;
++static double nativeGameClockHeldAt = -1.0;
++static double nativeGameClockHeldMs = 0.0;
++
++void Game_SetNativeClockPaused(bool paused) {
++  std::lock_guard<std::mutex> lock(nativeGameClockMutex);
++  if (Demo_Active())
++    return; // Recorded time already stops with the replay's frame counter.
++  if (paused && nativeGameClockHeldAt < 0.0)
++    nativeGameClockHeldAt = timestamp();
++  else if (!paused && nativeGameClockHeldAt >= 0.0) {
++    nativeGameClockHeldMs += timestamp() - nativeGameClockHeldAt;
++    nativeGameClockHeldAt = -1.0;
++  }
++}
++
+ // AUTOINJECT
+ void psiInitTimeIn100ths(void) {
++  std::lock_guard<std::mutex> lock(nativeGameClockMutex);
+   INITIALISATION_TIME = timestamp();
++  nativeGameClockHeldAt = -1.0;
++  nativeGameClockHeldMs = 0.0;
+ }
+
+ // AUTOINJECT
+ ulonglong psiGetTimeIn100ths(void) {
+-  return (ulonglong)Ftol64((Extended(timestamp()) - Extended(INITIALISATION_TIME)) * Extended(0.1));
++  std::lock_guard<std::mutex> lock(nativeGameClockMutex);
++  double now = timestamp();
++  if (!Demo_Active()) {
++    if (nativeGameClockHeldAt >= 0.0)
++      now = nativeGameClockHeldAt;
++    now -= nativeGameClockHeldMs;
++  }
++  return (ulonglong)Ftol64((Extended(now) - Extended(INITIALISATION_TIME)) * Extended(0.1));
+ }
+
+ // Only used in GameFlow_Main, so technically no need to inject, but helps us track project completion
+--- a/src/action/game.h
++++ b/src/action/game.h
+@@ -21,6 +21,8 @@
+ void __stdcall Boot_LoadPTPData(void);
+ void psiInitTimeIn100ths(void);
+ unsigned long long psiGetTimeIn100ths(void);
++// Exclude native menu/background holds from the game's elapsed-play clock.
++void Game_SetNativeClockPaused(bool paused);
+
+ // Milliseconds from a free-running host clock. Reimplemented rather than used from the image, because
+ // the original divides the CPU's cycle counter by the Xbox's own 733 MHz - see game.cpp.
+--- a/src/action/main.cpp
++++ b/src/action/main.cpp
+@@ -76,6 +76,7 @@
+     while (!EngineLifecycle_StopRequested()) {
+         if (EngineLifecycle_PauseRequested()) {
+             if (!paused) {
++                Game_SetNativeClockPaused(true);
+                 BackgroundMovieSetNativePaused(true);
+                 SFXPause();
+                 SFXPauseAllStreams();
+@@ -85,6 +86,7 @@
+             continue;
+         }
+         if (paused) {
++            Game_SetNativeClockPaused(false);
+             SFXUnPause();
+             SFXUnPauseAllStreams();
+             BackgroundMovieSetNativePaused(false);
+@@ -114,6 +116,7 @@
+     fflush(stdout);
+
+     if (paused) {
++        Game_SetNativeClockPaused(false);
+         SFXUnPause();
+         SFXUnPauseAllStreams();
+     }

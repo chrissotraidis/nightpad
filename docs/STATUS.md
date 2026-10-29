@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-29 03:54 UTC
+Updated: 2026-10-29 05:37 UTC
 
 ## Outcome
 
@@ -500,6 +500,19 @@ with native OFF; Replay, explicit ON protection and OFF restoring death pass.
 All profile hashes are unchanged and native choices are restored OFF. Complete
 native engine regression, quick/both iOS lanes, unchanged 635-frame replay,
 36-patch/83-file reconstruction and unsigned Release package pass. Decision 0022
-and `evidence/assist-profile/result.json` record the current installed build.
+and `evidence/assist-profile/result.json` record that installed build.
 The earlier Uplink/Fort Knox scoring/results run is diagnostic only because it
 exposed this bug; repeat it on the repaired build for unassisted acceptance.
+
+
+Patch 0037 repairs a gameplay-clock gap in native pause: held action frames no
+longer consume Uplink match time or mission elapsed-play time. The actual-engine
+regression fails before and passes after across resume/paused Stop/two boots.
+Simulator Uplink holds its countdown through at least 52 seconds in the native
+menu (1:58 -> 1:57 on resume), then verifies six-bot objectives/points, human
+death/respawn, ammo pickup, results and Replay with native assists OFF. Human
+frag/capture and full multiplayer acceptance remain open. Clean Stop preserves
+all seven save files. Full engine, quick/both iOS builds, 37-patch/83-file
+reconstruction, focused unchanged 635-frame replay and unsigned package pass.
+Decision 0023 and `evidence/action-pause-clock/result.json` record the current
+installed build. Continue NPRUN earned campaign/results save and relaunch.

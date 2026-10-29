@@ -23,6 +23,11 @@ tester would see, what is blocked, and where the detail lives.
 
 ## Not issues
 
+- Native action holds now exclude elapsed gameplay time as well as frames/audio.
+  Patch 0037 fixes the Uplink timer consuming the menu interval on resume; the
+  actual PSI/MP-clock regression and simulator countdown hold pass. Decision
+  0023 records the scope; physical acceptance remains open.
+
 - Loaded profiles no longer override the native assists OFF choices. Patch 0036
   and decision 0022 have native production-CHET and simulator damage/death,
   Replay and explicit ON/OFF evidence. Both native choices are restored OFF;

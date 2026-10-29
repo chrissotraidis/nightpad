@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T04:21:32.316341+00:00",
+  "last_updated_at": "2026-10-29T05:35:11.273709+00:00",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -25,35 +25,33 @@
   },
   "current_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "f72fbe6",
+    "nightpad_base_commit": "da2f9bd",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "09c8e134d487c3eea9429d3cc229b4ad957ecbe4695663cdc67069c310cdfc68",
+    "simulator_binary_sha256": "fd6913a542022ccbbf02707c52ebf80770201d417106910a0b7a86338e01c0a9",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "72c972ff92030830f28c83fa0fe8a2d819bd5a57442caa94a776a6c68f50c616",
-    "evidence": "evidence/assist-profile/result.json",
-    "verified_at": "2026-10-29T03:55:13.007729+00:00",
-    "acceptance_scope": "post-0036 full engine/quick/build/package, focused replay, loaded-profile OFF and explicit ON/OFF simulator damage/death/Replay; full campaign/device acceptance remains",
-    "installed_simulator_source_commit": "638caa5",
-    "installed_simulator_binary_sha256": "09c8e134d487c3eea9429d3cc229b4ad957ecbe4695663cdc67069c310cdfc68",
-    "simulator_install_state": "fixed build installed and hash verified; QA regression cleanly stopped; all profile hashes unchanged",
-    "source_delta": "patches/0036-action-assist-profile-authority.patch and app runtime authority"
+    "unsigned_device_package_sha256": "1247cd99089240380a79b71796f2fe4efee764108b7acbd4ecfa6748626355c5",
+    "evidence": "evidence/action-pause-clock/result.json",
+    "verified_at": "2026-10-29T05:35:11.273709+00:00",
+    "acceptance_scope": "post-0037 full engine/quick/both iOS builds/package, focused unchanged replay, simulator match clock hold and Uplink death/respawn/results/Replay subset; whole campaign/device acceptance remains",
+    "installed_simulator_binary_sha256": "fd6913a542022ccbbf02707c52ebf80770201d417106910a0b7a86338e01c0a9",
+    "simulator_install_state": "fixed build installed and hash verified; clean Stop; seven profile files unchanged",
+    "source_delta": "patches/0037-action-native-pause-clock.patch"
   },
   "last_known_good_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "f72fbe6",
+    "nightpad_base_commit": "da2f9bd",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "09c8e134d487c3eea9429d3cc229b4ad957ecbe4695663cdc67069c310cdfc68",
+    "simulator_binary_sha256": "fd6913a542022ccbbf02707c52ebf80770201d417106910a0b7a86338e01c0a9",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "72c972ff92030830f28c83fa0fe8a2d819bd5a57442caa94a776a6c68f50c616",
-    "evidence": "evidence/assist-profile/result.json",
-    "verified_at": "2026-10-29T03:55:13.007729+00:00",
-    "acceptance_scope": "post-0036 full engine/quick/build/package, focused replay, loaded-profile OFF and explicit ON/OFF simulator damage/death/Replay; full campaign/device acceptance remains",
-    "installed_simulator_source_commit": "638caa5",
-    "installed_simulator_binary_sha256": "09c8e134d487c3eea9429d3cc229b4ad957ecbe4695663cdc67069c310cdfc68",
-    "simulator_install_state": "fixed build installed and hash verified; QA regression cleanly stopped; all profile hashes unchanged",
-    "source_delta": "patches/0036-action-assist-profile-authority.patch and app runtime authority"
+    "unsigned_device_package_sha256": "1247cd99089240380a79b71796f2fe4efee764108b7acbd4ecfa6748626355c5",
+    "evidence": "evidence/action-pause-clock/result.json",
+    "verified_at": "2026-10-29T05:35:11.273709+00:00",
+    "acceptance_scope": "post-0037 full engine/quick/both iOS builds/package, focused unchanged replay, simulator match clock hold and Uplink death/respawn/results/Replay subset; whole campaign/device acceptance remains",
+    "installed_simulator_binary_sha256": "fd6913a542022ccbbf02707c52ebf80770201d417106910a0b7a86338e01c0a9",
+    "simulator_install_state": "fixed build installed and hash verified; clean Stop; seven profile files unchanged",
+    "source_delta": "patches/0037-action-native-pause-clock.patch"
   },
   "goals": {
     "G00": {
@@ -299,7 +297,7 @@
         "evidence/campaign-truck/result.json"
       ],
       "blockers": [],
-      "next_step": "Patch 0036 verified; NPRUN Exchange resumed with both assists OFF. Later attempts missed boarding or fell after on-foot checkpoint combat. Original failure/Replay/Restart/clean Stop recover. Check truck from fresh engine start and continue unassisted truck/exterior route to earned whole-mission results/save; do not count these failures as engine defects."
+      "next_step": "Original NPRUN on-foot exterior route now reaches snow-slip cutscene, creep traversal and outside-corner/007 marker; gap traversal not yet successful. Use actual pole/action at first gap; no whole mission/results save. Independent fixed-build Uplink retest next."
     },
     "G08": {
       "status": "in_progress",
@@ -2230,7 +2228,17 @@
       "name": "post-0036 full regression and candidate gates",
       "result": "PASS: complete native engine suite including unlock families, quick/both iOS lanes, focused unchanged 635-frame replay, 36-patch/83-file reconstruction, unsigned Release package",
       "target": "macOS arm64 / iOS build lanes"
+    },
+    {
+      "name": "native action gameplay-clock pause and reset",
+      "result": "PASS after baseline failure: real PSI clock/MP elapsed frozen over 800 ms; host clock free-running, resume +31 hundredths, Stop paused and second boot pass",
+      "target": "macOS arm64 native action engine"
+    },
+    {
+      "name": "post-0037 candidate regression and Uplink simulator subset",
+      "result": "PASS: full engine, quick/both iOS lanes, 37 patches/83 files, focused 635-frame replay, package; Uplink timer 1:58->1:57 across >=52 s hold, six-bot points, death/respawn/ammo pickup/results/Replay; protected saves unchanged",
+      "target": "macOS arm64 / iPhone 17 Pro iOS 26.5 simulator"
     }
   ],
-  "next_step": "Patch-0036 assist profile authority passes before/after native, simulator loaded-profile damage/death/Replay/ON/OFF, full engine, quick/both iOS lanes and package. Continue original NPRUN Exchange through confirmed truck route and courtyard to earned mission/results save/relaunch; repeat objective multiplayer without hidden assists. Physical and other campaign/display/multiplayer gates remain."
+  "next_step": "Patch-0037 gameplay-clock pause repair passes native before/after, full engine, quick/both iOS lanes, focused replay and package. Simulator Uplink holds countdown through native menu; six bots score, human death/respawn and original results/Replay work. Continue NPRUN Exchange exterior pole/gap to earned mission/results save/relaunch. Human frag/capture and remaining multiplayer/display/device gates remain."
 }

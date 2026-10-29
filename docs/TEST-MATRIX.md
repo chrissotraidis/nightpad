@@ -174,3 +174,6 @@
 
 Only rows with explicit execution evidence are marked passed. Source inspection
 does not satisfy runtime acceptance.
+| G05/G12 | Native action gameplay clock holds | macOS arm64 / iPhone 17 Pro iOS 26.5 simulator | passed tested subset | Before patch 0037, an 800 ms native hold adds 0.810 s to real multiplayer elapsed time despite held frames. After: PSI/MP time frozen, host clock free-running, resume and Stop/second boot pass. Simulator countdown 1:58 -> 1:57 across at least 52 s held at frame 15991. Decision 0023 |
+| G08 | Uplink on Fort Knox, native assists OFF | iPhone 17 Pro iOS 26.5 simulator | passed limited subset | One human versus six Phoenix bots, 2 minutes/10 points/Normal weapons: bot satellite ownership/points, two human deaths, automatic respawn, ammo pickup, Phoenix results and original Replay. Clean Stop and all seven save files unchanged. Human frag and human capture remain unverified; `evidence/action-pause-clock/result.json` |
+| G04/G05 | Post-0037 candidate regression | macOS arm64 / iOS build lanes | passed scoped gates | Full native engine suite including gameplay-clock gate, quick/both iOS lanes, 37-patch/83-file reconstruction, unchanged CastleIndoors1 635 frames and unsigned package. Full eleven-recording corpus remains earlier scope; physical acceptance remains |
