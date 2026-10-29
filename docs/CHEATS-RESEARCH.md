@@ -47,13 +47,15 @@ original Secret Unlocks screen rather than a blanket switch.
 
 - `NightPadActionEngineSetAssistImmortal` and
   `NightPadActionEngineSetAssistUnlimitedAmmo` set two bits the action loop
-  applies every frame (patch 0017), so a codename load cannot silently disable
-  an assist.
+  applies every frame once the app claims ownership (patches 0017/0036),
+  so a codename load cannot silently enable or disable either native choice.
+  Standalone/replay runs retain their original behavior without app ownership.
 - `NightPadActionEngineAppliedAssists` reports what the engine actually holds.
 - The shell persists both choices and re-applies them when action starts or is
   re-entered after a driving session.
 - `scripts/test_assists.sh` boots action, turns both on (engine reports 3),
-  turns them off (engine reports 0) and joins.
+  turns them off (engine reports 0), loads actual profile CHET blocks against
+  default-OFF, ON and returned-OFF choices, preserves AllWeapons and joins.
 
 ## Integration plan
 

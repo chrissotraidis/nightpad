@@ -107,10 +107,12 @@ extern "C" void NightPadActionEngineSetInputSuspended(int suspended) {
 }
 
 // The app's optional assists. The action loop applies these every frame so a
-// codename load cannot quietly disable one.
+// codename load cannot quietly change either choice, including OFF. Bit 31
+// claims app ownership; a standalone/replay engine never sets it.
 extern "C" unsigned NightPadActionAssistFlags;
 
 extern "C" void NightPadActionEngineSetAssistImmortal(int enabled) {
+    NightPadActionAssistFlags |= 0x80000000u;
     if (enabled)
         NightPadActionAssistFlags |= 1u;
     else
@@ -118,6 +120,7 @@ extern "C" void NightPadActionEngineSetAssistImmortal(int enabled) {
 }
 
 extern "C" void NightPadActionEngineSetAssistUnlimitedAmmo(int enabled) {
+    NightPadActionAssistFlags |= 0x80000000u;
     if (enabled)
         NightPadActionAssistFlags |= 2u;
     else

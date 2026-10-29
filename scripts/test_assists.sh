@@ -11,11 +11,13 @@ mkdir -p "$out" "$out/run"
 
 "$repo/scripts/test_action_lifecycle.sh" > "$out/build.log" 2>&1
 
-clang++ -arch arm64 -isysroot "$sdk" -mmacosx-version-min=15.0 -I "$repo/apple/shared" \
+clang++ -arch arm64 -isysroot "$sdk" -mmacosx-version-min=15.0 -std=gnu++20 \
+    -fms-extensions -Wno-ignored-attributes -DNIGHTFIRE_STANDALONE=1 \
+    -I "$nf/src" -I "$repo/apple/shared" \
     -c "$repo/tests/native/test_assists.cpp" -o "$out/main.o"
 clang++ -arch arm64 -isysroot "$sdk" -mmacosx-version-min=15.0 -Wl,-no_fixup_chains \
     -Wl,-rpath,@executable_path -o "$out/test_assists" "$out/main.o" \
-    "$action/shared-runtime.o" "$action/combined.o" \
+    "$action/shared-runtime.o" "$action/combined-raw.o" \
     "$build/_deps/sdl3-build/libSDL3.0.dylib" \
     "$build/_deps/spirv_cross-build/libspirv-cross-msl.a" \
     "$build/_deps/spirv_cross-build/libspirv-cross-glsl.a" \

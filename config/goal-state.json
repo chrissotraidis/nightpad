@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T03:20:58.653818+00:00",
+  "last_updated_at": "2026-10-29T03:55:13.007729+00:00",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -25,33 +25,35 @@
   },
   "current_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "f504a63",
+    "nightpad_base_commit": "f72fbe6",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "864331d6c780129442269af8894934b3c966055898be80c00164fc0605e93f1f",
+    "simulator_binary_sha256": "09c8e134d487c3eea9429d3cc229b4ad957ecbe4695663cdc67069c310cdfc68",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "eee1bf9fcbf7e2eaa54e8f5cdcbb62eae1099e1fa4142caba49dd289162c5b70",
-    "evidence": "evidence/action-audio-sessions/build-identity.json",
-    "verified_at": "2026-10-29T01:35:54Z",
-    "acceptance_scope": "post-0035 native engine/build gates, live first truck objective, five-family unlock native/UI persistence subset; full campaign and physical acceptance remain",
-    "installed_simulator_source_commit": "241160e",
-    "installed_simulator_binary_sha256": "864331d6c780129442269af8894934b3c966055898be80c00164fc0605e93f1f",
-    "simulator_install_state": "patch-0035 installed and verified; live truck objective/courtyard and QA unlock relaunch subset pass"
+    "unsigned_device_package_sha256": "72c972ff92030830f28c83fa0fe8a2d819bd5a57442caa94a776a6c68f50c616",
+    "evidence": "evidence/assist-profile/result.json",
+    "verified_at": "2026-10-29T03:55:13.007729+00:00",
+    "acceptance_scope": "post-0036 full engine/quick/build/package, focused replay, loaded-profile OFF and explicit ON/OFF simulator damage/death/Replay; full campaign/device acceptance remains",
+    "installed_simulator_source_commit": "f72fbe6 + 0036/runtime authority",
+    "installed_simulator_binary_sha256": "09c8e134d487c3eea9429d3cc229b4ad957ecbe4695663cdc67069c310cdfc68",
+    "simulator_install_state": "fixed build installed and hash verified; QA regression cleanly stopped; all profile hashes unchanged",
+    "source_delta": "patches/0036-action-assist-profile-authority.patch and app runtime authority"
   },
   "last_known_good_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "f504a63",
+    "nightpad_base_commit": "f72fbe6",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "864331d6c780129442269af8894934b3c966055898be80c00164fc0605e93f1f",
+    "simulator_binary_sha256": "09c8e134d487c3eea9429d3cc229b4ad957ecbe4695663cdc67069c310cdfc68",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "eee1bf9fcbf7e2eaa54e8f5cdcbb62eae1099e1fa4142caba49dd289162c5b70",
-    "evidence": "evidence/action-audio-sessions/build-identity.json",
-    "verified_at": "2026-10-29T01:35:54Z",
-    "acceptance_scope": "post-0035 native engine/build gates, live first truck objective, five-family unlock native/UI persistence subset; full campaign and physical acceptance remain",
-    "installed_simulator_source_commit": "241160e",
-    "installed_simulator_binary_sha256": "864331d6c780129442269af8894934b3c966055898be80c00164fc0605e93f1f",
-    "simulator_install_state": "patch-0035 installed and verified; live truck objective/courtyard and QA unlock relaunch subset pass"
+    "unsigned_device_package_sha256": "72c972ff92030830f28c83fa0fe8a2d819bd5a57442caa94a776a6c68f50c616",
+    "evidence": "evidence/assist-profile/result.json",
+    "verified_at": "2026-10-29T03:55:13.007729+00:00",
+    "acceptance_scope": "post-0036 full engine/quick/build/package, focused replay, loaded-profile OFF and explicit ON/OFF simulator damage/death/Replay; full campaign/device acceptance remains",
+    "installed_simulator_source_commit": "f72fbe6 + 0036/runtime authority",
+    "installed_simulator_binary_sha256": "09c8e134d487c3eea9429d3cc229b4ad957ecbe4695663cdc67069c310cdfc68",
+    "simulator_install_state": "fixed build installed and hash verified; QA regression cleanly stopped; all profile hashes unchanged",
+    "source_delta": "patches/0036-action-assist-profile-authority.patch and app runtime authority"
   },
   "goals": {
     "G00": {
@@ -223,10 +225,13 @@
         "docs/DECISIONS/0015-atomic-profile-saves.md",
         "evidence/save-durability/ui-save-result.json",
         "evidence/campaign-first-play/nprun/created-profile.json",
-        "evidence/campaign-first-play/nprun/paris-attempts.json"
+        "evidence/campaign-first-play/nprun/paris-attempts.json",
+        "patches/0036-action-assist-profile-authority.patch",
+        "docs/DECISIONS/0022-assist-profile-authority.md",
+        "evidence/assist-profile/result.json"
       ],
       "blockers": [],
-      "next_step": "R19 native five-family/save/relaunch checks pass; original QA UI accepts remaining families and reloads final mission, upgrades and Uplink. Continue original NPRUN Exchange through confirmed truck objective into courtyard, then earned results save/relaunch. Objective multiplayer and physical gates remain."
+      "next_step": "Patch-0036 assist profile authority passes before/after native, simulator loaded-profile damage/death/Replay/ON/OFF, full engine, quick/both iOS lanes and package. Continue original NPRUN Exchange through confirmed truck route and courtyard to earned mission/results save/relaunch; repeat objective multiplayer without hidden assists. Physical and other campaign/display/multiplayer gates remain."
     },
     "G06": {
       "status": "in_progress",
@@ -307,7 +312,7 @@
         "evidence/multiplayer/arena-skyrail/results-2.png"
       ],
       "blockers": [],
-      "next_step": "Continue objective-mode and remaining map/mode coverage; two Arena/Skyrail six-bot matches now reach results and replay on simulator. Physical multi-controller acceptance remains."
+      "next_step": "Repeat Fort Knox/Uplink six-bot objective match on fixed build with verified assists OFF, including player kills/respawn/pickups/results/replay. Earlier Uplink scoring/Phoenix result is diagnostic only due to loaded QA immortality."
     },
     "G09": {
       "status": "in_progress",
@@ -349,7 +354,7 @@
         "scripts/test_assists.sh"
       ],
       "blockers": [],
-      "next_step": "Wire all-weapons equip after a level is live, then verify assists across death, restart and load without affecting recordings."
+      "next_step": "Profile authority repair passes host/simulator subset; continue death/restart/load/transition and physical assist acceptance, all-weapons research remains open."
     },
     "G11": {
       "status": "pending",
@@ -719,12 +724,16 @@
         "apple/shared/NightPadSettings.cpp",
         "apple/ios/NightPadEngineHost.mm",
         "scripts/test_assists.sh",
-        "docs/TEST-MATRIX.md"
+        "docs/TEST-MATRIX.md",
+        "docs/DECISIONS/0022-assist-profile-authority.md",
+        "evidence/assist-profile/result.json"
       ],
       "decision_id": null,
       "notes": [
         "The reconstructed debug table is audited with a per-option product decision; only immortality and unlimited ammo are exposed, off by default and excluded from acceptance runs.",
-        "All-weapons equip is deferred with a concrete blocker: it needs player 0 to exist and the standalone harness cannot boot a live level. Unlock-everything is rejected because it bypasses progression."
+        "All-weapons equip is deferred with a concrete blocker: it needs player 0 to exist and the standalone harness cannot boot a live level. Unlock-everything is rejected because it bypasses progression.",
+        "A QA Uplink run revealed saved-profile immortality can remain enabled while native toggles are OFF. Native CHET-load regression reproduces both default-OFF and returned-OFF failures. Repair and candidate revalidation in progress; that match is diagnostic, not unassisted acceptance.",
+        "Repaired in patch 0036/decision 0022: app-owned two choices reconcile every frame, including OFF; no app ownership preserves standalone/replay behavior. Actual CHET-load regression and simulator NPQA stored-immortal load/damage/death/Replay/ON-under-fire/OFF-death pass. Native choices restored OFF and all profile files unchanged; device scope remains."
       ]
     },
     "R21": {
@@ -2206,7 +2215,22 @@
       "name": "live unassisted Exchange truck objective",
       "result": "PASS objective subset: truck boarding/crouch/concealment, objective complete and CastleCourtyard transition; three courtyard deaths/replay, no whole mission or earned save",
       "target": "iPhone 17 Pro iOS 26.5 simulator"
+    },
+    {
+      "name": "profile-loaded native assist authority",
+      "result": "PASS after before-fix OFF failures: actual CHET production encode/load while paused, unowned/default OFF/ON/returned OFF reconciliation, preserves AllWeapons and joins",
+      "target": "macOS arm64 actual action engine"
+    },
+    {
+      "name": "simulator stored immortality versus native OFF and ON/OFF",
+      "result": "PASS: actual QA CHET=01 profile load permits guard damage/death, Replay, explicit ON retains health under fire, OFF restores death; clean Stop, profile files unchanged",
+      "target": "iPhone 17 Pro iOS 26.5 simulator"
+    },
+    {
+      "name": "post-0036 full regression and candidate gates",
+      "result": "PASS: complete native engine suite including unlock families, quick/both iOS lanes, focused unchanged 635-frame replay, 36-patch/83-file reconstruction, unsigned Release package",
+      "target": "macOS arm64 / iOS build lanes"
     }
   ],
-  "next_step": "R19 native five-family/save/relaunch checks pass; original QA UI accepts remaining families and reloads final mission, upgrades and Uplink. Continue original NPRUN Exchange through confirmed truck objective into courtyard, then earned results save/relaunch. Objective multiplayer and physical gates remain."
+  "next_step": "Patch-0036 assist profile authority passes before/after native, simulator loaded-profile damage/death/Replay/ON/OFF, full engine, quick/both iOS lanes and package. Continue original NPRUN Exchange through confirmed truck route and courtyard to earned mission/results save/relaunch; repeat objective multiplayer without hidden assists. Physical and other campaign/display/multiplayer gates remain."
 }

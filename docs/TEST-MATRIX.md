@@ -169,5 +169,8 @@
 | G09 | Five Secret Unlocks families and fresh-process persistence | macOS arm64 native engine | passed native subset | `scripts/test_secret_unlocks.sh`: 118 parent +32 child checks, original invalid/set/toggle/upgrade behavior, actual weapon/dossier/MP selectors, whole 166-byte profile, exact backup, unrelated player/codename protection |
 | G09 | Remaining original code-entry families and app relaunch | iPhone 17 Pro / iOS 26.5 simulator | passed simulator subset | Isolated NPQA original keyboard and Save Codename: all-mission, reward sets, individual reward off, spaced upgrade; expected masks/exact backup; new process loads final mission, Gold P2K/stunner upgrades and Uplink. Other saves unchanged. `evidence/secret-unlocks/result.json`; physical entry/persistence remain |
 
+| G05/G10 | Saved-profile assist authority | macOS arm64 / iPhone 17 Pro simulator | passed tested subset | Production CHET load fails both OFF cases before patch 0036, passes unowned/default-OFF/ON/returned-OFF after. Simulator loads stored-immortal NPQA, takes damage/dies with native OFF, replays, survives with explicit ON and dies after OFF. All profiles unchanged; native choices restored OFF. Decision 0022 |
+| G04/G05 | Post-0036 native/candidate regression | macOS arm64 / iOS build lanes | passed scoped gates | Full engine suite (including new unlock-family check), quick/both iOS builds, focused unchanged CastleIndoors1 635 frames, 36-patch/83-file reconstruction and unsigned package. `build/tests/assist-profile/`, `evidence/assist-profile/result.json`; physical acceptance remains |
+
 Only rows with explicit execution evidence are marked passed. Source inspection
 does not satisfy runtime acceptance.

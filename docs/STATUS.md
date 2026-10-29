@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-29 03:22 UTC
+Updated: 2026-10-29 03:54 UTC
 
 ## Outcome
 
@@ -491,3 +491,15 @@ A new app process reloads final-mission access, Gold P2K/stunner upgrades and
 Uplink selection. The 166-byte profile has expected masks and an exact previous
 copy; NPRUN and all unrelated saves are unchanged. Physical entry/persistence
 remain open. See `evidence/secret-unlocks/result.json`.
+
+
+Patch 0036 fixes a saved profile silently overriding native assists OFF. Actual
+CHET-load before/after tests pass, with standalone/replay ownership preserved.
+The updated simulator loads the stored-immortal QA profile and takes damage/dies
+with native OFF; Replay, explicit ON protection and OFF restoring death pass.
+All profile hashes are unchanged and native choices are restored OFF. Complete
+native engine regression, quick/both iOS lanes, unchanged 635-frame replay,
+36-patch/83-file reconstruction and unsigned Release package pass. Decision 0022
+and `evidence/assist-profile/result.json` record the current installed build.
+The earlier Uplink/Fort Knox scoring/results run is diagnostic only because it
+exposed this bug; repeat it on the repaired build for unassisted acceptance.

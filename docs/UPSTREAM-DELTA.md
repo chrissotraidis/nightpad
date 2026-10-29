@@ -45,3 +45,5 @@ no engine source changes.
 | SDL3 | `829a65d769d935c4852f8159e964312c0957260a` | Allows the simulator's host-backed Metal device through SDL_GPU's iOS family check; tracked as `patches/sdl3-ios-simulator-metal.patch` and applied by `scripts/patch_ios_sdl.sh` | Simulator reports SDL's Metal driver and MSL shaders; action title, Paris intro and driving tutorial render |
 | SPIRV-Cross | `f11ba9f0b21ba8fc15153d50a2a1ae31ab1cf8f7` | None yet | CMake configure passed |
 
+
+| nightfire-cxbx | `8779cf79ff623b83b53b9acf9c0b0cd6639b75ab` | Reconciles both supported native assists after codename loads when the runtime claims ownership; standalone/replay behavior stays original. `patches/0036-action-assist-profile-authority.patch` | Actual engine CHET load fails both OFF cases before and passes unowned/default-OFF/ON/returned-OFF cases after; unchanged CastleIndoors1 635 frames. Simulator stored-profile OFF damage/death/Replay and explicit ON/OFF, full native suite, both iOS lanes and package pass; decision 0022 |
