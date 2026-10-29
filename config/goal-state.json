@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T08:07:41.368883+00:00",
+  "last_updated_at": "2026-10-29T08:16:23.503452+00:00",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -35,7 +35,7 @@
     "verified_at": "2026-10-29T08:07:41.368883+00:00",
     "acceptance_scope": "Full quick passed with final tablet geometry before the last phone right-stick 30-reference-point offset. Final offset passed focused layout/input tests, both shell builds, package and privacy/diff checks. Engine source/archive unchanged; previous full engine and replay scopes retained, not rerun/expanded. Phone 4:3/tablet 16:9 UX subset only; campaign/device gates remain.",
     "installed_simulator_binary_sha256": "ebfbb07610de794e58b64b71aabf1a181cec697ed7e62964b73b7d4cc24f0164",
-    "simulator_install_state": "Phone final UI build installed/hash verified; original NPRUN/Operative Exchange running, native menu holds. Tablet cleanly stopped/shut down. All seven phone save files unchanged.",
+    "simulator_install_state": "Final phone UI build installed/hash verified. NPRUN/Operative Exchange original Restart; full health/ammo on supply road approaching closed gate, native menu holds; no new objective/results save. Tablet stopped/shut down. Seven saves unchanged.",
     "source_delta": "f5c5303: native menu, touch geometry/editor, tests and README; engine patch stack unchanged",
     "installed_simulator_source_commit": "f5c5303011c01fcd902c52d60aad71d4964c1d38",
     "device_binary_sha256": "a2d3168471b1f437123bdb421e7fb236964870285ad15409b6d36db32f6d6952"
@@ -234,7 +234,7 @@
         "evidence/touch-menu-audit/result.json"
       ],
       "blockers": [],
-      "next_step": "Touch/menu review committed as f5c5303; final phone 4:3 and tablet 16:9 HUD captures pass scoped review. Continue restarted original NPRUN/Operative Exchange with both assists OFF to truck/courtyard and earned results/save/relaunch; previous live courtyard was cleanly stopped for requested UX update. Native Audio/master volume, human multiplayer frag/capture, remaining display and physical gates remain."
+      "next_step": "UI review complete in f5c5303 with exact evidence. Resume NPRUN/Operative Exchange at supply road near closed main gate, native menu holding; truck window missed during review. Inspect route or use original Restart for fresh truck timing. Re-derive input timings for shared resolved geometry, both assists OFF. Continue earned results/save/relaunch; native audio and other open gates remain."
     },
     "G06": {
       "status": "in_progress",
@@ -2269,5 +2269,5 @@
       "target": "macOS arm64 / iPhone 17 Pro and iPad Pro 13-inch iOS 26.5 simulator"
     }
   ],
-  "next_step": "Touch/menu review committed as f5c5303; final phone 4:3 and tablet 16:9 HUD captures pass scoped review. Continue restarted original NPRUN/Operative Exchange with both assists OFF to truck/courtyard and earned results/save/relaunch; previous live courtyard was cleanly stopped for requested UX update. Native Audio/master volume, human multiplayer frag/capture, remaining display and physical gates remain."
+  "next_step": "UI review complete in f5c5303 with exact evidence. Resume NPRUN/Operative Exchange at supply road near closed main gate, native menu holding; truck window missed during review. Inspect route or use original Restart for fresh truck timing. Re-derive input timings for shared resolved geometry, both assists OFF. Continue earned results/save/relaunch; native audio and other open gates remain."
 }
