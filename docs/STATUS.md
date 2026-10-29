@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-29 05:37 UTC
+Updated: 2026-10-29 06:56 UTC
 
 ## Outcome
 
@@ -13,6 +13,12 @@ simulator execution is no longer a platform blocker.
 
 ## Verified
 
+- Latest campaign run on source a0c43b7 completes the truck objective and
+  automatically enters CastleCourtyard. A crouched route passes the pavilion
+  guards without firing and reaches the dolphin fountain with full health.
+  The next searchlight court remains unfinished after combat deaths; original
+  Replay restores the courtyard checkpoint. No completed mission/earned save
+  is credited. The live fresh courtyard is held by the native menu.
 - Project root: `/Users/chrissotraidis/GitHub/nightpad`.
 - Nightfire, GalaxyPad, SunPad and extract-xiso are checked out at the exact
   revisions in `config/dependencies.lock.json`.
