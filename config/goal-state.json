@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T05:35:11.273709+00:00",
+  "last_updated_at": "2026-10-29T05:47:35.519586+00:00",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -36,7 +36,8 @@
     "acceptance_scope": "post-0037 full engine/quick/both iOS builds/package, focused unchanged replay, simulator match clock hold and Uplink death/respawn/results/Replay subset; whole campaign/device acceptance remains",
     "installed_simulator_binary_sha256": "fd6913a542022ccbbf02707c52ebf80770201d417106910a0b7a86338e01c0a9",
     "simulator_install_state": "fixed build installed and hash verified; clean Stop; seven profile files unchanged",
-    "source_delta": "patches/0037-action-native-pause-clock.patch"
+    "source_delta": "patches/0037-action-native-pause-clock.patch",
+    "installed_simulator_source_commit": "a0c43b7"
   },
   "last_known_good_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
@@ -51,7 +52,8 @@
     "acceptance_scope": "post-0037 full engine/quick/both iOS builds/package, focused unchanged replay, simulator match clock hold and Uplink death/respawn/results/Replay subset; whole campaign/device acceptance remains",
     "installed_simulator_binary_sha256": "fd6913a542022ccbbf02707c52ebf80770201d417106910a0b7a86338e01c0a9",
     "simulator_install_state": "fixed build installed and hash verified; clean Stop; seven profile files unchanged",
-    "source_delta": "patches/0037-action-native-pause-clock.patch"
+    "source_delta": "patches/0037-action-native-pause-clock.patch",
+    "installed_simulator_source_commit": "a0c43b7"
   },
   "goals": {
     "G00": {
@@ -229,7 +231,7 @@
         "evidence/assist-profile/result.json"
       ],
       "blockers": [],
-      "next_step": "Patch-0036 assist profile authority passes before/after native, simulator loaded-profile damage/death/Replay/ON/OFF, full engine, quick/both iOS lanes and package. Continue original NPRUN Exchange through confirmed truck route and courtyard to earned mission/results save/relaunch; repeat objective multiplayer without hidden assists. Physical and other campaign/display/multiplayer gates remain."
+      "next_step": "Patch-0037 gameplay-clock pause repair passes native before/after, full engine, quick/both iOS lanes, focused replay and package. Simulator Uplink holds countdown through native menu; six bots score, human death/respawn and original results/Replay work. Continue NPRUN Exchange exterior pole/gap to earned mission/results save/relaunch. Human frag/capture and remaining multiplayer/display/device gates remain."
     },
     "G06": {
       "status": "in_progress",
@@ -297,7 +299,7 @@
         "evidence/campaign-truck/result.json"
       ],
       "blockers": [],
-      "next_step": "Original NPRUN on-foot exterior route now reaches snow-slip cutscene, creep traversal and outside-corner/007 marker; gap traversal not yet successful. Use actual pole/action at first gap; no whole mission/results save. Independent fixed-build Uplink retest next."
+      "next_step": "Continue original NPRUN Exchange through the exterior route. On a0c43b7, bridge-side jump and Action enter creep wall and exit to the front shelf. A later guard/fall death ends this attempt; no whole mission or earned results save. Inspect footing/turn right around the outer corner before advancing; retain native pause during analysis. Full campaign/device acceptance remains."
     },
     "G08": {
       "status": "in_progress",
