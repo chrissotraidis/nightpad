@@ -14,6 +14,8 @@ struct AppSettings {
     bool touchControlsAlwaysVisible = false;
     bool hideTouchControlsWithController = true;
     bool rumble = true;
+    // App output attenuation; 100 preserves the original game's mix.
+    int masterVolume = 100;
     // 1 = original 640x480, 2..4 = that multiple for the scene's internal size.
     int renderScale = 1;
     bool antiAliasing = true;

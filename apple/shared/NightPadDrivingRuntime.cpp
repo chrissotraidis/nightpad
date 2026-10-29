@@ -13,9 +13,14 @@
 #include "../../vendor/nightfire/src/driving/audio/SoundManager.h"
 
 #include "NightPadEngineBridge.h"
+#include "../../vendor/nightfire/src/common/sound/voiceMixer.h"
 
 extern "C" void NightPadDrivingResetFrameCounter(void);
 static HostHandle g_gameThread = nullptr;
+
+extern "C" int NightPadDrivingEngineSetMasterVolume(int percent) {
+    return percent >= 0 && percent <= 100 && VoiceMixer_SetMasterVolume(percent / 100.0f);
+}
 static const size_t kGameStackSize = 0x10000;
 static bool g_processServicesStarted = false;
 

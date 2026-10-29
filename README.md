@@ -101,6 +101,13 @@ physical phone/tablet acceptance.
    any original save operation first; stopping does not save an unfinished
    mission or preserve its live checkpoint.
 
+The menu groups **Display, Controls, Audio, Enhancements, Data & Saves, Help &
+Feedback**, then **Start/Stop Game**. Touch editing lives under Controls;
+data and save operations have separate submenus. **Audio → Master Volume**
+offers Muted, 25%, 50%, 75%, and 100%. Changes apply to game and movie output
+and survive app relaunch. The default 100% preserves the original game's mix;
+the game's own music/effects preferences still apply within that mix.
+
 ## Touch and controllers
 
 The defaults place movement under the left thumb, looking inward on the right,

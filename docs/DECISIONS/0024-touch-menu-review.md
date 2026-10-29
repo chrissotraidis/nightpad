@@ -17,8 +17,8 @@ manual override visibly disables Auto-Hide while it takes precedence. Data
 and save actions have distinct submenus. Native menu entry already pauses
 local gameplay/audio; Xbox Start remains the original pause action. The old
 App Pause card remains a diagnostic entry point, not a Controls row. Native
-Audio/master volume is still outstanding PRD work and is not represented by
-an inert menu item.
+Audio/master volume was outstanding at this review; decision 0025 adds the
+working Audio group and removes the redundant root heading to keep Stop visible.
 
 Phone and tablet defaults use aligned movement/look sticks, an equal-sized
 Xbox A/B/X/Y diamond, secondary keys above it, and a separate Start/Back row.

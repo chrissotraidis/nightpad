@@ -26,10 +26,11 @@ int main() {
 
     AppSettings settings;
     Check(settings.touchControlsAlwaysVisible == false && settings.hideTouchControlsWithController &&
-              settings.rumble,
+              settings.rumble && settings.masterVolume == 100,
           "defaults");
     settings.touchControlsAlwaysVisible = true;
     settings.rumble = false;
+    settings.masterVolume = 25;
     settings.renderScale = 3;
     settings.antiAliasing = false;
     settings.widescreen = true;
@@ -44,6 +45,7 @@ int main() {
           "round trip");
     Check(loaded.renderScale == 3 && !loaded.antiAliasing && loaded.widescreen, "display round trip");
     Check(loaded.fov == 80, "FOV round trip");
+    Check(loaded.masterVolume == 25, "master volume round trip");
     Check(loaded.assistImmortal && loaded.assistUnlimitedAmmo, "assist round trip");
 
     // A donor's Nintendo preferences must not leak into NightPad.
@@ -79,6 +81,18 @@ int main() {
     std::ofstream(path, std::ios::trunc) << "version=1\nfov=200\n";
     Check(!kept.Load(path, &error), "FOV out of range rejected");
 
+    kept.masterVolume = 75;
+    for (const char *invalid : {"-1", "101", "", "loud", "50x", "99999999999999999999999999"}) {
+        std::ofstream(path, std::ios::trunc) << "version=1\nmaster_volume=" << invalid << '\n';
+        Check(!kept.Load(path, &error), "invalid master volume rejected");
+        Check(kept.masterVolume == 75, "invalid master volume keeps current settings");
+    }
+    for (int percent : {0, 100}) {
+        settings.masterVolume = percent;
+        Check(settings.Save(path, &error) && loaded.Load(path, &error) && loaded.masterVolume == percent,
+              "master volume endpoints persist");
+    }
+
     Check(!AppSettings{}.Load(home / "missing.txt", &error), "missing file reported");
     Check(error == "The settings file is missing.", "missing file has a readable reason");
 
@@ -89,7 +103,7 @@ int main() {
     Check(older.Load(path, &error), "older settings file loads");
     Check(!older.rumble && !older.touchControlsAlwaysVisible, "older known values kept");
     Check(older.renderScale == 1 && older.antiAliasing && !older.widescreen && older.fov == 60 &&
-              !older.assistImmortal && !older.assistUnlimitedAmmo,
+              !older.assistImmortal && !older.assistUnlimitedAmmo && older.masterVolume == 100,
           "newer keys default when absent");
 
     fs::remove_all(home, ec);

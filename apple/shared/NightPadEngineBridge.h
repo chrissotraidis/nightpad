@@ -23,6 +23,10 @@ void NightPadActionEngineRequestStop(void);
 void NightPadActionEngineSetPaused(int paused);
 void NightPadActionEngineSetInputSuspended(int suspended);
 int NightPadActionEngineAudioPaused(void);
+// Native output volume, 0..100; retained before boot and across handoffs.
+// Returns zero for invalid input or output-device failure.
+int NightPadActionEngineSetMasterVolume(int percent);
+int NightPadDrivingEngineSetMasterVolume(int percent);
 // Optional assists owned by the app; applied by the action loop each frame.
 void NightPadActionEngineSetAssistImmortal(int enabled);
 void NightPadActionEngineSetAssistUnlimitedAmmo(int enabled);

@@ -36,6 +36,7 @@ typedef NS_ENUM(NSInteger, NightPadEngineKind) {
 // Optional action-only assists; the action loop re-applies them each frame.
 - (void)setImmortal:(BOOL)enabled;
 - (void)setUnlimitedAmmo:(BOOL)enabled;
+- (BOOL)setMasterVolume:(int)percent;
 - (void)setPaused:(BOOL)paused;
 - (void)setInputSuspended:(BOOL)suspended;
 // The app is the pad authority once this is enabled: the engine reads only the states published below.

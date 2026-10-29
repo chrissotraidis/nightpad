@@ -16,6 +16,7 @@ repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 "$repo/scripts/test_engine_settings.sh"
 "$repo/scripts/test_fmv_audio.sh"
 "$repo/scripts/test_action_audio_sessions.sh"
+"$repo/scripts/test_master_volume.sh"
 "$repo/scripts/test_presentation.sh"
 "$repo/scripts/test_saves_link.sh"
 "$repo/scripts/test_engine_save.sh"

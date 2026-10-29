@@ -19,6 +19,7 @@ static __weak NightPadEngineHost *gHost;
     NSString *_launchState;
     NSString *_handoffImage;
     NightPadEngineKind _engine;
+    int _masterVolumePercent;
 }
 
 - (instancetype)init {
@@ -28,6 +29,7 @@ static __weak NightPadEngineHost *gHost;
         _antiAliasing = YES;
         _widescreen = NO;
         _fov = 60;
+        _masterVolumePercent = 100;
     }
     return self;
 }
@@ -99,6 +101,24 @@ static int AcceptLaunchRequest(NightPadEngineId engine, const char *image, const
 
 - (BOOL)startAction {
     return [self startActionPreservingLaunchData:NO];
+}
+
+- (BOOL)setMasterVolume:(int)percent {
+    if (percent < 0 || percent > 100)
+        return NO;
+#if NIGHTPAD_HAS_ENGINE
+    // Both isolated engines keep their own mixer. Set the inactive one too so
+    // a future XBE handoff starts at the same volume, including its movies.
+    const int action = NightPadActionEngineSetMasterVolume(percent);
+    const int driving = NightPadDrivingEngineSetMasterVolume(percent);
+    if (!action || !driving) {
+        NightPadActionEngineSetMasterVolume(_masterVolumePercent);
+        NightPadDrivingEngineSetMasterVolume(_masterVolumePercent);
+        return NO;
+    }
+#endif
+    _masterVolumePercent = percent;
+    return YES;
 }
 
 - (BOOL)startActionPreservingLaunchData:(BOOL)preserve {

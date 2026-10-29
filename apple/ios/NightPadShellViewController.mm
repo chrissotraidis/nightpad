@@ -237,6 +237,8 @@ static uint64_t ShellResidentBytes(void) {
     if (!_settings.Load(_paths.appSupport / "settings.txt", &settingsError) &&
         settingsError != "The settings file is missing.")
         [self showError:[NSString stringWithFormat:@"Saved settings ignored: %s", settingsError.c_str()]];
+    if (![_engineHost setMasterVolume:_settings.masterVolume])
+        [self showError:@"The saved audio volume could not be applied."];
     [self refreshDataState];
     // Trees left by earlier runs are unreachable once a launch has happened.
     // Deleting gigabytes must not block the first frame, so it runs in the
@@ -564,6 +566,22 @@ static uint64_t ShellResidentBytes(void) {
                                     options:0
                                    children:@[ resolution, antiAliasing, aspect, fieldOfView ]];
 
+    NSMutableArray<UIMenuElement *> *volumeActions = [NSMutableArray array];
+    for (int percent : {0, 25, 50, 75, 100}) {
+        NSString *title = percent == 0 ? @"Muted" : [NSString stringWithFormat:@"%d%%", percent];
+        UIAction *action = [self menuAction:title image:nil disabled:NO handler:^{
+            [weakSelf setMasterVolume:percent];
+        }];
+        action.state = _settings.masterVolume == percent ? UIMenuElementStateOn : UIMenuElementStateOff;
+        [volumeActions addObject:action];
+    }
+    UIMenu *masterVolume = [UIMenu menuWithTitle:@"Master Volume" image:nil
+        identifier:@"nightpad.menu.volume" options:UIMenuOptionsDisplayInline | UIMenuOptionsSingleSelection
+        children:volumeActions];
+    UIMenu *audio = [UIMenu menuWithTitle:@"Audio"
+        image:[UIImage systemImageNamed:@"speaker.wave.2"] identifier:@"nightpad.menu.audio"
+        options:0 children:@[masterVolume]];
+
     UIAction *immortal = [self menuAction:@"Immortality" image:@"heart.fill" disabled:NO
                                   handler:^{ [weakSelf toggleImmortal]; }];
     immortal.state = _settings.assistImmortal ? UIMenuElementStateOn : UIMenuElementStateOff;
@@ -618,8 +636,10 @@ static uint64_t ShellResidentBytes(void) {
                                 children:@[ help, diagnostics, about ]];
 
     UIMenu *playSettings = [UIMenu menuWithTitle:@"" image:nil identifier:@"nightpad.menu.play"
-        options:UIMenuOptionsDisplayInline children:@[display, controls, assists]];
-    return [UIMenu menuWithTitle:@"NightPad"
+        options:UIMenuOptionsDisplayInline children:@[display, controls, audio, assists]];
+    // Seven root actions fit the phone at standard touch size without a
+    // redundant app-name heading pushing Stop below the visible area.
+    return [UIMenu menuWithTitle:@""
         children:@[playSettings, dataMenu, helpFeedback, start]];
 }
 
@@ -969,6 +989,18 @@ static uint64_t ShellResidentBytes(void) {
 - (void)toggleRumble {
     _settings.rumble = !_settings.rumble;
     [_gameInput.controllers setRumbleAllowed:_settings.rumble];
+    [self saveSettings];
+    [self refreshMenu];
+}
+
+- (void)setMasterVolume:(int)percent {
+    if (percent < 0 || percent > 100)
+        return;
+    if (![_engineHost setMasterVolume:percent]) {
+        [self showError:@"The audio volume could not be changed."];
+        return;
+    }
+    _settings.masterVolume = percent;
     [self saveSettings];
     [self refreshMenu];
 }

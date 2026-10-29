@@ -73,6 +73,14 @@ bool AppSettings::Load(const fs::path &path, std::string *error) {
                 if (error) *error = "A settings value is invalid.";
                 return false;
             }
+        } else if (key == "master_volume") {
+            char *end = nullptr;
+            const long parsed = std::strtol(value.c_str(), &end, 10);
+            if (value.empty() || end == value.c_str() || *end != '\0' || parsed < 0 || parsed > 100) {
+                if (error) *error = "The master volume must be 0 to 100.";
+                return false;
+            }
+            loaded.masterVolume = static_cast<int>(parsed);
         } else if (key == "render_scale") {
             char *end = nullptr;
             const long parsed = std::strtol(value.c_str(), &end, 10);
@@ -137,6 +145,7 @@ bool AppSettings::Save(const fs::path &path, std::string *error) const {
     out << "touch_always_visible=" << (touchControlsAlwaysVisible ? 1 : 0) << '\n';
     out << "auto_hide_touch=" << (hideTouchControlsWithController ? 1 : 0) << '\n';
     out << "rumble=" << (rumble ? 1 : 0) << '\n';
+    out << "master_volume=" << masterVolume << '\n';
     out << "render_scale=" << renderScale << '\n';
     out << "anti_aliasing=" << (antiAliasing ? 1 : 0) << '\n';
     out << "widescreen=" << (widescreen ? 1 : 0) << '\n';

@@ -17,12 +17,17 @@
 #include "../../vendor/nightfire/src/driving/platform/HostInput.h"
 
 #include "NightPadEngineBridge.h"
+#include "../../vendor/nightfire/src/common/sound/voiceMixer.h"
 
 #include <stdio.h>
 #include <string.h>
 
 extern "C" void NightPadActionResetFrameCounter(void);
 static HostHandle g_gameThread = nullptr;
+
+extern "C" int NightPadActionEngineSetMasterVolume(int percent) {
+    return percent >= 0 && percent <= 100 && VoiceMixer_SetMasterVolume(percent / 100.0f);
+}
 
 extern "C" int NightPadActionEngineStart(int argc, char **argv) {
     if (g_gameThread != nullptr) {
