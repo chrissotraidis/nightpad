@@ -1,0 +1,44 @@
+diff --git a/src/action/sound/sdlAudioAction.cpp b/src/action/sound/sdlAudioAction.cpp
+index 6feeb38..269a981 100644
+--- a/src/action/sound/sdlAudioAction.cpp
++++ b/src/action/sound/sdlAudioAction.cpp
+@@ -147,6 +147,17 @@ uint32_t XA2_GetDevice(void) {
+ void XA2_DirectSoundCreate(void *lpGuid, DSoundObject **ppDS, void *pUnknown) {
+     (void)lpGuid;
+     (void)pUnknown;
++    // The game creates one device and 192 buffers per boot. On an in-process
++    // reboot its AudioSystem discards the old table; retire those voices and
++    // PCM bindings before creating the next set, keeping the shared device.
++    for (int i = 0; i < g_bufferCount; i++) {
++        SdlBuffer *b = g_buffers[i];
++        VoiceMixer_Release(b->voice);
++        b->magic = 0;
++        delete b;
++        g_buffers[i] = NULL;
++    }
++    g_bufferCount = 0;
+     EnsureDevice();
+     if (ppDS != NULL)
+         *ppDS = (DSoundObject *)&g_deviceObject;
+diff --git a/src/action/sound/xaudio2Backend.cpp b/src/action/sound/xaudio2Backend.cpp
+index 09d91a4..577953b 100644
+--- a/src/action/sound/xaudio2Backend.cpp
++++ b/src/action/sound/xaudio2Backend.cpp
+@@ -369,6 +369,17 @@ static bool EnsureDevice(void) {
+ void XA2_DirectSoundCreate(void *lpGuid, DSoundObject **ppDS, void *pUnknown) {
+     (void)lpGuid;
+     (void)pUnknown;
++    // AudioSystem replaces its 192-buffer table at every in-process boot.
++    // Destroy the previous voices before their PCM bindings leave tracking.
++    for (int i = 0; i < g_bufferCount; i++) {
++        XA2Buffer *b = g_buffers[i];
++        if (b->voice != NULL)
++            b->voice->DestroyVoice();
++        b->magic = 0;
++        free(b);
++        g_buffers[i] = NULL;
++    }
++    g_bufferCount = 0;
+     EnsureDevice();
+     if (ppDS != NULL)
+         *ppDS = (DSoundObject *)&g_deviceObject;

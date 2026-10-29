@@ -161,5 +161,9 @@
 | G05 | Blocking movie native pause and stop | macOS arm64 / iPhone 17 Pro simulator, iOS 26.5 | passed for tested subset | Actual SDL movie clock/voice tests pass; two native driving intro pause/resume/stop cycles join. Simulator action clock holds at 11.357621 s; driving holds frames 77 then 624 at simulation zero; paused Stop returns in 1.825 s. Decision 0019; hardware remains |
 | G04/G05 | Fresh boot after stopping action movie | macOS arm64 / iPhone 17 Pro simulator | passed for tested subset | Regression fails before and passes after patch 0034: interrupted loader phases and absent/new/replaced/deleted per-boot launch pages. Actual movie Stop/Start reaches Press START in one simulator process; decision 0020 |
 
+| G04/G12 | Action audio buffers across repeated boots | macOS arm64, SDL dummy audio | passed native subset | Actual backend/cache/mixer: fifteen boots, 2,880 buffers, live final buffer tracked each time, old voice released, no registry overflow; fails before patch 0035. Fifteen real action cycles join with no overflow; no new simulator/device audio claim. Decision 0021 |
+
+| G04/G12 | Full post-0035 engine regression | macOS arm64 | passed native subset | `scripts/verify_engine.sh` completes lifecycle, boot reset, action/driving pause, assists, two actual intro pause/stop cycles, early stop, three transition cycles, handoff and mixed round trip. `build/tests/action-audio-sessions/verify-engine.log`; no new simulator/device claim |
+
 Only rows with explicit execution evidence are marked passed. Source inspection
 does not satisfy runtime acceptance.

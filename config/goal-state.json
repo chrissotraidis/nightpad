@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T00:52:46Z",
+  "last_updated_at": "2026-10-29T01:35:54Z",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -25,27 +25,33 @@
   },
   "current_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "ecf96ca",
+    "nightpad_base_commit": "f504a63",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "95414d17a4d49188f415e9162f6760903e0feb8bc5e3ebf8023305246af18177",
+    "simulator_binary_sha256": "864331d6c780129442269af8894934b3c966055898be80c00164fc0605e93f1f",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "d253f59b9d158a27a70a73e6564ad38a08fba96507eb4dce8e4e3524538757f3",
-    "evidence": "evidence/action-boot/build-identity.json",
-    "verified_at": "2026-10-29T00:52:46Z",
-    "acceptance_scope": "host/build and simulator movie pause/stop, interrupted boot, actual Paris failure/Quit subset; campaign and physical acceptance remain"
+    "unsigned_device_package_sha256": "eee1bf9fcbf7e2eaa54e8f5cdcbb62eae1099e1fa4142caba49dd289162c5b70",
+    "evidence": "evidence/action-audio-sessions/build-identity.json",
+    "verified_at": "2026-10-29T01:35:54Z",
+    "acceptance_scope": "post-0035 native audio/lifecycle/full engine suite and host/build gates; simulator remains on paused f504a63; campaign and physical acceptance remain",
+    "installed_simulator_source_commit": "f504a63",
+    "installed_simulator_binary_sha256": "95414d17a4d49188f415e9162f6760903e0feb8bc5e3ebf8023305246af18177",
+    "simulator_install_state": "not updated: Mac locked, prior campaign run held under native menu"
   },
   "last_known_good_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "ecf96ca",
+    "nightpad_base_commit": "f504a63",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "95414d17a4d49188f415e9162f6760903e0feb8bc5e3ebf8023305246af18177",
+    "simulator_binary_sha256": "864331d6c780129442269af8894934b3c966055898be80c00164fc0605e93f1f",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "d253f59b9d158a27a70a73e6564ad38a08fba96507eb4dce8e4e3524538757f3",
-    "evidence": "evidence/action-boot/build-identity.json",
-    "verified_at": "2026-10-29T00:52:46Z",
-    "acceptance_scope": "host/build and simulator movie pause/stop, interrupted boot, actual Paris failure/Quit subset; campaign and physical acceptance remain"
+    "unsigned_device_package_sha256": "eee1bf9fcbf7e2eaa54e8f5cdcbb62eae1099e1fa4142caba49dd289162c5b70",
+    "evidence": "evidence/action-audio-sessions/build-identity.json",
+    "verified_at": "2026-10-29T01:35:54Z",
+    "acceptance_scope": "post-0035 native audio/lifecycle/full engine suite and host/build gates; simulator remains on paused f504a63; campaign and physical acceptance remain",
+    "installed_simulator_source_commit": "f504a63",
+    "installed_simulator_binary_sha256": "95414d17a4d49188f415e9162f6760903e0feb8bc5e3ebf8023305246af18177",
+    "simulator_install_state": "not updated: Mac locked, prior campaign run held under native menu"
   },
   "goals": {
     "G00": {
@@ -153,7 +159,7 @@
       "blockers": [
         "B01"
       ],
-      "next_step": "Physical-device execution and loading-screen quit stability; the simulator now completes action-to-driving into the Paris tutorial."
+      "next_step": "Native lifecycle, boot, movie pause and handover gates pass after patch 0035. Obtain signed physical-device evidence, including loading-screen quit stability. Simulator route awaits Mac unlock."
     },
     "G05": {
       "status": "in_progress",
@@ -220,7 +226,7 @@
         "evidence/campaign-first-play/nprun/paris-attempts.json"
       ],
       "blockers": [],
-      "next_step": "Repair native movie pause before further campaign acceptance: inspect PlayMPC::Play and common/fmv/FmvAudio{,Sdl}.cpp; pause voice and clock (including silent/drained/virtual cases), honor stop while paused, integrate both movie players and test an actual intro. Native root/menu/modal/background simulation holds now have simulator traces; R15 still fails during driving intro. Then resume NPRUN earned mission/results save and remaining campaign/multiplayer/display/device gates. All eleven complete replays passed; no replay process remains live. Only the phone simulator is booted and its app is stopped."
+      "next_step": "After Mac unlock, preserve the paused f504a63 NPRUN run and profile, stop/restart through original UI, and use the higher ledge to board and crouch in the supply truck through the castle gate. Continue actual continuous mission/results saving and relaunch; no mission has been earned yet. Patch 0035 SDL regression, fifteen real action cycles, full native suite, quick/build/package now pass; install its built simulator app only after protecting the current run. Remaining campaign/multiplayer/display and physical gates stay open."
     },
     "G06": {
       "status": "in_progress",
@@ -287,7 +293,7 @@
         "evidence/campaign-first-play/nprun/paris-attempts.json"
       ],
       "blockers": [],
-      "next_step": "Run the first-play route when device execution is available."
+      "next_step": "Resume fresh NPRUN continuous campaign after unlock. Truck route from the higher ledge is visible in the matching native CastleExterior recording, but live objective completion and earned results saving remain unverified."
     },
     "G08": {
       "status": "in_progress",
@@ -509,12 +515,18 @@
         "scripts/test_action_pause.sh",
         "scripts/test_driving_pause.sh",
         "scripts/verify_engine.sh",
-        "docs/TEST-MATRIX.md"
+        "docs/TEST-MATRIX.md",
+        "patches/0035-action-audio-session-buffers.patch",
+        "scripts/test_action_audio_sessions.sh",
+        "docs/DECISIONS/0021-action-audio-session-buffers.md",
+        "build/tests/action-audio-sessions"
       ],
       "decision_id": null,
       "notes": [
         "Host gates show action SFX and streams paused and resumed with frames held, and the driving sound manager paused and resumed; movies play in the handoff gate.",
-        "Device interruptions (calls, route changes, audio focus) and sustained synchronization under load are unverified."
+        "Device interruptions (calls, route changes, audio focus) and sustained synchronization under load are unverified.",
+        "The fixed 256-buffer registry overflowed after 192 buffers per native boot. Patch 0035 retires old buffers/voices at the next device creation; actual SDL/cache/mixer and fifteen real action cycles pass. New build has no simulator/physical audio acceptance yet.",
+        "SDL spatial voices currently have distance/pan but no HRTF or I3DL2 reverb. Audio fidelity and physical listening remain unverified."
       ]
     },
     "R11": {
@@ -904,6 +916,11 @@
       "id": "0020",
       "path": "docs/DECISIONS/0020-action-boot-state.md",
       "summary": "Reset action loader phase and launch page per boot while preserving original handover semantics."
+    },
+    {
+      "id": "0021",
+      "path": "docs/DECISIONS/0021-action-audio-session-buffers.md",
+      "summary": "Retire the prior action boot buffer/voice set before creating the next device so PCM ownership and 3D tracking remain complete."
     }
   ],
   "blockers": [
@@ -935,7 +952,22 @@
       "evidence": [
         "evidence/action-demos"
       ],
-      "next_step": "Provide the matching PAL image data, or explicitly accept the affected SpaceStationD route as untestable on this content."
+      "next_step": "Supply legitimate matching media for the blocked PAL recording; independently validate the supplied NTSC Equinox route. No core campaign route is waived."
+    },
+    {
+      "id": "B03",
+      "scope": [
+        "G05",
+        "G07",
+        "G08",
+        "G09"
+      ],
+      "status": "open",
+      "description": "Simulator-control tool reports the Mac is locked and cannot interact. The live NPRUN run is held under native UI; unlock was requested. Independent native work continues.",
+      "evidence": [
+        "evidence/campaign-route/lock-checkpoint.json"
+      ],
+      "next_step": "Unlock the Mac manually, then resume the preserved simulator route."
     }
   ],
   "journal_entries": [
@@ -1847,6 +1879,17 @@
         "evidence/action-boot",
         "build/tests/action-boot"
       ]
+    },
+    {
+      "at": "2026-10-29T01:35:54Z",
+      "goal": "G04/G05/G07/G12",
+      "summary": "Live NPRUN reaches Exchange main gate without completion; matching replay reveals ledge/truck/crouch route. Mac lock blocks UI and unlock is requested. Patch 0035 repairs repeated-boot audio registry/PCM ownership; fifteen actual action cycles, SDL regression, full native suite, quick/build/package pass. New artifacts not installed; paused f504a63 run and profile preserved.",
+      "evidence": [
+        "docs/DECISIONS/0021-action-audio-session-buffers.md",
+        "evidence/campaign-route",
+        "build/tests/action-audio-sessions",
+        "evidence/action-demos/20261029T010941Z/results.json"
+      ]
     }
   ],
   "completed_tests": [
@@ -2106,7 +2149,32 @@
       "name": "post-0034 focused replay, roundtrip and builds",
       "result": "PASS: unchanged CastleIndoors1 all 635 frames, native mixed roundtrip joins, quick, both iOS lanes, 35 exports, 34 patches / 81 files, unsigned Release package",
       "target": "macOS arm64 host"
+    },
+    {
+      "name": "actual action SDL audio across fifteen boots",
+      "result": "PASS after baseline failure: 2,880 buffers, PCM ownership tracked, old voice released, final zero voices, no registry overflow; Windows source only",
+      "target": "macOS arm64, actual SDL backend/cache/mixer with dummy audio"
+    },
+    {
+      "name": "fifteen actual post-0035 action lifecycle cycles",
+      "result": "PASS: all joined, settled threads six/seven, no registry overflow; RSS cold222MB -> final264MB, no physical memory acceptance",
+      "target": "macOS arm64 native action engine"
+    },
+    {
+      "name": "full post-0035 native engine regression",
+      "result": "PASS: lifecycle, boot, both pause paths, assists, actual intro pause/stop, early stop, transitions, handoff and mixed round trip",
+      "target": "macOS arm64"
+    },
+    {
+      "name": "post-0034 CastleExterior route guide",
+      "result": "PASS: unchanged recording all 5,649 frames, higher-ledge/truck/crouch route reaches CastleCourtyard; guide only, not continuous campaign acceptance",
+      "target": "macOS arm64 action test"
+    },
+    {
+      "name": "post-0035 focused action replay",
+      "result": "PASS: unchanged CastleIndoors1 all 635 frames",
+      "target": "macOS arm64 action test"
     }
   ],
-  "next_step": "Resume real NPRUN earned mission/results save and relaunch; no mission has been completed yet. Movie pause/stop and interrupted-action boot reset now pass native/simulator subset (decisions 0019/0020), and real Paris failure/Quit returns to mission menu through a fresh page. Continue outstanding campaign/multiplayer/display/device gates. No build/replay job live; only phone simulator booted, app cleanly stopped at data-ready shell, 4:3/FOV60/1x/FXAA, assists off. Signing preflight still reports zero identities and no connected device."
+  "next_step": "After Mac unlock, preserve the paused f504a63 NPRUN run and profile, stop/restart through original UI, and use the higher ledge to board and crouch in the supply truck through the castle gate. Continue actual continuous mission/results saving and relaunch; no mission has been earned yet. Patch 0035 SDL regression, fifteen real action cycles, full native suite, quick/build/package now pass; install its built simulator app only after protecting the current run. Remaining campaign/multiplayer/display and physical gates stay open."
 }

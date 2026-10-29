@@ -327,6 +327,22 @@ HendersonA, PowerStationA1, SpaceStationD, Tower2A and TowerA. CastleExterior
 also demonstrates a level transition: the recording starts on `0x07000005` and
 reaches `0x07000006` before its final frames.
 
+### CastleExterior route observation (native replay guide)
+
+A fresh post-0035 guide has not been claimed; the post-0034 unchanged
+CastleExterior-20261016-031815 recording matches all 5,649 frames. Periodic
+captures show the player on the higher ledge above the approach road, boarding
+the supply truck, crouching in its bed as it passes the castle gate, then
+reaching CastleCourtyard with the first objective complete. Evidence:
+`evidence/action-demos/20261029T010941Z/`. These captures guide a live run;
+they do not satisfy continuous fresh-profile campaign acceptance.
+
+The live NPRUN run moved past the outer arch and reached the closed main gate
+on foot, with no objective completion. The next live attempt should use the
+higher ledge and truck rather than fight through the closed gate. NPRUN is
+still byte-identical to its initial profile. The run is held under native UI
+while simulator control waits for Mac unlock.
+
 ## Still missing
 
 - Start and end state per mission part, including which part writes a save.

@@ -2564,3 +2564,54 @@ are ignored and may contain paths, hashes, captures or device identities.
   4:3/FOV60/1x/FXAA with both assists off. Continue real NPRUN earned mission /
   results save and relaunch, then remaining campaign/multiplayer/display
   coverage. The goal remains active; no blocker impasse is claimed.
+
+## 2026-10-29: investigate the truck route and repeated-boot audio
+
+- Previous goal turn: progress (f504a63 plus verified interrupted-boot and
+  handover evidence). The live NPRUN Exchange route now passes the outer arch
+  with much less damage by using the supply truck's cover. On-foot fighting
+  reached the closed main gate; no objective or mission was completed. The
+  profile remains byte-identical to its initial copy.
+- A fresh unchanged CastleExterior recording matches all 5,649 frames and
+  periodic native captures show the higher-ledge / truck-bed / crouch route
+  through the main gate into CastleCourtyard. This is a route guide, not a
+  continuous campaign pass. Restart through the original UI and try that path.
+- Simulator control then reports a locked Mac and cannot interact. Unlock was
+  requested once. The last native-menu trace holds frame 16005; the f504a63
+  app/run remains installed and preserved. Do not reinstall or call its live
+  run completed while access is unavailable. B03 tracks this external input.
+- Independent full native engine verification passes at f504a63, including
+  lifecycle, boot reset, both pause paths, actual intro pause/stop, early stop,
+  transitions, handoff and mixed round trip. Logs:
+  `build/tests/campaign-route/verify-engine.log`.
+- Audited the repeated-session sound-buffer warning. Each action boot creates
+  192 buffers, but a fixed 256-entry registry kept every earlier boot. New
+  buffers were handed to the game without PCM ownership or per-frame 3D
+  tracking. Patch 0035 releases previous source voices and buffer objects at
+  the next device creation, then resets the registry and creation indices;
+  the shared output/movie streams and ordinary level resets are preserved.
+- Actual SDL/cache/mixer regression fails before: 2,624 registry warnings over
+  fifteen boots, untracked later PCM and fifteen retained playing voices.
+  Afterward all 2,880 buffers fit per-boot tracking, PCM ownership passes, only
+  the current test voice remains, final reset leaves zero voices, no overflow.
+  Windows mirrors the source fix but is not built/tested here.
+- Fifteen real action cycles join with settled threads six/seven and no buffer
+  overflow. RSS is 222 MB on the cold first cycle and 264 MB on the final one;
+  this does not prove physical stability/performance. Focused unchanged
+  CastleIndoors1 still matches all 635 frames. Quick gates, both iOS lanes,
+  35-export link, 35-patch/83-file reconstruction and rebuilt unsigned Release
+  package pass. The full post-0035 native suite terminates successfully:
+  lifecycle, boot, both pause paths, assists, actual intro pause/stop, early
+  stop, three transition cycles, handoff and mixed round trip. No test job
+  remains live. Evidence is under
+  `build/tests/action-audio-sessions/`, decision 0021.
+- No earned campaign/results save, new simulator audio acceptance or hardware
+  acceptance is credited. Resume the preserved route after Mac unlock, protect
+  NPRUN, install the new build only when appropriate, and continue all original
+  campaign/multiplayer/display/device gates. SDL HRTF/reverb remain unverified
+  fidelity gaps. Goal stays active; independent work is making progress.
+
+- Final checkpoint: the control tool again confirms Mac lock. Phone simulator
+  still has f504a63 held at frame 16005; new patch-0035 artifacts are built but
+  not installed. New source/build hashes are in the private audio-session
+  identity. Resume after unlock without pretending this paused run is saved.

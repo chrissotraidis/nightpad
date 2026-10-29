@@ -9,7 +9,8 @@ tester would see, what is blocked, and where the detail lives.
 | --- | --- | --- |
 | Display acceptance is incomplete | Safe-area aspect fitting and driving widescreen flag encoding are fixed. Phone/tablet titles, driving HUD and the tablet widescreen scope have simulator evidence; action scope/FOV combinations, the remaining matrix and device performance remain unverified | `docs/DECISIONS/0017-display-fit-and-flow-timing.md`, R18 |
 | Campaign completion/results save is not verified | Fresh codename, Paris and on-foot Exchange failure/replay work, but no mission/results save has been earned; failed attempts leave NPRUN byte-identical | `docs/TEST-MATRIX.md`, R09/R11 |
-| Six-bot run reports the sound-buffer tracking limit | The log warns that more buffers exist than the backend tracks; the audible effect has not been measured | `evidence/campaign-first-play/nprun/stdout.log`, R10 |
+| SDL spatial audio lacks HRTF and I3DL2 reverb | The current backend mixes dry 3D voices with distance/pan. Hardware listening, route changes and full audio fidelity remain unverified | `src/action/sound/sdlAudioAction.cpp`, R10 |
+| Simulator control is waiting for Mac unlock | The current NPRUN run is paused at the Exchange main gate on the f504a63 app. The control tool reports a locked Mac; new audio build is not installed there | `evidence/campaign-route/lock-checkpoint.json` |
 | No signing identity or device on this machine | Nothing physical has been installed; touch feel, controller rumble, campaign progression, performance and the final freeze are unverified | `docs/DEVICE-HANDOFF.md`, `docs/TEST-MATRIX.md` |
 | The supplied image has only the 30 fps movie bundle | One action recording stops early on a movie the image lacks; NightPad writes `Region=NTSC` | `docs/STATUS.md`, G02 blocker |
 | All-weapons assist is not wired | The menu offers immortality and unlimited ammo only | `docs/CHEATS-RESEARCH.md`, R20 |
@@ -22,6 +23,12 @@ tester would see, what is blocked, and where the detail lives.
 | Tablet sheet editing is not scriptable in this harness | Saving from the iPad form sheet and drag editing stay manual | `docs/TEST-MATRIX.md` |
 
 ## Not issues
+
+- The sound-buffer overflow on later action boots has a source fix and native
+  regression. Patch 0035 retires the previous 192 buffers before the next boot,
+  retaining PCM ownership tracking and releasing old voices. Fifteen synthetic
+  audio boots and fifteen real action lifecycle cycles pass; simulator/device
+  audio acceptance remains. See decision 0021.
 
 - A restart during an action movie now returns to the title. Patch 0034 resets
   the interrupted loader phase and per-boot launch-page cache; the real
