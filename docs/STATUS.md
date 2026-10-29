@@ -453,10 +453,14 @@ driving holds presented frames 77 and 624, resumes, and stops while paused in
 1.825 seconds. The quick gates, both iOS build lanes and unsigned Release
 package pass; the unchanged 635-frame replay still matches. See decision 0019.
 
-Next: investigate the zero-score Results page seen on same-process restart
-after stopping an action movie. Keep NPRUN protected and verify fresh boot and
-real handover data separately. Then continue earned mission/results save and
-relaunch, plus objective-mode and remaining multiplayer map coverage.
+Patch 0034 resets the interrupted loader phase and cached launch page at each
+action boot. The before/after native regression, simulator movie Stop/Start
+title and mixed native round trip pass. See decision 0020.
+
+The original Paris failure -> Quit route returns to the action mission menu
+through a newly read handover page; NPRUN remains unchanged. Next: continue
+NPRUN earned mission/results save and relaunch, plus objective-mode and
+remaining multiplayer map coverage.
 Individual campaign objectives do not write a profile save. Keep the fifteen-cycle
 action gate, ten-cycle driving gate, mixed round trip, pause, transition, handoff
 and data-import checks as regressions.

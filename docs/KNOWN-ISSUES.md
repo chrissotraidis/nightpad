@@ -7,7 +7,6 @@ tester would see, what is blocked, and where the detail lives.
 
 | Issue | Effect | Detail |
 | --- | --- | --- |
-| Restart after action movie can show stale Results | A Stop/Start during an action movie produced a zero-score Results page instead of a fresh title. The profile is unchanged; investigate retained launch/front-end state before campaign acceptance | `docs/DECISIONS/0019-native-movie-pause.md`, G04/G05 |
 | Display acceptance is incomplete | Safe-area aspect fitting and driving widescreen flag encoding are fixed. Phone/tablet titles, driving HUD and the tablet widescreen scope have simulator evidence; action scope/FOV combinations, the remaining matrix and device performance remain unverified | `docs/DECISIONS/0017-display-fit-and-flow-timing.md`, R18 |
 | Campaign completion/results save is not verified | Fresh codename, Paris and on-foot Exchange failure/replay work, but no mission/results save has been earned; failed attempts leave NPRUN byte-identical | `docs/TEST-MATRIX.md`, R09/R11 |
 | Six-bot run reports the sound-buffer tracking limit | The log warns that more buffers exist than the backend tracks; the audible effect has not been measured | `evidence/campaign-first-play/nprun/stdout.log`, R10 |
@@ -23,6 +22,11 @@ tester would see, what is blocked, and where the detail lives.
 | Tablet sheet editing is not scriptable in this harness | Saving from the iPad form sheet and drag editing stay manual | `docs/TEST-MATRIX.md` |
 
 ## Not issues
+
+- A restart during an action movie now returns to the title. Patch 0034 resets
+  the interrupted loader phase and per-boot launch-page cache; the real
+  simulator Stop/Start and native boot regression pass. Decision 0020 records
+  the cause and evidence. Campaign completion remains unverified.
 
 - Driving Stop is fixed: the former 60-second hang was a 260-character host-path
   limit that kept the speech `.spe` big file from opening, leaving a sound

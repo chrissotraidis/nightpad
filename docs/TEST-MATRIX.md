@@ -159,7 +159,7 @@
 | G05 | About and source notices | iPhone simulator / iPhoneOS build | passed for surface | Version, source/donor links, independence and game-data notices render; link opening and device use remain |
 | G05 | Native menu / sheet / App Pause / background ownership | iPhone 17 Pro, iOS 26.5 simulator | passed for simulation subset | Action frame 927 held through menu-to-sheet, background/menu at 3685, driving simulation at 1277, final App Pause/nested-menu at 1188. Dismissal resumes only after the last owner closes; `evidence/native-ui-pause/` |
 | G05 | Blocking movie native pause and stop | macOS arm64 / iPhone 17 Pro simulator, iOS 26.5 | passed for tested subset | Actual SDL movie clock/voice tests pass; two native driving intro pause/resume/stop cycles join. Simulator action clock holds at 11.357621 s; driving holds frames 77 then 624 at simulation zero; paused Stop returns in 1.825 s. Decision 0019; hardware remains |
-| G04/G05 | Fresh boot after stopping action movie | iPhone simulator | reopened | Same-process Stop/Start showed a zero-score Results page; NPRUN remains byte-identical. Investigate retained launch/front-end state |
+| G04/G05 | Fresh boot after stopping action movie | macOS arm64 / iPhone 17 Pro simulator | passed for tested subset | Regression fails before and passes after patch 0034: interrupted loader phases and absent/new/replaced/deleted per-boot launch pages. Actual movie Stop/Start reaches Press START in one simulator process; decision 0020 |
 
 Only rows with explicit execution evidence are marked passed. Source inspection
 does not satisfy runtime acceptance.

@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-28T19:36:02Z",
+  "last_updated_at": "2026-10-29T00:52:46Z",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -25,27 +25,27 @@
   },
   "current_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "c4fe204",
+    "nightpad_base_commit": "ecf96ca",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "c10a15a51fec171cc16f5f315bc01bcc062c071dfbf30ad2146184300198784f",
+    "simulator_binary_sha256": "95414d17a4d49188f415e9162f6760903e0feb8bc5e3ebf8023305246af18177",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "725a1abb64981682d7c79b40f1fbda75e3407185bead41d4588319d29ec982f3",
-    "evidence": "evidence/fmv-pause/build-identity.json",
-    "verified_at": "2026-10-28T19:36:02Z",
-    "acceptance_scope": "host/build and simulator movie pause/stop subset; fresh-boot Results anomaly open; campaign and physical acceptance remain"
+    "unsigned_device_package_sha256": "d253f59b9d158a27a70a73e6564ad38a08fba96507eb4dce8e4e3524538757f3",
+    "evidence": "evidence/action-boot/build-identity.json",
+    "verified_at": "2026-10-29T00:52:46Z",
+    "acceptance_scope": "host/build and simulator movie pause/stop, interrupted boot, actual Paris failure/Quit subset; campaign and physical acceptance remain"
   },
   "last_known_good_build": {
     "engine_revision": "8779cf79ff623b83b53b9acf9c0b0cd6639b75ab",
-    "nightpad_base_commit": "c4fe204",
+    "nightpad_base_commit": "ecf96ca",
     "dependency_manifest_sha256": "f2ae8ce569ba6fe8676fdfcdc4bd4a4c9a490aa483d1d661afed2dd63742b08e",
     "simulator_binary": "build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app/NightPadShell",
-    "simulator_binary_sha256": "c10a15a51fec171cc16f5f315bc01bcc062c071dfbf30ad2146184300198784f",
+    "simulator_binary_sha256": "95414d17a4d49188f415e9162f6760903e0feb8bc5e3ebf8023305246af18177",
     "unsigned_device_package": "build/package/NightPadShell-unsigned.ipa",
-    "unsigned_device_package_sha256": "725a1abb64981682d7c79b40f1fbda75e3407185bead41d4588319d29ec982f3",
-    "evidence": "evidence/fmv-pause/build-identity.json",
-    "verified_at": "2026-10-28T19:36:02Z",
-    "acceptance_scope": "host/build and simulator movie pause/stop subset; fresh-boot Results anomaly open; campaign and physical acceptance remain"
+    "unsigned_device_package_sha256": "d253f59b9d158a27a70a73e6564ad38a08fba96507eb4dce8e4e3524538757f3",
+    "evidence": "evidence/action-boot/build-identity.json",
+    "verified_at": "2026-10-29T00:52:46Z",
+    "acceptance_scope": "host/build and simulator movie pause/stop, interrupted boot, actual Paris failure/Quit subset; campaign and physical acceptance remain"
   },
   "goals": {
     "G00": {
@@ -899,6 +899,11 @@
       "id": "0019",
       "path": "docs/DECISIONS/0019-native-movie-pause.md",
       "summary": "Pause movie voices and clocks and observe stop during blocking playback; validate actual presented frames separately from simulation."
+    },
+    {
+      "id": "0020",
+      "path": "docs/DECISIONS/0020-action-boot-state.md",
+      "summary": "Reset action loader phase and launch page per boot while preserving original handover semantics."
     }
   ],
   "blockers": [
@@ -1832,6 +1837,16 @@
         "evidence/fmv-pause",
         "build/tests/fmv-pause"
       ]
+    },
+    {
+      "at": "2026-10-29T00:52:46Z",
+      "goal": "G04/G05",
+      "summary": "Patch 0034 resets interrupted loader phase and per-boot handover cache. Regression fails before/passes after, simulator movie Stop/Start reaches title, original Paris Quit returns to mission menu. NPRUN unchanged; earned progression remains unverified.",
+      "evidence": [
+        "docs/DECISIONS/0020-action-boot-state.md",
+        "evidence/action-boot",
+        "build/tests/action-boot"
+      ]
     }
   ],
   "completed_tests": [
@@ -2081,7 +2096,17 @@
       "name": "post-0033 focused unchanged action replay",
       "result": "PASS: CastleIndoors1 all 635 frames; full eleven-recording run remains patch 0032 evidence",
       "target": "macOS arm64 action test"
+    },
+    {
+      "name": "action boot loader and per-session launch-page reset",
+      "result": "PASS after eight before-fix failures; source cases plus simulator movie Stop/Start title and original Paris Quit handover; NPRUN unchanged",
+      "target": "macOS arm64 / iPhone 17 Pro, iOS 26.5 simulator"
+    },
+    {
+      "name": "post-0034 focused replay, roundtrip and builds",
+      "result": "PASS: unchanged CastleIndoors1 all 635 frames, native mixed roundtrip joins, quick, both iOS lanes, 35 exports, 34 patches / 81 files, unsigned Release package",
+      "target": "macOS arm64 host"
     }
   ],
-  "next_step": "Investigate retained launch/front-end state: same-process Stop/Start during an action movie displayed a zero-score Results page instead of the title, with NPRUN unchanged. Verify fresh boot and real handover data separately, then resume actual earned mission/results save and relaunch, plus remaining campaign/multiplayer/display/device gates. Movie pause/stop now passes native and simulator subset (decision 0019). No build/replay job live; only phone simulator booted, app cleanly stopped."
+  "next_step": "Resume real NPRUN earned mission/results save and relaunch; no mission has been completed yet. Movie pause/stop and interrupted-action boot reset now pass native/simulator subset (decisions 0019/0020), and real Paris failure/Quit returns to mission menu through a fresh page. Continue outstanding campaign/multiplayer/display/device gates. No build/replay job live; only phone simulator booted, app cleanly stopped at data-ready shell, 4:3/FOV60/1x/FXAA, assists off. Signing preflight still reports zero identities and no connected device."
 }

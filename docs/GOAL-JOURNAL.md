@@ -2536,3 +2536,31 @@ are ignored and may contain paths, hashes, captures or device identities.
   simulator is cleanly stopped at the data-ready shell. No build/replay job
   remains live. Goal stays active; physical signing/device and PAL media remain
   external dependencies, with useful independent work still available.
+
+## 2026-10-28: reset interrupted action boot and handover state
+
+- Previous goal turn: progress. An interrupted action movie left ResetMap_State
+  at AFTER_MOVIE. Only resetting the flow stack let the next front end finish
+  that phase and open a zero-score Results page. Patch 0034 resets the loader
+  to START at boot. The source audit also found a per-process launch-page cache
+  that retained the first boot's present/absent answer. Each new boot now clears
+  that cache while keeping the page stable within a boot.
+- Actual private engine regression failed before for all four interrupted load
+  phases and four new/replaced handover cases; it passes after the fix. It
+  covers initial absence, new/replaced/deleted pages, stable per-boot bytes and
+  direct-level bypass. No extra app export or campaign-save fixture is added.
+- Simulator Exchange movie Stop/Start reaches the original Press START title
+  in one process. NPRUN Paris still plays and accepts input; a failed run's
+  original Quit returns through a freshly read handover page to the mission
+  menu. The profile remains byte-identical to the before-mission copy. No
+  earned mission completion or results-save credit is claimed.
+- Native action targets, mixed action -> driving -> action joins, the unchanged
+  635-frame CastleIndoors1 replay, quick gates, both iOS lanes, 35-export link,
+  34-patch/81-file reconstruction and rebuilt unsigned Release package pass.
+  Signing/device preflight again finds zero identities and no hardware.
+- Evidence: `evidence/action-boot/`, `build/tests/action-boot/`, decision 0020,
+  `evidence/action-demos/20261028T194047Z/results.json`. No build/replay job is
+  live. Only the phone simulator is booted, app cleanly stopped, baseline
+  4:3/FOV60/1x/FXAA with both assists off. Continue real NPRUN earned mission /
+  results save and relaunch, then remaining campaign/multiplayer/display
+  coverage. The goal remains active; no blocker impasse is claimed.
