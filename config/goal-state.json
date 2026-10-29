@@ -6,7 +6,7 @@
   "implementation_started": true,
   "execution_started_at": "2026-10-27T10:34:02Z",
   "execution_root": "/Users/chrissotraidis/GitHub/nightpad",
-  "last_updated_at": "2026-10-29T03:55:13.007729+00:00",
+  "last_updated_at": "2026-10-29T04:21:32.316341+00:00",
   "active_goal": "G05",
   "source_lock_file": "sources.lock.json",
   "actual_dependency_lock": "config/dependencies.lock.json",
@@ -34,7 +34,7 @@
     "evidence": "evidence/assist-profile/result.json",
     "verified_at": "2026-10-29T03:55:13.007729+00:00",
     "acceptance_scope": "post-0036 full engine/quick/build/package, focused replay, loaded-profile OFF and explicit ON/OFF simulator damage/death/Replay; full campaign/device acceptance remains",
-    "installed_simulator_source_commit": "f72fbe6 + 0036/runtime authority",
+    "installed_simulator_source_commit": "638caa5",
     "installed_simulator_binary_sha256": "09c8e134d487c3eea9429d3cc229b4ad957ecbe4695663cdc67069c310cdfc68",
     "simulator_install_state": "fixed build installed and hash verified; QA regression cleanly stopped; all profile hashes unchanged",
     "source_delta": "patches/0036-action-assist-profile-authority.patch and app runtime authority"
@@ -50,7 +50,7 @@
     "evidence": "evidence/assist-profile/result.json",
     "verified_at": "2026-10-29T03:55:13.007729+00:00",
     "acceptance_scope": "post-0036 full engine/quick/build/package, focused replay, loaded-profile OFF and explicit ON/OFF simulator damage/death/Replay; full campaign/device acceptance remains",
-    "installed_simulator_source_commit": "f72fbe6 + 0036/runtime authority",
+    "installed_simulator_source_commit": "638caa5",
     "installed_simulator_binary_sha256": "09c8e134d487c3eea9429d3cc229b4ad957ecbe4695663cdc67069c310cdfc68",
     "simulator_install_state": "fixed build installed and hash verified; QA regression cleanly stopped; all profile hashes unchanged",
     "source_delta": "patches/0036-action-assist-profile-authority.patch and app runtime authority"
@@ -299,7 +299,7 @@
         "evidence/campaign-truck/result.json"
       ],
       "blockers": [],
-      "next_step": "Original NPRUN truck/crouch route completed first objective and entered CastleCourtyard on patch 0035. Three courtyard gameplay deaths ended in clean Stop. Resume fresh original campaign, clear raised pavilion, find dolphin fountain guardroom, then complete earned mission/results save and relaunch."
+      "next_step": "Patch 0036 verified; NPRUN Exchange resumed with both assists OFF. Later attempts missed boarding or fell after on-foot checkpoint combat. Original failure/Replay/Restart/clean Stop recover. Check truck from fresh engine start and continue unassisted truck/exterior route to earned whole-mission results/save; do not count these failures as engine defects."
     },
     "G08": {
       "status": "in_progress",
