@@ -1,6 +1,6 @@
 # NightPad status
 
-Updated: 2026-10-29 06:56 UTC
+Updated: 2026-10-29 08:04 UTC
 
 ## Outcome
 
@@ -13,12 +13,19 @@ simulator execution is no longer a platform blocker.
 
 ## Verified
 
+- Screenshot-led touch/menu review: Xbox diamond, aligned sticks, separate
+  system keys, shared editor/input geometry, corrected safe-area margins and
+  minimum targets. Root settings precede Data & Saves and Help & Feedback;
+  Stop is last. Phone/tablet Exchange captures drove HUD clearance fixes.
+  README and handoff paths are expanded. Decision 0024 records exact scope;
+  physical comfort, drag/pinch and redesigned-editor larger text remain open.
 - Latest campaign run on source a0c43b7 completes the truck objective and
   automatically enters CastleCourtyard. A crouched route passes the pavilion
   guards without firing and reaches the dolphin fountain with full health.
   The next searchlight court remains unfinished after combat deaths; original
   Replay restores the courtyard checkpoint. No completed mission/earned save
-  is credited. The live fresh courtyard is held by the native menu.
+  is credited. That live checkpoint was cleanly stopped for the requested
+  touch/menu review; restart from the original Exchange mission next.
 - Project root: `/Users/chrissotraidis/GitHub/nightpad`.
 - Nightfire, GalaxyPad, SunPad and extract-xiso are checked out at the exact
   revisions in `config/dependencies.lock.json`.

@@ -1,6 +1,7 @@
 #include "../../apple/shared/NightPadTouchLayout.h"
 
 #include <filesystem>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -52,13 +53,22 @@ int main() {
     };
     for (const LayoutCase &item : {
              LayoutCase{ phone, 844, 340 }, LayoutCase{ phone, 800, 320 },
+             LayoutCase{ phone, 640, 320 },
              LayoutCase{ phone, 1024, 700 }, LayoutCase{ tablet, 1024, 700 },
              LayoutCase{ tablet, 1366, 1032 },
          }) {
-        TouchLayout layout = item.layout;
         const std::pair<float, float> size{ item.width, item.height };
-        layout.Clamp(size.first, size.second, 44);
+        const TouchLayout layout = item.layout.ForCanvas(size.first, size.second);
         for (size_t i = 0; i < layout.controls.size(); ++i) {
+            const auto &control = layout.controls[i];
+            Check(control.width * size.first >= 43.9f && control.height * size.second >= 43.9f,
+                  "live targets retain the 44-point minimum");
+            Check(control.x >= 0 && control.y >= 0 && control.x + control.width <= 1.0001f &&
+                      control.y + control.height <= 1.0001f, "resolved controls remain inside canvas");
+            if (control.id != TouchControlId::LeftTrigger && control.id != TouchControlId::RightTrigger &&
+                control.id != TouchControlId::Start && control.id != TouchControlId::Back)
+                Check(std::fabs(control.width * size.first - control.height * size.second) < 0.01f,
+                      "drawn stick/face/D-pad rectangles are square in points");
             for (size_t j = i + 1; j < layout.controls.size(); ++j) {
                 const auto &a = layout.controls[i];
                 const auto &b = layout.controls[j];
@@ -74,6 +84,33 @@ int main() {
                 Check(apart, message.c_str());
             }
         }
+    }
+
+    // Opening the editor or resolving a different screen must not rewrite a
+    // saved layout. A compressed preview previously changed the saved minimum.
+    const auto originalWidth = phone.controls[0].width;
+    const auto originalY = phone.controls[0].y;
+    (void)phone.ForCanvas(640, 320);
+    (void)phone.ForCanvas(1024, 700);
+    Check(phone.controls[0].width == originalWidth && phone.controls[0].y == originalY,
+          "resolution leaves authored/saved geometry untouched");
+
+    for (const auto &layout : {phone, tablet}) {
+        auto centre = [&](TouchControlId id) {
+            for (const auto &control : layout.controls)
+                if (control.id == id)
+                    return std::pair<float,float>{control.x + control.width * 0.5f,
+                                                   control.y + control.height * 0.5f};
+            return std::pair<float,float>{-1, -1};
+        };
+        const auto a = centre(TouchControlId::A), b = centre(TouchControlId::B);
+        const auto x = centre(TouchControlId::X), y = centre(TouchControlId::Y);
+        Check(std::fabs(a.first - y.first) < 0.001f && a.second > y.second &&
+                  x.first < a.first && b.first > a.first && std::fabs(x.second - b.second) < 0.001f,
+              "Xbox diamond has Y above A, X left and B right");
+        Check(std::fabs(centre(TouchControlId::LeftStick).second -
+                        centre(TouchControlId::RightStick).second) < 0.001f,
+              "move and look sticks share the thumb row");
     }
 
     // 44-point minimum and safe-area clamp at an extreme landscape size.

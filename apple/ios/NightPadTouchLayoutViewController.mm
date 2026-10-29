@@ -32,57 +32,78 @@
     [super viewDidLoad];
     self.title = @"Touch Layout";
     self.view.backgroundColor = UIColor.blackColor;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
-        initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancel)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
-        initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(done)];
-    self.navigationItem.rightBarButtonItem.accessibilityIdentifier = @"nightpad.touch.save";
-
-    UILabel *hint = [UILabel new];
-    hint.text = @"Drag to move · pinch to resize · long press for hide and opacity · 44 pt minimum";
-    hint.textColor = [UIColor colorWithWhite:1 alpha:0.72];
-    UIFont *hintBase = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-    hint.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleFootnote]
-        scaledFontForFont:hintBase maximumPointSize:17];
-    hint.adjustsFontForContentSizeCategory = YES;
-    hint.numberOfLines = 0;
-    hint.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:hint];
+    // Use the gameplay canvas itself, with editing chrome over its empty top
+    // centre. A shorter preview used to clamp/rescale the saved layout merely
+    // by opening the editor and made its rectangles differ from live controls.
     _canvas = [UIView new];
-    _canvas.backgroundColor = [UIColor colorWithWhite:0.08 alpha:1];
+    _canvas.backgroundColor = [UIColor colorWithWhite:0.055 alpha:1];
     _canvas.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_canvas];
+
+    UIButton *cancel = [UIButton buttonWithType:UIButtonTypeSystem];
+    [cancel setTitle:@"Cancel" forState:UIControlStateNormal];
+    cancel.accessibilityIdentifier = @"nightpad.touch.cancel";
+    [cancel addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchUpInside];
+    UIButton *save = [UIButton buttonWithType:UIButtonTypeSystem];
+    save.configuration = [UIButtonConfiguration filledButtonConfiguration];
+    [save setTitle:@"Save" forState:UIControlStateNormal];
+    save.accessibilityIdentifier = @"nightpad.touch.save";
+    [save addTarget:self action:@selector(done) forControlEvents:UIControlEventTouchUpInside];
     UIButton *reset = [UIButton buttonWithType:UIButtonTypeSystem];
-    UIButtonConfiguration *resetConfiguration = [UIButtonConfiguration tintedButtonConfiguration];
-    resetConfiguration.title = @"Reset Layout";
-    resetConfiguration.image = [UIImage systemImageNamed:@"arrow.counterclockwise"];
-    resetConfiguration.imagePadding = 8;
-    reset.configuration = resetConfiguration;
+    [reset setTitle:@"Reset" forState:UIControlStateNormal];
     reset.accessibilityIdentifier = @"nightpad.touch.reset";
-    reset.translatesAutoresizingMaskIntoConstraints = NO;
     [reset addTarget:self action:@selector(reset) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:reset];
+    UILabel *title = [UILabel new];
+    title.text = @"Touch Layout";
+    title.textColor = UIColor.whiteColor;
+    title.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+    title.adjustsFontForContentSizeCategory = YES;
+    title.textAlignment = NSTextAlignmentCenter;
+    UIView *leftSpace = [UIView new], *rightSpace = [UIView new];
+    UIStackView *bar = [[UIStackView alloc] initWithArrangedSubviews:
+        @[cancel, leftSpace, title, rightSpace, reset, save]];
+    bar.axis = UILayoutConstraintAxisHorizontal;
+    bar.spacing = 12;
+    bar.alignment = UIStackViewAlignmentCenter;
+    bar.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:bar];
+    UILabel *hint = [UILabel new];
+    hint.text = @"Drag to move · pinch to resize\nHold a control for visibility and opacity";
+    hint.textAlignment = NSTextAlignmentCenter;
+    hint.textColor = [UIColor colorWithWhite:1 alpha:0.72];
+    hint.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleFootnote]
+        scaledFontForFont:[UIFont systemFontOfSize:12] maximumPointSize:17];
+    hint.adjustsFontForContentSizeCategory = YES;
+    hint.numberOfLines = 2;
+    hint.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:hint];
     UILayoutGuide *safe = self.view.safeAreaLayoutGuide;
     [NSLayoutConstraint activateConstraints:@[
-        [hint.leadingAnchor constraintEqualToAnchor:safe.leadingAnchor constant:16],
-        [hint.trailingAnchor constraintEqualToAnchor:safe.trailingAnchor constant:-16],
-        [hint.topAnchor constraintEqualToAnchor:safe.topAnchor constant:8],
         [_canvas.leadingAnchor constraintEqualToAnchor:safe.leadingAnchor constant:8],
         [_canvas.trailingAnchor constraintEqualToAnchor:safe.trailingAnchor constant:-8],
-        [_canvas.topAnchor constraintEqualToAnchor:hint.bottomAnchor constant:8],
-        [_canvas.bottomAnchor constraintEqualToAnchor:reset.topAnchor constant:-8],
-        [reset.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
-        [reset.bottomAnchor constraintEqualToAnchor:safe.bottomAnchor constant:-4],
+        [_canvas.topAnchor constraintEqualToAnchor:safe.topAnchor constant:8],
+        [_canvas.bottomAnchor constraintEqualToAnchor:safe.bottomAnchor constant:-8],
+        [bar.leadingAnchor constraintEqualToAnchor:safe.leadingAnchor constant:8],
+        [bar.trailingAnchor constraintEqualToAnchor:safe.trailingAnchor constant:-8],
+        [bar.topAnchor constraintEqualToAnchor:safe.topAnchor constant:4],
+        [bar.heightAnchor constraintEqualToConstant:44],
+        [leftSpace.widthAnchor constraintEqualToAnchor:rightSpace.widthAnchor],
+        [cancel.widthAnchor constraintGreaterThanOrEqualToConstant:64],
+        [cancel.heightAnchor constraintEqualToConstant:44],
+        [reset.widthAnchor constraintGreaterThanOrEqualToConstant:56],
+        [reset.heightAnchor constraintEqualToConstant:44],
+        [save.widthAnchor constraintGreaterThanOrEqualToConstant:64],
+        [save.heightAnchor constraintEqualToConstant:44],
+        [hint.centerXAnchor constraintEqualToAnchor:safe.centerXAnchor],
+        [hint.widthAnchor constraintLessThanOrEqualToAnchor:safe.widthAnchor multiplier:0.5],
+        [hint.topAnchor constraintEqualToAnchor:bar.bottomAnchor constant:4],
     ]];
     [self rebuildControls];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
-    _layout.Clamp(_canvas.bounds.size.width, _canvas.bounds.size.height, 44.0f);
-    for (NightPadLayoutControlView *view in _controlViews) {
-        view.frame = [self frameForControl:[self controlForId:view.controlId]];
-    }
+    [self updateControlFrames];
 }
 
 - (nightpad::TouchControl *)controlForId:(nightpad::TouchControlId)id {
@@ -95,8 +116,25 @@
 - (CGRect)frameForControl:(nightpad::TouchControl *)control {
     if (control == nullptr || _canvas.bounds.size.width <= 0 || _canvas.bounds.size.height <= 0)
         return CGRectZero;
-    return CGRectMake(control->x * _canvas.bounds.size.width, control->y * _canvas.bounds.size.height,
-                      control->width * _canvas.bounds.size.width, control->height * _canvas.bounds.size.height);
+    const auto resolved = _layout.ForCanvas(_canvas.bounds.size.width, _canvas.bounds.size.height);
+    for (const auto &item : resolved.controls) {
+        if (item.id == control->id)
+            return CGRectMake(item.x * _canvas.bounds.size.width, item.y * _canvas.bounds.size.height,
+                              item.width * _canvas.bounds.size.width, item.height * _canvas.bounds.size.height);
+    }
+    return CGRectZero;
+}
+
+- (void)updateControlFrames {
+    for (NightPadLayoutControlView *view in _controlViews) {
+        view.frame = [self frameForControl:[self controlForId:view.controlId]];
+        using nightpad::TouchControlId;
+        const auto id = view.controlId;
+        const BOOL round = id == TouchControlId::LeftStick || id == TouchControlId::RightStick ||
+            id == TouchControlId::A || id == TouchControlId::B || id == TouchControlId::X ||
+            id == TouchControlId::Y || id == TouchControlId::White || id == TouchControlId::Black;
+        view.layer.cornerRadius = round ? MIN(view.bounds.size.width, view.bounds.size.height) * 0.5 : 12;
+    }
 }
 
 - (UIColor *)colourFor:(nightpad::TouchControlId)id {
@@ -267,9 +305,7 @@
 
 - (void)clampAndReload {
     _layout.Clamp(_canvas.bounds.size.width, _canvas.bounds.size.height, 44.0f);
-    for (NightPadLayoutControlView *view in _controlViews) {
-        view.frame = [self frameForControl:[self controlForId:view.controlId]];
-    }
+    [self updateControlFrames];
 }
 
 - (void)reset {

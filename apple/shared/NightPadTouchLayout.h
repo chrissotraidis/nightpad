@@ -33,7 +33,8 @@ struct TouchControl {
 };
 
 struct TouchLayout {
-    // 3: the GalaxyPad-derived controller layout. Older files load as unsupported and fall back to the defaults.
+    // File format, independent of default geometry. Existing custom layouts
+    // remain valid when the authored defaults change; Reset adopts new defaults.
     int version = 3;
     TouchDeviceClass device = TouchDeviceClass::Phone;
     std::vector<TouchControl> controls;
@@ -44,6 +45,10 @@ struct TouchLayout {
     // Keeps every control inside the safe area and no smaller than minPoints in
     // either axis. Opacity is clamped to [0.2, 1].
     void Clamp(float viewWidth, float viewHeight, float minPoints = 44.0f);
+
+    // The same resolved rectangles drive drawing, hit testing and editing.
+    // Round controls stay square in points, including on a different aspect.
+    TouchLayout ForCanvas(float viewWidth, float viewHeight, float minPoints = 44.0f) const;
 
     bool Save(const std::filesystem::path &path, std::string *error) const;
     bool Load(const std::filesystem::path &path, std::string *error);

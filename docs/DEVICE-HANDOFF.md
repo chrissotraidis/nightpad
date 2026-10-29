@@ -29,11 +29,11 @@ ignored `evidence/device/<date>/`.
 | Gate | Session | Expected result |
 | --- | --- | --- |
 | G03 | Install the probe app and run the pointer/Metal/media fixtures | Results match the simulator probe |
-| G05 | Import the prepared data - copy it to `Documents/NightPad Import` first, then use the panel's "Use NightPad Folder"; try the picker path once too - relaunch, play, save | Ready state survives; saves untouched by import; both paths reach the same result |
+| G05 | Import the prepared data - copy it to `Documents/NightPad Import` first, then use Data & Saves > Game Data > Import from NightPad Folder; try the picker path once too - relaunch, play, save | Ready state survives; saves untouched by import; both paths reach the same result |
 | G05 | Share the saves, then restore them with Import Saves (or copy them to `Documents/Save Import` and use "Restore Saves from NightPad Folder") and answer the replace prompt | Restored files match the export; unrelated saves stay untouched |
 | G06 | Touch: move/look/fire/aim, five fingers, sustained combat grip | No dropped inputs, controls reachable, menu independent |
 | G06 | Controller: connect, held buttons, sleep/wake, P2 join | Ports stay separate; touch P1 not stolen; rumble routed |
-| G06 | Edit the layout, Save, relaunch, Reset; long-press a control to hide and show it | Geometry and visibility persist; every editor action remains reachable |
+| G06 | Open Controls > Touch Controls > Edit Layout, drag/pinch, Save, relaunch, Reset; long-press a control to hide and show it | Geometry and visibility persist; every editor action remains reachable |
 | G07 | First-play route: front end, Paris, a transition, save, relaunch | Transitions, media and saves work on device |
 | G09 | Original and 2x targets, 4:3 and 16:9, FXAA off/on | Correct fit, no scope/HUD regressions, sustained frame rate |
 | G09 | Secret Unlocks: mission toggle, reward set, upgrade, invalid code, save/relaunch | Unlocks persist; invalid code changes nothing |
@@ -41,7 +41,7 @@ ignored `evidence/device/<date>/`.
 
 ## Evidence to bring back
 
-- The in-app Diagnostics report (three-dot menu > Info > Diagnostics > Share).
+- The in-app Diagnostics report (three-dot menu > Help & Feedback > Diagnostics > Share).
 - Screenshots of the home screen, menu, touch overlay, layout editor and each
   display mode.
 - Notes for each controller and touch session: device model, iOS version,

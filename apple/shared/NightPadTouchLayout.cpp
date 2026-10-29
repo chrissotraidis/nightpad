@@ -16,46 +16,60 @@ struct DefaultControl {
     float x, y, w, h;
 };
 
-// Landscape phone geometry inherited from GalaxyPad's overlay (its 800x380
-// reference): the move stick lower-left with the D-pad above it, the camera
-// stick lower-right, A large in the corner with B up-left of it, the light
-// X/Y pair above, the right-rail key (GalaxyPad's Z) mapped to RT with the
-// mirrored LT on the left, Start inward at the upper right, and White/Black/
-// Back in GalaxyPad's auxiliary key row along the bottom.
+// Independent landscape defaults, authored as centres and point sizes. The
+// phone uses an Xbox diamond, aligned sticks and a compact D-pad above movement.
+// Secondary buttons sit above the diamond; Start and Back share a system row.
+constexpr DefaultControl Centred(TouchControlId id, float x, float y, float w, float h,
+                                float referenceWidth, float referenceHeight) {
+    return {id, (x - w * 0.5f) / referenceWidth, (y - h * 0.5f) / referenceHeight,
+            w / referenceWidth, h / referenceHeight};
+}
+constexpr DefaultControl Phone(TouchControlId id, float x, float y, float w, float h) {
+    return Centred(id, x, y, w, h, 800, 360);
+}
+constexpr DefaultControl Tablet(TouchControlId id, float x, float y, float w, float h) {
+    return Centred(id, x, y, w, h, 1366, 960);
+}
 constexpr DefaultControl kPhone[] = {
-    { TouchControlId::LeftStick, 0.0448f, 0.6145f, 0.1575f, 0.3316f },
-    { TouchControlId::RightStick, 0.8695f, 0.6997f, 0.1075f, 0.2263f },
-    { TouchControlId::Dpad, 0.0000f, 0.2563f, 0.1650f, 0.3474f },
-    { TouchControlId::A, 0.8800f, 0.4740f, 0.0975f, 0.2053f },
-    { TouchControlId::B, 0.7938f, 0.6132f, 0.0725f, 0.1526f },
-    { TouchControlId::X, 0.8746f, 0.3300f, 0.0575f, 0.1211f },
-    { TouchControlId::Y, 0.8083f, 0.4663f, 0.0575f, 0.1211f },
-    { TouchControlId::LeftTrigger, 0.0463f, 0.0595f, 0.0575f, 0.1211f },
-    { TouchControlId::RightTrigger, 0.8963f, 0.0595f, 0.0575f, 0.1211f },
-    { TouchControlId::Start, 0.6625f, 0.5595f, 0.1150f, 0.1211f },
-    { TouchControlId::White, 0.3313f, 0.8195f, 0.0575f, 0.1211f },
-    { TouchControlId::Black, 0.4038f, 0.8195f, 0.0575f, 0.1211f },
-    { TouchControlId::Back, 0.5313f, 0.8195f, 0.0575f, 0.1211f },
+    Phone(TouchControlId::LeftStick, 100, 260, 112, 112),
+    Phone(TouchControlId::RightStick, 540, 260, 112, 112),
+    Phone(TouchControlId::Dpad, 100, 156, 84, 84),
+    Phone(TouchControlId::A, 714, 298, 48, 48),
+    Phone(TouchControlId::B, 768, 244, 48, 48),
+    Phone(TouchControlId::X, 660, 244, 48, 48),
+    Phone(TouchControlId::Y, 714, 190, 48, 48),
+    Phone(TouchControlId::LeftTrigger, 100, 80, 88, 48),
+    Phone(TouchControlId::RightTrigger, 736, 80, 88, 48),
+    Phone(TouchControlId::Start, 426, 334, 56, 44),
+    Phone(TouchControlId::White, 682, 140, 44, 44),
+    Phone(TouchControlId::Black, 742, 140, 44, 44),
+    Phone(TouchControlId::Back, 360, 334, 56, 44),
 };
 
-// Tablet geometry: GalaxyPad's fixed iPad point sizes and reviewed centers on
-// a 1366x1024 safe area. The controls stay the same physical size as the iPad
-// grows instead of becoming tall, screen-relative pills.
+// Tablet controls stay near the lower grip, with more spacing for the larger
+// display. This is a separate composition rather than an enlarged phone row.
 constexpr DefaultControl kTablet[] = {
-    { TouchControlId::LeftStick, 0.0681f, 0.7066f, 0.1259f, 0.1680f },
-    { TouchControlId::RightStick, 0.8926f, 0.8290f, 0.0615f, 0.0820f },
-    { TouchControlId::Dpad, 0.2204f, 0.7303f, 0.0966f, 0.1289f },
-    { TouchControlId::A, 0.8536f, 0.6902f, 0.0761f, 0.1016f },
-    { TouchControlId::B, 0.7962f, 0.7721f, 0.0556f, 0.0742f },
-    { TouchControlId::X, 0.9367f, 0.6853f, 0.0454f, 0.0605f },
-    { TouchControlId::Y, 0.9316f, 0.7567f, 0.0454f, 0.0605f },
-    { TouchControlId::LeftTrigger, 0.0523f, 0.0997f, 0.0454f, 0.0605f },
-    { TouchControlId::RightTrigger, 0.9023f, 0.0997f, 0.0454f, 0.0605f },
-    { TouchControlId::Start, 0.8543f, 0.5478f, 0.0849f, 0.0605f },
-    { TouchControlId::White, 0.3573f, 0.8195f, 0.0454f, 0.0605f },
-    { TouchControlId::Black, 0.4273f, 0.8195f, 0.0454f, 0.0605f },
-    { TouchControlId::Back, 0.5473f, 0.8195f, 0.0454f, 0.0605f },
+    Tablet(TouchControlId::LeftStick, 100, 910, 160, 160),
+    Tablet(TouchControlId::RightStick, 1000, 910, 144, 144),
+    Tablet(TouchControlId::Dpad, 100, 600, 84, 84),
+    Tablet(TouchControlId::A, 1220, 932, 56, 56),
+    Tablet(TouchControlId::B, 1288, 886, 56, 56),
+    Tablet(TouchControlId::X, 1152, 886, 56, 56),
+    Tablet(TouchControlId::Y, 1220, 830, 56, 56),
+    Tablet(TouchControlId::LeftTrigger, 100, 500, 104, 60),
+    Tablet(TouchControlId::RightTrigger, 1220, 500, 104, 60),
+    Tablet(TouchControlId::Start, 680, 910, 64, 44),
+    Tablet(TouchControlId::White, 1170, 600, 52, 52),
+    Tablet(TouchControlId::Black, 1270, 600, 52, 52),
+    Tablet(TouchControlId::Back, 600, 910, 64, 44),
 };
+
+bool SquareControl(TouchControlId id) {
+    return id == TouchControlId::LeftStick || id == TouchControlId::RightStick ||
+        id == TouchControlId::Dpad || id == TouchControlId::A || id == TouchControlId::B ||
+        id == TouchControlId::X || id == TouchControlId::Y ||
+        id == TouchControlId::White || id == TouchControlId::Black;
+}
 
 TouchControlId ParseId(const std::string &name) {
     for (int i = 0; i <= int(TouchControlId::Back); ++i) {
@@ -125,6 +139,26 @@ void TouchLayout::Clamp(float viewWidth, float viewHeight, float minPoints) {
         control.y = std::clamp(control.y, 0.0f, 1.0f - control.height);
         control.opacity = std::clamp(control.opacity, 0.2f, 1.0f);
     }
+}
+
+TouchLayout TouchLayout::ForCanvas(float viewWidth, float viewHeight, float minPoints) const {
+    TouchLayout result = *this;
+    if (viewWidth <= 0 || viewHeight <= 0)
+        return result;
+    for (auto &control : result.controls) {
+        const float cx = (control.x + control.width * 0.5f) * viewWidth;
+        const float cy = (control.y + control.height * 0.5f) * viewHeight;
+        float width = std::clamp(control.width * viewWidth, std::min(minPoints, viewWidth), viewWidth);
+        float height = std::clamp(control.height * viewHeight, std::min(minPoints, viewHeight), viewHeight);
+        if (SquareControl(control.id))
+            width = height = std::min(width, height);
+        control.width = width / viewWidth;
+        control.height = height / viewHeight;
+        control.x = std::clamp(cx - width * 0.5f, 0.0f, viewWidth - width) / viewWidth;
+        control.y = std::clamp(cy - height * 0.5f, 0.0f, viewHeight - height) / viewHeight;
+        control.opacity = std::clamp(control.opacity, 0.2f, 1.0f);
+    }
+    return result;
 }
 
 bool TouchLayout::Save(const fs::path &path, std::string *error) const {

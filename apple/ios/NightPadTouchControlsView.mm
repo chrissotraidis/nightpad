@@ -95,7 +95,7 @@ BOOL IsRoundControl(TouchControlId id) {
 }
 
 // Xbox controller finish: the four face-button colours, graphite sticks and
-// shoulders, and dark system keys. The layout remains GalaxyPad's touch geometry.
+// shoulders, and dark system keys. The controls retain the original Xbox semantics.
 struct ControlStyle {
     UIColor *fill;
     UIColor *text;
@@ -390,6 +390,7 @@ ControlStyle StyleForControl(TouchControlId id) {
 
 @implementation NightPadTouchControlsView {
     nightpad::TouchLayout _layout;
+    nightpad::TouchLayout _resolvedLayout;
     NSMutableArray<NightPadOverlayControlView *> *_controlViews;
     NSMutableSet<UITouch *> *_activeTouches;
     NSMutableDictionary<NSValue *, NSNumber *> *_touchOrder;  // begin order, newest wins
@@ -416,6 +417,7 @@ ControlStyle StyleForControl(TouchControlId id) {
 }
 
 - (void)setTouchLayout:(const nightpad::TouchLayout &)layout {
+    [self releaseAllTouches];
     _layout = layout;
     for (UIView *view in _controlViews)
         [view removeFromSuperview];
@@ -462,10 +464,7 @@ ControlStyle StyleForControl(TouchControlId id) {
 
 - (CGRect)canvasRect {
     const UIEdgeInsets safe = self.safeAreaInsets;
-    CGRect rect = CGRectInset(self.bounds, safe.left + kCanvasMargin, safe.top + kCanvasMargin);
-    rect.size.width -= safe.right + kCanvasMargin;
-    rect.size.height -= safe.bottom + kCanvasMargin;
-    return rect;
+    return CGRectInset(UIEdgeInsetsInsetRect(self.bounds, safe), kCanvasMargin, kCanvasMargin);
 }
 
 - (void)layoutSubviews {
@@ -473,8 +472,9 @@ ControlStyle StyleForControl(TouchControlId id) {
     const CGRect canvas = [self canvasRect];
     if (canvas.size.width <= 0 || canvas.size.height <= 0)
         return;
+    _resolvedLayout = _layout.ForCanvas(canvas.size.width, canvas.size.height);
     NSUInteger index = 0;
-    for (const auto &control : _layout.controls) {
+    for (const auto &control : _resolvedLayout.controls) {
         if (!control.visible)
             continue;
         if (index >= _controlViews.count)
@@ -483,14 +483,6 @@ ControlStyle StyleForControl(TouchControlId id) {
         CGRect frame = CGRectMake(CGRectGetMinX(canvas) + control.x * canvas.size.width,
                                   CGRectGetMinY(canvas) + control.y * canvas.size.height,
                                   control.width * canvas.size.width, control.height * canvas.size.height);
-        if (IsRoundControl(control.id)) {
-            // A normalized rectangle is not square on every canvas aspect; keep
-            // the round controls round by using the smaller side about the same
-            // centre (SunPad places round controls by point size).
-            const CGFloat side = std::min(frame.size.width, frame.size.height);
-            frame = CGRectMake(CGRectGetMidX(frame) - side * 0.5,
-                               CGRectGetMidY(frame) - side * 0.5, side, side);
-        }
         view.frame = frame;
         view.layer.cornerRadius = ControlCornerRadius(control.id, view.bounds.size);
     }
@@ -517,7 +509,7 @@ ControlStyle StyleForControl(TouchControlId id) {
     const float nx = (point.x - CGRectGetMinX(canvas)) / canvas.size.width;
     const float ny = (point.y - CGRectGetMinY(canvas)) / canvas.size.height;
     NSUInteger visibleIndex = 0;
-    for (const auto &control : _layout.controls) {
+    for (const auto &control : _resolvedLayout.controls) {
         if (!control.visible)
             continue;
         if (nx >= control.x && nx <= control.x + control.width && ny >= control.y && ny <= control.y + control.height) {
@@ -535,7 +527,7 @@ ControlStyle StyleForControl(TouchControlId id) {
     points.reserve(_activeTouches.count);
     const CGRect canvas = [self canvasRect];
     if (canvas.size.width <= 0 || canvas.size.height <= 0)
-        return nightpad::TouchPadState(_layout, nullptr, 0);
+        return nightpad::TouchPadState(_resolvedLayout, nullptr, 0);
     for (UITouch *touch in _activeTouches) {
         const CGPoint p = [touch locationInView:self];
         NSNumber *order = _touchOrder[[NSValue valueWithNonretainedObject:touch]];
@@ -543,7 +535,7 @@ ControlStyle StyleForControl(TouchControlId id) {
                           static_cast<float>((p.x - CGRectGetMinX(canvas)) / canvas.size.width),
                           static_cast<float>((p.y - CGRectGetMinY(canvas)) / canvas.size.height)});
     }
-    return nightpad::TouchPadState(_layout, points.data(), points.size());
+    return nightpad::TouchPadState(_resolvedLayout, points.data(), points.size());
 }
 
 - (void)refreshVisuals {
@@ -562,7 +554,7 @@ ControlStyle StyleForControl(TouchControlId id) {
         NightPadOverlayControlView *view = _controlViews[i];
         NSNumber *key = @(i);
         NSValue *value = latest[key];
-        const CGPoint point = value != nil ? value.CGPointValue
+        const CGPoint point = value != nil ? [view convertPoint:value.CGPointValue fromView:self]
                                            : CGPointMake(CGRectGetMidX(view.bounds), CGRectGetMidY(view.bounds));
         [view setTouchPoint:point offset:CGPointZero active:value != nil];
     }
