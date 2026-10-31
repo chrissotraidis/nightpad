@@ -5,19 +5,28 @@
 
 #import "NightPadShellViewController.h"
 
-@interface NightPadAppDelegate : UIResponder <UIApplicationDelegate>
+// iOS 27 requires the UIScene lifecycle: the window belongs to the scene.
+@interface NightPadSceneDelegate : UIResponder <UIWindowSceneDelegate>
 @property(nonatomic, strong) UIWindow *window;
 @end
 
-@implementation NightPadAppDelegate
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)options {
-    (void)application;
+@implementation NightPadSceneDelegate
+- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session
+      options:(UISceneConnectionOptions *)options {
+    (void)session;
     (void)options;
-    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    if (![scene isKindOfClass:UIWindowScene.class])
+        return;
+    self.window = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *)scene];
     self.window.rootViewController = [NightPadShellViewController new];
     [self.window makeKeyAndVisible];
-    return YES;
 }
+@end
+
+@interface NightPadAppDelegate : UIResponder <UIApplicationDelegate>
+@end
+
+@implementation NightPadAppDelegate
 @end
 
 int main(int argc, char *argv[]) {

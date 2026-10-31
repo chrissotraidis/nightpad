@@ -87,6 +87,7 @@ using nightpad::Paths;
     BOOL _pendingDiagnostics;
     BOOL _pendingAbout;
     BOOL _pendingFixtureImport;
+    BOOL _pendingAppFolderImport;
     BOOL _pickingSaveFiles;
     BOOL _pendingTouchLayout;
     BOOL _pendingControlsHelp;
@@ -99,6 +100,9 @@ using nightpad::Paths;
 
     UILabel *_title;
     UILabel *_status;
+    UIImageView *_backdrop;
+    UIStackView *_homeStack;
+    UIButton *_primaryButton;
     NightPadMenuButton *_menuButton;
     UIView *_dataPanel;
     UIView *_pausePanel;
@@ -150,23 +154,43 @@ static uint64_t ShellResidentBytes(void) {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBecomeActive:)
         name:UIApplicationDidBecomeActiveNotification object:nil];
 
+    // Home screen: the moonlit Paris backdrop from the app icon, with the title,
+    // data status and one primary action on its calm left side.
+    _backdrop = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LauncherBackdrop"]];
+    _backdrop.contentMode = UIViewContentModeScaleAspectFill;
+    _backdrop.clipsToBounds = YES;
+    _backdrop.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:_backdrop];
+
     _title = [UILabel new];
     _title.text = @"NIGHTPAD";
     _title.textColor = UIColor.whiteColor;
     _title.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleLargeTitle]
-        scaledFontForFont:[UIFont monospacedSystemFontOfSize:30 weight:UIFontWeightBold]];
+        scaledFontForFont:[UIFont monospacedSystemFontOfSize:44 weight:UIFontWeightHeavy]];
     _title.adjustsFontForContentSizeCategory = YES;
-    _title.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:_title];
+    _title.layer.shadowColor = [UIColor colorWithRed:0.35 green:0.6 blue:1.0 alpha:1].CGColor;
+    _title.layer.shadowRadius = 12;
+    _title.layer.shadowOpacity = 0.55;
+    _title.layer.shadowOffset = CGSizeZero;
 
     _status = [UILabel new];
-    _status.textColor = [UIColor colorWithWhite:1 alpha:0.78];
+    _status.textColor = [UIColor colorWithWhite:1 alpha:0.82];
     _status.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     _status.adjustsFontForContentSizeCategory = YES;
     _status.numberOfLines = 0;
-    _status.textAlignment = NSTextAlignmentCenter;
-    _status.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:_status];
+    _status.textAlignment = NSTextAlignmentNatural;
+
+    _primaryButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    _primaryButton.accessibilityIdentifier = @"nightpad.home.primary";
+    [_primaryButton addTarget:self action:@selector(primaryHomeAction) forControlEvents:UIControlEventTouchUpInside];
+
+    _homeStack = [[UIStackView alloc] initWithArrangedSubviews:@[_title, _status, _primaryButton]];
+    _homeStack.axis = UILayoutConstraintAxisVertical;
+    _homeStack.alignment = UIStackViewAlignmentLeading;
+    _homeStack.spacing = 14;
+    [_homeStack setCustomSpacing:24 afterView:_status];
+    _homeStack.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:_homeStack];
 
     _menuButton = [NightPadMenuButton buttonWithType:UIButtonTypeCustom];
     // SunPad's three-dot button: a 40-point capsule with a plain ellipsis on a
@@ -217,12 +241,13 @@ static uint64_t ShellResidentBytes(void) {
     [self buildPausePanel];
 
     [NSLayoutConstraint activateConstraints:@[
-        [_title.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
-        [_title.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:36],
-        [_status.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
-        [_status.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor],
-        [_status.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.view.safeAreaLayoutGuide.leadingAnchor constant:30],
-        [_status.trailingAnchor constraintLessThanOrEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor constant:-30],
+        [_backdrop.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
+        [_backdrop.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+        [_backdrop.topAnchor constraintEqualToAnchor:self.view.topAnchor],
+        [_backdrop.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
+        [_homeStack.leadingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.leadingAnchor constant:56],
+        [_homeStack.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor constant:-20],
+        [_homeStack.widthAnchor constraintLessThanOrEqualToAnchor:self.view.widthAnchor multiplier:0.5],
         [_menuButton.widthAnchor constraintEqualToConstant:44],
         [_menuButton.heightAnchor constraintEqualToConstant:44],
         [_menuButton.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor constant:-12],
@@ -264,6 +289,8 @@ static uint64_t ShellResidentBytes(void) {
         _pendingAbout = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--import-fixture"])
         _pendingFixtureImport = YES;
+    else if ([NSProcessInfo.processInfo.arguments containsObject:@"--import-app-folder"])
+        _pendingAppFolderImport = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-touch-layout"])
         _pendingTouchLayout = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--preview-gameplay"])
@@ -298,6 +325,13 @@ static uint64_t ShellResidentBytes(void) {
             URLByAppendingPathComponent:@"ImportFixture" isDirectory:YES];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             [self importPreparedFolder:fixture];
+        });
+    }
+    if (_pendingAppFolderImport) {
+        // Lets a Mac-side install import data already copied to NightPad Import.
+        _pendingAppFolderImport = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            [self importFromAppFolder];
         });
     }
     if (_pendingTouchLayout) {
@@ -776,12 +810,16 @@ static uint64_t ShellResidentBytes(void) {
         [_dataStatus.topAnchor constraintEqualToAnchor:detail.bottomAnchor constant:10],
         [_importButton.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
         [_importButton.topAnchor constraintEqualToAnchor:_dataStatus.bottomAnchor constant:14],
-        [_discardButton.leadingAnchor constraintEqualToAnchor:_importButton.trailingAnchor constant:12],
-        [_discardButton.centerYAnchor constraintEqualToAnchor:_importButton.centerYAnchor],
+        [_importButton.trailingAnchor constraintLessThanOrEqualToAnchor:detail.trailingAnchor],
+        // One action per row keeps every title inside the card at large text sizes.
+        [_discardButton.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
+        [_discardButton.topAnchor constraintEqualToAnchor:_importButton.bottomAnchor constant:10],
+        [_discardButton.trailingAnchor constraintLessThanOrEqualToAnchor:detail.trailingAnchor],
         [share.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
-        [share.topAnchor constraintEqualToAnchor:_importButton.bottomAnchor constant:10],
+        [share.topAnchor constraintEqualToAnchor:_discardButton.bottomAnchor constant:10],
         [restore.leadingAnchor constraintEqualToAnchor:share.trailingAnchor constant:12],
         [restore.centerYAnchor constraintEqualToAnchor:share.centerYAnchor],
+        [restore.trailingAnchor constraintLessThanOrEqualToAnchor:detail.trailingAnchor],
         [_progress.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
         [_progress.trailingAnchor constraintEqualToAnchor:detail.trailingAnchor],
         [_progress.topAnchor constraintEqualToAnchor:share.bottomAnchor constant:12],
@@ -835,14 +873,14 @@ static uint64_t ShellResidentBytes(void) {
 - (void)closePanels {
     _dataPanel.hidden = YES;
     _pausePanel.hidden = YES;
-    _status.hidden = _gameplayMode;
+    _homeStack.hidden = _gameplayMode;
 }
 
 - (void)openDataPanel {
     [self beginNativeUI];
     [self closePanels];
     _dataPanel.hidden = NO;
-    _status.hidden = YES;
+    _homeStack.hidden = YES;
     [self.view bringSubviewToFront:_dataPanel];
 }
 
@@ -850,7 +888,7 @@ static uint64_t ShellResidentBytes(void) {
     [self beginNativeUI];
     [self closePanels];
     _pausePanel.hidden = NO;
-    _status.hidden = YES;
+    _homeStack.hidden = YES;
     [self.view bringSubviewToFront:_pausePanel];
 }
 
@@ -1290,8 +1328,8 @@ static uint64_t ShellResidentBytes(void) {
 
 - (void)updateGameplaySurface {
     self.view.backgroundColor = _gameplayMode ? UIColor.clearColor : UIColor.blackColor;
-    _title.hidden = _gameplayMode;
-    _status.hidden = _gameplayMode;
+    _backdrop.hidden = _gameplayMode;
+    _homeStack.hidden = _gameplayMode || !_dataPanel.hidden || !_pausePanel.hidden;
     _menuButton.hidden = NO;
     if (self.view.window != nil)
         self.view.window.windowLevel = _gameplayMode ? UIWindowLevelNormal + 2 : UIWindowLevelNormal;
@@ -1307,11 +1345,12 @@ static uint64_t ShellResidentBytes(void) {
     _importButton.enabled = !_engineRunning && !_importing;
     [self refreshMenu];
     if (_state == DataState::Ready)
-        _status.text = @"Game data ready\nOpen the three-dot menu to start playing.";
+        _status.text = @"Game data ready. Settings, controls and saves are in the ⋯ menu.";
     else if (_state == DataState::RecoverableError)
         _status.text = [NSString stringWithFormat:@"Game data needs attention: %s", error.c_str()];
     else
-        _status.text = @"Game data missing\nOpen the three-dot menu to import a prepared game-data folder.";
+        _status.text = @"Import your prepared Xbox game data to begin.";
+    [self updatePrimaryButton];
     if (_state == DataState::Ready)
         _dataStatus.text = @"Ready · Xbox game data imported";
     else if (_state == DataState::RecoverableError)
@@ -1322,6 +1361,28 @@ static uint64_t ShellResidentBytes(void) {
     _progress.hidden = !_importing;
     _progressLabel.hidden = !_importing;
     _cancelImportButton.hidden = !_importing;
+}
+
+- (void)updatePrimaryButton {
+    const BOOL ready = _state == DataState::Ready;
+    UIButtonConfiguration *primary = [UIButtonConfiguration filledButtonConfiguration];
+    primary.title = ready ? @"Start Game" : @"Import Game Data";
+    primary.image = [UIImage systemImageNamed:ready ? @"play.fill" : @"square.and.arrow.down"];
+    primary.imagePadding = 10;
+    primary.cornerStyle = UIButtonConfigurationCornerStyleCapsule;
+    primary.buttonSize = UIButtonConfigurationSizeLarge;
+    primary.contentInsets = NSDirectionalEdgeInsetsMake(14, 26, 14, 28);
+    primary.baseBackgroundColor = [UIColor colorWithRed:0.20 green:0.45 blue:0.95 alpha:1];
+    primary.baseForegroundColor = UIColor.whiteColor;
+    _primaryButton.configuration = primary;
+    _primaryButton.enabled = !_engineRunning && !_importing;
+}
+
+- (void)primaryHomeAction {
+    if (_state == DataState::Ready)
+        [self startGame];
+    else
+        [self openDataPanel];
 }
 
 - (void)chooseImportFolder {

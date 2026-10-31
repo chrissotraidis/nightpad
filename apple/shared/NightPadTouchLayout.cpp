@@ -48,16 +48,18 @@ constexpr DefaultControl kPhone[] = {
 
 // Tablet controls stay near the lower grip, with more spacing for the larger
 // display. This is a separate composition rather than an enlarged phone row.
+// LT/RT and the D-pad sit in the thumb arc just above each stick, so aiming and
+// firing on a 12.9-inch screen do not need a reach to mid-height.
 constexpr DefaultControl kTablet[] = {
     Tablet(TouchControlId::LeftStick, 100, 910, 160, 160),
     Tablet(TouchControlId::RightStick, 1000, 910, 144, 144),
-    Tablet(TouchControlId::Dpad, 100, 600, 84, 84),
+    Tablet(TouchControlId::Dpad, 100, 690, 84, 84),
     Tablet(TouchControlId::A, 1220, 932, 56, 56),
     Tablet(TouchControlId::B, 1288, 886, 56, 56),
     Tablet(TouchControlId::X, 1152, 886, 56, 56),
     Tablet(TouchControlId::Y, 1220, 830, 56, 56),
-    Tablet(TouchControlId::LeftTrigger, 100, 500, 104, 60),
-    Tablet(TouchControlId::RightTrigger, 1220, 500, 104, 60),
+    Tablet(TouchControlId::LeftTrigger, 270, 770, 104, 60),
+    Tablet(TouchControlId::RightTrigger, 1000, 750, 104, 60),
     Tablet(TouchControlId::Start, 680, 910, 64, 44),
     Tablet(TouchControlId::White, 1170, 600, 52, 52),
     Tablet(TouchControlId::Black, 1270, 600, 52, 52),
