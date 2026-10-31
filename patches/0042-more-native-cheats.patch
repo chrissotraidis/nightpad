@@ -1,0 +1,21 @@
+--- a/src/action/main.cpp
++++ b/src/action/main.cpp
+@@ -22,6 +22,7 @@
+ // bit 1 is unlimited ammo; bit 31 means the app owns both choices. Without
+ // an app owner, standalone/replay boots retain the original profile behavior.
+ extern "C" unsigned NightPadActionAssistFlags = 0;
++extern char menu_unlock_everything;   // game.cpp
+ 
+ static void ApplyAssists(void) {
+     const unsigned wanted = NightPadActionAssistFlags;
+@@ -30,6 +31,10 @@
+         // stay unchanged, including both OFF. Reconcile both every frame.
+         CheatInfo.Immortal = (wanted & 1u) != 0;
+         CheatInfo.UnlimitedAmmo = (wanted & 2u) != 0;
++        // Bit 2: every weapon and full ammo, read when a mission starts (Player_InitAmmoWeapons).
++        CheatInfo.AllWeapons = (wanted & 4u) != 0;
++        // Bit 3: the original menus' unlock-everything switch; it is not written to a profile.
++        menu_unlock_everything = (wanted & 8u) != 0 ? 1 : 0;
+     }
+ }
+ 

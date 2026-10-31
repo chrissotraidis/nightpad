@@ -128,6 +128,8 @@ ControlStyle StyleForControl(TouchControlId id) {
             return {UIColor.clearColor, UIColor.whiteColor};
         case TouchControlId::White:
             return {[UIColor colorWithWhite:0.92 alpha:0.96], [UIColor colorWithWhite:0.06 alpha:1.0]};
+        case TouchControlId::Black:
+            return {[UIColor colorWithWhite:0.03 alpha:0.96], UIColor.whiteColor};
         default:
             return {[UIColor colorWithWhite:0.22 alpha:0.88], UIColor.whiteColor};
     }
@@ -135,8 +137,8 @@ ControlStyle StyleForControl(TouchControlId id) {
 
 }  // namespace
 
-@interface NightPadOverlayControlView : UIView
-@property(nonatomic, assign) nightpad::TouchControlId controlId;
+@interface NightPadOverlayControlView ()
+@property(nonatomic, assign, readwrite) nightpad::TouchControlId controlId;
 @property(nonatomic, strong) UILabel *label;
 @property(nonatomic, strong) UIView *thumb;
 @property(nonatomic, strong) UIView *fill;
@@ -147,7 +149,6 @@ ControlStyle StyleForControl(TouchControlId id) {
 @property(nonatomic, strong) UIView *dpadHorizontal;
 @property(nonatomic, strong) UIView *dpadVertical;
 @property(nonatomic, strong) UIImageView *symbol;
-@property(nonatomic, assign) CGFloat displayAlpha;
 - (void)setTouchPoint:(CGPoint)point offset:(CGPoint)offset active:(BOOL)active;
 @end
 
@@ -157,7 +158,7 @@ ControlStyle StyleForControl(TouchControlId id) {
     if ((self = [super initWithFrame:CGRectZero])) {
         _controlId = control.id;
         const ControlStyle style = StyleForControl(control.id);
-        _displayAlpha = std::clamp<CGFloat>(control.opacity, 0.2, 1.0);
+        _displayAlpha = 0.7;
         self.backgroundColor = style.fill;
         self.layer.cornerRadius = 12;
         const BOOL stick = control.id == TouchControlId::LeftStick || control.id == TouchControlId::RightStick;
@@ -257,7 +258,8 @@ ControlStyle StyleForControl(TouchControlId id) {
         // would sit underneath it.
         _label.hidden = control.id == TouchControlId::Dpad || control.id == TouchControlId::LeftStick ||
                         control.id == TouchControlId::RightStick || control.id == TouchControlId::Start ||
-                        control.id == TouchControlId::Back;
+                        control.id == TouchControlId::Back || control.id == TouchControlId::White ||
+                        control.id == TouchControlId::Black;
         [self addSubview:_label];
 
         UIImage *symbolImage = ControlSymbol(control.id);
@@ -279,6 +281,7 @@ ControlStyle StyleForControl(TouchControlId id) {
 - (void)layoutSubviews {
     [super layoutSubviews];
     const CGFloat side = std::min(self.bounds.size.width, self.bounds.size.height);
+    self.layer.cornerRadius = ControlCornerRadius(_controlId, self.bounds.size);
     _gloss.frame = self.bounds;
     if (_stickWell != nil) {
         const CGFloat diameter = side * 0.80;
@@ -408,8 +411,18 @@ ControlStyle StyleForControl(TouchControlId id) {
         _touchOrder = [NSMutableDictionary dictionary];
         _feedback = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight];
         _layout = nightpad::TouchLayout::Defaults(nightpad::TouchDeviceClass::Phone);
+        _controlOpacity = 0.7;
     }
     return self;
+}
+
+- (void)setControlOpacity:(CGFloat)opacity {
+    _controlOpacity = std::clamp<CGFloat>(opacity, 0.2, 1.0);
+    for (NightPadOverlayControlView *view in _controlViews) {
+        view.displayAlpha = _controlOpacity;
+        if (!_hidden)
+            view.alpha = _controlOpacity;
+    }
 }
 
 - (BOOL)controlsHidden {
@@ -426,6 +439,7 @@ ControlStyle StyleForControl(TouchControlId id) {
         if (!control.visible)
             continue;
         NightPadOverlayControlView *view = [[NightPadOverlayControlView alloc] initWithControl:control];
+        view.displayAlpha = _controlOpacity;
         // A layout rebuild must not reveal controls the controller-hide policy
         // has hidden.
         view.alpha = _hidden ? 0.0 : view.displayAlpha;

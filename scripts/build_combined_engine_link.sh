@@ -73,6 +73,7 @@ ld -r -arch arm64 -platform_version $platform -o "$out/shared-runtime.o" \
 printf '_NightPadActionEngineThread\n_NightPadActionEngineSetLaunchRequestCallback\n_NightPadActionEngineRequestStop\n_NightPadActionEngineSetPaused\n_NightPadActionEngineSetInputSuspended\n_NightPadActionEngineFrameCount\n_NightPadActionEngineStart\n_NightPadActionEngineRunWindow\n_NightPadActionEnginePollWindow\n_NightPadActionEngineJoin\n_NightPadActionEngineCloseWindow\n_NightPadActionEngineTriggerDrivingAfter\n' > "$out/action-exports.txt"
 printf '_NightPadActionEngineSetHostPadsEnabled\n_NightPadActionEngineSetHostPad\n_NightPadActionEngineSetRumbleHandler\n' >> "$out/action-exports.txt"
 printf '_NightPadActionEngineSetAssistImmortal\n_NightPadActionEngineSetAssistUnlimitedAmmo\n_NightPadActionEngineAppliedAssists\n' >> "$out/action-exports.txt"
+printf '_NightPadActionEngineSetAssistAllWeapons\n_NightPadActionEngineSetAssistUnlockAll\n' >> "$out/action-exports.txt"
 printf '_NightPadActionEngineAudioPaused\n' >> "$out/action-exports.txt"
 printf '_NightPadActionEngineSetMasterVolume\n' >> "$out/action-exports.txt"
 printf '_NightPadDrivingEngineThread\n_NightPadDrivingEngineSetLaunchRequestCallback\n_NightPadDrivingEngineRequestStop\n_NightPadDrivingEngineStart\n_NightPadDrivingEngineRunWindow\n_NightPadDrivingEnginePollWindow\n_NightPadDrivingEngineSetPaused\n_NightPadDrivingEngineSetInputSuspended\n_NightPadDrivingEngineAudioPaused\n_NightPadDrivingEngineSetHostPadsEnabled\n_NightPadDrivingEngineSetHostPad\n_NightPadDrivingEngineSetRumbleHandler\n_NightPadDrivingEngineFrameCount\n_NightPadDrivingEngineJoin\n_NightPadDrivingEngineCloseWindow\n' > "$out/driving-exports.txt"
@@ -103,8 +104,8 @@ clang++ -target $triple -isysroot "$sysroot" -Wl,-no_fixup_chains \
     -weak_framework CoreHaptics 2> "$out/combined-link.log"
 
 exports=$(nm -gU "$out/nightpad-combined-link" | grep -c 'NightPad.*Engine' || true)
-if [ "$exports" -ne 37 ]; then
-    echo "Expected thirty-seven engine bridge exports, found $exports" >&2
+if [ "$exports" -ne 39 ]; then
+    echo "Expected thirty-nine engine bridge exports, found $exports" >&2
     exit 1
 fi
 file "$out/nightpad-combined-link"

@@ -12,7 +12,7 @@ tester would see, what is blocked, and where the detail lives.
 | SDL spatial audio lacks HRTF and I3DL2 reverb | The current backend mixes dry 3D voices with distance/pan. Hardware listening, route changes and full audio fidelity remain unverified | `src/action/sound/sdlAudioAction.cpp`, R10 |
 | No signing identity or device on this machine | Nothing physical has been installed; touch feel, controller rumble, campaign progression, performance and the final freeze are unverified | `docs/DEVICE-HANDOFF.md`, `docs/TEST-MATRIX.md` |
 | The supplied image has only the 30 fps movie bundle | One action recording stops early on a movie the image lacks; NightPad writes `Region=NTSC` | `docs/STATUS.md`, G02 blocker |
-| All-weapons assist is not wired | The menu offers immortality and unlimited ammo only | `docs/CHEATS-RESEARCH.md`, R20 |
+| All Weapons and Unlock All Content are not yet verified in play | Both set the game's own switches every frame (patch 0042); a mission start with All Weapons and the unlocked mission list still need a device check | `docs/CHEATS-RESEARCH.md`, R20 |
 | Texture overrides are not implemented | A `textures` folder does nothing | `docs/DECISIONS/0013-texture-overrides.md`, R21 |
 | Driving objectives are not attributed per mission | The strings are located but not mapped to Paris, Alpine and the rest; headless runs do not reach the trigger | `docs/CAMPAIGN-INVENTORY.md`, G07 |
 | Secret Unlock physical coverage is incomplete | All five families, original simulator keyboard/save/relaunch and actual native menu/weapon effects pass; physical entry/persistence remain | `docs/TEST-MATRIX.md`, R19 |

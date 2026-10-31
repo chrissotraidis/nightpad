@@ -117,6 +117,24 @@ bool AppSettings::Load(const fs::path &path, std::string *error) {
                 if (error) *error = "A settings value is invalid.";
                 return false;
             }
+        } else if (key == "assist_all_weapons") {
+            if (!ParseBool(value, &loaded.assistAllWeapons)) {
+                if (error) *error = "A settings value is invalid.";
+                return false;
+            }
+        } else if (key == "assist_unlock_all") {
+            if (!ParseBool(value, &loaded.assistUnlockAll)) {
+                if (error) *error = "A settings value is invalid.";
+                return false;
+            }
+        } else if (key == "touch_opacity") {
+            char *end = nullptr;
+            const long parsed = std::strtol(value.c_str(), &end, 10);
+            if (value.empty() || end == value.c_str() || *end != '\0' || parsed < 20 || parsed > 100) {
+                if (error) *error = "The touch opacity must be 20 to 100.";
+                return false;
+            }
+            loaded.touchOpacity = static_cast<int>(parsed);
         }
         // Unknown keys, including another app's preferences, are ignored.
     }
@@ -152,6 +170,9 @@ bool AppSettings::Save(const fs::path &path, std::string *error) const {
     out << "fov=" << fov << '\n';
     out << "assist_immortal=" << (assistImmortal ? 1 : 0) << '\n';
     out << "assist_unlimited_ammo=" << (assistUnlimitedAmmo ? 1 : 0) << '\n';
+    out << "assist_all_weapons=" << (assistAllWeapons ? 1 : 0) << '\n';
+    out << "assist_unlock_all=" << (assistUnlockAll ? 1 : 0) << '\n';
+    out << "touch_opacity=" << touchOpacity << '\n';
     out.close();
     if (!out) {
         if (error) *error = "Could not finish the settings file.";

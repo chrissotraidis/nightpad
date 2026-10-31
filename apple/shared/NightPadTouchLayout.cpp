@@ -46,24 +46,29 @@ constexpr DefaultControl kPhone[] = {
     Phone(TouchControlId::Back, 360, 334, 56, 44),
 };
 
-// Tablet controls stay near the lower grip, with more spacing for the larger
-// display. This is a separate composition rather than an enlarged phone row.
-// LT/RT and the D-pad sit in the thumb arc just above each stick, so aiming and
-// firing on a 12.9-inch screen do not need a reach to mid-height.
+// The tablet default is the owner's own iPad Pro 12.9 arrangement: sticks in
+// the lower thumb row with LT/RT just above them, the D-pad at the left edge,
+// the face diamond in the right corner with White/Black above it, and Start/Back
+// stacked at the right edge. Authored as normalized centres and sizes.
+constexpr DefaultControl Norm(TouchControlId id, float cx, float cy, float w, float h) {
+    return {id, cx - w * 0.5f, cy - h * 0.5f, w, h};
+}
+constexpr float kFaceW = 0.041f, kFaceH = 0.0583f;
+constexpr float kFaceX = 0.918f, kFaceY = 0.826f, kFaceDx = 0.045f, kFaceDy = 0.054f;
 constexpr DefaultControl kTablet[] = {
-    Tablet(TouchControlId::LeftStick, 100, 910, 160, 160),
-    Tablet(TouchControlId::RightStick, 1000, 910, 144, 144),
-    Tablet(TouchControlId::Dpad, 100, 690, 84, 84),
-    Tablet(TouchControlId::A, 1220, 932, 56, 56),
-    Tablet(TouchControlId::B, 1288, 886, 56, 56),
-    Tablet(TouchControlId::X, 1152, 886, 56, 56),
-    Tablet(TouchControlId::Y, 1220, 830, 56, 56),
-    Tablet(TouchControlId::LeftTrigger, 270, 770, 104, 60),
-    Tablet(TouchControlId::RightTrigger, 1000, 750, 104, 60),
-    Tablet(TouchControlId::Start, 680, 910, 64, 44),
-    Tablet(TouchControlId::White, 1170, 600, 52, 52),
-    Tablet(TouchControlId::Black, 1270, 600, 52, 52),
-    Tablet(TouchControlId::Back, 600, 910, 64, 44),
+    Norm(TouchControlId::LeftStick, 0.1606f, 0.862f, 0.1171f, 0.1667f),
+    Norm(TouchControlId::RightStick, 0.7632f, 0.862f, 0.1054f, 0.15f),
+    Norm(TouchControlId::Dpad, 0.0551f, 0.7208f, 0.0615f, 0.0875f),
+    Norm(TouchControlId::A, kFaceX, kFaceY + kFaceDy, kFaceW, kFaceH),
+    Norm(TouchControlId::B, kFaceX + kFaceDx, kFaceY, kFaceW, kFaceH),
+    Norm(TouchControlId::X, kFaceX - kFaceDx, kFaceY, kFaceW, kFaceH),
+    Norm(TouchControlId::Y, kFaceX, kFaceY - kFaceDy, kFaceW, kFaceH),
+    Norm(TouchControlId::LeftTrigger, 0.1632f, 0.7205f, 0.0761f, 0.0625f),
+    Norm(TouchControlId::RightTrigger, 0.7657f, 0.7394f, 0.0761f, 0.0625f),
+    Norm(TouchControlId::Start, 0.9592f, 0.565f, 0.0469f, 0.046f),
+    Norm(TouchControlId::White, 0.913f, 0.660f, 0.0381f, 0.0542f),
+    Norm(TouchControlId::Black, 0.9686f, 0.660f, 0.0381f, 0.0542f),
+    Norm(TouchControlId::Back, 0.9592f, 0.495f, 0.0469f, 0.046f),
 };
 
 bool SquareControl(TouchControlId id) {
@@ -112,6 +117,145 @@ const char *TouchControlName(TouchControlId id) {
 
 const char *TouchDeviceName(TouchDeviceClass device) {
     return device == TouchDeviceClass::Tablet ? "tablet" : "phone";
+}
+
+TouchGroup TouchGroupFor(TouchControlId id) {
+    switch (id) {
+        case TouchControlId::A:
+        case TouchControlId::B:
+        case TouchControlId::X:
+        case TouchControlId::Y: return TouchGroup::Face;
+        case TouchControlId::White:
+        case TouchControlId::Black: return TouchGroup::Shoulders;
+        case TouchControlId::Start:
+        case TouchControlId::Back: return TouchGroup::System;
+        default: return TouchGroup::None;
+    }
+}
+
+bool SameTouchItem(TouchControlId a, TouchControlId b) {
+    if (a == b)
+        return true;
+    const TouchGroup group = TouchGroupFor(a);
+    return group != TouchGroup::None && group == TouchGroupFor(b);
+}
+
+namespace {
+
+struct Box {
+    float left = 1e9f, top = 1e9f, right = -1e9f, bottom = -1e9f;
+};
+
+Box ItemBox(const std::vector<TouchControl> &controls, TouchControlId id) {
+    Box box;
+    for (const auto &control : controls) {
+        if (!SameTouchItem(id, control.id))
+            continue;
+        box.left = std::min(box.left, control.x);
+        box.top = std::min(box.top, control.y);
+        box.right = std::max(box.right, control.x + control.width);
+        box.bottom = std::max(box.bottom, control.y + control.height);
+    }
+    return box;
+}
+
+void ShiftItem(std::vector<TouchControl> &controls, TouchControlId id, float dx, float dy) {
+    for (auto &control : controls) {
+        if (SameTouchItem(id, control.id)) {
+            control.x += dx;
+            control.y += dy;
+        }
+    }
+}
+
+// Moves the whole item back inside the canvas without changing its shape.
+void KeepItemInside(std::vector<TouchControl> &controls, TouchControlId id) {
+    const Box box = ItemBox(controls, id);
+    float dx = 0, dy = 0;
+    if (box.left < 0) dx = -box.left;
+    else if (box.right > 1) dx = 1 - box.right;
+    if (box.top < 0) dy = -box.top;
+    else if (box.bottom > 1) dy = 1 - box.bottom;
+    ShiftItem(controls, id, dx, dy);
+}
+
+}  // namespace
+
+void TouchLayout::MoveItem(TouchControlId id, float dx, float dy) {
+    ShiftItem(controls, id, dx, dy);
+    KeepItemInside(controls, id);
+}
+
+void TouchLayout::ScaleItem(TouchControlId id, float factor, float viewWidth, float viewHeight, float minPoints) {
+    if (!(factor > 0) || viewWidth <= 0 || viewHeight <= 0)
+        return;
+    const Box box = ItemBox(controls, id);
+    if (box.right < box.left)
+        return;
+    const float cx = (box.left + box.right) * 0.5f, cy = (box.top + box.bottom) * 0.5f;
+    // A group's members share one size: the average, so a stray enlarged button
+    // is brought back in line the first time the group is resized.
+    float sumW = 0, sumH = 0;
+    int members = 0;
+    for (const auto &control : controls) {
+        if (SameTouchItem(id, control.id)) {
+            sumW += control.width;
+            sumH += control.height;
+            ++members;
+        }
+    }
+    const bool group = TouchGroupFor(id) != TouchGroup::None;
+    // Never below the touch minimum, and never larger than the canvas.
+    float smallest = 1e9f;
+    for (const auto &control : controls) {
+        if (!SameTouchItem(id, control.id))
+            continue;
+        const float w = group ? sumW / members : control.width;
+        const float h = group ? sumH / members : control.height;
+        smallest = std::min(smallest, std::min(w * viewWidth, h * viewHeight));
+    }
+    factor = std::max(factor, minPoints / std::max(smallest, 1.0f));
+    const float span = std::max(box.right - box.left, box.bottom - box.top);
+    if (span > 0)
+        factor = std::min(factor, 1.0f / span);
+    for (auto &control : controls) {
+        if (!SameTouchItem(id, control.id))
+            continue;
+        const float w = group ? sumW / members : control.width;
+        const float h = group ? sumH / members : control.height;
+        const float mx = control.x + control.width * 0.5f, my = control.y + control.height * 0.5f;
+        const float nx = cx + (mx - cx) * factor, ny = cy + (my - cy) * factor;
+        control.width = w * factor;
+        control.height = h * factor;
+        control.x = nx - control.width * 0.5f;
+        control.y = ny - control.height * 0.5f;
+    }
+    KeepItemInside(controls, id);
+}
+
+float TouchLayout::ItemScale(TouchControlId id) const {
+    const TouchLayout defaults = Defaults(device);
+    for (const auto &control : controls) {
+        if (control.id != id)
+            continue;
+        for (const auto &original : defaults.controls)
+            if (original.id == id && original.width > 0)
+                return control.width / original.width;
+    }
+    return 1.0f;
+}
+
+void TouchLayout::SetItemVisible(TouchControlId id, bool visible) {
+    for (auto &control : controls)
+        if (SameTouchItem(id, control.id))
+            control.visible = visible;
+}
+
+bool TouchLayout::ItemVisible(TouchControlId id) const {
+    for (const auto &control : controls)
+        if (control.id == id)
+            return control.visible;
+    return true;
 }
 
 TouchLayout TouchLayout::Defaults(TouchDeviceClass device) {
@@ -237,6 +381,26 @@ bool TouchLayout::Load(const fs::path &path, std::string *error) {
     if (loaded.controls.empty()) {
         if (error) *error = "The touch layout has no controls.";
         return false;
+    }
+    // Grouped buttons share one size (older editors resized them one by one).
+    // Each keeps its centre, so the saved arrangement is otherwise unchanged.
+    for (TouchGroup group : { TouchGroup::Face, TouchGroup::Shoulders, TouchGroup::System }) {
+        float sumW = 0, sumH = 0;
+        int members = 0;
+        for (const auto &control : loaded.controls)
+            if (TouchGroupFor(control.id) == group)
+                sumW += control.width, sumH += control.height, ++members;
+        if (members < 2)
+            continue;
+        for (auto &control : loaded.controls) {
+            if (TouchGroupFor(control.id) != group)
+                continue;
+            const float cx = control.x + control.width * 0.5f, cy = control.y + control.height * 0.5f;
+            control.width = sumW / members;
+            control.height = sumH / members;
+            control.x = cx - control.width * 0.5f;
+            control.y = cy - control.height * 0.5f;
+        }
     }
     *this = std::move(loaded);
     return true;

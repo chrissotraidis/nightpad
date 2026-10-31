@@ -138,7 +138,24 @@ extern "C" void NightPadActionEngineSetAssistUnlimitedAmmo(int enabled) {
 }
 
 extern "C" unsigned NightPadActionEngineAppliedAssists(void) {
-    return (CheatInfo.Immortal != 0 ? 1u : 0u) | (CheatInfo.UnlimitedAmmo != 0 ? 2u : 0u);
+    return (CheatInfo.Immortal != 0 ? 1u : 0u) | (CheatInfo.UnlimitedAmmo != 0 ? 2u : 0u) |
+           (CheatInfo.AllWeapons != 0 ? 4u : 0u);
+}
+
+static void SetAssistBit(unsigned bit, int enabled) {
+    NightPadActionAssistFlags |= 0x80000000u;
+    if (enabled)
+        NightPadActionAssistFlags |= bit;
+    else
+        NightPadActionAssistFlags &= ~bit;
+}
+
+extern "C" void NightPadActionEngineSetAssistAllWeapons(int enabled) {
+    SetAssistBit(4u, enabled);
+}
+
+extern "C" void NightPadActionEngineSetAssistUnlockAll(int enabled) {
+    SetAssistBit(8u, enabled);
 }
 
 extern "C" int NightPadActionEngineAudioPaused(void) {

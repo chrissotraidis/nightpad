@@ -1,0 +1,12 @@
+--- a/src/driving/platform/HostWindowSdl.cpp
++++ b/src/driving/platform/HostWindowSdl.cpp
+@@ -57,6 +57,9 @@
+     SDL_SetBooleanProperty(properties, SDL_PROP_WINDOW_CREATE_HIDDEN_BOOLEAN, headless);
+     SDL_SetBooleanProperty(properties, SDL_PROP_WINDOW_CREATE_EXTERNAL_GRAPHICS_CONTEXT_BOOLEAN, true);
+ #if TARGET_OS_IPHONE
++    // A resizable SDL window accepts every orientation on iOS. The game is landscape only; otherwise iPadOS can lay
++    // the window out for portrait under a native screen and the picture is drawn into a 1024-point-wide corner.
++    SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
+     // On iOS a bordered window keeps the status bar over the game; borderless hides it.
+     SDL_SetBooleanProperty(properties, SDL_PROP_WINDOW_CREATE_BORDERLESS_BOOLEAN, true);
+     // Present into a drawable at the screen's native pixel size. Without this the Metal layer

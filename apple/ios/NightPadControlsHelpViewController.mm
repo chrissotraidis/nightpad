@@ -11,19 +11,23 @@ static UIColor *BadgeColour(NSString *control) {
     if ([control isEqualToString:@"B"]) return [UIColor colorWithRed:0.86 green:0.18 blue:0.20 alpha:1];
     if ([control isEqualToString:@"X"]) return [UIColor colorWithRed:0.12 green:0.46 blue:0.92 alpha:1];
     if ([control isEqualToString:@"Y"]) return [UIColor colorWithRed:0.86 green:0.68 blue:0.08 alpha:1];
+    if ([control isEqualToString:@"White"]) return [UIColor colorWithWhite:0.9 alpha:1];
+    if ([control isEqualToString:@"Black"]) return [UIColor colorWithWhite:0.02 alpha:1];
     return [UIColor colorWithWhite:0.22 alpha:1];
 }
 
 - (UIView *)rowWithControl:(NSString *)control action:(NSString *)action {
     UILabel *badgeText = [UILabel new];
     badgeText.text = control;
-    badgeText.textColor = UIColor.whiteColor;
+    badgeText.textColor = [control isEqualToString:@"White"] ? UIColor.blackColor : UIColor.whiteColor;
     badgeText.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
     badgeText.font = [UIFont systemFontOfSize:badgeText.font.pointSize weight:UIFontWeightSemibold];
     badgeText.translatesAutoresizingMaskIntoConstraints = NO;
     UIView *badge = [UIView new];
     badge.backgroundColor = BadgeColour(control);
     badge.layer.cornerRadius = 8;
+    badge.layer.borderWidth = 1;
+    badge.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.18].CGColor;
     badge.translatesAutoresizingMaskIntoConstraints = NO;
     [badge addSubview:badgeText];
     UIView *column = [UIView new];
@@ -129,8 +133,8 @@ static UIColor *BadgeColour(NSString *control) {
         @[ @"Y", @"Jump" ],
         @[ @"A", @"Crouch" ],
         @[ @"X", @"Reload / context action" ],
-        @[ @"White (LB)", @"Alternate fire" ],
-        @[ @"Black (RB)", @"Next gadget" ],
+        @[ @"White", @"Alternate fire" ],
+        @[ @"Black", @"Next gadget" ],
         @[ @"D-pad", @"Weapon and gadget selection" ],
         @[ @"Back", @"Night vision" ],
         @[ @"Start", @"Original game pause" ],
@@ -144,7 +148,7 @@ static UIColor *BadgeColour(NSString *control) {
         @[ @"A", @"Fire secondary" ],
         @[ @"X", @"Fire gadget" ],
         @[ @"Y", @"Change camera" ],
-        @[ @"White / Black", @"Secondary up and down" ],
+        @[ @"White / Black", @"Secondary weapon up and down" ],
         @[ @"D-pad left / right", @"Secondary up and down" ],
     ]]];
     [stack addArrangedSubview:[self cardWithTitle:@"Mounted views (varies by mount)" rows:@[

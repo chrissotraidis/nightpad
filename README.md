@@ -28,8 +28,10 @@ and the [test matrix](docs/TEST-MATRIX.md) for the verified boundary.
 - Persistent master volume for game and movie audio, including mute.
 - Prepared-data import, separate save storage, save export/restore,
   diagnostics, and original control references.
-- Two optional action-engine assists, off by default: immortality and
-  unlimited ammo. These do not apply to driving or core acceptance runs.
+- Four native cheats under **⋯ → Cheats**, all off by default: Immortality,
+  Unlimited Ammo, All Weapons (from the next mission start) and Unlock All
+  Content (missions, difficulties and multiplayer, without changing saves).
+  They use the game's own cheat switches and do not apply to driving.
 
 Original Secret Unlocks and multiplayer rules remain in the game's own menus.
 Online/LAN play and external texture replacements are not delivered features.
@@ -108,7 +110,7 @@ the Simulator.
    any original save operation first; stopping does not save an unfinished
    mission or preserve its live checkpoint.
 
-The menu groups **Display, Controls, Audio, Enhancements, Data & Saves, Help &
+The menu groups **Display, Controls, Audio, Cheats, Data & Saves, Help &
 Feedback**, then **Start/Stop Game**. Touch editing lives under Controls;
 data and save operations have separate submenus. **Audio → Master Volume**
 offers Muted, 25%, 50%, 75%, and 100%. Changes apply to game and movie output
@@ -119,17 +121,18 @@ the game's own music/effects preferences still apply within that mix.
 
 The defaults place movement under the left thumb, looking inward on the right,
 and the face buttons in Xbox order: **Y above, A below, X left, B right**.
-LT/RT and White/Black sit above the main controls; Start and Back share a small
-system-button row. The tablet uses its own composition, with LT/RT and the
-D-pad placed just above the sticks so a thumb can reach them on a 12.9-inch
-screen.
+On iPad, LT/RT sit just above the sticks, the D-pad at the left edge, the face
+buttons in the right corner with the White and Black buttons above them, and
+Start/Back stacked at the right edge. The phone uses its own composition.
 
 Use **⋯ → Controls → Touch Controls → Edit Layout…** to arrange the controls.
-Drag to move, pinch to resize, or hold a control for visibility and opacity.
-Save commits the layout; Cancel leaves the saved layout alone. Reset adopts
-the latest default, and takes effect persistently when you Save. Existing
-custom layouts are retained across updates; use Reset if you want the new
-arrangement.
+Tap a control to select it, drag to move it, and pinch or use the **Size**
+slider to resize it. The A/B/X/Y diamond, the White/Black pair and Start/Back
+each move, resize and hide as one item, so their buttons always match.
+**Opacity** is one setting for the whole overlay. Save commits the layout;
+Cancel leaves it alone; Reset restores the device default when you Save.
+Existing custom layouts are kept, and grouped buttons are evened out to one
+size when they load.
 
 The overlay forwards Xbox inputs; the original selected control scheme still
 sets their meaning. Under the original Nightfire scheme, A crouches, Y jumps,
@@ -193,7 +196,7 @@ also passes host tests and both iOS shell build lanes. This is simulator and
 build verification; earned mission-save/relaunch and physical play remain
 unverified.
 
-The current engine patch stack reproduces 41 patches across 85 files. Native
+The current engine patch stack reproduces 43 patches across 85 files. Native
 lifecycle, save durability, input, and focused simulator checks have passed on
 their recorded scopes. Eleven unchanged action recordings cover 208,364
 frames on an earlier recorded candidate; they are not a continuous campaign
