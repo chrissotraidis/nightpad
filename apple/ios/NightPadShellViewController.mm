@@ -87,6 +87,7 @@ using nightpad::Paths;
     BOOL _pendingDiagnostics;
     BOOL _pendingAbout;
     BOOL _pendingFixtureImport;
+    BOOL _pendingAppFolderImport;
     BOOL _pickingSaveFiles;
     BOOL _pendingTouchLayout;
     BOOL _pendingControlsHelp;
@@ -264,6 +265,8 @@ static uint64_t ShellResidentBytes(void) {
         _pendingAbout = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--import-fixture"])
         _pendingFixtureImport = YES;
+    else if ([NSProcessInfo.processInfo.arguments containsObject:@"--import-app-folder"])
+        _pendingAppFolderImport = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--open-touch-layout"])
         _pendingTouchLayout = YES;
     else if ([NSProcessInfo.processInfo.arguments containsObject:@"--preview-gameplay"])
@@ -298,6 +301,13 @@ static uint64_t ShellResidentBytes(void) {
             URLByAppendingPathComponent:@"ImportFixture" isDirectory:YES];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             [self importPreparedFolder:fixture];
+        });
+    }
+    if (_pendingAppFolderImport) {
+        // Lets a Mac-side install import data already copied to NightPad Import.
+        _pendingAppFolderImport = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            [self importFromAppFolder];
         });
     }
     if (_pendingTouchLayout) {
