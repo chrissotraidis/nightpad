@@ -1,0 +1,14 @@
+--- a/src/driving/platform/HostWindowSdl.cpp
++++ b/src/driving/platform/HostWindowSdl.cpp
+@@ -121,7 +121,10 @@
+         SDL_DestroyWindow(Window);
+         Window = NULL;
+     }
+-    SDL_Quit();
++    // Release only what HostWindow_Open initialized. SDL_Quit() would zero every reference count, so the next
++    // session's SDL_Init would restart the audio subsystem and close the voice mixer's device, which is opened once
++    // per process (common/sound/voiceMixer.cpp): the game would be silent after the first engine handoff or restart.
++    SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD | SDL_INIT_AUDIO);
+ }
+ 
+ void *HostWindow_Native(void) {
