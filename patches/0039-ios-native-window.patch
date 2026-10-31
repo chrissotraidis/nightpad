@@ -10,13 +10,17 @@
  #ifdef _WIN32
  #define SDL_MAIN_HANDLED   // SDL_RegisterApp only: the executable has a main of its own
  #include <SDL3/SDL_main.h>
-@@ -53,6 +56,10 @@
+@@ -53,6 +56,14 @@
      SDL_SetBooleanProperty(properties, SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN, true);
      SDL_SetBooleanProperty(properties, SDL_PROP_WINDOW_CREATE_HIDDEN_BOOLEAN, headless);
      SDL_SetBooleanProperty(properties, SDL_PROP_WINDOW_CREATE_EXTERNAL_GRAPHICS_CONTEXT_BOOLEAN, true);
 +#if TARGET_OS_IPHONE
 +    // On iOS a bordered window keeps the status bar over the game; borderless hides it.
 +    SDL_SetBooleanProperty(properties, SDL_PROP_WINDOW_CREATE_BORDERLESS_BOOLEAN, true);
++    // Present into a drawable at the screen's native pixel size. Without this the Metal layer
++    // uses scale 1, so higher render resolutions are shown at point resolution, and a UIKit
++    // relayout that restores the view's own scale changes the drawable under the game.
++    SDL_SetBooleanProperty(properties, SDL_PROP_WINDOW_CREATE_HIGH_PIXEL_DENSITY_BOOLEAN, true);
 +#endif
      Window = SDL_CreateWindowWithProperties(properties);
      SDL_DestroyProperties(properties);

@@ -5,6 +5,58 @@
 
 @implementation NightPadControlsHelpViewController
 
+// Face buttons keep the overlay's Xbox colours; everything else is graphite.
+static UIColor *BadgeColour(NSString *control) {
+    if ([control isEqualToString:@"A"]) return [UIColor colorWithRed:0.10 green:0.62 blue:0.30 alpha:1];
+    if ([control isEqualToString:@"B"]) return [UIColor colorWithRed:0.86 green:0.18 blue:0.20 alpha:1];
+    if ([control isEqualToString:@"X"]) return [UIColor colorWithRed:0.12 green:0.46 blue:0.92 alpha:1];
+    if ([control isEqualToString:@"Y"]) return [UIColor colorWithRed:0.86 green:0.68 blue:0.08 alpha:1];
+    return [UIColor colorWithWhite:0.22 alpha:1];
+}
+
+- (UIView *)rowWithControl:(NSString *)control action:(NSString *)action {
+    UILabel *badgeText = [UILabel new];
+    badgeText.text = control;
+    badgeText.textColor = UIColor.whiteColor;
+    badgeText.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    badgeText.font = [UIFont systemFontOfSize:badgeText.font.pointSize weight:UIFontWeightSemibold];
+    badgeText.translatesAutoresizingMaskIntoConstraints = NO;
+    UIView *badge = [UIView new];
+    badge.backgroundColor = BadgeColour(control);
+    badge.layer.cornerRadius = 8;
+    badge.translatesAutoresizingMaskIntoConstraints = NO;
+    [badge addSubview:badgeText];
+    UIView *column = [UIView new];
+    column.translatesAutoresizingMaskIntoConstraints = NO;
+    [column addSubview:badge];
+
+    UILabel *label = [UILabel new];
+    label.text = action;
+    label.numberOfLines = 0;
+    label.adjustsFontForContentSizeCategory = YES;
+    label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    label.textColor = [UIColor colorWithWhite:1 alpha:0.88];
+
+    UIStackView *row = [[UIStackView alloc] initWithArrangedSubviews:@[column, label]];
+    row.axis = UILayoutConstraintAxisHorizontal;
+    row.spacing = 14;
+    row.alignment = UIStackViewAlignmentCenter;
+    row.isAccessibilityElement = YES;
+    row.accessibilityLabel = [NSString stringWithFormat:@"%@, %@", control, action];
+    [NSLayoutConstraint activateConstraints:@[
+        [column.widthAnchor constraintEqualToConstant:150],
+        [badge.leadingAnchor constraintEqualToAnchor:column.leadingAnchor],
+        [badge.trailingAnchor constraintLessThanOrEqualToAnchor:column.trailingAnchor],
+        [badge.topAnchor constraintEqualToAnchor:column.topAnchor],
+        [badge.bottomAnchor constraintEqualToAnchor:column.bottomAnchor],
+        [badgeText.leadingAnchor constraintEqualToAnchor:badge.leadingAnchor constant:10],
+        [badgeText.trailingAnchor constraintEqualToAnchor:badge.trailingAnchor constant:-10],
+        [badgeText.topAnchor constraintEqualToAnchor:badge.topAnchor constant:4],
+        [badgeText.bottomAnchor constraintEqualToAnchor:badge.bottomAnchor constant:-4],
+    ]];
+    return row;
+}
+
 - (UIView *)cardWithTitle:(NSString *)title rows:(NSArray<NSArray<NSString *> *> *)rows {
     UIView *card = [UIView new];
     card.backgroundColor = [UIColor colorWithWhite:0.09 alpha:1];
@@ -16,7 +68,8 @@
     UILabel *heading = [UILabel new];
     heading.text = title;
     heading.textColor = UIColor.whiteColor;
-    heading.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+    heading.font = [UIFont preferredFontForTextStyle:UIFontTextStyleTitle3];
+    heading.font = [UIFont systemFontOfSize:heading.font.pointSize weight:UIFontWeightBold];
     heading.adjustsFontForContentSizeCategory = YES;
     heading.translatesAutoresizingMaskIntoConstraints = NO;
     heading.accessibilityTraits = UIAccessibilityTraitHeader;
@@ -24,20 +77,12 @@
 
     UIStackView *stack = [UIStackView new];
     stack.axis = UILayoutConstraintAxisVertical;
-    stack.spacing = 8;
+    stack.spacing = 10;
     stack.translatesAutoresizingMaskIntoConstraints = NO;
     [card addSubview:stack];
 
-    for (NSArray<NSString *> *row in rows) {
-        UILabel *line = [UILabel new];
-        line.numberOfLines = 0;
-        line.adjustsFontForContentSizeCategory = YES;
-        line.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
-        line.textColor = [UIColor colorWithWhite:1 alpha:0.82];
-        line.text = [NSString stringWithFormat:@"%@  —  %@", row[0], row[1]];
-        line.accessibilityLabel = [NSString stringWithFormat:@"%@, %@", row[0], row[1]];
-        [stack addArrangedSubview:line];
-    }
+    for (NSArray<NSString *> *row in rows)
+        [stack addArrangedSubview:[self rowWithControl:row[0] action:row[1]]];
 
     [NSLayoutConstraint activateConstraints:@[
         [heading.leadingAnchor constraintEqualToAnchor:card.leadingAnchor constant:18],
@@ -45,7 +90,7 @@
         [heading.topAnchor constraintEqualToAnchor:card.topAnchor constant:16],
         [stack.leadingAnchor constraintEqualToAnchor:heading.leadingAnchor],
         [stack.trailingAnchor constraintEqualToAnchor:heading.trailingAnchor],
-        [stack.topAnchor constraintEqualToAnchor:heading.bottomAnchor constant:10],
+        [stack.topAnchor constraintEqualToAnchor:heading.bottomAnchor constant:14],
         [stack.bottomAnchor constraintEqualToAnchor:card.bottomAnchor constant:-16],
     ]];
     return card;
@@ -53,8 +98,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"Controls";
+    self.title = @"Control Guide";
     self.view.backgroundColor = UIColor.blackColor;
+    // The guide is always dark, so the navigation title must be light.
+    self.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+    self.navigationController.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
         initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done)];
 
@@ -65,7 +113,7 @@
                  @"Goldfinger, Dr. No, Thunderball, GoldenEye and Classic Bond.";
     intro.numberOfLines = 0;
     intro.adjustsFontForContentSizeCategory = YES;
-    intro.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    intro.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
     intro.textColor = [UIColor colorWithWhite:1 alpha:0.7];
 
     UIStackView *stack = [UIStackView new];
