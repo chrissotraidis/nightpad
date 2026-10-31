@@ -47,6 +47,8 @@ extern "C" int NightPadActionEngineStart(int argc, char **argv) {
     }
     EngineLifecycle_ResetStop();
     EngineLifecycle_ReleasePause();
+    // A session that stopped under a native menu must not leave this engine's output held.
+    VoiceMixer_SetOutputPaused(false);
     NightPadActionResetFrameCounter();
     g_gameThread = HostCreateThread(0x10000, mainXapiStartup, nullptr, 0, nullptr);
     return g_gameThread != nullptr;
@@ -105,6 +107,9 @@ extern "C" void NightPadActionEngineSetPaused(int paused) {
         EngineLifecycle_RequestPause();
     else
         EngineLifecycle_ReleasePause();
+    // The game thread stops refilling streamed buffers while held; holding the output keeps the mixer from
+    // replaying them (the menu music looped under the native menu) and resumes from the same point.
+    VoiceMixer_SetOutputPaused(paused != 0);
 }
 
 extern "C" void NightPadActionEngineSetInputSuspended(int suspended) {

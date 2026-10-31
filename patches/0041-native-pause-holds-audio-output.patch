@@ -1,0 +1,52 @@
+--- a/src/common/sound/voiceMixer.cpp
++++ b/src/common/sound/voiceMixer.cpp
+@@ -66,6 +66,7 @@
+ // never takes it, and the device lives for the process, like the original mixer.
+ static std::mutex DeviceMutex;
+ static float MasterVolume = 1.0f;
++static bool OutputPaused;
+ static SDL_AudioStream *Stream;
+ static HostLock Lock;
+ static bool StartAttempted;
+@@ -215,7 +216,10 @@
+         Device = 0;
+         return false;
+     }
+-    SDL_ResumeAudioDevice(Device);
++    if (OutputPaused)
++        SDL_PauseAudioDevice(Device);
++    else
++        SDL_ResumeAudioDevice(Device);
+     int deviceFrames = 0;
+     SDL_AudioSpec device;
+     SDL_GetAudioDeviceFormat(Device, &device, &deviceFrames);
+@@ -224,6 +228,17 @@
+     return true;
+ }
+ 
++void VoiceMixer_SetOutputPaused(bool paused) {
++    std::lock_guard<std::mutex> guard(DeviceMutex);
++    OutputPaused = paused;
++    if (Device == 0)
++        return;
++    if (paused)
++        SDL_PauseAudioDevice(Device);
++    else
++        SDL_ResumeAudioDevice(Device);
++}
++
+ uint32_t VoiceMixer_Device(void) {
+     return Device;
+ }
+--- a/src/common/sound/voiceMixer.h
++++ b/src/common/sound/voiceMixer.h
+@@ -29,6 +29,9 @@
+ // Safe before Start and from a native UI thread. Does not change game voice volumes.
+ // Accepts finite amplitudes from 0 (mute) to 1 (original output).
+ bool VoiceMixer_SetMasterVolume(float amplitude);
++// Holds or resumes the whole output (every voice and any movie bound to the device) without moving a play cursor.
++// A native pause uses it so that buffers the paused game thread no longer refills are not replayed.
++void VoiceMixer_SetOutputPaused(bool paused);
+ 
+ // A voice for samples of this format. formatTag is WAVE_FORMAT_PCM or WAVE_FORMAT_XBOX_ADPCM (0x69). NULL if the
+ // output did not start or the format is neither.

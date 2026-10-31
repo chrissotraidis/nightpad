@@ -193,7 +193,7 @@ also passes host tests and both iOS shell build lanes. This is simulator and
 build verification; earned mission-save/relaunch and physical play remain
 unverified.
 
-The current engine patch stack reproduces 40 patches across 85 files. Native
+The current engine patch stack reproduces 41 patches across 85 files. Native
 lifecycle, save durability, input, and focused simulator checks have passed on
 their recorded scopes. Eleven unchanged action recordings cover 208,364
 frames on an earlier recorded candidate; they are not a continuous campaign
