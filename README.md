@@ -86,6 +86,11 @@ Import the prepared folder through the app before starting the game.
 Simulator rendering is useful development evidence and does not replace
 physical phone/tablet acceptance.
 
+The Simulator exposes the Mac keyboard as a virtual gamepad once a game starts,
+so the default Auto-Hide rule hides the touch overlay there. Turn on
+**⋯ → Controls → Touch Controls → Always Show** to review touch controls in
+the Simulator.
+
 ## Import and play
 
 1. Open **⋯ → Data & Saves → Game Data** and choose the prepared folder
@@ -115,7 +120,9 @@ the game's own music/effects preferences still apply within that mix.
 The defaults place movement under the left thumb, looking inward on the right,
 and the face buttons in Xbox order: **Y above, A below, X left, B right**.
 LT/RT and White/Black sit above the main controls; Start and Back share a small
-system-button row. The tablet uses its own composition.
+system-button row. The tablet uses its own composition, with LT/RT and the
+D-pad placed just above the sticks so a thumb can reach them on a 12.9-inch
+screen.
 
 Use **⋯ → Controls → Touch Controls → Edit Layout…** to arrange the controls.
 Drag to move, pinch to resize, or hold a control for visibility and opacity.
@@ -186,7 +193,7 @@ also passes host tests and both iOS shell build lanes. This is simulator and
 build verification; earned mission-save/relaunch and physical play remain
 unverified.
 
-The current engine patch stack reproduces 38 patches across 85 files. Native
+The current engine patch stack reproduces 39 patches across 85 files. Native
 lifecycle, save durability, input, and focused simulator checks have passed on
 their recorded scopes. Eleven unchanged action recordings cover 208,364
 frames on an earlier recorded candidate; they are not a continuous campaign

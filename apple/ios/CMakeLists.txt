@@ -49,7 +49,9 @@ add_executable(NightPadShell MACOSX_BUNDLE
   NightPadControllerAuthority.mm
   NightPadControllerRumble.mm
   NightPadGameInput.mm
-  NightPadEngineHost.mm)
+  NightPadEngineHost.mm
+  Assets.xcassets)
+set_source_files_properties(Assets.xcassets PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 target_compile_features(NightPadShell PRIVATE cxx_std_20)
 target_compile_options(NightPadShell PRIVATE -fobjc-arc)
 target_compile_definitions(NightPadShell PRIVATE $<$<CONFIG:Debug>:DEBUG=1>)
@@ -88,6 +90,7 @@ set_target_properties(NightPadShell PROPERTIES
   MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/NightPadShellInfo.plist.in"
   XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
   XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "local.nightpad.shell"
+  XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon"
   XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "NO")
 
 set_source_files_properties("${NIGHTFIRE}/src/driving/devtools/GameWindowTest.cpp"

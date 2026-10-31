@@ -24,15 +24,17 @@ fetch_pin tools/extract-xiso https://github.com/XboxDev/extract-xiso.git 3f5b62c
 git -C "$repo/vendor/nightfire" submodule update --init --depth 1 third_party/ffmpeg
 test "$(git -C "$repo/vendor/nightfire/third_party/ffmpeg" rev-parse HEAD)" = 8ae0b34901ba60a802f183ee75a250a9fc3e09a5
 
-for patch in "$repo"/patches/*.patch; do
-    [ -f "$patch" ] || continue
-    if git -C "$repo/vendor/nightfire" apply --check "$patch" 2>/dev/null; then
+# Only the numbered engine patches belong to Nightfire. The SDL patch is applied
+# to the configured SDL source by scripts/patch_ios_sdl.sh. Later patches touch
+# lines from earlier ones, so apply the series to a clean tree and otherwise
+# prove that the existing tree matches it.
+if [ -z "$(git -C "$repo/vendor/nightfire" status --porcelain --untracked-files=no)" ]; then
+    for patch in "$repo"/patches/00*.patch; do
         git -C "$repo/vendor/nightfire" apply "$patch"
-    elif ! git -C "$repo/vendor/nightfire" apply --reverse --check "$patch" 2>/dev/null; then
-        echo "Patch neither applies nor is already present: $patch" >&2
-        exit 1
-    fi
-done
+    done
+else
+    "$repo/scripts/verify_patches.sh"
+fi
 
 cmake -S "$repo/tools/extract-xiso" -B "$repo/tools/extract-xiso/build" -DCMAKE_BUILD_TYPE=Release
 cmake --build "$repo/tools/extract-xiso/build" -j 4
