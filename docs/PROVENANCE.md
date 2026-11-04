@@ -12,6 +12,11 @@ file. Its provenance and any later distribution decision remain separate from
 private-candidate testing. Reused GalaxyPad and SunPad files retain their
 notices and are recorded in `docs/UPSTREAM-DELTA.md`.
 
+NightPad's own code is licensed GPL-3.0-or-later (`LICENSE`), matching the
+reused GalaxyPad and SunPad files. That licence covers this repository's
+files. It does not relicense the upstream engine, which is fetched at build
+time and not stored here, or any other dependency.
+
 The original Xbox image and extracted data are owner-supplied private inputs.
 They, generated binaries, saves, captures, credentials and signing artifacts are
 outside the source commit. `prepare_game_data.py` preserves the source image,

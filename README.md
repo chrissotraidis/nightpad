@@ -519,7 +519,10 @@ content belong to their respective owners.
 No game data, disc image, movie or save is included or distributed. You must
 supply data from your own copy of the original Xbox game.
 
-The upstream nightfire-cxbx repository does not publish a licence. NightPad
-pins it by commit and keeps its own engine changes as patches. The reused
-GalaxyPad and SunPad files are GPL-3.0 and keep their notices. Details are in
+NightPad's own code (the Apple shell, scripts, tests and engine patches) is
+licensed under the [GNU General Public License v3.0 or later](LICENSE), the
+same licence as the GalaxyPad and SunPad files it reuses, which keep their
+notices. The upstream nightfire-cxbx repository does not publish a licence;
+NightPad does not include its source, but pins it by commit and fetches it at
+build time. Each other dependency keeps its own terms. Details are in
 [PROVENANCE](docs/PROVENANCE.md).
