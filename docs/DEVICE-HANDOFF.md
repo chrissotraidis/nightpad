@@ -2,8 +2,11 @@
 
 Status: signed Release builds install and run on the owner's iPad Pro 12.9
 (iPadOS 27.0.1) with team `VKDH2T9UTF`. The app identifier is
-`com.chrissotraidis.nightpad` (version 0.2.0, build 2); builds before it used
-the placeholder `local.nightpad.shell`, which installs as a separate app.
+`com.chrissotraidis.nightpad` (version 0.2.0, build 2). Builds before 0.2.0
+used the placeholder `local.nightpad.shell`, which installed as a separate
+app; its data was migrated and backed up, and it was removed from the owner's
+iPad on 2026-11-05. The installed copy is now the IPA PadMint built from the
+public v0.2.0 recipe, re-signed with the owner's team.
 Game data can be copied with `devicectl device copy to` into
 `Documents/NightPad Import` and imported by launching with
 `--import-app-folder`. The acceptance gates below remain open.
@@ -12,13 +15,14 @@ Game data can be copied with `devicectl device copy to` into
 
 1. An Apple ID added to Xcode (Settings > Accounts) with a development team.
 2. The device connected, unlocked and trusted, with Developer Mode enabled.
-3. A unique bundle identifier for installation, for example
-   `com.example.nightpad.shell`.
+3. A bundle identifier. The script defaults to `com.chrissotraidis.nightpad`,
+   which only the maintainer's team can sign; anyone else passes their own,
+   for example `com.yourname.nightpad`.
 
 ## One command
 
 ```sh
-scripts/device_handoff.sh --install --team=<TEAMID> --bundle=com.example.nightpad.shell
+scripts/device_handoff.sh --install --team=<TEAMID> --bundle=<your.bundle.id>
 ```
 
 Without `--install` the script only rebuilds the unsigned device shell, runs
