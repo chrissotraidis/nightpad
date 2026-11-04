@@ -109,6 +109,8 @@ You need:
 
 ### Build for iPhone/iPad with PadMint
 
+Use **PadMint 0.5.30 or newer**; older downloads do not include NightPad.
+
 1. Install CMake once: `brew install cmake`.
 2. Download [PadMint](https://github.com/chrissotraidis/padmint/releases/latest),
    unzip it and open `PadMint.command`.
@@ -129,8 +131,7 @@ executables or its `eurocom` and `driving` folders. The first build
 downloads the engine, SDL, FFmpeg and SPIRV-Cross sources; later builds reuse
 them.
 
-NightPad appears in PadMint once PadMint's catalog lists it. Until then,
-[Build from source](#build-from-source) runs the same recipe.
+The first build takes about 6 to 7 minutes on a recent Apple Silicon Mac.
 
 ### Build from source
 
@@ -341,6 +342,7 @@ in the Simulator or by automated tests.
 | Touch controls and an Xbox controller | Same iPad | Confirmed by the maintainer |
 | Level audio across missions and restarts | Same iPad | Confirmed by the maintainer |
 | 0.2.0 fixes: post-editor display, ⋯ menu audio hold, All Weapons and Unlock All in play, Nightfire default with RB weapon switching | Same iPad | Installed; awaiting the maintainer's play check |
+| The IPA PadMint builds from the public 0.2.0 recipe | Same iPad | Signed with the maintainer's team, installed over the existing app and launched; saves, layout and settings unchanged |
 | Paris tutorial, the Exchange, driving handoffs, local bot matches | iPhone and iPad Simulators (iOS 26.5 and 27) | Pass |
 | Repeated Start/Stop, action ↔ driving transitions, Stop during a movie | Simulator and Mac engine tests | Pass |
 | Complete campaign and earned mission saves | Not yet | Open |
@@ -357,9 +359,10 @@ Automated checks, all passing on 0.2.0:
   Mac, covering action and driving boot and lifecycle, pauses and pause
   clocks, Stop during a driving movie and at early points, cheats, secret
   unlocks, and engine transitions, handoffs and round trips.
-- **PadMint player check:** a fresh clone built the way a player's PadMint
-  builds it, with Apple's Python 3.9 and an empty PadMint folder, producing the
-  IPA and the game data folder from the disc image.
+- **PadMint player check:** built the way a player's PadMint builds it, with
+  Apple's Python 3.9 and an empty PadMint folder, from a fresh checkout before
+  tagging and from the public v0.2.0 release afterwards (369 seconds), producing
+  the IPA and the game data folder from the disc image.
 
 Eleven recorded action sessions replay unchanged over 208,364 frames. That is
 regression evidence, not a full campaign completion. The detailed record is in
