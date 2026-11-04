@@ -23,6 +23,16 @@ expected exactly three entries in the app bundle, so every
 now allows the executable, its plists, `Assets.car` and the AppIcon images,
 and rejects anything else (a stray `default.xbe` fails it).
 
+Released 2026-11-05: NightPad v0.2.0 (recipe and `SHA256SUMS` only, tag
+`947978f`, GPL-3.0-or-later for this repository) and PadMint 0.5.30 with the
+NightPad catalog entry. The post-publication player check built the public
+recipe in 369 s (IPA `618dd021…`). That IPA, re-signed with team
+`VKDH2T9UTF`, was installed over the existing app on the iPad Pro and
+launched; `BOND.dat`, its backup, the tablet layout, `settings.txt` and
+`settings.ini` hash identical before and after (backup in
+`~/.codex/worktrees/nightpad-device-backup-20261105`). Gameplay with this
+exact binary is the owner's next check.
+
 Since the 2026-10-29 wrap-up the app runs on the owner's physical iPad Pro
 12.9 (6th generation, iPadOS 27.0.1), signed with the owner's development
 team. Merged in PR #2: UIScene lifecycle (iPadOS 27 refused the old launch
