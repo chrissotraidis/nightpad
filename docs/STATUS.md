@@ -7,6 +7,16 @@ Updated: 2026-11-04
 Stability of the original build. Online play is researched and planned in
 [NETPLAY-PLAN.md](NETPLAY-PLAN.md) but deferred.
 
+Public preview preparation (0.2.0): the repository is public. `padmint.json`
+and `scripts/build-personal-ipa.sh` give PadMint one recipe that fetches and
+patches the pinned sources, checks and extracts the player's own disc image,
+and builds the unsigned device IPA; the prepared folder is left beside the IPA
+as `<output>.data`, which PadMint hands over as the NightPad game data folder.
+`prepare_game_data.py` now accepts an image anywhere (it still never writes to
+it and compares its hash before and after extraction). The README was
+rewritten for players, with the testing record, display notes, known issues and
+the refinement plan.
+
 Since the 2026-10-29 wrap-up the app runs on the owner's physical iPad Pro
 12.9 (6th generation, iPadOS 27.0.1), signed with the owner's development
 team. Merged in PR #2: UIScene lifecycle (iPadOS 27 refused the old launch
@@ -16,7 +26,7 @@ across engine handoffs and restarts (0040), audio held under the ⋯ menu
 Control Guide. The owner confirmed display, render resolution, controls and
 level audio on the device.
 
-On branch `codex/touch-system` (not yet merged):
+Merged in PR #3 (`codex/touch-system`):
 
 - Touch layout editor rebuilt around grouped items (A/B/X/Y, White/Black,
   Start/Back move, resize and hide together), a Size slider and one overlay
