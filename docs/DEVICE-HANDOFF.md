@@ -1,7 +1,12 @@
 # Device handoff
 
-Status: the build is ready; the machine has no signing identity and no
-connected device, so every physical acceptance gate is waiting on this handoff.
+Status: signed Release builds install and run on the owner's iPad Pro 12.9
+(iPadOS 27.0.1) with team `VKDH2T9UTF`. The shell's bundle identifier is still
+`local.nightpad.shell`; the signing build passes
+`PRODUCT_BUNDLE_IDENTIFIER=com.chrissotraidis.nightpad` for the provisioning
+profile. Game data can be copied with `devicectl device copy to` into
+`Documents/NightPad Import` and imported by launching with
+`--import-app-folder`. The acceptance gates below remain open.
 
 ## Prerequisites
 

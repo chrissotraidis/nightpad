@@ -7,6 +7,8 @@ tester would see, what is blocked, and where the detail lives.
 
 | Issue | Effect | Detail |
 | --- | --- | --- |
+| macOS-hosted engine tests cannot start on macOS 26.6.2 | Every Mac engine binary (including the unmodified standalone) fails in dyld before `main`: its fixed game window from `0x100000000` (about 2.3 GB of `__DATA`) overlaps where this macOS maps the shared library cache. iPhone/iPad builds are unaffected. `verify_engine.sh` and the engine steps of `verify_quick.sh` are blocked until the host changes or the Mac test build uses another window base | `docs/STATUS.md` |
+| The touch editor's post-save display fix needs device confirmation | The shrink was not reproduced in the simulator; patch 0043 and the shell's window re-alignment address the likeliest cause | `docs/UPSTREAM-DELTA.md` |
 | Display acceptance is incomplete | Safe-area aspect fitting and driving widescreen flag encoding are fixed. Phone/tablet titles, driving HUD and the tablet widescreen scope have simulator evidence; action scope/FOV combinations, the remaining matrix and device performance remain unverified | `docs/DECISIONS/0017-display-fit-and-flow-timing.md`, R18 |
 | Campaign completion/results save is not verified | Fresh codename, Paris and on-foot Exchange failure/replay work, but no mission/results save has been earned; failed attempts leave NPRUN byte-identical | `docs/TEST-MATRIX.md`, R09/R11 |
 | SDL spatial audio lacks HRTF and I3DL2 reverb | The current backend mixes dry 3D voices with distance/pan. Hardware listening, route changes and full audio fidelity remain unverified | `src/action/sound/sdlAudioAction.cpp`, R10 |

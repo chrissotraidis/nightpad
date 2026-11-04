@@ -496,9 +496,12 @@ static uint64_t ShellResidentBytes(void) {
 
 - (UIMenu *)buildMenu {
     __weak NightPadShellViewController *weakSelf = self;
-    const BOOL canStart = _engineRunning || ([NightPadEngineHost isLinked] && _state == DataState::Ready);
+    // While the previous session is still shutting down, Start would launch a
+    // second engine before the first has joined.
+    const BOOL canStart = _engineRunning ||
+        (!_engineTeardown && [NightPadEngineHost isLinked] && _state == DataState::Ready);
     NSString *startTitle = _stopWhenBooted ? @"Stopping After Load…"
-        : (_engineRunning ? @"Stop Game" : @"Start Game");
+        : (_engineRunning ? @"Stop Game" : (_engineTeardown ? @"Stopping…" : @"Start Game"));
     UIAction *start = [self menuAction:startTitle
                                  image:(_engineRunning ? @"stop.fill" : @"play.fill")
                               disabled:(!canStart || _stopWhenBooted)
@@ -1184,6 +1187,8 @@ static uint64_t ShellResidentBytes(void) {
         [self showInfo:@"Engine not linked" detail:@"Build the device shell to include the combined engine archive."];
         return;
     }
+    if (_engineTeardown)
+        return;
     if (_state != DataState::Ready || _identity.length == 0) {
         [self showInfo:@"Game data required" detail:@"Import a validated prepared game-data folder first."];
         return;
@@ -1346,6 +1351,8 @@ static uint64_t ShellResidentBytes(void) {
     [_engineHost requestStop];
     [self endNativeUI];
     [self removeTouchControls];
+    [self updatePrimaryButton];
+    [self refreshMenu];
     __weak NightPadShellViewController *weakSelf = self;
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         NightPadShellViewController *strongSelf = weakSelf;
@@ -1420,7 +1427,7 @@ static uint64_t ShellResidentBytes(void) {
     primary.baseBackgroundColor = [UIColor colorWithRed:0.20 green:0.45 blue:0.95 alpha:1];
     primary.baseForegroundColor = UIColor.whiteColor;
     _primaryButton.configuration = primary;
-    _primaryButton.enabled = !_engineRunning && !_importing;
+    _primaryButton.enabled = !_engineRunning && !_importing && !_engineTeardown;
 }
 
 - (void)primaryHomeAction {

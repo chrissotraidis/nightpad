@@ -32,6 +32,9 @@ NSString *ItemName(TouchControlId id) {
 
 }  // namespace
 
+@interface NightPadTouchLayoutViewController () <UIGestureRecognizerDelegate>
+@end
+
 @implementation NightPadTouchLayoutViewController {
     nightpad::TouchLayout _layout;
     NSURL *_savePath;
@@ -48,6 +51,8 @@ NSString *ItemName(TouchControlId id) {
     UILabel *_sizeValue;
     UISlider *_opacitySlider;
     UILabel *_opacityValue;
+    UIView *_inspector;
+    UIView *_bar;
 }
 
 - (instancetype)initWithLayout:(nightpad::TouchLayout)layout
@@ -88,7 +93,10 @@ NSString *ItemName(TouchControlId id) {
     _selection.lineDashPattern = @[ @6, @4 ];
 
     [_canvas addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)]];
-    [_canvas addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)]];
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
+    pan.maximumNumberOfTouches = 1;
+    pan.delegate = self;   // a drag starts only on a control
+    [_canvas addGestureRecognizer:pan];
     [_canvas addGestureRecognizer:[[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinch:)]];
 
     UIButton *cancel = [self barButton:@"Cancel" filled:NO action:@selector(cancel)];
@@ -108,9 +116,11 @@ NSString *ItemName(TouchControlId id) {
     bar.alignment = UIStackViewAlignmentCenter;
     bar.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:bar];
+    _bar = bar;
 
     UIView *inspector = [self buildInspector];
     [self.view addSubview:inspector];
+    _inspector = inspector;
 
     UILayoutGuide *safe = self.view.safeAreaLayoutGuide;
     [NSLayoutConstraint activateConstraints:@[
@@ -322,15 +332,23 @@ NSString *ItemName(TouchControlId id) {
         TouchControlId id;
         if ([self controlAt:[gesture locationInView:_canvas] id:&id])
             [self select:YES id:id];
-        else
-            gesture.state = UIGestureRecognizerStateFailed;
     }
+    // The panel and bar fade while dragging so a control can pass under them.
+    const BOOL dragging = gesture.state == UIGestureRecognizerStateBegan ||
+                          gesture.state == UIGestureRecognizerStateChanged;
+    _inspector.alpha = dragging ? 0.25 : 1.0;
+    _bar.alpha = dragging ? 0.25 : 1.0;
     if (!_hasSelection || size.width <= 0 || size.height <= 0)
         return;
     const CGPoint delta = [gesture translationInView:_canvas];
     [gesture setTranslation:CGPointZero inView:_canvas];
     _layout.MoveItem(_selected, delta.x / size.width, delta.y / size.height);
     [self updateControlFrames];
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gesture {
+    TouchControlId id;
+    return [self controlAt:[gesture locationInView:_canvas] id:&id];
 }
 
 - (void)pinch:(UIPinchGestureRecognizer *)gesture {

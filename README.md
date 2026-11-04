@@ -35,6 +35,7 @@ and the [test matrix](docs/TEST-MATRIX.md) for the verified boundary.
 
 Original Secret Unlocks and multiplayer rules remain in the game's own menus.
 Online/LAN play and external texture replacements are not delivered features.
+A deferred plan for online play is in [NETPLAY-PLAN](docs/NETPLAY-PLAN.md).
 
 ## Requirements
 

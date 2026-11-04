@@ -8,14 +8,34 @@
  
  static void ApplyAssists(void) {
      const unsigned wanted = NightPadActionAssistFlags;
-@@ -30,6 +31,10 @@
-         // stay unchanged, including both OFF. Reconcile both every frame.
+@@ -31,6 +32,30 @@
          CheatInfo.Immortal = (wanted & 1u) != 0;
          CheatInfo.UnlimitedAmmo = (wanted & 2u) != 0;
-+        // Bit 2: every weapon and full ammo, read when a mission starts (Player_InitAmmoWeapons).
-+        CheatInfo.AllWeapons = (wanted & 4u) != 0;
-+        // Bit 3: the original menus' unlock-everything switch; it is not written to a profile.
-+        menu_unlock_everything = (wanted & 8u) != 0 ? 1 : 0;
      }
++    // Bit 2: every weapon and full ammo, read when a mission starts (Player_InitAmmoWeapons). Bit 3: the original
++    // menus' unlock-everything switch. These are forced only while the app turns them on, and handed back to the
++    // game when it turns them off, so a profile's own All Weapons choice is never cleared.
++    static bool forcedWeapons, forcedUnlock;
++    static uint32_t savedWeapons;
++    static char savedUnlock;
++    const bool weapons = (wanted & 0x80000000u) && (wanted & 4u);
++    const bool unlock = (wanted & 0x80000000u) && (wanted & 8u);
++    if (weapons) {
++        if (!forcedWeapons)
++            savedWeapons = CheatInfo.AllWeapons;
++        CheatInfo.AllWeapons = 1;
++    } else if (forcedWeapons) {
++        CheatInfo.AllWeapons = savedWeapons;
++    }
++    if (unlock) {
++        if (!forcedUnlock)
++            savedUnlock = menu_unlock_everything;
++        menu_unlock_everything = 1;
++    } else if (forcedUnlock) {
++        menu_unlock_everything = savedUnlock;
++    }
++    forcedWeapons = weapons;
++    forcedUnlock = unlock;
  }
  
+ extern "C" unsigned long NightPadActionEngineFrameCount(void) {

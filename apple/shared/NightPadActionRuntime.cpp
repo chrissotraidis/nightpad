@@ -138,8 +138,8 @@ extern "C" void NightPadActionEngineSetAssistUnlimitedAmmo(int enabled) {
 }
 
 extern "C" unsigned NightPadActionEngineAppliedAssists(void) {
-    return (CheatInfo.Immortal != 0 ? 1u : 0u) | (CheatInfo.UnlimitedAmmo != 0 ? 2u : 0u) |
-           (CheatInfo.AllWeapons != 0 ? 4u : 0u);
+    // The two per-frame assists only; All Weapons can also come from a profile.
+    return (CheatInfo.Immortal != 0 ? 1u : 0u) | (CheatInfo.UnlimitedAmmo != 0 ? 2u : 0u);
 }
 
 static void SetAssistBit(unsigned bit, int enabled) {
