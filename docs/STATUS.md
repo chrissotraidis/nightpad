@@ -38,10 +38,18 @@ group drag from the diamond's middle, empty-canvas drag ignored, opacity
 saved and applied, Stop and menu Start again, audio thread present after
 restart.
 
-Not verified: the macOS-hosted engine tests (`verify_engine.sh`, master
-volume, audio sessions, launch bridge, assists) cannot start on this Mac's
-macOS 26.6.2; see known issues. All Weapons and Unlock All have not been seen
-in play. The post-editor display fix still needs the owner's device check.
+Later on 2026-11-04: patch 0044 brings the Apple image under the dyld shared
+cache, so the macOS engine suite runs again; it exposed two hand-over hangs
+introduced with 0040, fixed in 0045 (pending main-thread calls at window close,
+stale quit events, bounded blocking wait). `verify_engine.sh` (13 gates) and
+`verify_quick.sh` both pass; the assist test now covers All Weapons and Unlock
+All. Controls: new codenames start on the Nightfire scheme and RB/Black is next
+weapon (0046); touch sticks, D-pad and triggers keep the finger that started on
+them and sticks centre where the thumb lands. The app identifier is now
+`com.chrissotraidis.nightpad`, version 0.2.0 (2).
+
+Not verified: the post-editor display fix, All Weapons and Unlock All in
+play, a new codename's Nightfire scheme and RB weapon cycling, all on device.
 
 ## Outcome
 
