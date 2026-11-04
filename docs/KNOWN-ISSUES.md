@@ -1,7 +1,7 @@
 # Known issues
 
-Status: current for the private candidate. Each entry says what a player or
-tester would see, what is blocked, and where the detail lives.
+Status: current for 0.2.0, the first public preview. Each entry says what a
+player or tester would see, what is blocked, and where the detail lives.
 
 ## Open
 
@@ -11,7 +11,9 @@ tester would see, what is blocked, and where the detail lives.
 | Display acceptance is incomplete | Safe-area aspect fitting and driving widescreen flag encoding are fixed. Phone/tablet titles, driving HUD and the tablet widescreen scope have simulator evidence; action scope/FOV combinations, the remaining matrix and device performance remain unverified | `docs/DECISIONS/0017-display-fit-and-flow-timing.md`, R18 |
 | Campaign completion/results save is not verified | Fresh codename, Paris and on-foot Exchange failure/replay work, but no mission/results save has been earned; failed attempts leave NPRUN byte-identical | `docs/TEST-MATRIX.md`, R09/R11 |
 | SDL spatial audio lacks HRTF and I3DL2 reverb | The current backend mixes dry 3D voices with distance/pan. Hardware listening, route changes and full audio fidelity remain unverified | `src/action/sound/sdlAudioAction.cpp`, R10 |
-| No signing identity or device on this machine | Nothing physical has been installed; touch feel, controller rumble, campaign progression, performance and the final freeze are unverified | `docs/DEVICE-HANDOFF.md`, `docs/TEST-MATRIX.md` |
+| Physical coverage is one iPad | The signed app runs on an iPad Pro 12.9-inch (6th generation, iPadOS 27.0.1), where display, render resolution, touch and Xbox controller input and level audio are confirmed. iPhone hardware, rumble, four real controllers, campaign progression and sustained performance at 2-4x are unverified | `docs/DEVICE-HANDOFF.md`, `docs/TEST-MATRIX.md` |
+| Codenames made before 0.2.0 keep their saved control scheme | Usually Classic Bond, so RB still changes gadget until the player picks Nightfire in the game's Controller Setup | `docs/CONTROL-SCHEMES.md` |
+| Only one disc image has been played | The tested image is version 1 with the 30 fps (NTSC) movie set; PAL and other dumps should prepare but have not been played through NightPad | `docs/STATUS.md` |
 | The supplied image has only the 30 fps movie bundle | One action recording stops early on a movie the image lacks; NightPad writes `Region=NTSC` | `docs/STATUS.md`, G02 blocker |
 | All Weapons and Unlock All Content are not yet verified in play | Both set the game's own switches every frame (patch 0042); a mission start with All Weapons and the unlocked mission list still need a device check | `docs/CHEATS-RESEARCH.md`, R20 |
 | Texture overrides are not implemented | A `textures` folder does nothing | `docs/DECISIONS/0013-texture-overrides.md`, R21 |
