@@ -23,8 +23,16 @@ app="$work/Payload/NightPadShell.app"
 [ -d "$app" ] || { echo "check_package: no Payload/NightPadShell.app" >&2; exit 1; }
 [ -x "$app/NightPadShell" ] || { echo "check_package: no executable" >&2; exit 1; }
 
-entries=$(find "$app" -mindepth 1 -maxdepth 1 | wc -l | tr -d ' ')
-[ "$entries" = "3" ] || { echo "check_package: unexpected app contents ($entries entries)" >&2; ls -la "$app" >&2; exit 1; }
+# Only the executable, its plists and the compiled app icon belong here; game
+# data, frameworks or loose libraries must never be packaged.
+unexpected=$(find "$app" -mindepth 1 -maxdepth 1 | while read -r entry; do
+    case "$(basename "$entry")" in
+        (NightPadShell|Info.plist|PkgInfo|Assets.car|AppIcon*.png) ;;
+        (*) echo "$entry" ;;
+    esac
+done)
+[ -z "$unexpected" ] || { echo "check_package: unexpected app contents:" >&2; echo "$unexpected" >&2; exit 1; }
+[ -f "$app/Assets.car" ] || { echo "check_package: no compiled app icon (Assets.car)" >&2; exit 1; }
 
 arch=$(lipo -info "$app/NightPadShell")
 case "$arch" in
