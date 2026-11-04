@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "id": "nightpad",
+  "name": "NightPad",
+  "game": "007: Nightfire (Xbox)",
+  "kind": "upstream-engine",
+  "status": "experimental",
+  "inputs": [
+    {
+      "type": "xbox-disc",
+      "formats": [
+        "iso",
+        "xiso"
+      ],
+      "when": "build",
+      "verified_sha256": [
+        "8a0dc0e713f44e48b00054ca021fb027571e6f7877b8225cc5ae275af2435ebe"
+      ],
+      "description": "Your own original Xbox 007: Nightfire disc image (.iso or .xiso). PC, GameCube and PlayStation 2 versions do not work. PadMint only reads the image: it checks and extracts it into the NightPad game data folder that you import in the app."
+    }
+  ],
+  "targets": {
+    "ios": {
+      "hosts": {
+        "macos-arm64": "experimental"
+      },
+      "output": "ipa",
+      "check": "ipa",
+      "steps": [
+        {
+          "stage": "compile",
+          "command": [
+            "{repo}/scripts/build-personal-ipa.sh",
+            "{disc}",
+            "{output}",
+            "{work}"
+          ],
+          "env": {
+            "NIGHTPAD_PYTHON": "{python}"
+          }
+        }
+      ]
+    }
+  },
+  "requirements": {
+    "disk_gb": 12,
+    "tools": [
+      {
+        "name": "git",
+        "version_args": [
+          "--version"
+        ]
+      },
+      {
+        "name": "python3",
+        "version_args": [
+          "--version"
+        ],
+        "min_version": "3.9"
+      },
+      {
+        "name": "cmake",
+        "version_args": [
+          "--version"
+        ],
+        "min_version": "3.22",
+        "player": true,
+        "note": "Install CMake: brew install cmake"
+      },
+      {
+        "name": "xcodebuild",
+        "version_args": [
+          "-version"
+        ],
+        "player": true,
+        "note": "Install full Xcode and its iOS platform (Command Line Tools alone are not enough)."
+      }
+    ]
+  },
+  "publication": {
+    "public_binaries": false,
+    "reason": "The app is compiled from a reconstructed engine with no published license, and the game data comes from the player's own disc. Releases publish the recipe and source only."
+  }
+}

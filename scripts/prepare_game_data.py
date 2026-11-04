@@ -140,9 +140,6 @@ def main():
     args = parser.parse_args()
 
     iso = args.iso.resolve()
-    allowed_roots = [(repo / "ref").resolve(), (repo / "REF").resolve()]
-    if not any(iso == root or root in iso.parents for root in allowed_roots):
-        fail("ISO must be inside the project's ref/ or REF/ directory")
     if not iso.is_file():
         fail("ISO not found: %s" % iso)
     if not args.extractor.is_file():
