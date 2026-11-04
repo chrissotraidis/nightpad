@@ -397,6 +397,8 @@ ControlStyle StyleForControl(TouchControlId id) {
     NSMutableArray<NightPadOverlayControlView *> *_controlViews;
     NSMutableSet<UITouch *> *_activeTouches;
     NSMutableDictionary<NSValue *, NSNumber *> *_touchOrder;  // begin order, newest wins
+    NSMutableDictionary<NSValue *, NSNumber *> *_touchControl;   // layout index the finger landed on
+    NSMutableDictionary<NSValue *, NSValue *> *_touchOrigin;     // where it landed, normalized
     int _nextTouchOrder;
     UIImpactFeedbackGenerator *_feedback;
     BOOL _hidden;
@@ -409,6 +411,8 @@ ControlStyle StyleForControl(TouchControlId id) {
         _controlViews = [NSMutableArray array];
         _activeTouches = [NSMutableSet set];
         _touchOrder = [NSMutableDictionary dictionary];
+        _touchControl = [NSMutableDictionary dictionary];
+        _touchOrigin = [NSMutableDictionary dictionary];
         _feedback = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight];
         _layout = nightpad::TouchLayout::Defaults(nightpad::TouchDeviceClass::Phone);
         _controlOpacity = 0.7;
@@ -536,39 +540,71 @@ ControlStyle StyleForControl(TouchControlId id) {
     return nullptr;
 }
 
+- (nightpad::TouchPoint)touchPointFor:(UITouch *)touch canvas:(CGRect)canvas {
+    const CGPoint p = [touch locationInView:self];
+    NSValue *key = [NSValue valueWithNonretainedObject:touch];
+    NSNumber *order = _touchOrder[key];
+    NSNumber *control = _touchControl[key];
+    nightpad::TouchPoint point;
+    point.id = order != nil ? order.intValue : 0;
+    point.x = static_cast<float>((p.x - CGRectGetMinX(canvas)) / canvas.size.width);
+    point.y = static_cast<float>((p.y - CGRectGetMinY(canvas)) / canvas.size.height);
+    point.control = control != nil ? control.intValue : -1;
+    NSValue *origin = _touchOrigin[key];
+    if (origin != nil) {
+        point.originX = static_cast<float>(origin.CGPointValue.x);
+        point.originY = static_cast<float>(origin.CGPointValue.y);
+    }
+    return point;
+}
+
 - (nightpad::PadState)currentPad {
     std::vector<nightpad::TouchPoint> points;
     points.reserve(_activeTouches.count);
     const CGRect canvas = [self canvasRect];
     if (canvas.size.width <= 0 || canvas.size.height <= 0)
         return nightpad::TouchPadState(_resolvedLayout, nullptr, 0);
-    for (UITouch *touch in _activeTouches) {
-        const CGPoint p = [touch locationInView:self];
-        NSNumber *order = _touchOrder[[NSValue valueWithNonretainedObject:touch]];
-        points.push_back({order != nil ? order.intValue : 0,
-                          static_cast<float>((p.x - CGRectGetMinX(canvas)) / canvas.size.width),
-                          static_cast<float>((p.y - CGRectGetMinY(canvas)) / canvas.size.height)});
-    }
+    for (UITouch *touch in _activeTouches)
+        points.push_back([self touchPointFor:touch canvas:canvas]);
     return nightpad::TouchPadState(_resolvedLayout, points.data(), points.size());
 }
 
+// The view drawing a layout control, by layout index (hidden controls have none).
+- (NightPadOverlayControlView *)viewForLayoutIndex:(int)index {
+    if (index < 0 || static_cast<std::size_t>(index) >= _resolvedLayout.controls.size() ||
+        !_resolvedLayout.controls[index].visible)
+        return nil;
+    NSUInteger visible = 0;
+    for (int c = 0; c < index; ++c)
+        if (_resolvedLayout.controls[c].visible)
+            ++visible;
+    return visible < _controlViews.count ? _controlViews[visible] : nil;
+}
+
 - (void)refreshVisuals {
-    NSMutableDictionary<NSNumber *, NSValue *> *latest = [NSMutableDictionary dictionary];
-
-    for (UITouch *touch in _activeTouches) {
-        const CGPoint point = [touch locationInView:self];
-        NSUInteger index = 0;
-        if ([self controlAtPoint:point index:&index] == nullptr)
-            continue;
-        NSNumber *key = @(index);
-        latest[key] = [NSValue valueWithCGPoint:point];
+    NSMapTable<NightPadOverlayControlView *, NSValue *> *latest = [NSMapTable strongToStrongObjectsMapTable];
+    const CGRect canvas = [self canvasRect];
+    if (canvas.size.width > 0 && canvas.size.height > 0) {
+        for (UITouch *touch in _activeTouches) {
+            const nightpad::TouchPoint point = [self touchPointFor:touch canvas:canvas];
+            const int owner = nightpad::TouchOwnerFor(_resolvedLayout, point);
+            NightPadOverlayControlView *view = [self viewForLayoutIndex:owner];
+            if (view == nil)
+                continue;
+            CGPoint drawn = [view convertPoint:[touch locationInView:self] fromView:self];
+            const auto id = _resolvedLayout.controls[owner].id;
+            if ((id == TouchControlId::LeftStick || id == TouchControlId::RightStick) && point.originX >= 0) {
+                // The thumb is drawn from the stick's centre by the same offset the input uses.
+                const CGFloat dx = (point.x - point.originX) * canvas.size.width;
+                const CGFloat dy = (point.y - point.originY) * canvas.size.height;
+                drawn = CGPointMake(CGRectGetMidX(view.bounds) + dx, CGRectGetMidY(view.bounds) + dy);
+            }
+            [latest setObject:[NSValue valueWithCGPoint:drawn] forKey:view];
+        }
     }
-
-    for (NSUInteger i = 0; i < _controlViews.count; ++i) {
-        NightPadOverlayControlView *view = _controlViews[i];
-        NSNumber *key = @(i);
-        NSValue *value = latest[key];
-        const CGPoint point = value != nil ? [view convertPoint:value.CGPointValue fromView:self]
+    for (NightPadOverlayControlView *view in _controlViews) {
+        NSValue *value = [latest objectForKey:view];
+        const CGPoint point = value != nil ? value.CGPointValue
                                            : CGPointMake(CGRectGetMidX(view.bounds), CGRectGetMidY(view.bounds));
         [view setTouchPoint:point offset:CGPointZero active:value != nil];
     }
@@ -576,15 +612,28 @@ ControlStyle StyleForControl(TouchControlId id) {
 
 - (void)noteTouches:(NSSet<UITouch *> *)touches active:(BOOL)active {
     if (active) {
+        const CGRect canvas = [self canvasRect];
         for (UITouch *touch in touches) {
             NSValue *key = [NSValue valueWithNonretainedObject:touch];
-            if (_touchOrder[key] == nil)
+            if (_touchOrder[key] == nil) {
                 _touchOrder[key] = @(++_nextTouchOrder);
+                if (canvas.size.width > 0 && canvas.size.height > 0) {
+                    const CGPoint p = [touch locationInView:self];
+                    const float nx = static_cast<float>((p.x - CGRectGetMinX(canvas)) / canvas.size.width);
+                    const float ny = static_cast<float>((p.y - CGRectGetMinY(canvas)) / canvas.size.height);
+                    _touchControl[key] = @(nightpad::TouchControlAt(_resolvedLayout, nx, ny));
+                    _touchOrigin[key] = [NSValue valueWithCGPoint:CGPointMake(nx, ny)];
+                }
+            }
         }
         [_activeTouches unionSet:touches];
     } else {
-        for (UITouch *touch in touches)
-            [_touchOrder removeObjectForKey:[NSValue valueWithNonretainedObject:touch]];
+        for (UITouch *touch in touches) {
+            NSValue *key = [NSValue valueWithNonretainedObject:touch];
+            [_touchOrder removeObjectForKey:key];
+            [_touchControl removeObjectForKey:key];
+            [_touchOrigin removeObjectForKey:key];
+        }
         [_activeTouches minusSet:touches];
     }
     [_feedback prepare];
@@ -619,6 +668,8 @@ ControlStyle StyleForControl(TouchControlId id) {
         return;
     [_activeTouches removeAllObjects];
     [_touchOrder removeAllObjects];
+    [_touchControl removeAllObjects];
+    [_touchOrigin removeAllObjects];
     [self refreshVisuals];
     if (self.touchStateChanged)
         self.touchStateChanged();

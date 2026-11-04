@@ -111,10 +111,10 @@ static UIColor *BadgeColour(NSString *control) {
         initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done)];
 
     UILabel *intro = [UILabel new];
-    intro.text = @"NightPad sends Xbox controls, so the game's eight control schemes and its inversion, "
-                 @"aim and crouch preferences stay in charge. A physical controller uses the same mapping as "
-                 @"the touch layout. The game's Controller Setup offers Nightfire, Moonraker, Octopussy, "
-                 @"Goldfinger, Dr. No, Thunderball, GoldenEye and Classic Bond.";
+    intro.text = @"On foot below is the Nightfire scheme, which new codenames now start on. A codename made "
+                 @"earlier keeps its own scheme: choose Nightfire under Options, Controller Setup. On a modern "
+                 @"controller LB is White and RB is Black, so the bumper beside the right trigger changes weapon. "
+                 @"Touch and controller send the same buttons, and the game's other schemes still apply if chosen.";
     intro.numberOfLines = 0;
     intro.adjustsFontForContentSizeCategory = YES;
     intro.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
@@ -133,9 +133,11 @@ static UIColor *BadgeColour(NSString *control) {
         @[ @"Y", @"Jump" ],
         @[ @"A", @"Crouch" ],
         @[ @"X", @"Reload / context action" ],
+        @[ @"Black", @"Next weapon" ],
+        @[ @"B", @"Next weapon" ],
         @[ @"White", @"Alternate fire" ],
-        @[ @"Black", @"Next gadget" ],
-        @[ @"D-pad", @"Weapon and gadget selection" ],
+        @[ @"D-pad left / right", @"Previous / next weapon" ],
+        @[ @"D-pad up / down", @"Next / previous gadget; zoom while scoped" ],
         @[ @"Back", @"Night vision" ],
         @[ @"Start", @"Original game pause" ],
     ]]];

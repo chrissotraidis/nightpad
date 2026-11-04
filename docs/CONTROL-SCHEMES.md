@@ -12,6 +12,12 @@ block, which fills 19 action channels per scheme. The scheme names come from
 
 ## Baseline: Nightfire
 
+NightPad changes two things about this scheme (patch 0046): new codenames
+start on it (the original defaulted to Classic Bond), and RB (Black) changes
+weapon instead of gadget, so the bumper beside the right trigger switches
+weapons as on a modern pad. Gadgets stay on the D-pad. Existing codenames keep
+their saved scheme until it is changed in the game's Controller Setup.
+
 | Input | Action |
 | --- | --- |
 | Left stick | Move |
@@ -20,9 +26,9 @@ block, which fills 19 action channels per scheme. The scheme names come from
 | Y / A | Jump / crouch |
 | X | Reload |
 | LB | Alternate fire |
-| D-pad right or B | Next weapon |
+| D-pad right, B or RB | Next weapon |
 | D-pad left | Previous weapon |
-| D-pad up or RB | Next gadget |
+| D-pad up | Next gadget |
 | D-pad down | Previous gadget |
 | D-pad up / down | Zoom in / out |
 | Back | Night vision |

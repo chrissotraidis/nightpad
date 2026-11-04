@@ -98,6 +98,7 @@ extern "C" void NightPadActionEngineCloseWindow(void) {
 extern "C" void NightPadActionEngineRequestStop(void) {
     printf("[lifecycle] action stop requested\n");
     fflush(stdout);
+    VoiceMixer_SetOutputPaused(false);   // see NightPadDrivingEngineRequestStop
     EngineLifecycle_RequestStop();
     HostWindow_RequestQuit();
 }

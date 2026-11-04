@@ -1,0 +1,52 @@
+--- a/src/driving/platform/HostWindowSdl.cpp
++++ b/src/driving/platform/HostWindowSdl.cpp
+@@ -46,6 +46,10 @@
+         fflush(stdout);
+         return false;
+     }
++    // The events queue outlives a session now (the audio keeps SDL's events subsystem). A quit left by the previous
++    // session's stop (a hand-off and a stop request can each post one) would end this session's window at once.
++    SDL_FlushEvent(SDL_EVENT_QUIT);
++    SDL_FlushEvent(SDL_EVENT_WINDOW_CLOSE_REQUESTED);
+ #if defined(__APPLE__)
+     // SDL's Metal driver makes a Metal view of the window when it claims it. A window with no graphics flags would be
+     // made for OpenGL on macOS: the context is said to be external instead, so that none is loaded.
+@@ -90,14 +94,17 @@
+ }
+ 
+ void HostWindow_Run(void) {
++    // A bounded wait, so calls the game thread hands to this thread (SDL_RunOnMainThread: presents, the window
++    // claim) run even when no event arrives. SDL's events subsystem now outlives a session (the audio is kept), and
++    // a later session's claim could otherwise wait behind an indefinite SDL_WaitEvent.
+     SDL_Event event;
+-    while (SDL_WaitEvent(&event)) {
++    for (;;) {
++        if (!SDL_WaitEventTimeout(&event, 10))
++            continue;
+         if (event.type == SDL_EVENT_QUIT || event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)
+             return;
+         HostInputSdl_Event(&event);
+     }
+-    printf("[sdl] waiting for events failed: %s\n", SDL_GetError());
+-    fflush(stdout);
+ }
+ 
+ bool HostWindow_Poll(void) {
+@@ -120,9 +127,17 @@
+ 
+ void HostWindow_Close(void) {
+     if (Window != NULL) {
++        // A game thread still shutting down may be waiting for this thread to present a frame. Run those calls
++        // before and after the window goes (with no window a present does nothing): SDL cancels waiting calls only
++        // when its events subsystem quits, and the audio kept below keeps that subsystem alive.
++        SDL_PumpEvents();
+         GfxHost_ReleaseGpuWindow(Window);
+         SDL_DestroyWindow(Window);
+         Window = NULL;
++        for (int i = 0; i < 10; ++i) {
++            SDL_PumpEvents();
++            SDL_Delay(2);
++        }
+     }
+     // Release only what HostWindow_Open initialized. SDL_Quit() would zero every reference count, so the next
+     // session's SDL_Init would restart the audio subsystem and close the voice mixer's device, which is opened once

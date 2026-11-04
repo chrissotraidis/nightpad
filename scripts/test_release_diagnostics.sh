@@ -20,7 +20,7 @@ fi
 app="$repo/build/ios-shell-simulator/Release-iphonesimulator/NightPadShell.app"
 
 cleanup() {
-    xcrun simctl terminate "$device" local.nightpad.shell >/dev/null 2>&1 || true
+    xcrun simctl terminate "$device" com.chrissotraidis.nightpad >/dev/null 2>&1 || true
     xcrun simctl shutdown "$device" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT INT TERM
@@ -28,10 +28,10 @@ trap cleanup EXIT INT TERM
 xcrun simctl boot "$device" >/dev/null 2>&1 || true
 xcrun simctl bootstatus "$device" -b >/dev/null 2>&1
 xcrun simctl install "$device" "$app"
-xcrun simctl launch "$device" local.nightpad.shell --open-diagnostics >/dev/null
+xcrun simctl launch "$device" com.chrissotraidis.nightpad --open-diagnostics >/dev/null
 sleep 4
 
-container=$(xcrun simctl get_app_container "$device" local.nightpad.shell data)
+container=$(xcrun simctl get_app_container "$device" com.chrissotraidis.nightpad data)
 report=$(ls -t "$container"/Library/Logs/NightPad/*.txt | head -1)
 if ! grep -q 'build_configuration=performance/release' "$report"; then
     echo "release diagnostics: report does not identify a performance build" >&2

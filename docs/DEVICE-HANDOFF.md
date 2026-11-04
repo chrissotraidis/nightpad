@@ -1,10 +1,10 @@
 # Device handoff
 
 Status: signed Release builds install and run on the owner's iPad Pro 12.9
-(iPadOS 27.0.1) with team `VKDH2T9UTF`. The shell's bundle identifier is still
-`local.nightpad.shell`; the signing build passes
-`PRODUCT_BUNDLE_IDENTIFIER=com.chrissotraidis.nightpad` for the provisioning
-profile. Game data can be copied with `devicectl device copy to` into
+(iPadOS 27.0.1) with team `VKDH2T9UTF`. The app identifier is
+`com.chrissotraidis.nightpad` (version 0.2.0, build 2); builds before it used
+the placeholder `local.nightpad.shell`, which installs as a separate app.
+Game data can be copied with `devicectl device copy to` into
 `Documents/NightPad Import` and imported by launching with
 `--import-app-folder`. The acceptance gates below remain open.
 

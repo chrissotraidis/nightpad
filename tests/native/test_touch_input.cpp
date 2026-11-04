@@ -121,6 +121,45 @@ int main() {
               (five.buttons & nightpad::kX) && five.leftTrigger > 240,
           "five simultaneous touches");
 
+    // Capture: a thumb that started on a stick keeps it past the stick's edge.
+    auto index = [&](const TouchLayout &layout, TouchControlId id) {
+        for (std::size_t c = 0; c < layout.controls.size(); ++c)
+            if (layout.controls[c].id == id)
+                return static_cast<int>(c);
+        return -1;
+    };
+    const auto &left = Control(phone, TouchControlId::LeftStick);
+    TouchPoint drifted{1, left.x + left.width * 1.6f, left.y + left.height * 0.5f,
+                       index(phone, TouchControlId::LeftStick)};
+    PadState held = With(phone, { drifted });
+    Check(held.leftX > 32000, "a captured stick keeps full deflection outside its edge");
+    TouchPoint uncaptured = drifted;
+    uncaptured.control = -1;
+    Check(With(phone, { uncaptured }).leftX == 0, "without capture the same point is outside the stick");
+
+    // Floating centre: landing off-centre is neutral; movement is measured from the landing point.
+    TouchPoint landed = At(phone, TouchControlId::RightStick, 0.85f, 0.5f);
+    landed.control = index(phone, TouchControlId::RightStick);
+    landed.originX = landed.x;
+    landed.originY = landed.y;
+    Check(With(phone, { landed }).rightX == 0, "a stick is neutral where the thumb lands");
+    TouchPoint moved = landed;
+    moved.x -= Control(phone, TouchControlId::RightStick).width * 0.5f;
+    Check(With(phone, { moved }).rightX < -32000, "deflection is measured from the landing point");
+
+    // A finger that began on a button cannot take a stick over by sliding onto it.
+    TouchPoint slid = At(phone, TouchControlId::LeftStick, 0.9f, 0.5f);
+    slid.control = index(phone, TouchControlId::A);
+    Check(With(phone, { slid }).leftX == 0, "a slide from a button does not move the stick");
+
+    // A captured trigger pulled past its bottom edge stays at full travel.
+    TouchPoint pulled = At(phone, TouchControlId::RightTrigger, 0.5f, 3.0f);
+    pulled.control = index(phone, TouchControlId::RightTrigger);
+    Check(With(phone, { pulled }).rightTrigger == 255, "captured trigger saturates past its edge");
+    Check(nightpad::TouchControlAt(phone, left.x + left.width * 0.5f, left.y + left.height * 0.5f) ==
+              index(phone, TouchControlId::LeftStick),
+          "control lookup by point");
+
     std::cout << (failures == 0 ? "touch input: PASS" : "touch input: FAIL") << "\n";
     return failures == 0 ? 0 : 1;
 }

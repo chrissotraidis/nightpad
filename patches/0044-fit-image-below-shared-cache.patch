@@ -1,0 +1,21 @@
+--- a/src/driving/platform/HostPosix.cpp
++++ b/src/driving/platform/HostPosix.cpp
+@@ -834,12 +834,14 @@
+ // image holds the reservations instead, as a zero-fill section, whose pages cost nothing until they are used.
+ // Contiguous memory goes below 256 MB of the window (KernelImports.cpp), where the image and so this section lie too.
+ // The section's part below that serves it, a 64 KB granule at a time, inaccessible while free; the rest serves the
+-// reservations: 1 GB for the heap arena and 1 GB more for the thread stacks a process can start across repeated
+-// engine launches. Given back, the low part would take the system's libraries: the window's frameworks loaded there,
+-// among the game's own memory.
++// reservations: 1 GB for the heap arena and 384 MB more for the thread stacks a process can start across repeated
++// engine launches (released stacks are reused, so a session needs a few dozen). Given back, the low part would take
++// the system's libraries: the window's frameworks loaded there, among the game's own memory. The whole image must end
++// below the dyld shared cache at 0x1'8000'0000; a 2 GB reservation ran into it and the process died before main.
+ const uintptr_t kContiguousEnd = 0x10000000;
+ const size_t kGranule = 0x10000;
+-alignas(0x4000) static char ImageReserve[(size_t(2) << 30) + kContiguousEnd];
++const size_t kStacksReserve = size_t(384) << 20;
++alignas(0x4000) static char ImageReserve[(size_t(1) << 30) + kStacksReserve + kContiguousEnd];
+ static char *ImageReserveStart;
+ static size_t ImageReserveUsed;
+ static uintptr_t LowPagesStart, LowPagesEnd;

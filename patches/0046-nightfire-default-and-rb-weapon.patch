@@ -1,0 +1,36 @@
+--- a/src/action/engine/psiInput.cpp
++++ b/src/action/engine/psiInput.cpp
+@@ -540,9 +540,11 @@
+                     playerInputs[i].fChannels[ACTION_FIRE] = (psiInput_GetButtons(controllerIdx) & XBOXINPUT_GAMEPAD_RIGHT_TRIGGER ? 1.0f : 0.0f);
+                     playerInputs[i].fChannels[ACTION_RELOAD] = (psiInput_GetButtons(controllerIdx) & XBOXINPUT_GAMEPAD_X ? 1.0f : 0.0f);
+                     playerInputs[i].fChannels[ACTION_ALTFIRE] = (psiInput_GetButtons(controllerIdx) & XBOXINPUT_GAMEPAD_LEFT_SHOULDER ? 1.0f : 0.0f);
+-                    playerInputs[i].fChannels[ACTION_WEAPON_NEXT] = (psiInput_GetButtons(controllerIdx) & (XINPUT_GAMEPAD_DPAD_RIGHT | XBOXINPUT_GAMEPAD_B) ? 1.0f : 0.0f);
++                    // NightPad: the right shoulder (Black) changes weapon, beside the trigger as on a modern pad;
++                    // gadgets stay on the D-pad. The original put the next gadget on Black.
++                    playerInputs[i].fChannels[ACTION_WEAPON_NEXT] = (psiInput_GetButtons(controllerIdx) & (XINPUT_GAMEPAD_DPAD_RIGHT | XBOXINPUT_GAMEPAD_B | XBOXINPUT_GAMEPAD_RIGHT_SHOULDER) ? 1.0f : 0.0f);
+                     playerInputs[i].fChannels[ACTION_WEAPON_PREV] = (psiInput_GetButtons(controllerIdx) & XINPUT_GAMEPAD_DPAD_LEFT ? 1.0f : 0.0f);
+-                    playerInputs[i].fChannels[ACTION_GADGET_NEXT] = (psiInput_GetButtons(controllerIdx) & (XINPUT_GAMEPAD_DPAD_UP | XBOXINPUT_GAMEPAD_RIGHT_SHOULDER) ? 1.0f : 0.0f);
++                    playerInputs[i].fChannels[ACTION_GADGET_NEXT] = (psiInput_GetButtons(controllerIdx) & XINPUT_GAMEPAD_DPAD_UP ? 1.0f : 0.0f);
+                     playerInputs[i].fChannels[ACTION_GADGET_PREV] = (psiInput_GetButtons(controllerIdx) & XINPUT_GAMEPAD_DPAD_DOWN ? 1.0f : 0.0f);
+                     playerInputs[i].fChannels[ACTION_NIGHTVISION] = (psiInput_GetButtons(controllerIdx) & XINPUT_GAMEPAD_BACK ? 1.0f : 0.0f);
+                     break;
+--- a/src/action/ui/Menu.cpp
++++ b/src/action/ui/Menu.cpp
+@@ -138,7 +138,7 @@
+         .musicVolume = 75,
+         .sfxVolume = 100,
+         .mpRadar = 1,
+-        .controlStyle = 7,
++        .controlStyle = 0,   // NightPad: new codenames start on the Nightfire scheme (the original used Classic Bond, 7)
+         .autoAim = 1,
+         .crouchToggle = 1,
+         .vibrationEnabled = 1,
+@@ -153,7 +153,7 @@
+         .musicVolume = 75,
+         .sfxVolume = 100,
+         .mpRadar = 1,
+-        .controlStyle = 7,
++        .controlStyle = 0,   // NightPad: new codenames start on the Nightfire scheme (the original used Classic Bond, 7)
+         .autoAim = 1,
+         .crouchToggle = 1,
+         .vibrationEnabled = 1,

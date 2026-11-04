@@ -14,7 +14,20 @@ namespace nightpad {
 struct TouchPoint {
     int id = 0;
     float x = 0, y = 0;
+    // The layout index of the control this finger started on, or -1. A finger
+    // that starts on a stick, the D-pad or a trigger keeps driving it wherever it
+    // moves, so a thumb that drifts past the edge does not drop movement or aim.
+    int control = -1;
+    // Where the finger landed (normalized). Sticks measure deflection from here,
+    // so landing off-centre does not jerk the stick; -1 uses the stick's centre.
+    float originX = -1, originY = -1;
 };
+
+// The layout index of the visible control under a point, or -1.
+int TouchControlAt(const TouchLayout &layout, float x, float y);
+// The layout index of the control a finger drives under the capture rules
+// above (for drawing it pressed), or -1.
+int TouchOwnerFor(const TouchLayout &layout, const TouchPoint &point);
 
 // Turns every live finger into the Xbox pad the authored layout describes:
 // sticks use the offset from their centre (Y up positive), the D-pad is

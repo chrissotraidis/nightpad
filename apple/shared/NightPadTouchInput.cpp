@@ -41,13 +41,21 @@ int16_t AxisFrom(float value) {
     return static_cast<int16_t>(std::lround(clamped * 32767.0f));
 }
 
+bool CapturesFinger(TouchControlId id) {
+    return id == TouchControlId::LeftStick || id == TouchControlId::RightStick || id == TouchControlId::Dpad ||
+           id == TouchControlId::LeftTrigger || id == TouchControlId::RightTrigger;
+}
+
 void ApplyStick(const TouchControl &control, const TouchPoint &point, int16_t *x, int16_t *y) {
     if (control.width <= 0 || control.height <= 0)
         return;
     const float halfWidth = control.width * 0.5f;
     const float halfHeight = control.height * 0.5f;
-    float dx = (point.x - (control.x + halfWidth)) / halfWidth;
-    float dy = (point.y - (control.y + halfHeight)) / halfHeight;
+    const bool floating = point.originX >= 0 && point.originY >= 0;
+    const float cx = floating ? point.originX : control.x + halfWidth;
+    const float cy = floating ? point.originY : control.y + halfHeight;
+    float dx = (point.x - cx) / halfWidth;
+    float dy = (point.y - cy) / halfHeight;
     const float length = std::hypot(dx, dy);
     if (length > 1.0f) {
         dx /= length;
@@ -75,12 +83,36 @@ uint16_t ApplyDpad(const TouchControl &control, const TouchPoint &point) {
 uint8_t ApplyTrigger(const TouchControl &control, const TouchPoint &point) {
     if (control.height <= 0)
         return 0;
-    const float depth = (point.y - control.y) / control.height;
+    const float depth = std::clamp((point.y - control.y) / control.height, 0.0f, 1.0f);
     const float ramp = std::clamp((depth - kTriggerRampStart) / (1.0f - kTriggerRampStart), 0.0f, 1.0f);
     return static_cast<uint8_t>(std::lround(kTriggerTouchFloor + ramp * (255.0f - kTriggerTouchFloor)));
 }
 
 }  // namespace
+
+int TouchControlAt(const TouchLayout &layout, float x, float y) {
+    const TouchPoint point{0, x, y};
+    for (std::size_t c = 0; c < layout.controls.size(); ++c)
+        if (layout.controls[c].visible && Contains(layout.controls[c], point))
+            return static_cast<int>(c);
+    return -1;
+}
+
+int TouchOwnerFor(const TouchLayout &layout, const TouchPoint &point) {
+    const int held = point.control;
+    if (held >= 0 && static_cast<std::size_t>(held) < layout.controls.size() && layout.controls[held].visible &&
+        CapturesFinger(layout.controls[held].id))
+        return held;
+    for (std::size_t c = 0; c < layout.controls.size(); ++c) {
+        const TouchControl &control = layout.controls[c];
+        if (!control.visible || !Contains(control, point))
+            continue;
+        if (CapturesFinger(control.id) && point.control != static_cast<int>(c) && point.control != -1)
+            continue;
+        return static_cast<int>(c);
+    }
+    return -1;
+}
 
 PadState TouchPadState(const TouchLayout &layout, const TouchPoint *points, std::size_t count) {
     PadState pad;
@@ -92,9 +124,21 @@ PadState TouchPadState(const TouchLayout &layout, const TouchPoint *points, std:
     // sees when a thumb slides back on without lifting cleanly.
     std::vector<const TouchPoint *> owner(layout.controls.size(), nullptr);
     for (std::size_t i = 0; i < count; ++i) {
+        const int held = points[i].control;
+        if (held >= 0 && static_cast<std::size_t>(held) < layout.controls.size() &&
+            layout.controls[held].visible && CapturesFinger(layout.controls[held].id)) {
+            // A captured finger belongs to its control only.
+            if (owner[held] == nullptr || points[i].id >= owner[held]->id)
+                owner[held] = &points[i];
+            continue;
+        }
         for (std::size_t c = 0; c < layout.controls.size(); ++c) {
             const TouchControl &control = layout.controls[c];
             if (!control.visible || !Contains(control, points[i]))
+                continue;
+            // A finger that did not start on a stick or trigger cannot take it
+            // over by sliding onto it; buttons still respond to a slide.
+            if (CapturesFinger(control.id) && points[i].control != static_cast<int>(c) && points[i].control != -1)
                 continue;
             if (owner[c] == nullptr || points[i].id >= owner[c]->id)
                 owner[c] = &points[i];

@@ -82,7 +82,7 @@ booted at a time** for this project's test runs. After booting it:
 ```sh
 xcrun simctl list devices booted
 xcrun simctl install <SIMULATOR_UDID> build/ios-shell-simulator/Debug-iphonesimulator/NightPadShell.app
-xcrun simctl launch <SIMULATOR_UDID> local.nightpad.shell
+xcrun simctl launch <SIMULATOR_UDID> com.chrissotraidis.nightpad
 ```
 
 Import the prepared folder through the app before starting the game.
@@ -135,10 +135,14 @@ Cancel leaves it alone; Reset restores the device default when you Save.
 Existing custom layouts are kept, and grouped buttons are evened out to one
 size when they load.
 
-The overlay forwards Xbox inputs; the original selected control scheme still
-sets their meaning. Under the original Nightfire scheme, A crouches, Y jumps,
-X reloads/interacts, B changes weapons, Black changes gadgets, Back controls
-vision, and LT/RT retain the original aim/fire behavior. Driving has its own
+The overlay forwards Xbox inputs; the selected control scheme sets their
+meaning. New codenames start on the Nightfire scheme: A crouches, Y jumps,
+X reloads/interacts, B or Black (RB, beside the right trigger) changes weapon,
+the D-pad cycles weapons left/right and gadgets up/down, Back controls vision,
+and LT/RT aim and fire. Older codenames keep their saved scheme until it is
+changed in the game's Controller Setup. A finger that starts on a stick, the
+D-pad or a trigger keeps it even if it slides past the edge, and sticks centre
+on where the thumb lands. Driving has its own
 original bindings. See the in-app **Control Guide**, [control schemes](docs/CONTROL-SCHEMES.md),
 and [driving controls](docs/DRIVING-CONTROLS.md).
 
@@ -197,7 +201,7 @@ also passes host tests and both iOS shell build lanes. This is simulator and
 build verification; earned mission-save/relaunch and physical play remain
 unverified.
 
-The current engine patch stack reproduces 43 patches across 85 files. Native
+The current engine patch stack reproduces 46 patches across 87 files. Native
 lifecycle, save durability, input, and focused simulator checks have passed on
 their recorded scopes. Eleven unchanged action recordings cover 208,364
 frames on an earlier recorded candidate; they are not a continuous campaign
