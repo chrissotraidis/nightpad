@@ -17,6 +17,12 @@ it and compares its hash before and after extraction). The README was
 rewritten for players, with the testing record, display notes, known issues and
 the refinement plan.
 
+The first player check found a real packaging bug: `check_package.sh` still
+expected exactly three entries in the app bundle, so every
+`package_device_app.sh` run had failed since the app icon was added. The check
+now allows the executable, its plists, `Assets.car` and the AppIcon images,
+and rejects anything else (a stray `default.xbe` fails it).
+
 Since the 2026-10-29 wrap-up the app runs on the owner's physical iPad Pro
 12.9 (6th generation, iPadOS 27.0.1), signed with the owner's development
 team. Merged in PR #2: UIScene lifecycle (iPadOS 27 refused the old launch
