@@ -1,5 +1,10 @@
 # Private candidate manifest (draft)
 
+> **Historical.** This draft predates the public 0.2.0 preview (2026-11-05) and
+> its device statements are out of date: the app is signed and played on an
+> iPad Pro. For the current state see [STATUS](STATUS.md), the README's
+> testing status and [KNOWN-ISSUES](KNOWN-ISSUES.md).
+
 Status: **draft, not accepted**. This is the handoff document R30 asks for,
 filled with what is verified today. Device gates are open, so it must be
 refreshed at freeze time.
