@@ -8,7 +8,7 @@ repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 install=0
 team=""
 device=""
-bundle="local.nightpad.shell"
+bundle="com.chrissotraidis.nightpad"
 for arg in "$@"; do
     case "$arg" in
         --install) install=1 ;;

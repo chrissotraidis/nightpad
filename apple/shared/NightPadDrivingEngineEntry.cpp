@@ -4,6 +4,7 @@
 #include "../../vendor/nightfire/src/common/launchInfo.h"
 #include "../../vendor/nightfire/src/common/engineLifecycle.h"
 #include "../../vendor/nightfire/src/driving/platform/HostWindow.h"
+#include "../../vendor/nightfire/src/common/sound/voiceMixer.h"
 #include "NightPadEngineBridge.h"
 
 static NightPadLaunchRequestCallback g_launchRequestCallback = nullptr;
@@ -24,6 +25,9 @@ extern "C" unsigned NightPadDrivingEngineThread(void *unused) {
 }
 
 extern "C" void NightPadDrivingEngineRequestStop(void) {
+    // Shutdown drains the sound and movie streams; a held output would never
+    // consume them, so a stop under the native menu could not finish.
+    VoiceMixer_SetOutputPaused(false);
     EngineLifecycle_RequestStop();
     HostWindow_RequestQuit();
 }

@@ -25,6 +25,12 @@ struct AppSettings {
     // Optional assists, off by default and never part of acceptance runs.
     bool assistImmortal = false;
     bool assistUnlimitedAmmo = false;
+    // Every weapon and full ammo from the next mission start; all missions,
+    // difficulties and multiplayer content in the original menus.
+    bool assistAllWeapons = false;
+    bool assistUnlockAll = false;
+    // One opacity for the whole touch overlay, in percent (20-100).
+    int touchOpacity = 70;
 
     bool Load(const std::filesystem::path &path, std::string *error);
     bool Save(const std::filesystem::path &path, std::string *error) const;

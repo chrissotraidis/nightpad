@@ -1,6 +1,55 @@
 # NightPad status
 
-Updated: 2026-10-29 11:16 UTC
+Updated: 2026-11-04
+
+## Current focus (2026-11-04)
+
+Stability of the original build. Online play is researched and planned in
+[NETPLAY-PLAN.md](NETPLAY-PLAN.md) but deferred.
+
+Since the 2026-10-29 wrap-up the app runs on the owner's physical iPad Pro
+12.9 (6th generation, iPadOS 27.0.1), signed with the owner's development
+team. Merged in PR #2: UIScene lifecycle (iPadOS 27 refused the old launch
+path), native-resolution borderless game window (patch 0039), audio kept
+across engine handoffs and restarts (0040), audio held under the ⋯ menu
+(0041), the blue icon and themed launcher, the import panel layout and the
+Control Guide. The owner confirmed display, render resolution, controls and
+level audio on the device.
+
+On branch `codex/touch-system` (not yet merged):
+
+- Touch layout editor rebuilt around grouped items (A/B/X/Y, White/Black,
+  Start/Back move, resize and hide together), a Size slider and one overlay
+  opacity. The owner's iPad arrangement is the tablet default.
+- The game window is locked to landscape (0043) and re-aligned when native
+  UI closes, the likely cause of the picture shrinking after the editor.
+- Cheats menu with All Weapons and Unlock All Content (0042). Both are forced
+  only while on and hand the game's own value back when turned off, so a
+  profile's All Weapons is preserved.
+- About screen redone with the repository and issue links.
+- Start is blocked while a stopped session is still shutting down; it could
+  otherwise start a second engine before the first joined.
+
+Verified on this pass: host tests (input, touch layout and input, policies,
+settings, presentation, contrast, data import and tools, diagnostics, saves
+link, engine save, FMV audio), patch reconstruction, privacy, both iOS lanes
+and the link check. iPadOS 27 simulator smoke: launcher, Start, ⋯ open/close,
+group drag from the diamond's middle, empty-canvas drag ignored, opacity
+saved and applied, Stop and menu Start again, audio thread present after
+restart.
+
+Later on 2026-11-04: patch 0044 brings the Apple image under the dyld shared
+cache, so the macOS engine suite runs again; it exposed two hand-over hangs
+introduced with 0040, fixed in 0045 (pending main-thread calls at window close,
+stale quit events, bounded blocking wait). `verify_engine.sh` (13 gates) and
+`verify_quick.sh` both pass; the assist test now covers All Weapons and Unlock
+All. Controls: new codenames start on the Nightfire scheme and RB/Black is next
+weapon (0046); touch sticks, D-pad and triggers keep the finger that started on
+them and sticks centre where the thumb lands. The app identifier is now
+`com.chrissotraidis.nightpad`, version 0.2.0 (2).
+
+Not verified: the post-editor display fix, All Weapons and Unlock All in
+play, a new codename's Nightfire scheme and RB weapon cycling, all on device.
 
 ## Outcome
 

@@ -385,6 +385,7 @@ static uint64_t ShellResidentBytes(void) {
     if (!_gameplayMode || self.view.window == nil) return;
     self.view.window.windowLevel = UIWindowLevelNormal + 2;
     [self.view.window makeKeyAndVisible];
+    [self alignGameWindow];
 }
 
 - (void)appWillResignActive:(NSNotification *)note {
@@ -495,9 +496,12 @@ static uint64_t ShellResidentBytes(void) {
 
 - (UIMenu *)buildMenu {
     __weak NightPadShellViewController *weakSelf = self;
-    const BOOL canStart = _engineRunning || ([NightPadEngineHost isLinked] && _state == DataState::Ready);
+    // While the previous session is still shutting down, Start would launch a
+    // second engine before the first has joined.
+    const BOOL canStart = _engineRunning ||
+        (!_engineTeardown && [NightPadEngineHost isLinked] && _state == DataState::Ready);
     NSString *startTitle = _stopWhenBooted ? @"Stopping After Load…"
-        : (_engineRunning ? @"Stop Game" : @"Start Game");
+        : (_engineRunning ? @"Stop Game" : (_engineTeardown ? @"Stopping…" : @"Start Game"));
     UIAction *start = [self menuAction:startTitle
                                  image:(_engineRunning ? @"stop.fill" : @"play.fill")
                               disabled:(!canStart || _stopWhenBooted)
@@ -616,17 +620,26 @@ static uint64_t ShellResidentBytes(void) {
         image:[UIImage systemImageNamed:@"speaker.wave.2"] identifier:@"nightpad.menu.audio"
         options:0 children:@[masterVolume]];
 
+    // The game's own cheat switches, applied by the action engine every frame.
     UIAction *immortal = [self menuAction:@"Immortality" image:@"heart.fill" disabled:NO
-                                  handler:^{ [weakSelf toggleImmortal]; }];
+                                  handler:^{ [weakSelf toggleCheat:0]; }];
     immortal.state = _settings.assistImmortal ? UIMenuElementStateOn : UIMenuElementStateOff;
     UIAction *ammo = [self menuAction:@"Unlimited Ammo" image:@"infinity" disabled:NO
-                               handler:^{ [weakSelf toggleUnlimitedAmmo]; }];
+                               handler:^{ [weakSelf toggleCheat:1]; }];
     ammo.state = _settings.assistUnlimitedAmmo ? UIMenuElementStateOn : UIMenuElementStateOff;
-    UIMenu *assists = [UIMenu menuWithTitle:@"Enhancements"
-                                      image:[UIImage systemImageNamed:@"shield.lefthalf.filled"]
-                                 identifier:nil
+    UIAction *weapons = [self menuAction:@"All Weapons" image:@"scope" disabled:NO
+                                  handler:^{ [weakSelf toggleCheat:2]; }];
+    weapons.subtitle = @"Every weapon and gadget from the next mission start";
+    weapons.state = _settings.assistAllWeapons ? UIMenuElementStateOn : UIMenuElementStateOff;
+    UIAction *unlock = [self menuAction:@"Unlock All Content" image:@"lock.open.fill" disabled:NO
+                                 handler:^{ [weakSelf toggleCheat:3]; }];
+    unlock.subtitle = @"Missions, difficulties and multiplayer; saves are unchanged";
+    unlock.state = _settings.assistUnlockAll ? UIMenuElementStateOn : UIMenuElementStateOff;
+    UIMenu *assists = [UIMenu menuWithTitle:@"Cheats"
+                                      image:[UIImage systemImageNamed:@"wand.and.stars"]
+                                 identifier:@"nightpad.menu.cheats"
                                     options:0
-                                   children:@[ immortal, ammo ]];
+                                   children:@[ immortal, ammo, weapons, unlock ]];
 
     UIAction *data = [self menuAction:@"Data & Save Status…" image:@"internaldrive" disabled:NO
                                handler:^{ [weakSelf openDataPanel]; }];
@@ -941,12 +954,19 @@ static uint64_t ShellResidentBytes(void) {
     nightpad::TouchLayout layout = [self loadTouchLayout];
     NSURL *url = [self touchLayoutURL];
     NightPadTouchLayoutViewController *editor = [[NightPadTouchLayoutViewController alloc]
-        initWithLayout:layout savePath:url];
+        initWithLayout:layout savePath:url opacityPercent:_settings.touchOpacity];
     __weak NightPadShellViewController *weakSelf = self;
+    __weak NightPadTouchLayoutViewController *weakEditor = editor;
     editor.onClose = ^{
         NightPadShellViewController *strongSelf = weakSelf;
         if (strongSelf == nil)
             return;
+        NightPadTouchLayoutViewController *closed = weakEditor;
+        if (closed.saved && closed.opacityPercent != strongSelf->_settings.touchOpacity) {
+            strongSelf->_settings.touchOpacity = closed.opacityPercent;
+            [strongSelf saveSettings];
+        }
+        strongSelf->_touchControls.controlOpacity = strongSelf->_settings.touchOpacity / 100.0;
         if (strongSelf->_touchControls != nil)
             [strongSelf->_touchControls setTouchLayout:[strongSelf loadTouchLayout]];
         [strongSelf endNativeUI];
@@ -972,6 +992,7 @@ static uint64_t ShellResidentBytes(void) {
         return;
     _touchControls = [[NightPadTouchControlsView alloc] initWithFrame:self.view.bounds];
     _touchControls.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _touchControls.controlOpacity = _settings.touchOpacity / 100.0;
     [_touchControls setTouchLayout:[self loadTouchLayout]];
     [self.view insertSubview:_touchControls belowSubview:_menuButton];
     _gameInput = [[NightPadGameInput alloc] initWithEngineHost:_engineHost touchView:_touchControls];
@@ -1069,11 +1090,23 @@ static uint64_t ShellResidentBytes(void) {
         [self showInfo:@"Display change queued" detail:@"Widescreen applies at the next Start."];
 }
 
-- (void)toggleImmortal {
-    _settings.assistImmortal = !_settings.assistImmortal;
-    [_engineHost setImmortal:_settings.assistImmortal];
+// 0 immortality, 1 unlimited ammo, 2 all weapons, 3 unlock all content.
+- (void)toggleCheat:(int)cheat {
+    bool *flags[] = { &_settings.assistImmortal, &_settings.assistUnlimitedAmmo,
+                      &_settings.assistAllWeapons, &_settings.assistUnlockAll };
+    if (cheat < 0 || cheat > 3)
+        return;
+    *flags[cheat] = !*flags[cheat];
+    [self applyCheats];
     [self saveSettings];
     [self refreshMenu];
+}
+
+- (void)applyCheats {
+    [_engineHost setImmortal:_settings.assistImmortal];
+    [_engineHost setUnlimitedAmmo:_settings.assistUnlimitedAmmo];
+    [_engineHost setAllWeapons:_settings.assistAllWeapons];
+    [_engineHost setUnlockAll:_settings.assistUnlockAll];
 }
 
 - (void)setFov:(int)fov {
@@ -1086,13 +1119,6 @@ static uint64_t ShellResidentBytes(void) {
         [self showInfo:@"Display change queued" detail:@"Field of view applies at the next Start."];
 }
 
-- (void)toggleUnlimitedAmmo {
-    _settings.assistUnlimitedAmmo = !_settings.assistUnlimitedAmmo;
-    [_engineHost setUnlimitedAmmo:_settings.assistUnlimitedAmmo];
-    [self saveSettings];
-    [self refreshMenu];
-}
-
 - (void)beginNativeUI {
     _nativeSurfaceVisible = YES;
     [self reconcileNativeUI];
@@ -1101,6 +1127,30 @@ static uint64_t ShellResidentBytes(void) {
 - (void)endNativeUI {
     _nativeSurfaceVisible = NO;
     [self reconcileNativeUI];
+    [self alignGameWindow];
+}
+
+// The engine's SDL window is a second UIWindow under the shell. iPadOS can lay
+// it out for another orientation while a full-screen native screen covers it,
+// leaving the game drawn into a portrait-sized corner. Keep it on the shell's
+// frame whenever native UI closes or the shell lays out.
+- (void)alignGameWindow {
+    UIWindow *shell = self.view.window;
+    if (!_gameplayMode || shell == nil)
+        return;
+    for (UIWindow *window in shell.windowScene.windows) {
+        if (window == shell || ![NSStringFromClass([window.rootViewController class]) hasPrefix:@"SDL"])
+            continue;
+        if (!CGRectEqualToRect(window.frame, shell.frame)) {
+            window.frame = shell.frame;
+            [window.rootViewController.view setNeedsLayout];
+        }
+    }
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    [self alignGameWindow];
 }
 
 - (void)reconcileNativeUI {
@@ -1137,6 +1187,8 @@ static uint64_t ShellResidentBytes(void) {
         [self showInfo:@"Engine not linked" detail:@"Build the device shell to include the combined engine archive."];
         return;
     }
+    if (_engineTeardown)
+        return;
     if (_state != DataState::Ready || _identity.length == 0) {
         [self showInfo:@"Game data required" detail:@"Import a validated prepared game-data folder first."];
         return;
@@ -1154,8 +1206,7 @@ static uint64_t ShellResidentBytes(void) {
         [self showError:error.length ? error : @"The engine could not start."];
         return;
     }
-    [_engineHost setImmortal:_settings.assistImmortal];
-    [_engineHost setUnlimitedAmmo:_settings.assistUnlimitedAmmo];
+    [self applyCheats];
     [self closePanels];
     [self endNativeUI];
     _stopWhenBooted = NO;
@@ -1261,8 +1312,7 @@ static uint64_t ShellResidentBytes(void) {
                                                ? @"engine switched to driving"
                                                : @"engine switched to action")];
                 if (startSelf->_engineHost.activeEngine == NightPadEngineKindAction) {
-                    [startSelf->_engineHost setImmortal:startSelf->_settings.assistImmortal];
-                    [startSelf->_engineHost setUnlimitedAmmo:startSelf->_settings.assistUnlimitedAmmo];
+                    [startSelf applyCheats];
                 }
                 startSelf->_switchingEngine = NO;
                 startSelf->_engineTeardown = NO;
@@ -1301,6 +1351,8 @@ static uint64_t ShellResidentBytes(void) {
     [_engineHost requestStop];
     [self endNativeUI];
     [self removeTouchControls];
+    [self updatePrimaryButton];
+    [self refreshMenu];
     __weak NightPadShellViewController *weakSelf = self;
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         NightPadShellViewController *strongSelf = weakSelf;
@@ -1375,7 +1427,7 @@ static uint64_t ShellResidentBytes(void) {
     primary.baseBackgroundColor = [UIColor colorWithRed:0.20 green:0.45 blue:0.95 alpha:1];
     primary.baseForegroundColor = UIColor.whiteColor;
     _primaryButton.configuration = primary;
-    _primaryButton.enabled = !_engineRunning && !_importing;
+    _primaryButton.enabled = !_engineRunning && !_importing && !_engineTeardown;
 }
 
 - (void)primaryHomeAction {
@@ -1688,9 +1740,11 @@ static uint64_t ShellResidentBytes(void) {
     context.displayOptions = [[NSString stringWithFormat:@"aa=%@ widescreen=%@",
                                         _settings.antiAliasing ? @"on" : @"off",
                                         _settings.widescreen ? @"on" : @"off"] UTF8String];
-    context.assists = [[NSString stringWithFormat:@"immortality=%@ unlimited_ammo=%@",
+    context.assists = [[NSString stringWithFormat:@"immortality=%@ unlimited_ammo=%@ all_weapons=%@ unlock_all=%@",
                                                  _settings.assistImmortal ? @"on" : @"off",
-                                                 _settings.assistUnlimitedAmmo ? @"on" : @"off"] UTF8String];
+                                                 _settings.assistUnlimitedAmmo ? @"on" : @"off",
+                                                 _settings.assistAllWeapons ? @"on" : @"off",
+                                                 _settings.assistUnlockAll ? @"on" : @"off"] UTF8String];
     context.home = NSHomeDirectory().UTF8String ?: "";
     context.paths = _paths;
     context.threadCount = ShellThreadCount();

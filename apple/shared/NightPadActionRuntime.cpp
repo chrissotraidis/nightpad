@@ -98,6 +98,7 @@ extern "C" void NightPadActionEngineCloseWindow(void) {
 extern "C" void NightPadActionEngineRequestStop(void) {
     printf("[lifecycle] action stop requested\n");
     fflush(stdout);
+    VoiceMixer_SetOutputPaused(false);   // see NightPadDrivingEngineRequestStop
     EngineLifecycle_RequestStop();
     HostWindow_RequestQuit();
 }
@@ -138,7 +139,24 @@ extern "C" void NightPadActionEngineSetAssistUnlimitedAmmo(int enabled) {
 }
 
 extern "C" unsigned NightPadActionEngineAppliedAssists(void) {
+    // The two per-frame assists only; All Weapons can also come from a profile.
     return (CheatInfo.Immortal != 0 ? 1u : 0u) | (CheatInfo.UnlimitedAmmo != 0 ? 2u : 0u);
+}
+
+static void SetAssistBit(unsigned bit, int enabled) {
+    NightPadActionAssistFlags |= 0x80000000u;
+    if (enabled)
+        NightPadActionAssistFlags |= bit;
+    else
+        NightPadActionAssistFlags &= ~bit;
+}
+
+extern "C" void NightPadActionEngineSetAssistAllWeapons(int enabled) {
+    SetAssistBit(4u, enabled);
+}
+
+extern "C" void NightPadActionEngineSetAssistUnlockAll(int enabled) {
+    SetAssistBit(8u, enabled);
 }
 
 extern "C" int NightPadActionEngineAudioPaused(void) {

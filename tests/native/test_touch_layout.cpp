@@ -166,6 +166,79 @@ int main() {
               "loaded rows clamped");
 
     fs::remove_all(home, ec);
+
+    // Grouped editing: the face diamond, White/Black and Start/Back move and
+    // resize as one item; their members share one size and keep their shape.
+    {
+        using nightpad::SameTouchItem;
+        Check(SameTouchItem(TouchControlId::A, TouchControlId::Y) &&
+                  SameTouchItem(TouchControlId::White, TouchControlId::Black) &&
+                  SameTouchItem(TouchControlId::Start, TouchControlId::Back) &&
+                  !SameTouchItem(TouchControlId::A, TouchControlId::White) &&
+                  !SameTouchItem(TouchControlId::LeftStick, TouchControlId::RightStick),
+              "control groups");
+        TouchLayout edit = TouchLayout::Defaults(TouchDeviceClass::Tablet);
+        auto find = [&](TouchControlId id) -> const nightpad::TouchControl & {
+            for (const auto &control : edit.controls)
+                if (control.id == id)
+                    return control;
+            return edit.controls[0];
+        };
+        const float ax = find(TouchControlId::A).x, yx = find(TouchControlId::Y).x;
+        const float stickX = find(TouchControlId::LeftStick).x;
+        edit.MoveItem(TouchControlId::B, -0.1f, -0.05f);
+        Check(std::fabs(find(TouchControlId::A).x - (ax - 0.1f)) < 1e-5f &&
+                  std::fabs(find(TouchControlId::Y).x - (yx - 0.1f)) < 1e-5f &&
+                  find(TouchControlId::LeftStick).x == stickX,
+              "moving one face button moves the whole diamond only");
+        edit.MoveItem(TouchControlId::A, 5.0f, 5.0f);
+        Check(find(TouchControlId::B).x + find(TouchControlId::B).width <= 1.0001f &&
+                  find(TouchControlId::A).y + find(TouchControlId::A).height <= 1.0001f,
+              "a group stays inside the canvas");
+
+        // An uneven diamond (the owner's enlarged Y) becomes even when resized.
+        TouchLayout uneven = TouchLayout::Defaults(TouchDeviceClass::Tablet);
+        for (auto &control : uneven.controls)
+            if (control.id == TouchControlId::Y)
+                control.width *= 1.3f, control.height *= 1.3f;
+        uneven.ScaleItem(TouchControlId::X, 1.5f, 1350, 964);
+        float w = -1;
+        bool equal = true;
+        for (const auto &control : uneven.controls) {
+            if (nightpad::TouchGroupFor(control.id) != nightpad::TouchGroup::Face)
+                continue;
+            if (w < 0) w = control.width;
+            equal = equal && std::fabs(control.width - w) < 1e-5f;
+        }
+        Check(equal, "face buttons share one size after a resize");
+        Check(uneven.ItemScale(TouchControlId::A) > 1.5f, "resize grows the diamond");
+        uneven.ScaleItem(TouchControlId::A, 0.01f, 1350, 964);
+        for (const auto &control : uneven.controls)
+            if (nightpad::TouchGroupFor(control.id) == nightpad::TouchGroup::Face)
+                Check(control.width * 1350 >= 43.9f && control.height * 964 >= 43.9f,
+                      "a shrunken group keeps the 44-point minimum");
+        uneven.SetItemVisible(TouchControlId::Black, false);
+        Check(!uneven.ItemVisible(TouchControlId::White), "hiding one shoulder hides the pair");
+
+        // The owner's saved iPad file, with one face button larger than the rest.
+        const fs::path saved = fs::temp_directory_path() / ("nightpad-owner-layout-" + std::to_string(::getpid()));
+        {
+            std::ofstream out(saved);
+            out << "NightPadTouchLayout 3\ndevice tablet\n"
+                   "a 0.897807 0.850662 0.0409956 0.0583333 0.7 1\n"
+                   "b 0.933513 0.799607 0.0409956 0.0583333 0.7 1\n"
+                   "x 0.86099 0.795947 0.0409956 0.0583333 0.7 1\n"
+                   "y 0.895387 0.732382 0.0510273 0.0726076 0.7 1\n";
+        }
+        TouchLayout owner;
+        std::string loadError;
+        Check(owner.Load(saved, &loadError), "owner layout loads");
+        bool same = true;
+        for (const auto &control : owner.controls)
+            same = same && std::fabs(control.width - owner.controls[0].width) < 1e-6f;
+        Check(same, "loading evens out a group's sizes");
+        fs::remove(saved, ec);
+    }
     std::cout << (failures == 0 ? "touch layout: PASS" : "touch layout: FAIL") << "\n";
     return failures == 0 ? 0 : 1;
 }

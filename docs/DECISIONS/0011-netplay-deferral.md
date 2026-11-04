@@ -43,3 +43,7 @@ impairment and disconnect work open.
   enough to make rollback practical.
 
 Until then, multiplayer work stays on local modes, bots and ports.
+
+Update 2026-11-04: the owner asked for an exploration and then put it on hold
+in favour of stability. The research and a phased input-lockstep plan are in
+[NETPLAY-PLAN.md](../NETPLAY-PLAN.md). This decision's result is unchanged.

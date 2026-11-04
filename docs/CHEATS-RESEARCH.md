@@ -1,6 +1,6 @@
 # Cheat and modification research
 
-Status: **two assists implemented**. Immortality and unlimited ammo are app
+Status: **four cheats implemented**. Immortality, unlimited ammo, all weapons and unlock all content are app
 toggles, off by default and excluded from core acceptance runs. Everything else
 in the table below remains research.
 
