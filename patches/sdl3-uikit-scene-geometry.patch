@@ -1,0 +1,403 @@
+diff --git a/src/video/uikit/SDL_uikitappdelegate.m b/src/video/uikit/SDL_uikitappdelegate.m
+index 2bc65e2..5861887 100644
+--- a/src/video/uikit/SDL_uikitappdelegate.m
++++ b/src/video/uikit/SDL_uikitappdelegate.m
+@@ -339,6 +339,9 @@ static UIImage *SDL_LoadLaunchImageNamed(NSString *name, int screenh)
+ @end // SDLLaunchScreenController
+ 
+ 
++// Set once the application scene has started the application's main function.
++static bool scene_main_started;
++
+ API_AVAILABLE(ios(13.0))
+ @implementation SDLUIKitSceneDelegate
+ {
+@@ -360,6 +363,30 @@ API_AVAILABLE(ios(13.0))
+     UIWindowScene *windowScene = (UIWindowScene *)scene;
+     windowScene.delegate = self;
+ 
++#ifndef SDL_PLATFORM_VISIONOS
++    /* The application runs in the first application scene. Any other scene, such
++     * as an external display's, must not show a launch screen or start the
++     * application a second time. */
++    if (![session.role isEqualToString:UIWindowSceneSessionRoleApplication]) {
++        return;
++    }
++    UIWindowScene *owner = UIKit_GetOwningWindowScene();
++    if (owner && owner != windowScene) {
++        return;
++    }
++    UIKit_SetOwningWindowScene(windowScene);
++    if (scene_main_started) {
++#ifndef SDL_PLATFORM_TVOS
++        if (!owner) {
++            // A replacement for a disconnected owning scene adopts SDL's windows.
++            UIKit_AdoptOwningScene(windowScene);
++        }
++#endif
++        return;
++    }
++    scene_main_started = true;
++#endif
++
+     NSBundle *bundle = [NSBundle mainBundle];
+ 
+ #ifdef SDL_IPHONE_LAUNCHSCREEN
+@@ -428,24 +455,52 @@ API_AVAILABLE(ios(13.0))
+ 
+ - (void)sceneDidBecomeActive:(UIScene *)scene
+ {
+-    SDL_OnApplicationDidEnterForeground();
++    if (UIKit_IsOwningScene(scene)) {
++        SDL_OnApplicationDidEnterForeground();
++    }
+ }
+ 
+ - (void)sceneWillResignActive:(UIScene *)scene
+ {
+-    SDL_OnApplicationWillEnterBackground();
++    if (UIKit_IsOwningScene(scene)) {
++        SDL_OnApplicationWillEnterBackground();
++    }
+ }
+ 
+ - (void)sceneWillEnterForeground:(UIScene *)scene
+ {
+-    SDL_OnApplicationWillEnterForeground();
++    if (UIKit_IsOwningScene(scene)) {
++        SDL_OnApplicationWillEnterForeground();
++    }
+ }
+ 
+ - (void)sceneDidEnterBackground:(UIScene *)scene
+ {
+-    SDL_OnApplicationDidEnterBackground();
++    if (UIKit_IsOwningScene(scene)) {
++        SDL_OnApplicationDidEnterBackground();
++    }
+ }
+ 
++- (void)sceneDidDisconnect:(UIScene *)scene
++{
++    UIKit_OwningSceneDidDisconnect(scene);
++}
++
++#if !defined(SDL_PLATFORM_TVOS) && !defined(SDL_PLATFORM_VISIONOS)
++- (void)windowScene:(UIWindowScene *)windowScene didUpdateCoordinateSpace:(id<UICoordinateSpace>)previousCoordinateSpace interfaceOrientation:(UIInterfaceOrientation)previousInterfaceOrientation traitCollection:(UITraitCollection *)previousTraitCollection
++{
++    if (@available(iOS 26.0, *)) {
++        return; // windowScene:didUpdateEffectiveGeometry: reports the change
++    }
++    UIKit_OnWindowSceneGeometryChanged(windowScene);
++}
++
++- (void)windowScene:(UIWindowScene *)windowScene didUpdateEffectiveGeometry:(UIWindowSceneGeometry *)previousEffectiveGeometry API_AVAILABLE(ios(26.0))
++{
++    UIKit_OnWindowSceneGeometryChanged(windowScene);
++}
++#endif
++
+ - (void)handleURL:(NSURL *)url
+ {
+     const char *sourceApplicationCString = NULL;
+@@ -505,7 +560,15 @@ API_AVAILABLE(ios(13.0))
+ {
+     // This doesn't appear to be called, but it needs to be implemented to signal that we support the UIScene life cycle
+     UISceneConfiguration *config = [[UISceneConfiguration alloc] initWithName:@"SDLSceneConfiguration" sessionRole:connectingSceneSession.role];
++#ifndef SDL_PLATFORM_VISIONOS
++    /* Claim only application scenes. An external display's scene without an SDL
++     * window keeps the system default (mirroring or an extended display). */
++    if ([connectingSceneSession.role isEqualToString:UIWindowSceneSessionRoleApplication]) {
++        config.delegateClass = [SDLUIKitSceneDelegate class];
++    }
++#else
+     config.delegateClass = [SDLUIKitSceneDelegate class];
++#endif
+     return config;
+ }
+ 
+diff --git a/src/video/uikit/SDL_uikitmodes.m b/src/video/uikit/SDL_uikitmodes.m
+index b7cb52e..349dc00 100644
+--- a/src/video/uikit/SDL_uikitmodes.m
++++ b/src/video/uikit/SDL_uikitmodes.m
+@@ -330,7 +330,7 @@ bool UIKit_IsDisplayLandscape(UIScreen *uiscreen)
+ {
+ #ifndef SDL_PLATFORM_TVOS
+     if (uiscreen == [UIScreen mainScreen]) {
+-        return UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation);
++        return UIInterfaceOrientationIsLandscape(UIKit_GetInterfaceOrientation());
+     } else
+ #endif // !SDL_PLATFORM_TVOS
+     {
+@@ -484,7 +484,8 @@ void UIKit_QuitModes(SDL_VideoDevice *_this)
+ #if !defined(SDL_PLATFORM_TVOS) && !defined(SDL_PLATFORM_VISIONOS)
+ void SDL_OnApplicationDidChangeStatusBarOrientation(void)
+ {
+-    BOOL isLandscape = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation);
++    UIInterfaceOrientation interfaceOrientation = UIKit_GetInterfaceOrientation();
++    BOOL isLandscape = UIInterfaceOrientationIsLandscape(interfaceOrientation);
+     SDL_VideoDisplay *display = SDL_GetVideoDisplay(SDL_GetPrimaryDisplay());
+ 
+     if (display) {
+@@ -518,7 +519,7 @@ void SDL_OnApplicationDidChangeStatusBarOrientation(void)
+             }
+         }
+ 
+-        switch ([UIApplication sharedApplication].statusBarOrientation) {
++        switch (interfaceOrientation) {
+         case UIInterfaceOrientationPortrait:
+             orientation = SDL_ORIENTATION_PORTRAIT;
+             break;
+diff --git a/src/video/uikit/SDL_uikitvideo.h b/src/video/uikit/SDL_uikitvideo.h
+index 3db7f9b..17d7eae 100644
+--- a/src/video/uikit/SDL_uikitvideo.h
++++ b/src/video/uikit/SDL_uikitvideo.h
+@@ -42,6 +42,15 @@ extern CGRect UIKit_ComputeViewFrame(SDL_Window *window, UIScreen *screen);
+ #endif
+ 
+ extern API_AVAILABLE(ios(13.0)) UIWindowScene *UIKit_GetActiveWindowScene(void);
++extern API_AVAILABLE(ios(13.0)) UIWindowScene *UIKit_GetOwningWindowScene(void);
++extern API_AVAILABLE(ios(13.0)) void UIKit_SetOwningWindowScene(UIWindowScene *scene);
++extern void UIKit_OwningSceneDidDisconnect(UIScene *scene);
++extern bool UIKit_IsOwningScene(UIScene *scene);
++#if !defined(SDL_PLATFORM_TVOS) && !defined(SDL_PLATFORM_VISIONOS)
++extern UIInterfaceOrientation UIKit_GetInterfaceOrientation(void);
++extern API_AVAILABLE(ios(13.0)) void UIKit_OnWindowSceneGeometryChanged(UIWindowScene *scene);
++extern API_AVAILABLE(ios(13.0)) void UIKit_AdoptOwningScene(UIWindowScene *scene);
++#endif
+ 
+ extern void UIKit_SetGameControllerInteraction(bool enabled);
+ extern void UIKit_SetViewGameControllerInteraction(UIView *view, bool enabled);
+diff --git a/src/video/uikit/SDL_uikitvideo.m b/src/video/uikit/SDL_uikitvideo.m
+index 97aeb94..28e28af 100644
+--- a/src/video/uikit/SDL_uikitvideo.m
++++ b/src/video/uikit/SDL_uikitvideo.m
+@@ -244,7 +244,15 @@ CGRect UIKit_ComputeViewFrame(SDL_Window *window, UIScreen *screen)
+ 
+     /* The orientation flip doesn't make sense when the window is smaller
+      * than the screen (iPad Split View, for example). */
+-    if (fullscreen && (landscape != (frame.size.width > frame.size.height))) {
++    BOOL scene_window = NO;
++    if (@available(iOS 13.0, *)) {
++        /* A window in a scene is sized by that scene: its bounds already follow
++         * the scene's interface orientation and screen (including an external
++         * display), and the application-wide status bar orientation may belong
++         * to another scene or be unknown. */
++        scene_window = (data != nil && data.uiwindow.windowScene != nil);
++    }
++    if (!scene_window && fullscreen && (landscape != (frame.size.width > frame.size.height))) {
+         float height = frame.size.width;
+         frame.size.width = frame.size.height;
+         frame.size.height = height;
+@@ -255,14 +263,91 @@ CGRect UIKit_ComputeViewFrame(SDL_Window *window, UIScreen *screen)
+ }
+ #endif // SDL_PLATFORM_VISIONOS
+ 
++// The application scene SDL started in (see SDLUIKitSceneDelegate).
++static __weak UIWindowScene *UIKit_owning_scene API_AVAILABLE(ios(13.0));
++
++UIWindowScene *UIKit_GetOwningWindowScene(void)
++{
++    if (@available(iOS 13.0, tvOS 13.0, *)) {
++        return UIKit_owning_scene;
++    }
++    return nil;
++}
++
++void UIKit_SetOwningWindowScene(UIWindowScene *scene)
++{
++    if (@available(iOS 13.0, tvOS 13.0, *)) {
++        UIKit_owning_scene = scene;
++    }
++}
++
++void UIKit_OwningSceneDidDisconnect(UIScene *scene)
++{
++    /* UIKit can keep a disconnected scene object alive for seconds, so the weak
++     * reference alone does not clear it; a replacement scene then adopts SDL's windows. */
++    if (@available(iOS 13.0, tvOS 13.0, *)) {
++        if (scene == UIKit_owning_scene) {
++            UIKit_owning_scene = nil;
++        }
++    }
++}
++
++// Only an application scene can run the app; an external display's scene keeps the system default.
++static bool UIKit_IsApplicationScene(UIScene *scene)
++{
++#ifndef SDL_PLATFORM_VISIONOS
++    if (@available(iOS 13.0, tvOS 13.0, *)) {
++        return [scene.session.role isEqualToString:UIWindowSceneSessionRoleApplication];
++    }
++#endif
++    return true;
++}
++
++bool UIKit_IsOwningScene(UIScene *scene)
++{
++    if (@available(iOS 13.0, tvOS 13.0, *)) {
++        UIWindowScene *owner = UIKit_GetOwningWindowScene();
++        if (owner) {
++            return owner == scene;
++        }
++        return UIKit_IsApplicationScene(scene);
++    }
++    return true;
++}
++
++#if !defined(SDL_PLATFORM_TVOS) && !defined(SDL_PLATFORM_VISIONOS)
++UIInterfaceOrientation UIKit_GetInterfaceOrientation(void)
++{
++    if (@available(iOS 13.0, *)) {
++        UIWindowScene *scene = UIKit_GetActiveWindowScene();
++        if (scene) {
++            if (@available(iOS 16.0, *)) {
++                return scene.effectiveGeometry.interfaceOrientation;
++            }
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wdeprecated-declarations"
++            return scene.interfaceOrientation;
++#pragma clang diagnostic pop
++        }
++    }
++    return [UIApplication sharedApplication].statusBarOrientation;
++}
++#endif
++
+ UIWindowScene *UIKit_GetActiveWindowScene(void)
+ {
+     if (@available(iOS 13.0, tvOS 13.0, *)) {
+         NSSet<UIScene *> *connectedScenes = [UIApplication sharedApplication].connectedScenes;
+ 
++        // Prefer the scene the application runs in over any other connected scene
++        UIWindowScene *owner = UIKit_GetOwningWindowScene();
++        if (owner) {
++            return owner;
++        }
++
+         // First, try to find an active foreground scene
+         for (UIScene *scene in connectedScenes) {
+-            if ([scene isKindOfClass:[UIWindowScene class]]) {
++            if ([scene isKindOfClass:[UIWindowScene class]] && UIKit_IsApplicationScene(scene)) {
+                 UIWindowScene *windowScene = (UIWindowScene *)scene;
+                 if (windowScene.activationState == UISceneActivationStateForegroundActive) {
+                     return windowScene;
+@@ -272,7 +357,7 @@ UIWindowScene *UIKit_GetActiveWindowScene(void)
+ 
+         // If no active scene, return any foreground scene
+         for (UIScene *scene in connectedScenes) {
+-            if ([scene isKindOfClass:[UIWindowScene class]]) {
++            if ([scene isKindOfClass:[UIWindowScene class]] && UIKit_IsApplicationScene(scene)) {
+                 UIWindowScene *windowScene = (UIWindowScene *)scene;
+                 if (windowScene.activationState == UISceneActivationStateForegroundInactive) {
+                     return windowScene;
+@@ -282,7 +367,7 @@ UIWindowScene *UIKit_GetActiveWindowScene(void)
+ 
+         // Last resort: return first window scene
+         for (UIScene *scene in connectedScenes) {
+-            if ([scene isKindOfClass:[UIWindowScene class]]) {
++            if ([scene isKindOfClass:[UIWindowScene class]] && UIKit_IsApplicationScene(scene)) {
+                 return (UIWindowScene *)scene;
+             }
+         }
+diff --git a/src/video/uikit/SDL_uikitwindow.m b/src/video/uikit/SDL_uikitwindow.m
+index 0ee7364..a2a3af6 100644
+--- a/src/video/uikit/SDL_uikitwindow.m
++++ b/src/video/uikit/SDL_uikitwindow.m
+@@ -59,15 +59,6 @@ static bool SetupWindowData(SDL_VideoDevice *_this, SDL_Window *window, UIWindow
+     SDL_UIKitDisplayData *displaydata = (__bridge SDL_UIKitDisplayData *)display->internal;
+     SDL_uikitview *view;
+ 
+-#ifdef SDL_PLATFORM_VISIONOS
+-    CGRect frame = UIKit_ComputeViewFrame(window);
+-#else
+-    CGRect frame = UIKit_ComputeViewFrame(window, displaydata.uiscreen);
+-#endif
+-
+-    int width = (int)frame.size.width;
+-    int height = (int)frame.size.height;
+-
+     SDL_UIKitWindowData *data = [[SDL_UIKitWindowData alloc] init];
+     if (!data) {
+         return SDL_OutOfMemory();
+@@ -77,6 +68,16 @@ static bool SetupWindowData(SDL_VideoDevice *_this, SDL_Window *window, UIWindow
+ 
+     data.uiwindow = uiwindow;
+ 
++    // Compute the frame once the UIWindow is known, so a scene window uses its own bounds.
++#ifdef SDL_PLATFORM_VISIONOS
++    CGRect frame = UIKit_ComputeViewFrame(window);
++#else
++    CGRect frame = UIKit_ComputeViewFrame(window, displaydata.uiscreen);
++#endif
++
++    int width = (int)frame.size.width;
++    int height = (int)frame.size.height;
++
+ #ifndef SDL_PLATFORM_VISIONOS
+     if (displaydata.uiscreen != [UIScreen mainScreen]) {
+         window->flags &= ~SDL_WINDOW_RESIZABLE;   // window is NEVER resizable
+@@ -388,6 +389,63 @@ void UIKit_GetWindowSizeInPixels(SDL_VideoDevice *_this, SDL_Window *window, int
+     }
+ }
+ 
++#if !defined(SDL_PLATFORM_TVOS) && !defined(SDL_PLATFORM_VISIONOS)
++/* The application scene changed size, orientation or screen: bring the display
++ * orientation and each of its windows' layout and Metal scale up to date, so the
++ * usual resize and pixel-size events follow. */
++void UIKit_OnWindowSceneGeometryChanged(UIWindowScene *scene)
++{
++    @autoreleasepool {
++        SDL_VideoDevice *_this = SDL_GetVideoDevice();
++        SDL_Window *window;
++
++        if (!_this || scene != UIKit_GetOwningWindowScene()) {
++            return;
++        }
++
++        SDL_OnApplicationDidChangeStatusBarOrientation();
++
++        for (window = _this->windows; window; window = window->next) {
++            SDL_UIKitWindowData *data = (__bridge SDL_UIKitWindowData *)window->internal;
++            UIView *view = data.viewcontroller.view;
++            if (!data || data.uiwindow.windowScene != scene || !view) {
++                continue;
++            }
++            if ((window->flags & SDL_WINDOW_HIGH_PIXEL_DENSITY) && view.tag == SDL_METALVIEW_TAG) {
++                view.layer.contentsScale = data.uiwindow.screen.nativeScale;
++            }
++            [view setNeedsLayout];
++        }
++    }
++}
++
++/* iOS discarded the scene SDL started in and connected a new application scene:
++ * move SDL's orphaned windows onto it instead of leaving them blank. */
++void UIKit_AdoptOwningScene(UIWindowScene *scene)
++{
++    @autoreleasepool {
++        SDL_VideoDevice *_this = SDL_GetVideoDevice();
++        SDL_Window *window;
++
++        if (!_this) {
++            return;
++        }
++
++        for (window = _this->windows; window; window = window->next) {
++            SDL_UIKitWindowData *data = (__bridge SDL_UIKitWindowData *)window->internal;
++            if (!data || !data.uiwindow || data.uiwindow.windowScene != nil) {
++                continue;
++            }
++            data.uiwindow.windowScene = scene;
++            if (!(window->flags & SDL_WINDOW_HIDDEN)) {
++                [data.uiwindow makeKeyAndVisible];
++            }
++        }
++        UIKit_OnWindowSceneGeometryChanged(scene);
++    }
++}
++#endif
++
+ #ifndef SDL_PLATFORM_TVOS
+ NSUInteger
+ UIKit_GetSupportedOrientations(SDL_Window *window)
