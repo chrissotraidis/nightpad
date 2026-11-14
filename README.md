@@ -28,7 +28,7 @@ upstream engine.
   <img alt="iOS and iPadOS 16 or later" src="https://img.shields.io/badge/iOS%20%2F%20iPadOS-16%2B-0A84FF?logo=apple">
   <img alt="Native ARM64" src="https://img.shields.io/badge/runtime-native%20ARM64-30D158">
   <img alt="SDL GPU on Metal" src="https://img.shields.io/badge/renderer-SDL%20GPU%20%E2%86%92%20Metal-5E5CE6">
-  <img alt="Version 0.2.0 preview" src="https://img.shields.io/badge/version-0.2.0%20preview-FF9F0A">
+  <img alt="Version 0.2.1 preview" src="https://img.shields.io/badge/version-0.2.1%20preview-FF9F0A">
   <img alt="Game data not included" src="https://img.shields.io/badge/game%20data-not%20included-FF453A">
   <a href="https://github.com/chrissotraidis/padmint"><img alt="Build with PadMint" src="https://img.shields.io/badge/PadMint-build%20your%20own-3EB489"></a>
   <a href="https://discord.gg/xwHfUD2bxW"><img alt="Join the Discord community" src="https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?logo=discord&amp;logoColor=white"></a>
@@ -86,7 +86,7 @@ upstream engine.
 | App Store, TestFlight, prebuilt apps | Not offered |
 | Online or LAN play | Not offered. A deferred plan is in [NETPLAY-PLAN](docs/NETPLAY-PLAN.md) |
 
-**NightPad 0.2.0 is a preview.** The maintainer plays it on a physical iPad
+**NightPad 0.2.1 is a preview.** The maintainer plays it on a physical iPad
 with touch controls and an Xbox controller, and the display, render resolution,
 controls and in-level audio are confirmed there. A complete campaign run, long
 sessions, iPhone hardware and four-player split screen with real controllers
