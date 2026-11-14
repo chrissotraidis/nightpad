@@ -71,7 +71,7 @@
     title.text = @"NIGHTPAD";
     title.textColor = UIColor.whiteColor;
     title.font = [UIFont monospacedSystemFontOfSize:30 weight:UIFontWeightHeavy];
-    NSString *version = [NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"] ?: @"0.2.0";
+    NSString *version = [NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"] ?: @"0.2.1";
     NSString *build = [NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"] ?: @"2";
     UILabel *subtitle = [UILabel new];
     subtitle.text = [NSString stringWithFormat:@"Version %@ (%@)", version, build];
