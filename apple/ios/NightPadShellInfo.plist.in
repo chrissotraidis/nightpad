@@ -10,7 +10,7 @@
   <key>CFBundleName</key><string>NightPad</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>0.2.2</string>
-  <key>CFBundleVersion</key><string>4</string>
+  <key>CFBundleVersion</key><string>5</string>
   <key>LSRequiresIPhoneOS</key><true/>
   <key>UIRequiresFullScreen</key><true/>
   <key>UIRequiresFullScreenIgnoredStartingWithVersion</key>

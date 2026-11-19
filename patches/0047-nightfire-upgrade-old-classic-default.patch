@@ -1,0 +1,30 @@
+--- a/src/action/engine/LoadSave.cpp
++++ b/src/action/engine/LoadSave.cpp
+@@ -1,3 +1,6 @@
++#ifdef __APPLE__
++#include <CoreFoundation/CoreFoundation.h>
++#endif
+ #include "LoadSave.h"
+ 
+ #include "psiSave.h"
+@@ -233,6 +236,20 @@
+     BIN_PullBits_U8(block, &cursor, &input->inverted, 1);
+     BIN_PullBits_U16(block, &cursor, (ushort *)&input->controlStyle, 4);
+     BIN_PullBits_U16(block, &cursor, (ushort *)&input->controlStyleDriving, 4);
++#ifdef __APPLE__
++    // NightPad: codenames made before Nightfire became the default carry the old
++    // default, Classic Bond (7). Move one such codename to Nightfire (0), once per
++    // install; a scheme chosen afterwards is kept.
++    if (input->controlStyle == 7) {
++        CFStringRef key = CFSTR("NightPadNightfireUpgradeDone");
++        Boolean found = false;
++        if (!CFPreferencesGetAppBooleanValue(key, kCFPreferencesCurrentApplication, &found) || !found) {
++            input->controlStyle = 0;
++            CFPreferencesSetAppValue(key, kCFBooleanTrue, kCFPreferencesCurrentApplication);
++            CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
++        }
++    }
++#endif
+     BIN_PullBits_U8(block, &cursor, &input->autoAim, 1);
+     BIN_PullBits_U8(block, &cursor, &input->autoAimMultiplayer, 1);
+     BIN_PullBits_U8(block, &cursor, &input->manualAimToggle, 1);

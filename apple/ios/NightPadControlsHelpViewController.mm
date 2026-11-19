@@ -111,8 +111,8 @@ static UIColor *BadgeColour(NSString *control) {
         initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done)];
 
     UILabel *intro = [UILabel new];
-    intro.text = @"On foot below is the Nightfire scheme, which new codenames now start on. A codename made "
-                 @"earlier keeps its own scheme: choose Nightfire under Options, Controller Setup. On a modern "
+    intro.text = @"On foot below is the Nightfire scheme, which new codenames start on. A codename still on "
+                 @"the old default, Classic, moves to Nightfire once; a scheme you pick under Options, Controller Setup stays. On a modern "
                  @"controller LB is White and RB is Black, so the bumper beside the right trigger changes weapon. "
                  @"Touch and controller send the same buttons, and the game's other schemes still apply if chosen.";
     intro.numberOfLines = 0;
