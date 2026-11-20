@@ -143,6 +143,9 @@ static uint64_t ShellResidentBytes(void) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    setenv("SDL_ORIENTATIONS", UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad
+        ? "Portrait PortraitUpsideDown LandscapeLeft LandscapeRight"
+        : "LandscapeLeft LandscapeRight", 1);
     self.view.backgroundColor = UIColor.blackColor;
     _engineHost = [NightPadEngineHost new];
     _applicationActive = UIApplication.sharedApplication.applicationState == UIApplicationStateActive;
@@ -369,7 +372,7 @@ static uint64_t ShellResidentBytes(void) {
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
-    return UIInterfaceOrientationMaskLandscape;
+    return UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? UIInterfaceOrientationMaskAll : UIInterfaceOrientationMaskLandscape;
 }
 
 - (BOOL)prefersStatusBarHidden { return YES; }
